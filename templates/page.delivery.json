@@ -1,0 +1,23 @@
+{
+  "sections": {
+    "mp_delivery": {
+      "type": "mp-delivery",
+      "blocks": {
+        "h1": { "type": "highlight", "settings": { "icon": "🚚", "title": "Free UK delivery over £50", "body": "Orders under £50 ship from £3.49. Next working day dispatch, Mon–Fri." } },
+        "h2": { "type": "highlight", "settings": { "icon": "↺", "title": "30-day returns", "body": "Changed your mind? Send unopened games back within 30 days for a full refund." } },
+        "h3": { "type": "highlight", "settings": { "icon": "🌎", "title": "Worldwide shipping", "body": "We ship to 40+ countries. Rates and times are calculated at checkout." } },
+        "p1": { "type": "ship", "settings": { "name": "Standard (Royal Mail Tracked 48)", "time": "2–3 working days", "cost": "£3.49" } },
+        "p2": { "type": "ship", "settings": { "name": "Express (Royal Mail Tracked 24)", "time": "1–2 working days", "cost": "£5.99" } },
+        "p3": { "type": "ship", "settings": { "name": "Next-day (DPD, order by 2pm)", "time": "Next working day", "cost": "£7.99" } },
+        "p4": { "type": "ship", "settings": { "name": "Free delivery (orders over £50)", "time": "2–3 working days", "cost": "FREE" } },
+        "t1": { "type": "step", "settings": { "title": "Start your return", "body": "Sign in and open the order, or use the link in your dispatch email." } },
+        "t2": { "type": "step", "settings": { "title": "Print your label", "body": "We email a prepaid returns label — just attach it to the parcel." } },
+        "t3": { "type": "step", "settings": { "title": "Drop it off", "body": "Post it at any Royal Mail post office or parcel locker." } },
+        "t4": { "type": "step", "settings": { "title": "Get refunded", "body": "Refund processed 3–5 days after it reaches our warehouse." } }
+      },
+      "block_order": ["h1", "h2", "h3", "p1", "p2", "p3", "p4", "t1", "t2", "t3", "t4"],
+      "settings": {}
+    }
+  },
+  "order": ["mp_delivery"]
+}

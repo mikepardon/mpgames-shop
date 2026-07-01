@@ -1,0 +1,146 @@
+{%- comment -%}
+  MPGames account auth — tabbed Sign in / Create account with a benefits panel.
+  Uses real Shopify customer_login, recover_customer_password and create_customer
+  forms. Imported from Claude Design "MPGames Account".
+{%- endcomment -%}
+
+{%- style -%}
+  .mp-au-{{ section.id }} { background: #f4efe6; font-family: 'Barlow', ui-sans-serif, system-ui, sans-serif; color: #16323f; }
+  .mp-au-{{ section.id }} .au__body { display: flex; max-width: 940px; margin: 36px auto 44px; padding: 0 28px; align-items: stretch; }
+  .mp-au-{{ section.id }} .au__card { flex: 1; background: #fff; border: 1px solid #e7ddcb; border-radius: 14px 0 0 14px; border-right: none; padding: 34px 38px; box-shadow: 0 1px 3px rgba(20,40,50,.05); }
+  .mp-au-{{ section.id }} .au__tabs { display: flex; gap: 4px; background: #f1ece2; border-radius: 9px; padding: 4px; margin-bottom: 24px; }
+  .mp-au-{{ section.id }} .au__tab { flex: 1; text-align: center; cursor: pointer; font-size: 13.5px; font-weight: 600; padding: 10px; border-radius: 7px; color: #8a8278; background: none; border: 0; font-family: inherit; }
+  .mp-au-{{ section.id }} .au__tab.is-active { background: #fff; color: #16323f; box-shadow: 0 1px 2px rgba(20,40,50,.08); }
+  .mp-au-{{ section.id }} .au__pane[hidden] { display: none; }
+  .mp-au-{{ section.id }} .au__h { font-size: 24px; font-weight: 700; }
+  .mp-au-{{ section.id }} .au__sub { font-size: 13px; color: #8a8278; margin-top: 4px; }
+  .mp-au-{{ section.id }} .au__field { margin-top: 14px; }
+  .mp-au-{{ section.id }} .au__label { display: flex; justify-content: space-between; align-items: center; font-size: 12.5px; font-weight: 600; color: #4a443c; margin-bottom: 6px; }
+  .mp-au-{{ section.id }} .au__forgot { font-size: 12px; color: #f2872f; font-weight: 600; background: none; border: 0; cursor: pointer; font-family: inherit; text-decoration: none; }
+  .mp-au-{{ section.id }} .au__input { width: 100%; box-sizing: border-box; border: 1px solid #d8d4cc; border-radius: 8px; padding: 12px 14px; font-size: 13.5px; background: #fbfaf7; font-family: inherit; color: #16323f; }
+  .mp-au-{{ section.id }} .au__row { display: flex; gap: 12px; }
+  .mp-au-{{ section.id }} .au__row > div { flex: 1; }
+  .mp-au-{{ section.id }} .au__check { display: flex; align-items: flex-start; gap: 9px; margin-top: 14px; font-size: 12px; color: #6b6b62; line-height: 1.45; }
+  .mp-au-{{ section.id }} .au__btn { width: 100%; background: #f2872f; color: #fff; text-align: center; font-size: 15px; font-weight: 700; padding: 13px; border-radius: 9px; margin-top: 20px; border: 0; cursor: pointer; font-family: inherit; }
+  .mp-au-{{ section.id }} .au__fine { font-size: 11.5px; color: #9b948a; text-align: center; margin-top: 11px; line-height: 1.5; }
+  .mp-au-{{ section.id }} .au__fine a { color: #f2872f; text-decoration: none; }
+  .mp-au-{{ section.id }} .au__errors { background: #fdecea; border: 1px solid #f3c0bb; color: #9a3b2e; border-radius: 8px; padding: 10px 13px; font-size: 12.5px; margin-bottom: 14px; }
+  .mp-au-{{ section.id }} .au__errors ul { margin: 0; padding-left: 18px; }
+  .mp-au-{{ section.id }} .au__success { background: #e3f1e9; border: 1px solid #b6dcc6; color: #1f6b45; border-radius: 8px; padding: 10px 13px; font-size: 12.5px; margin-bottom: 14px; }
+
+  .mp-au-{{ section.id }} .au__benefits { width: 330px; flex: none; background: linear-gradient(160deg,#16323f,#1d4252); border-radius: 0 14px 14px 0; padding: 34px 30px; color: #fff; display: flex; flex-direction: column; justify-content: center; }
+  .mp-au-{{ section.id }} .au__bh { font-size: 22px; font-weight: 700; line-height: 1.2; }
+  .mp-au-{{ section.id }} .au__blist { display: flex; flex-direction: column; gap: 16px; margin-top: 22px; }
+  .mp-au-{{ section.id }} .au__b { display: flex; gap: 12px; align-items: flex-start; }
+  .mp-au-{{ section.id }} .au__bt { font-size: 14.5px; font-weight: 600; }
+  .mp-au-{{ section.id }} .au__bd { font-size: 12.5px; color: #9fb4bd; line-height: 1.5; }
+  @media (max-width: 749px) {
+    .mp-au-{{ section.id }} .au__body { flex-direction: column; padding: 0 16px; }
+    .mp-au-{{ section.id }} .au__card { border-radius: 14px 14px 0 0; border-right: 1px solid #e7ddcb; border-bottom: none; }
+    .mp-au-{{ section.id }} .au__benefits { width: auto; border-radius: 0 0 14px 14px; }
+  }
+{%- endstyle -%}
+
+<div class="mp-au-{{ section.id }}" data-auth>
+  <div class="au__body">
+    <div class="au__card">
+      <div class="au__tabs" role="tablist">
+        <button type="button" class="au__tab" data-tab="signin">Sign in</button>
+        <button type="button" class="au__tab" data-tab="register">Create account</button>
+      </div>
+
+      <!-- SIGN IN -->
+      <div class="au__pane" data-pane="signin">
+        <div data-recover-main>
+          <div class="au__h mp-cond">Welcome back</div>
+          <div class="au__sub">Sign in to track orders and manage returns.</div>
+          {%- form 'customer_login', novalidate: 'novalidate' -%}
+            {%- if form.errors -%}<div class="au__errors">{{ form.errors | default_errors }}</div>{%- endif -%}
+            <div class="au__field">
+              <div class="au__label">Email address</div>
+              <input type="email" name="customer[email]" class="au__input" autocomplete="email" placeholder="you@example.com" required>
+            </div>
+            <div class="au__field">
+              <div class="au__label">Password <button type="button" class="au__forgot" data-recover-toggle>Forgot password?</button></div>
+              <input type="password" name="customer[password]" class="au__input" autocomplete="current-password" placeholder="Your password" required>
+            </div>
+            <button type="submit" class="au__btn mp-cond">Sign in</button>
+          {%- endform -%}
+        </div>
+
+        <div data-recover hidden>
+          <div class="au__h mp-cond">Reset your password</div>
+          <div class="au__sub">We'll email you a secure reset link.</div>
+          {%- form 'recover_customer_password' -%}
+            {%- if form.posted_successfully? -%}<div class="au__success">If that email exists, a reset link is on its way.</div>{%- endif -%}
+            {%- if form.errors -%}<div class="au__errors">{{ form.errors | default_errors }}</div>{%- endif -%}
+            <div class="au__field">
+              <div class="au__label">Email address</div>
+              <input type="email" name="email" class="au__input" autocomplete="email" placeholder="you@example.com" required>
+            </div>
+            <button type="submit" class="au__btn mp-cond">Send reset link</button>
+          {%- endform -%}
+          <button type="button" class="au__forgot" data-recover-cancel style="display:block;margin-top:14px">&larr; Back to sign in</button>
+        </div>
+      </div>
+
+      <!-- REGISTER -->
+      <div class="au__pane" data-pane="register" hidden>
+        <div class="au__h mp-cond">Create your account</div>
+        <div class="au__sub">Join the MPGames club for faster checkout and member deals.</div>
+        {%- form 'create_customer', novalidate: 'novalidate' -%}
+          {%- if form.errors -%}<div class="au__errors">{{ form.errors | default_errors }}</div>{%- endif -%}
+          <div class="au__row" style="margin-top:14px">
+            <div><div class="au__label">First name</div><input type="text" name="customer[first_name]" class="au__input" autocomplete="given-name"></div>
+            <div><div class="au__label">Last name</div><input type="text" name="customer[last_name]" class="au__input" autocomplete="family-name"></div>
+          </div>
+          <div class="au__field"><div class="au__label">Email address</div><input type="email" name="customer[email]" class="au__input" autocomplete="email" placeholder="you@example.com" required></div>
+          <div class="au__field"><div class="au__label">Password</div><input type="password" name="customer[password]" class="au__input" autocomplete="new-password" placeholder="Create a password" required></div>
+          <label class="au__check"><input type="checkbox" name="customer[accepts_marketing]" value="true" style="margin-top:2px"> Email me restock alerts, new releases and member-only deals. Unsubscribe any time.</label>
+          <button type="submit" class="au__btn mp-cond">Create account</button>
+          <div class="au__fine">By creating an account you agree to our {% if shop.terms_of_service != blank %}<a href="{{ shop.terms_of_service.url }}">{{ shop.terms_of_service.title }}</a>{% else %}Terms of Service{% endif %} and {% if shop.privacy_policy != blank %}<a href="{{ shop.privacy_policy.url }}">{{ shop.privacy_policy.title }}</a>{% else %}Privacy Policy{% endif %}.</div>
+        {%- endform -%}
+      </div>
+    </div>
+
+    <div class="au__benefits">
+      <div class="au__bh mp-cond">Why have an MPGames account?</div>
+      <div class="au__blist">
+        <div class="au__b"><span style="font-size:18px">&#128666;</span><div><div class="au__bt mp-cond">Faster checkout</div><div class="au__bd">Saved addresses and payment for one-tap ordering.</div></div></div>
+        <div class="au__b"><span style="font-size:18px">&#128230;</span><div><div class="au__bt mp-cond">Track every order</div><div class="au__bd">Live tracking and one-click returns from your dashboard.</div></div></div>
+        <div class="au__b"><span style="font-size:18px">&#128221;</span><div><div class="au__bt mp-cond">Order history</div><div class="au__bd">Reorder past favourites and view your previous orders anytime.</div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function () {
+    var root = document.querySelector('.mp-au-{{ section.id }}');
+    if (!root) return;
+    function tab(name) {
+      root.querySelectorAll('[data-tab]').forEach(function (t) { t.classList.toggle('is-active', t.getAttribute('data-tab') === name); });
+      root.querySelectorAll('[data-pane]').forEach(function (p) { p.hidden = p.getAttribute('data-pane') !== name; });
+    }
+    root.querySelectorAll('[data-tab]').forEach(function (t) { t.addEventListener('click', function () { tab(t.getAttribute('data-tab')); }); });
+    // recover toggle
+    var main = root.querySelector('[data-recover-main]'), rec = root.querySelector('[data-recover]');
+    root.querySelector('[data-recover-toggle]').addEventListener('click', function () { main.hidden = true; rec.hidden = false; });
+    root.querySelector('[data-recover-cancel]').addEventListener('click', function () { rec.hidden = true; main.hidden = false; });
+    // default tab: register if a create_customer error exists, recover if requested, else setting
+    var def = '{{ section.settings.default_tab }}';
+    {%- if form.errors and form.id == 'create_customer' -%}def = 'register';{%- endif -%}
+    tab(def === 'register' ? 'register' : 'signin');
+    if (window.location.hash === '#recover') { tab('signin'); main.hidden = true; rec.hidden = false; }
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "MP Account auth",
+  "settings": [
+    { "type": "select", "id": "default_tab", "label": "Default tab", "default": "signin", "options": [ { "value": "signin", "label": "Sign in" }, { "value": "register", "label": "Create account" } ] }
+  ],
+  "presets": [ { "name": "MP Account auth" } ]
+}
+{% endschema %}

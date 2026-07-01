@@ -1,0 +1,231 @@
+{%- comment -%}
+  MPGames product rail — horizontally-scrolling product cards.
+  Two card styles: "bestseller" (BGG score, rank, RRP/discount) and
+  "release" (publisher, NEW/PRE-ORDER badge). Imported from Claude Design.
+{%- endcomment -%}
+
+{%- liquid
+  assign style = section.settings.card_style
+-%}
+
+{%- style -%}
+  .mp-rail-{{ section.id }} .mp-rail__pad { padding: 24px 0 6px; }
+  .mp-rail-{{ section.id }} .mp-rail__head {
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding: 0 28px; margin-bottom: 14px; gap: 16px;
+  }
+  .mp-rail-{{ section.id }} .mp-rail__title { font-size: 20px; font-weight: 700; color: #16323f; }
+  .mp-rail-{{ section.id }} .mp-rail__sub { font-size: 12.5px; color: #8a8278; margin-top: 1px; }
+  .mp-rail-{{ section.id }} .mp-rail__tools { display: flex; align-items: center; gap: 12px; white-space: nowrap; }
+  .mp-rail-{{ section.id }} .mp-rail__viewall { font-size: 12.5px; color: #f2872f; font-weight: 600; text-decoration: none; }
+  .mp-rail-{{ section.id }} .mp-rail__nav { display: flex; gap: 6px; }
+  .mp-rail-{{ section.id }} .mp-rail__nav button {
+    width: 32px; height: 32px; border: 1px solid #d8d4cc; border-radius: 7px; background: #fff;
+    display: flex; align-items: center; justify-content: center; color: #6b7a82; cursor: pointer;
+  }
+  .mp-rail-{{ section.id }} .mp-rail__nav button.is-active { border-color: #16323f; background: #16323f; color: #fff; }
+  .mp-rail-{{ section.id }} .mp-rail__track {
+    display: flex; gap: 16px; overflow-x: auto; padding: 4px 28px 14px;
+    scrollbar-width: thin; scrollbar-color: #c9c2b6 transparent;
+  }
+  .mp-rail-{{ section.id }} .mp-rail__track::-webkit-scrollbar { height: 8px; }
+  .mp-rail-{{ section.id }} .mp-rail__track::-webkit-scrollbar-thumb { background: #c9c2b6; border-radius: 8px; }
+
+  .mp-rail-{{ section.id }} .mp-card {
+    flex: 0 0 212px; border: 1px solid #e7e0d4; border-radius: 10px; overflow: hidden;
+    background: #fff; display: flex; flex-direction: column; position: relative;
+  }
+  .mp-rail-{{ section.id }} .mp-card__media {
+    height: 150px; display: flex; align-items: center; justify-content: center;
+    font: 11px ui-monospace, monospace; color: #a39c92; background-size: cover; background-position: center;
+  }
+  .mp-rail-{{ section.id }} .mp-card__media--ph {
+    background: repeating-linear-gradient(45deg,#efece6,#efece6 9px,#e6e2da 9px,#e6e2da 18px);
+  }
+  .mp-rail-{{ section.id }} .mp-card__flag {
+    position: absolute; top: 9px; left: 9px; z-index: 2; color: #fff;
+    font-size: 12px; font-weight: 700; padding: 3px 8px; border-radius: 5px;
+  }
+  .mp-rail-{{ section.id }} .mp-card__flag--sale { background: #d6402e; }
+  .mp-rail-{{ section.id }} .mp-card__flag--badge { background: #16323f; font-size: 11px; }
+  .mp-rail-{{ section.id }} .mp-card__wish {
+    position: absolute; top: 9px; right: 9px; z-index: 2; background: #fff; border: 1px solid #e7e0d4;
+    border-radius: 50%; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center;
+    color: #8a8278; font-size: 13px;
+  }
+  .mp-rail-{{ section.id }} .mp-card__body { padding: 11px 12px 13px; display: flex; flex-direction: column; flex: 1; }
+  .mp-rail-{{ section.id }} .mp-card__bgg {
+    display: inline-flex; align-items: center; gap: 5px; background: #2b2233; border-radius: 5px; padding: 2px 6px;
+  }
+  .mp-rail-{{ section.id }} .mp-card__bgg b { font-size: 10px; font-weight: 700; color: #fff; letter-spacing: .5px; }
+  .mp-rail-{{ section.id }} .mp-card__rank { font-size: 10.5px; color: #9b948a; }
+  .mp-rail-{{ section.id }} .mp-card__name { font-size: 13.5px; font-weight: 600; color: #16323f; line-height: 1.25; }
+  .mp-rail-{{ section.id }} .mp-card__pub { font-size: 11px; color: #9b948a; margin-top: 3px; }
+  .mp-rail-{{ section.id }} .mp-card__meta { display: flex; gap: 10px; margin-top: 7px; font-size: 11px; color: #6b7a82; }
+  .mp-rail-{{ section.id }} .mp-card__foot {
+    display: flex; align-items: flex-end; justify-content: space-between; margin-top: auto; padding-top: 11px;
+  }
+  .mp-rail-{{ section.id }} .mp-card__rrp { font-size: 11px; color: #9b948a; text-decoration: line-through; }
+  .mp-rail-{{ section.id }} .mp-card__price { font-size: 18px; font-weight: 700; color: #16323f; }
+  .mp-rail-{{ section.id }} .mp-card__add {
+    background: #f2872f; color: #fff; border-radius: 7px; padding: 8px 12px; font-size: 12.5px; font-weight: 600;
+    text-decoration: none; border: 0; cursor: pointer;
+  }
+  .mp-rail-{{ section.id }} .mp-card__add--ghost { background: #fff; border: 1px solid #16323f; color: #16323f; padding: 7px 11px; font-size: 12px; }
+  .mp-rail-{{ section.id }} .mp-card__add[disabled] { opacity: .45; cursor: not-allowed; }
+  .mp-rail-{{ section.id }} .mp-card__addform { margin: 0; }
+  .mp-rail-{{ section.id }} .mp-card__media { text-decoration: none; }
+  @media (max-width: 749px) {
+    .mp-rail-{{ section.id }} .mp-rail__head, .mp-rail-{{ section.id }} .mp-rail__track { padding-left: 16px; padding-right: 16px; }
+    .mp-rail-{{ section.id }} .mp-rail__nav { display: none; }
+  }
+{%- endstyle -%}
+
+<div class="mp-cream mp-rail-{{ section.id }}">
+  <div class="mp-col">
+    <div class="mp-rail__pad">
+      <div class="mp-rail__head">
+        <div>
+          <div class="mp-rail__title mp-cond">{{ section.settings.title }}</div>
+          {%- if section.settings.subtitle != blank -%}<div class="mp-rail__sub">{{ section.settings.subtitle }}</div>{%- endif -%}
+        </div>
+        <div class="mp-rail__tools">
+          {%- if section.settings.view_all_label != blank -%}
+            <a class="mp-rail__viewall" href="{{ section.settings.view_all_url | default: section.settings.collection.url | default: '#' }}">{{ section.settings.view_all_label }} &#8594;</a>
+          {%- endif -%}
+          <span class="mp-rail__nav">
+            <button type="button" data-scroll="-1" aria-label="Scroll left">&lsaquo;</button>
+            <button type="button" data-scroll="1" class="is-active" aria-label="Scroll right">&rsaquo;</button>
+          </span>
+        </div>
+      </div>
+
+      <div class="mp-rail__track" data-track>
+        {%- liquid
+          assign rail_products = section.settings.collection.products
+          assign limit = section.settings.products_to_show
+        -%}
+        {%- for product in rail_products limit: limit -%}
+          {%- liquid
+            assign bgg_mf = product.metafields.custom.bgg_rating
+            assign bgg = bgg_mf.value | times: 1.0
+            assign bgg_color = '#e0b441'
+            if bgg >= 8.0
+              assign bgg_color = '#5fbf7e'
+            elsif bgg >= 7.0
+              assign bgg_color = '#9ccf63'
+            endif
+            assign players = product.metafields.custom.player_count.value
+            assign playtime = product.metafields.custom.play_time.value
+            assign on_sale = false
+            if product.compare_at_price > product.price
+              assign on_sale = true
+              assign discount = product.compare_at_price | minus: product.price | times: 100.0 | divided_by: product.compare_at_price | round
+            endif
+            assign badge = ''
+            if product.tags contains 'PRE-ORDER'
+              assign badge = 'PRE-ORDER'
+            elsif product.tags contains 'NEW'
+              assign badge = 'NEW'
+            endif
+          -%}
+          <div class="mp-card">
+            {%- if style == 'bestseller' and on_sale -%}
+              <span class="mp-card__flag mp-card__flag--sale mp-cond">-{{ discount }}%</span>
+            {%- elsif style == 'release' and badge != blank -%}
+              <span class="mp-card__flag mp-card__flag--badge mp-cond">{{ badge }}</span>
+            {%- endif -%}
+
+            <a href="{{ product.url }}" class="mp-card__media{% unless product.featured_image %} mp-card__media--ph{% endunless %}"{% if product.featured_image %} style="background-image:url('{{ product.featured_image | image_url: width: 440 }}')"{% endif %} aria-label="{{ product.title | escape }}">{% unless product.featured_image %}box art{% endunless %}</a>
+
+            <div class="mp-card__body">
+              {%- if product.type == 'Board Game Expansion' -%}<span style="display:inline-block;width:fit-content;background:#ede7f3;color:#6a4f86;font-size:9.5px;font-weight:700;letter-spacing:.4px;padding:2px 6px;border-radius:5px;text-transform:uppercase;margin-bottom:6px">Expansion</span>{%- endif -%}
+              {%- if style == 'bestseller' and bgg_mf != blank -%}
+                <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
+                  <span class="mp-card__bgg"><b class="mp-cond">BGG</b><span style="font-size:11px;font-weight:700;color:{{ bgg_color }}">{{ bgg_mf.value }}</span></span>
+                  {%- if product.metafields.custom.bgg_rank != blank -%}<span class="mp-card__rank">rank #{{ product.metafields.custom.bgg_rank.value }}</span>{%- endif -%}
+                </div>
+              {%- endif -%}
+
+              <a class="mp-card__name" href="{{ product.url }}" style="text-decoration:none;color:inherit">{{ product.title }}</a>
+
+              {%- if style == 'release' and product.vendor != blank -%}
+                <div class="mp-card__pub">{{ product.vendor }}</div>
+              {%- endif -%}
+
+              {%- if players != blank or playtime != blank -%}
+                <div class="mp-card__meta">
+                  {%- if players != blank -%}<span>&#9823; {{ players }}</span>{%- endif -%}
+                  {%- if playtime != blank -%}<span>&#9201; {{ playtime }}</span>{%- endif -%}
+                </div>
+              {%- endif -%}
+
+              <div class="mp-card__foot">
+                <div>
+                  {%- if style == 'bestseller' and on_sale -%}<span class="mp-card__rrp">{{ product.compare_at_price | money }}</span>{%- endif -%}
+                  <div class="mp-card__price mp-cond">{{ product.price | money }}</div>
+                </div>
+                <form action="{{ routes.cart_add_url }}" method="post" enctype="multipart/form-data" class="mp-card__addform">
+                  <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+                  <button type="submit" class="mp-card__add{% if style == 'release' %} mp-card__add--ghost{% endif %} mp-cond"{% unless product.available %} disabled{% endunless %}>
+                    {%- if style == 'release' -%}{{ section.settings.release_action | default: 'Add' }}{%- else -%}Add{%- endif -%}
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+        {%- else -%}
+          {%- if request.design_mode -%}
+            <p style="padding:4px 0;color:#8a8278;font-size:13px">Pick a collection in this section's settings to show products.</p>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function () {
+    var scope = document.querySelector('.mp-rail-{{ section.id }}');
+    if (!scope) return;
+    var track = scope.querySelector('[data-track]');
+    scope.querySelectorAll('[data-scroll]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var dir = parseInt(btn.getAttribute('data-scroll'), 10);
+        track.scrollBy({ left: dir * Math.round(track.clientWidth * 0.85), behavior: 'smooth' });
+      });
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "MP Product rail",
+  "settings": [
+    { "type": "collection", "id": "collection", "label": "Collection" },
+    { "type": "range", "id": "products_to_show", "min": 4, "max": 16, "step": 1, "label": "Products to show", "default": 8 },
+    { "type": "text", "id": "title", "label": "Title", "default": "Best sellers this month" },
+    { "type": "text", "id": "subtitle", "label": "Subtitle (optional)" },
+    { "type": "text", "id": "view_all_label", "label": "View-all label", "default": "View all" },
+    { "type": "url", "id": "view_all_url", "label": "View-all URL (defaults to the collection)" },
+    {
+      "type": "select", "id": "card_style", "label": "Card style", "default": "bestseller",
+      "options": [
+        { "value": "bestseller", "label": "Best seller (BGG score + RRP/discount)" },
+        { "value": "release", "label": "New release (publisher + badge)" }
+      ]
+    },
+    { "type": "text", "id": "release_action", "label": "New-release button label", "default": "Add", "info": "Used only by the New release card style." }
+  ],
+  "presets": [
+    {
+      "name": "MP Product rail (best sellers)",
+      "settings": { "title": "Best sellers this month", "view_all_label": "View all", "card_style": "bestseller", "products_to_show": 8 }
+    },
+    {
+      "name": "MP Product rail (new releases)",
+      "settings": { "title": "New & upcoming releases", "view_all_label": "View all new in", "card_style": "release", "products_to_show": 8 }
+    }
+  ]
+}
+{% endschema %}

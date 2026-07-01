@@ -1,0 +1,65 @@
+{%- comment -%}
+  MPGames activate account — sets a password for an invited customer.
+  Uses the real Shopify `activate_customer_password` form.
+{%- endcomment -%}
+
+{%- style -%}
+  .mp-act-{{ section.id }} { background: #f4efe6; font-family: 'Barlow', ui-sans-serif, system-ui, sans-serif; color: #16323f; }
+  .mp-act-{{ section.id }} .act__wrap { max-width: 440px; margin: 0 auto; padding: 48px 28px 60px; }
+  .mp-act-{{ section.id }} .act__card { background: #fff; border: 1px solid #e7ddcb; border-radius: 14px; padding: 34px 34px 38px; box-shadow: 0 1px 3px rgba(20,40,50,.05); }
+  .mp-act-{{ section.id }} .act__h { font-size: 24px; font-weight: 700; line-height: 1.15; }
+  .mp-act-{{ section.id }} .act__sub { font-size: 13px; color: #8a8278; margin-top: 6px; }
+  .mp-act-{{ section.id }} .act__field { margin-top: 16px; }
+  .mp-act-{{ section.id }} .act__label { font-size: 12.5px; font-weight: 600; color: #4a443c; margin-bottom: 6px; }
+  .mp-act-{{ section.id }} .act__input { width: 100%; box-sizing: border-box; border: 1px solid #d8d4cc; border-radius: 8px; padding: 12px 14px; font-size: 13.5px; background: #fbfaf7; font-family: inherit; color: #16323f; }
+  .mp-act-{{ section.id }} .act__btn { width: 100%; background: #f2872f; color: #fff; text-align: center; font-size: 15px; font-weight: 700; padding: 13px; border-radius: 9px; margin-top: 22px; border: 0; cursor: pointer; font-family: inherit; }
+  .mp-act-{{ section.id }} .act__decline { width: 100%; background: none; color: #8a8278; font-size: 13px; font-weight: 600; padding: 12px; margin-top: 8px; border: 0; cursor: pointer; font-family: inherit; }
+  .mp-act-{{ section.id }} .act__errors { background: #fdecea; border: 1px solid #f3c0bb; color: #9a3b2e; border-radius: 8px; padding: 10px 13px; font-size: 12.5px; margin-top: 16px; }
+  .mp-act-{{ section.id }} .act__errors ul { margin: 6px 0 0; padding-left: 18px; }
+  .mp-act-{{ section.id }} .act__errors a { color: #9a3b2e; }
+{%- endstyle -%}
+
+<div class="mp-act-{{ section.id }}">
+  <div class="act__wrap">
+    <div class="act__card">
+      <div class="act__h mp-cond">Activate your account</div>
+      <div class="act__sub">Create a password to finish setting up your MPGames account.</div>
+      {%- form 'activate_customer_password' -%}
+        {%- if form.errors -%}
+          <div class="act__errors">
+            There was a problem activating your account:
+            <ul>
+              {%- for field in form.errors -%}
+                <li>
+                  {%- if field == 'form' -%}
+                    {{ form.errors.messages[field] }}
+                  {%- else -%}
+                    <a href="#{{ field }}">{{ form.errors.translated_fields[field] | capitalize }} {{ form.errors.messages[field] }}</a>
+                  {%- endif -%}
+                </li>
+              {%- endfor -%}
+            </ul>
+          </div>
+        {%- endif -%}
+        <div class="act__field">
+          <div class="act__label">Password</div>
+          <input type="password" name="customer[password]" id="password" class="act__input" autocomplete="new-password" placeholder="Create a password" required>
+        </div>
+        <div class="act__field">
+          <div class="act__label">Confirm password</div>
+          <input type="password" name="customer[password_confirmation]" id="password_confirmation" class="act__input" autocomplete="new-password" placeholder="Re-enter your password" required>
+        </div>
+        <button type="submit" class="act__btn mp-cond">Activate account</button>
+        <button type="submit" name="decline" class="act__decline">Decline invitation</button>
+      {%- endform -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "MP Activate account",
+  "settings": [],
+  "presets": [ { "name": "MP Activate account" } ]
+}
+{% endschema %}

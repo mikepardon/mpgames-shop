@@ -1,40 +1,14 @@
 {
   "sections": {
-    "main": {
-      "type": "main-article",
-      "blocks": {
-        "featured_image": {
-          "type": "featured_image",
-          "settings": {
-            "image_height": "adapt"
-          }
-        },
-        "title": {
-          "type": "title",
-          "settings": {
-            "blog_show_date": true,
-            "blog_show_author": false
-          }
-        },
-        "share": {
-          "type": "share",
-          "settings": {
-            "share_label": "Share"
-          }
-        },
-        "content": {
-          "type": "content"
-        }
-      },
-      "block_order": [
-        "featured_image",
-        "title",
-        "share",
-        "content"
-      ]
+    "mp_article": {
+      "type": "mp-article",
+      "settings": {
+        "author_role": "Founder, MPGames · forever DM",
+        "author_bio": "Michael's a lifelong lover of games who's been DM'ing for years and has built a few online games of his own. When he's not behind the screen, he's hunting for the next great game night."
+      }
     }
   },
   "order": [
-    "main"
+    "mp_article"
   ]
 }

@@ -1,0 +1,197 @@
+{%- comment -%}
+  MPGames collections index ("Browse all") — category cards, player-count, price,
+  publisher and featured collections. Imported from Claude Design.
+  Categories & featured are blocks (collection-driven); player/price/publisher
+  read live from real collections.
+{%- endcomment -%}
+
+{%- style -%}
+  .mp-ci-{{ section.id }} { background: #f4efe6; font-family: 'Barlow', ui-sans-serif, system-ui, sans-serif; color: #16323f; padding-bottom: 48px; }
+  .mp-ci-{{ section.id }} .ci__wrap { max-width: 1240px; margin: 0 auto; padding: 0 28px; }
+  .mp-ci-{{ section.id }} .ci__crumb { padding: 15px 0 0; font-size: 12px; color: #9b948a; }
+  .mp-ci-{{ section.id }} .ci__crumb a { color: inherit; text-decoration: none; }
+  .mp-ci-{{ section.id }} .ci__crumb .sep { color: #cfc9be; margin: 0 5px; }
+  .mp-ci-{{ section.id }} .ci__mast { padding: 24px 0 6px; }
+  .mp-ci-{{ section.id }} .ci__h1 { font-size: 38px; font-weight: 700; }
+  .mp-ci-{{ section.id }} .ci__sub { font-size: 14.5px; color: #8a8278; margin-top: 6px; max-width: 620px; }
+  .mp-ci-{{ section.id }} .ci__sh { font-size: 20px; font-weight: 700; margin: 22px 0 13px; }
+  .mp-ci-{{ section.id }} .ci__shrow { display: flex; justify-content: space-between; align-items: baseline; margin: 22px 0 13px; }
+  .mp-ci-{{ section.id }} .ci__all { font-size: 12.5px; color: #f2872f; font-weight: 600; text-decoration: none; }
+
+  .mp-ci-{{ section.id }} .ci__cats { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; }
+  .mp-ci-{{ section.id }} .ci__cat { position: relative; border: 1px solid #e7ddcb; border-radius: 13px; background: #fff; padding: 18px; display: flex; align-items: center; gap: 14px; overflow: hidden; box-shadow: 0 1px 2px rgba(20,40,50,.04); text-decoration: none; }
+  .mp-ci-{{ section.id }} .ci__accent { position: absolute; left: 0; top: 0; bottom: 0; width: 4px; }
+  .mp-ci-{{ section.id }} .ci__icon { width: 46px; height: 46px; border-radius: 11px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex: none; }
+  .mp-ci-{{ section.id }} .ci__cname { display: block; font-size: 16px; font-weight: 700; color: #16323f; }
+  .mp-ci-{{ section.id }} .ci__ccount { font-size: 12px; color: #8a8278; }
+  .mp-ci-{{ section.id }} .ci__chev { color: #cdc6ba; font-size: 18px; }
+
+  .mp-ci-{{ section.id }} .ci__half { display: flex; gap: 24px; }
+  .mp-ci-{{ section.id }} .ci__half > div { flex: 1; }
+  .mp-ci-{{ section.id }} .ci__players { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
+  .mp-ci-{{ section.id }} .ci__ptile { border: 1px solid #e7ddcb; border-radius: 11px; background: #fff; padding: 15px 12px; text-align: center; box-shadow: 0 1px 2px rgba(20,40,50,.04); text-decoration: none; display: block; }
+  .mp-ci-{{ section.id }} .ci__pips { color: #f2872f; font-size: 14px; letter-spacing: 2px; line-height: 1; margin-bottom: 7px; min-height: 14px; }
+  .mp-ci-{{ section.id }} .ci__pn { font-size: 22px; font-weight: 700; color: #16323f; }
+  .mp-ci-{{ section.id }} .ci__pl { font-size: 11.5px; color: #8a8278; margin-top: 2px; }
+  .mp-ci-{{ section.id }} .ci__prices { display: grid; grid-template-columns: repeat(2,1fr); gap: 12px; }
+  .mp-ci-{{ section.id }} .ci__price { border: 1px solid #e7ddcb; border-radius: 11px; background: #fff; padding: 15px 16px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 2px rgba(20,40,50,.04); text-decoration: none; }
+  .mp-ci-{{ section.id }} .ci__pricel { font-size: 16px; font-weight: 700; color: #16323f; }
+  .mp-ci-{{ section.id }} .ci__pricec { font-size: 12px; color: #8a8278; }
+
+  .mp-ci-{{ section.id }} .ci__pubs { display: grid; grid-template-columns: repeat(6,1fr); gap: 12px; }
+  .mp-ci-{{ section.id }} .ci__pub { border: 1px solid #e7ddcb; border-radius: 10px; height: 80px; display: flex; flex-direction: column; gap: 7px; align-items: center; justify-content: center; background: #fff; text-align: center; padding: 0 10px; box-shadow: 0 1px 2px rgba(20,40,50,.04); text-decoration: none; }
+  .mp-ci-{{ section.id }} .ci__pubav { width: 34px; height: 34px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: #fff; flex: none; }
+  .mp-ci-{{ section.id }} .ci__pubav--logo { background: #fff; border: 1px solid #eee; overflow: hidden; padding: 3px; box-sizing: border-box; }
+  .mp-ci-{{ section.id }} .ci__pubav--logo img { width: 100%; height: 100%; object-fit: contain; display: block; }
+  .mp-ci-{{ section.id }} .ci__pubn { font-size: 13.5px; font-weight: 700; color: #16323f; letter-spacing: .2px; line-height: 1.15; }
+
+  .mp-ci-{{ section.id }} .ci__feat { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
+  .mp-ci-{{ section.id }} .ci__fcard { border-radius: 13px; padding: 24px; min-height: 130px; display: flex; flex-direction: column; justify-content: flex-end; text-decoration: none; }
+  .mp-ci-{{ section.id }} .ci__fkick { font-size: 11.5px; font-weight: 600; letter-spacing: .5px; }
+  .mp-ci-{{ section.id }} .ci__ftitle { color: #fff; font-size: 21px; font-weight: 700; margin-top: 5px; }
+
+  @media (max-width: 989px) {
+    .mp-ci-{{ section.id }} .ci__cats { grid-template-columns: repeat(2,1fr); }
+    .mp-ci-{{ section.id }} .ci__half { flex-direction: column; }
+    .mp-ci-{{ section.id }} .ci__pubs { grid-template-columns: repeat(3,1fr); }
+    .mp-ci-{{ section.id }} .ci__feat { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 749px) { .mp-ci-{{ section.id }} .ci__wrap { padding: 0 16px; } .mp-ci-{{ section.id }} .ci__cats { grid-template-columns: 1fr; } }
+{%- endstyle -%}
+
+<section class="mp-ci-{{ section.id }}">
+  <div class="ci__wrap">
+    <div class="ci__crumb"><a href="{{ routes.root_url }}">Home</a><span class="sep">/</span><span style="color:#6b7a82">Browse all</span></div>
+
+    <div class="ci__mast">
+      <div class="ci__h1 mp-cond">{{ section.settings.heading }}</div>
+      <div class="ci__sub">{{ collections['all-games'].all_products_count }} games, sorted however you shop — by category, player count, price or publisher. Every listing carries its BGG score, player count and play time.</div>
+    </div>
+
+    {%- assign cat_blocks = section.blocks | where: 'type', 'category' -%}
+    {%- if cat_blocks.size > 0 -%}
+      <div class="ci__sh mp-cond">Shop by category</div>
+      <div class="ci__cats">
+        {%- for block in cat_blocks -%}
+          {%- assign col = block.settings.collection -%}
+          <a class="ci__cat" href="{% if col != blank %}{{ col.url }}{% else %}#{% endif %}" {{ block.shopify_attributes }}>
+            <span class="ci__accent" style="background:{{ block.settings.accent }}"></span>
+            <span class="ci__icon" style="background:{{ block.settings.tint }}">{{ block.settings.icon }}</span>
+            <span style="flex:1">
+              <span class="ci__cname mp-cond">{{ col.title | default: block.settings.label }}</span>
+              <span class="ci__ccount">{{ col.all_products_count }} games</span>
+            </span>
+            <span class="ci__chev">&#8250;</span>
+          </a>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+
+    <div class="ci__half">
+      <div>
+        <div class="ci__sh mp-cond">By player count</div>
+        <div class="ci__players">
+          {%- assign pc = 'players-solo:Solo,players-2:Two-player,players-3-4:Small group,players-5-6:Game night,players-7:Party,players-coop:Team up' | split: ',' -%}
+          {%- assign pn = '1,2,3–4,5–6,7+,Co-op' | split: ',' -%}
+          {%- assign pips = '1,2,4,6,7,0' | split: ',' -%}
+          {%- for item in pc -%}
+            {%- assign h = item | split: ':' | first -%}
+            {%- assign lbl = item | split: ':' | last -%}
+            <a class="ci__ptile" href="{{ collections[h].url | default: '#' }}">
+              <div class="ci__pips mp-cond">{% render 'mp-pips', count: pips[forloop.index0] %}</div>
+              <div class="ci__pn mp-cond">{{ pn[forloop.index0] }}</div>
+              <div class="ci__pl">{{ lbl }}</div>
+            </a>
+          {%- endfor -%}
+        </div>
+      </div>
+      <div>
+        <div class="ci__sh mp-cond">By price</div>
+        <div class="ci__prices">
+          <a class="ci__price" href="/collections/all-games?filter.v.price.lte=20"><span class="ci__pricel mp-cond">Under £20</span><span class="ci__pricec">&#8250;</span></a>
+          <a class="ci__price" href="/collections/all-games?filter.v.price.gte=20&filter.v.price.lte=40"><span class="ci__pricel mp-cond">£20 – £40</span><span class="ci__pricec">&#8250;</span></a>
+          <a class="ci__price" href="/collections/all-games?filter.v.price.gte=40&filter.v.price.lte=70"><span class="ci__pricel mp-cond">£40 – £70</span><span class="ci__pricec">&#8250;</span></a>
+          <a class="ci__price" href="/collections/all-games?filter.v.price.gte=70"><span class="ci__pricel mp-cond">£70 +</span><span class="ci__pricec">&#8250;</span></a>
+        </div>
+      </div>
+    </div>
+
+    {%- assign vendors = collections['all-games'].products | map: 'vendor' | uniq -%}
+    {%- if vendors.size > 0 -%}
+      <div class="ci__shrow"><div class="ci__sh mp-cond" style="margin:0">Shop by publisher</div><a class="ci__all" href="{{ routes.search_url }}?q=&type=product">All brands &#8594;</a></div>
+      <div class="ci__pubs">
+        {%- assign pub_palette = '#2c5466,#2f8f5b,#9a3b2e,#6a4f86,#c2772a,#16323f' | split: ',' -%}
+        {%- assign logo_handles = section.settings.logo_handles | split: ',' -%}
+        {%- for vendor in vendors limit: 12 -%}
+          {%- if vendor != blank -%}
+            {%- assign vhandle = vendor | handleize -%}
+            {%- assign vw = vendor | split: ' ' -%}
+            {%- assign initials = vw[0] | slice: 0 -%}
+            {%- if vw.size > 1 -%}{%- assign second = vw[1] | slice: 0 -%}{%- assign initials = initials | append: second -%}{%- endif -%}
+            {%- assign cidx = forloop.index0 | modulo: 6 -%}
+            {%- assign pcolor = pub_palette[cidx] -%}
+            <a class="ci__pub" href="/collections/publisher-{{ vhandle }}">
+              {%- if logo_handles contains vhandle -%}
+                <span class="ci__pubav ci__pubav--logo"><img src="{{ 'pub-' | append: vhandle | append: '.png' | asset_url }}" alt="{{ vendor | escape }}" width="34" height="34" loading="lazy"></span>
+              {%- else -%}
+                <span class="ci__pubav mp-cond" style="background:{{ pcolor }}">{{ initials | upcase }}</span>
+              {%- endif -%}
+              <span class="ci__pubn mp-cond">{{ vendor }}</span>
+            </a>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+
+    {%- assign feat_blocks = section.blocks | where: 'type', 'featured' -%}
+    {%- if feat_blocks.size > 0 -%}
+      <div class="ci__sh mp-cond">Featured collections</div>
+      <div class="ci__feat">
+        {%- for block in feat_blocks -%}
+          {%- assign col = block.settings.collection -%}
+          <a class="ci__fcard" href="{% if col != blank %}{{ col.url }}{% else %}{{ block.settings.url | default: '#' }}{% endif %}" style="background:{{ block.settings.gradient }}" {{ block.shopify_attributes }}>
+            <div class="ci__fkick mp-cond" style="color:{{ block.settings.kicker_color }}">{{ block.settings.kicker }}</div>
+            <div class="ci__ftitle mp-cond">{{ block.settings.title }}</div>
+          </a>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "MP Collections Index",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Browse the whole collection" },
+    { "type": "text", "id": "logo_handles", "label": "Publisher logo handles", "info": "Vendor handles with a pub-<handle>.png asset; others show a monogram.", "default": "stonemaier-games,roxley-games,z-man-games,cephalofair-games,stronghold-games,capstone-games,greater-than-games,plan-b-games,catan-studio,days-of-wonder,flatout-games,starling-games,repos-production,space-cowboys,leder-games,dire-wolf,czech-games-edition,kosmos,cocktail-games,delicious-games,burnt-island-games" }
+  ],
+  "blocks": [
+    {
+      "type": "category",
+      "name": "Category card",
+      "settings": [
+        { "type": "collection", "id": "collection", "label": "Collection" },
+        { "type": "text", "id": "label", "label": "Fallback label" },
+        { "type": "text", "id": "icon", "label": "Icon (emoji)", "default": "♟" },
+        { "type": "color", "id": "accent", "label": "Accent", "default": "#2c5466" },
+        { "type": "color", "id": "tint", "label": "Icon tint", "default": "#e7eef1" }
+      ]
+    },
+    {
+      "type": "featured",
+      "name": "Featured collection",
+      "settings": [
+        { "type": "collection", "id": "collection", "label": "Collection" },
+        { "type": "url", "id": "url", "label": "URL (if no collection)" },
+        { "type": "text", "id": "kicker", "label": "Kicker", "default": "HOBBYIST" },
+        { "type": "color", "id": "kicker_color", "label": "Kicker colour", "default": "#d7b8ef" },
+        { "type": "text", "id": "title", "label": "Title", "default": "Top 100 on BGG" },
+        { "type": "text", "id": "gradient", "label": "CSS background", "default": "linear-gradient(120deg,#2b2233,#4a3a5c)" }
+      ]
+    }
+  ],
+  "enabled_on": { "templates": ["list-collections"] },
+  "presets": [ { "name": "MP Collections Index" } ]
+}
+{% endschema %}

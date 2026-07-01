@@ -1,0 +1,72 @@
+{%- comment -%}
+  MPGames newsletter sign-up band. Imported from Claude Design.
+  Uses Shopify's customer newsletter form.
+{%- endcomment -%}
+
+{%- style -%}
+  .mp-nl-{{ section.id }} .mp-nl__wrap { padding: 22px 28px 36px; }
+  .mp-nl-{{ section.id }} .mp-nl__card {
+    border-radius: 14px; background: #2b2233; padding: 30px 40px; display: flex;
+    align-items: center; justify-content: space-between; gap: 30px; flex-wrap: wrap;
+  }
+  .mp-nl-{{ section.id }} .mp-nl__title { color: #fff; font-size: 24px; font-weight: 700; }
+  .mp-nl-{{ section.id }} .mp-nl__sub { color: #c5b9d4; font-size: 13.5px; margin-top: 6px; max-width: 420px; }
+  .mp-nl-{{ section.id }} .mp-nl__form { display: flex; flex-direction: column; gap: 10px; align-items: stretch; }
+  .mp-nl-{{ section.id }} .mp-nl__row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .mp-nl-{{ section.id }} .mp-nl__form input[type="email"] {
+    background: #fff; border: 0; border-radius: 8px; padding: 13px 18px; font-size: 13.5px;
+    color: #16323f; min-width: 260px; font-family: inherit; outline: 0;
+  }
+  .mp-nl-{{ section.id }} .mp-nl__consent { display: flex; gap: 8px; align-items: flex-start; color: #c5b9d4; font-size: 11.5px; line-height: 1.45; max-width: 360px; cursor: pointer; }
+  .mp-nl-{{ section.id }} .mp-nl__consent input { width: 15px; height: 15px; margin: 2px 0 0; flex: none; accent-color: #f2872f; }
+  .mp-nl-{{ section.id }} .mp-nl__consent a { color: #f2872f; }
+  .mp-nl-{{ section.id }} .mp-nl__form button {
+    background: #f2872f; color: #fff; font-weight: 700; font-size: 14.5px; padding: 13px 24px;
+    border-radius: 8px; white-space: nowrap; border: 0; cursor: pointer; font-family: inherit;
+  }
+  .mp-nl-{{ section.id }} .mp-nl__ok { color: #bfe9d2; font-size: 13px; margin-top: 8px; }
+  @media (max-width: 749px) { .mp-nl-{{ section.id }} .mp-nl__wrap { padding: 22px 16px 32px; } .mp-nl-{{ section.id }} .mp-nl__card { padding: 24px 22px; } .mp-nl-{{ section.id }} .mp-nl__form input { min-width: 0; flex: 1; } }
+{%- endstyle -%}
+
+<div class="mp-cream mp-nl-{{ section.id }}">
+  <div class="mp-col">
+    <div class="mp-nl__wrap">
+      <div class="mp-nl__card">
+        <div>
+          <div class="mp-nl__title mp-cond">{{ section.settings.title }}</div>
+          <div class="mp-nl__sub">{{ section.settings.subtitle }}</div>
+        </div>
+        {%- form 'customer', class: 'mp-nl__form' -%}
+          <input type="hidden" name="contact[tags]" value="newsletter">
+          {%- if form.posted_successfully? -%}
+            <p class="mp-nl__ok">{{ section.settings.success_text }}</p>
+          {%- else -%}
+            <div class="mp-nl__row">
+              <input type="email" name="contact[email]" placeholder="{{ section.settings.placeholder }}" aria-label="Email" required>
+              <button type="submit">{{ section.settings.button_label }}</button>
+            </div>
+            <label class="mp-nl__consent">
+              <input type="checkbox" name="contact[accepts_marketing]" value="true" required>
+              <span>{{ section.settings.consent_text }}{%- if shop.privacy_policy != blank %} <a href="{{ shop.privacy_policy.url }}">{{ shop.privacy_policy.title }}</a>{%- endif -%}.</span>
+            </label>
+          {%- endif -%}
+        {%- endform -%}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "MP Newsletter",
+  "settings": [
+    { "type": "text", "id": "title", "label": "Title", "default": "Join the MPGames club" },
+    { "type": "textarea", "id": "subtitle", "label": "Subtitle", "default": "Early access to restocks, new releases and the guides we publish each week." },
+    { "type": "text", "id": "placeholder", "label": "Email placeholder", "default": "Enter your email address" },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "Sign up" },
+    { "type": "text", "id": "success_text", "label": "Success text", "default": "Thanks for subscribing!" },
+    { "type": "text", "id": "consent_text", "label": "Consent text", "default": "Yes, email me restocks, new releases and offers. I can unsubscribe anytime — see our " }
+  ],
+  "presets": [ { "name": "MP Newsletter" } ]
+}
+{% endschema %}

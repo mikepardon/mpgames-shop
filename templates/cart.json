@@ -1,40 +1,16 @@
 {
   "sections": {
-    "cart-items": {
-      "type": "main-cart-items",
-      "settings": {
-        "color_scheme": "scheme-1",
-        "padding_top": 36,
-        "padding_bottom": 36
-      }
-    },
-    "cart-footer": {
-      "type": "main-cart-footer",
-      "settings": {
-        "color_scheme": "scheme-1",
-        "padding_top": 20,
-        "padding_bottom": 40
-      },
+    "mp_cart": {
+      "type": "mp-cart",
       "blocks": {
-        "subtotal": {
-          "type": "subtotal",
-          "settings": {
-          }
-        },
-        "buttons": {
-          "type": "buttons",
-          "settings": {
-          }
-        }
+        "m1": { "type": "milestone", "settings": { "amount": 50, "label": "Free UK shipping", "icon": "🚚" } }
       },
-      "block_order": [
-        "subtotal",
-        "buttons"
-      ]
+      "block_order": ["m1"],
+      "settings": {
+        "upsell_collection": "top-rated",
+        "upsell_heading": "Add a little more to level up"
+      }
     }
   },
-  "order": [
-    "cart-items",
-    "cart-footer"
-  ]
+  "order": ["mp_cart"]
 }

@@ -1,0 +1,101 @@
+{%- comment -%} MPGames Delivery & returns — imported from Claude Design "MPGames Delivery". {%- endcomment -%}
+{%- style -%}
+  .mp-dl-{{ section.id }} { font-family: 'Barlow', ui-sans-serif, system-ui, sans-serif; color: #16323f; padding-bottom: 48px; }
+  .mp-dl-{{ section.id }} .dl__wrap { max-width: 1000px; margin: 0 auto; padding: 0 28px; }
+  .mp-dl-{{ section.id }} .dl__head { padding: 22px 0 6px; }
+  .mp-dl-{{ section.id }} .dl__h1 { font-size: 36px; font-weight: 700; }
+  .mp-dl-{{ section.id }} .dl__sub { font-size: 14.5px; color: #8a8278; margin-top: 6px; }
+  .mp-dl-{{ section.id }} .dl__cards { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; padding: 18px 0 6px; }
+  .mp-dl-{{ section.id }} .dl__card { border: 1px solid #e7ddcb; border-radius: 13px; background: #fff; padding: 20px; box-shadow: 0 1px 2px rgba(20,40,50,.04); }
+  .mp-dl-{{ section.id }} .dl__ct { font-size: 17px; font-weight: 700; margin-top: 9px; }
+  .mp-dl-{{ section.id }} .dl__cb { font-size: 13px; color: #6b6b62; margin-top: 5px; line-height: 1.55; }
+  .mp-dl-{{ section.id }} .dl__sh { font-size: 22px; font-weight: 700; margin: 26px 0 14px; }
+  .mp-dl-{{ section.id }} .dl__table { border: 1px solid #e7ddcb; border-radius: 13px; background: #fff; overflow: hidden; box-shadow: 0 1px 2px rgba(20,40,50,.04); }
+  .mp-dl-{{ section.id }} .dl__thead, .mp-dl-{{ section.id }} .dl__trow { display: grid; grid-template-columns: 1.6fr 1fr 1fr; }
+  .mp-dl-{{ section.id }} .dl__thead { background: #16323f; color: #fff; font-size: 12.5px; font-weight: 600; padding: 13px 20px; }
+  .mp-dl-{{ section.id }} .dl__trow { padding: 14px 20px; border-top: 1px solid #f1ece2; font-size: 13.5px; color: #4a443c; align-items: center; }
+  .mp-dl-{{ section.id }} .dl__trow b { color: #16323f; }
+  .mp-dl-{{ section.id }} .dl__note { font-size: 12px; color: #9b948a; margin-top: 10px; }
+  .mp-dl-{{ section.id }} .dl__steps { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; }
+  .mp-dl-{{ section.id }} .dl__step { border: 1px solid #e7ddcb; border-radius: 13px; background: #fff; padding: 18px; box-shadow: 0 1px 2px rgba(20,40,50,.04); }
+  .mp-dl-{{ section.id }} .dl__stepn { width: 32px; height: 32px; border-radius: 9px; background: #f2872f; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; }
+  .mp-dl-{{ section.id }} .dl__stept { font-size: 15px; font-weight: 700; margin-top: 11px; }
+  .mp-dl-{{ section.id }} .dl__stepb { font-size: 12.5px; color: #6b6b62; line-height: 1.55; margin-top: 5px; }
+  .mp-dl-{{ section.id }} .dl__prose { max-width: 780px; margin: 0 auto; font-size: 14.5px; line-height: 1.7; color: #33312b; padding: 30px 0 8px; }
+  .mp-dl-{{ section.id }} .dl__prose h2 { font-size: 20px; font-weight: 700; margin: 0 0 8px; }
+  .mp-dl-{{ section.id }} .dl__prose p { margin: 0 0 16px; }
+  .mp-dl-{{ section.id }} .dl__contact { margin: 30px 0 0; border-radius: 14px; background: #16323f; padding: 28px 36px; display: flex; align-items: center; justify-content: space-between; gap: 30px; }
+  .mp-dl-{{ section.id }} .dl__ctt { color: #fff; font-size: 22px; font-weight: 700; }
+  .mp-dl-{{ section.id }} .dl__cts { color: #9fb4bd; font-size: 13.5px; margin-top: 5px; }
+  .mp-dl-{{ section.id }} .dl__btns { display: flex; gap: 11px; }
+  .mp-dl-{{ section.id }} .dl__btn { font-weight: 600; font-size: 14px; padding: 12px 22px; border-radius: 9px; text-decoration: none; }
+  @media (max-width: 749px) { .mp-dl-{{ section.id }} .dl__cards, .mp-dl-{{ section.id }} .dl__steps { grid-template-columns: 1fr; } .mp-dl-{{ section.id }} .dl__thead, .mp-dl-{{ section.id }} .dl__trow { grid-template-columns: 1.4fr 1fr .8fr; } .mp-dl-{{ section.id }} .dl__contact { flex-direction: column; align-items: flex-start; } }
+{%- endstyle -%}
+
+<div class="mp-dl-{{ section.id }}">
+  <div class="dl__wrap" style="max-width:1224px">
+    <div class="dl__head"><div class="dl__h1 mp-cond">{{ section.settings.title }}</div><div class="dl__sub">{{ section.settings.subtitle }}</div></div>
+  </div>
+
+  {%- assign highlights = section.blocks | where: 'type', 'highlight' -%}
+  {%- if highlights.size > 0 -%}
+    <div class="dl__wrap" style="max-width:1224px"><div class="dl__cards">
+      {%- for b in highlights -%}<div class="dl__card" {{ b.shopify_attributes }}><div style="font-size:24px">{{ b.settings.icon }}</div><div class="dl__ct mp-cond">{{ b.settings.title }}</div><div class="dl__cb">{{ b.settings.body }}</div></div>{%- endfor -%}
+    </div></div>
+  {%- endif -%}
+
+  {%- assign ships = section.blocks | where: 'type', 'ship' -%}
+  {%- if ships.size > 0 -%}
+    <div class="dl__wrap">
+      <div class="dl__sh mp-cond">{{ section.settings.table_heading }}</div>
+      <div class="dl__table">
+        <div class="dl__thead"><span>SERVICE</span><span>DELIVERY TIME</span><span>COST</span></div>
+        {%- for b in ships -%}<div class="dl__trow" {{ b.shopify_attributes }}><b>{{ b.settings.name }}</b><span>{{ b.settings.time }}</span><b class="mp-cond">{{ b.settings.cost }}</b></div>{%- endfor -%}
+      </div>
+      <div class="dl__note">{{ section.settings.table_note }}</div>
+    </div>
+  {%- endif -%}
+
+  {%- assign steps = section.blocks | where: 'type', 'step' -%}
+  {%- if steps.size > 0 -%}
+    <div class="dl__wrap">
+      <div class="dl__sh mp-cond">{{ section.settings.steps_heading }}</div>
+      <div class="dl__steps">
+        {%- for b in steps -%}<div class="dl__step" {{ b.shopify_attributes }}><div class="dl__stepn mp-cond">{{ forloop.index }}</div><div class="dl__stept mp-cond">{{ b.settings.title }}</div><div class="dl__stepb">{{ b.settings.body }}</div></div>{%- endfor -%}
+      </div>
+    </div>
+  {%- endif -%}
+
+  <div class="dl__wrap"><div class="dl__prose">{{ section.settings.policy }}</div></div>
+
+  <div class="dl__wrap" style="max-width:1224px"><div class="dl__contact">
+    <div><div class="dl__ctt mp-cond">{{ section.settings.contact_title }}</div><div class="dl__cts">{{ section.settings.contact_text }}</div></div>
+    <div class="dl__btns">
+      <a class="dl__btn mp-cond" style="background:#1d4252;color:#fff" href="/pages/faqs">Read the FAQs</a>
+      <a class="dl__btn mp-cond" style="background:#f2872f;color:#fff" href="/pages/contact">Contact us</a>
+    </div>
+  </div></div>
+</div>
+
+{% schema %}
+{
+  "name": "MP Delivery",
+  "settings": [
+    { "type": "text", "id": "title", "label": "Title", "default": "Delivery & returns" },
+    { "type": "textarea", "id": "subtitle", "label": "Subtitle", "default": "Everything you need to know about getting your games — and sending them back if needed." },
+    { "type": "text", "id": "table_heading", "label": "Table heading", "default": "UK delivery options" },
+    { "type": "text", "id": "table_note", "label": "Table note", "default": "Delivery estimates are from dispatch, not order date. Remote postcodes (Highlands & Islands) may take 1–2 extra days." },
+    { "type": "text", "id": "steps_heading", "label": "Steps heading", "default": "How to return an item" },
+    { "type": "richtext", "id": "policy", "label": "Policy prose", "default": "<p><strong>Damaged or faulty items:</strong> email hello@mpgames.io within 48 hours with your order number and a photo — we'll arrange a free replacement or refund, no need to return the faulty item first.</p><p><strong>Refund timing:</strong> once your return reaches our warehouse, refunds are processed within 3–5 working days to your original payment method.</p>" },
+    { "type": "text", "id": "contact_title", "label": "Contact title", "default": "Still have a question?" },
+    { "type": "text", "id": "contact_text", "label": "Contact text", "default": "Our team plays what they sell — we're happy to help." }
+  ],
+  "blocks": [
+    { "type": "highlight", "name": "Highlight card", "settings": [ { "type": "text", "id": "icon", "label": "Icon", "default": "🚚" }, { "type": "text", "id": "title", "label": "Title", "default": "Free UK delivery over £50" }, { "type": "textarea", "id": "body", "label": "Body" } ] },
+    { "type": "ship", "name": "Shipping row", "settings": [ { "type": "text", "id": "name", "label": "Service" }, { "type": "text", "id": "time", "label": "Time" }, { "type": "text", "id": "cost", "label": "Cost" } ] },
+    { "type": "step", "name": "Returns step", "settings": [ { "type": "text", "id": "title", "label": "Title" }, { "type": "textarea", "id": "body", "label": "Body" } ] }
+  ],
+  "enabled_on": { "templates": ["page"] },
+  "presets": [ { "name": "MP Delivery" } ]
+}
+{% endschema %}

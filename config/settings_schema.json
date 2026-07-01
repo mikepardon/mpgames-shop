@@ -8,6 +8,22 @@
     "theme_support_url": "https://support.shopify.com/"
   },
   {
+    "name": "MPGames store",
+    "settings": [
+      {
+        "type": "range",
+        "id": "free_shipping_threshold",
+        "min": 0,
+        "max": 150,
+        "step": 5,
+        "unit": "£",
+        "label": "Free shipping threshold",
+        "info": "Used for the cart free-shipping bar and the 'free delivery over £X' messaging across the storefront.",
+        "default": 50
+      }
+    ]
+  },
+  {
     "name": "t:settings_schema.logo.name",
     "settings": [
       {

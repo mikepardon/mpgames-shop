@@ -1,0 +1,112 @@
+{%- comment -%} MPGames FAQs — imported from Claude Design "MPGames FAQs". {%- endcomment -%}
+{%- style -%}
+  .mp-fq-{{ section.id }} { font-family: 'Barlow', ui-sans-serif, system-ui, sans-serif; color: #16323f; padding-bottom: 48px; }
+  .mp-fq-{{ section.id }} .fq__head { text-align: center; padding: 24px 28px 4px; }
+  .mp-fq-{{ section.id }} .fq__h1 { font-size: 36px; font-weight: 700; }
+  .mp-fq-{{ section.id }} .fq__sub { font-size: 14.5px; color: #8a8278; margin-top: 6px; }
+  .mp-fq-{{ section.id }} .fq__search { max-width: 520px; margin: 18px auto 0; display: flex; align-items: center; gap: 10px; background: #fff; border: 1px solid #e2ddd1; border-radius: 9px; padding: 4px 6px 4px 15px; }
+  .mp-fq-{{ section.id }} .fq__search input { flex: 1; border: 0; outline: 0; padding: 9px 0; font-size: 13.5px; font-family: inherit; background: transparent; }
+  .mp-fq-{{ section.id }} .fq__body { display: flex; gap: 30px; max-width: 1040px; margin: 0 auto; padding: 26px 28px 30px; align-items: flex-start; }
+  .mp-fq-{{ section.id }} .fq__nav { width: 210px; flex: none; border: 1px solid #e7ddcb; border-radius: 12px; background: #fff; overflow: hidden; box-shadow: 0 1px 2px rgba(20,40,50,.04); position: sticky; top: 16px; }
+  .mp-fq-{{ section.id }} .fq__navh { font-size: 14px; font-weight: 700; padding: 15px 16px 10px; }
+  .mp-fq-{{ section.id }} .fq__navlink { display: block; padding: 11px 16px; border-top: 1px solid #f1ece2; font-size: 13px; color: #4a443c; text-decoration: none; border-left: 3px solid transparent; }
+  .mp-fq-{{ section.id }} .fq__navlink:hover { background: #eef3f5; border-left-color: #f2872f; color: #16323f; }
+  .mp-fq-{{ section.id }} .fq__main { flex: 1; min-width: 0; }
+  .mp-fq-{{ section.id }} .fq__group { margin-bottom: 26px; scroll-margin-top: 16px; }
+  .mp-fq-{{ section.id }} .fq__gh { font-size: 20px; font-weight: 700; margin-bottom: 14px; }
+  .mp-fq-{{ section.id }} .fq__item { border: 1px solid #e7ddcb; border-radius: 12px; background: #fff; overflow: hidden; box-shadow: 0 1px 2px rgba(20,40,50,.04); margin-bottom: 11px; }
+  .mp-fq-{{ section.id }} .fq__item summary { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 16px 18px; cursor: pointer; list-style: none; }
+  .mp-fq-{{ section.id }} .fq__item summary::-webkit-details-marker { display: none; }
+  .mp-fq-{{ section.id }} .fq__q { font-size: 15.5px; font-weight: 600; color: #16323f; }
+  .mp-fq-{{ section.id }} .fq__sign { font-size: 20px; color: #f2872f; flex: none; line-height: 1; }
+  .mp-fq-{{ section.id }} .fq__item[open] .fq__sign { transform: rotate(45deg); }
+  .mp-fq-{{ section.id }} .fq__a { padding: 0 18px 17px; font-size: 14px; line-height: 1.65; color: #4a443c; }
+  .mp-fq-{{ section.id }} .fq__band { margin: 0 auto; max-width: 1040px; border-radius: 14px; background: #16323f; padding: 28px 36px; display: flex; align-items: center; justify-content: space-between; gap: 30px; }
+  .mp-fq-{{ section.id }} .fq__bandt { color: #fff; font-size: 22px; font-weight: 700; }
+  .mp-fq-{{ section.id }} .fq__bands { color: #9fb4bd; font-size: 13.5px; margin-top: 5px; }
+  .mp-fq-{{ section.id }} .fq__bandb { background: #f2872f; color: #fff; font-weight: 700; font-size: 14px; padding: 12px 24px; border-radius: 9px; text-decoration: none; }
+  @media (max-width: 749px) { .mp-fq-{{ section.id }} .fq__body { flex-direction: column; } .mp-fq-{{ section.id }} .fq__nav { width: 100%; position: static; } .mp-fq-{{ section.id }} .fq__band { flex-direction: column; align-items: flex-start; } }
+{%- endstyle -%}
+
+{%- assign faqs = section.blocks | where: 'type', 'faq' -%}
+{%- assign topic_list = section.settings.topics | split: ', ' -%}
+
+<div class="mp-fq-{{ section.id }}" data-faqs>
+  <div class="fq__head">
+    <div class="fq__h1 mp-cond">{{ section.settings.title }}</div>
+    <div class="fq__sub">{{ section.settings.subtitle }}</div>
+    <div class="fq__search"><span style="color:#a39c92">&#128269;</span><input type="search" data-faq-search placeholder="Search the help centre…" aria-label="Search FAQs"></div>
+  </div>
+
+  <div class="fq__body">
+    <nav class="fq__nav">
+      <div class="fq__navh mp-cond">Topics</div>
+      {%- for topic in topic_list -%}
+        <a class="fq__navlink" href="#faq-{{ topic | handleize }}">{{ topic }}</a>
+      {%- endfor -%}
+    </nav>
+
+    <div class="fq__main">
+      {%- for topic in topic_list -%}
+        <div class="fq__group" id="faq-{{ topic | handleize }}" data-topic>
+          <div class="fq__gh mp-cond">{{ topic }}</div>
+          {%- for b in faqs -%}
+            {%- if b.settings.topic == topic -%}
+              <details class="fq__item" data-faq-item {{ b.shopify_attributes }}>
+                <summary><span class="fq__q mp-cond">{{ b.settings.question }}</span><span class="fq__sign">+</span></summary>
+                <div class="fq__a">{{ b.settings.answer }}</div>
+              </details>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+
+  <div class="fq__band">
+    <div><div class="fq__bandt mp-cond">{{ section.settings.band_title }}</div><div class="fq__bands">{{ section.settings.band_text }}</div></div>
+    <a class="fq__bandb mp-cond" href="/pages/contact">Contact support</a>
+  </div>
+</div>
+
+<script>
+  (function () {
+    var root = document.querySelector('.mp-fq-{{ section.id }}');
+    if (!root) return;
+    var input = root.querySelector('[data-faq-search]');
+    input.addEventListener('input', function () {
+      var q = input.value.trim().toLowerCase();
+      root.querySelectorAll('[data-topic]').forEach(function (group) {
+        var any = false;
+        group.querySelectorAll('[data-faq-item]').forEach(function (item) {
+          var match = !q || item.textContent.toLowerCase().indexOf(q) !== -1;
+          item.style.display = match ? '' : 'none';
+          if (match) any = true;
+        });
+        group.style.display = any ? '' : 'none';
+      });
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "MP FAQs",
+  "settings": [
+    { "type": "text", "id": "title", "label": "Title", "default": "Frequently asked questions" },
+    { "type": "textarea", "id": "subtitle", "label": "Subtitle", "default": "Quick answers on orders, delivery, returns and your account." },
+    { "type": "text", "id": "topics", "label": "Topics (in order, comma-separated)", "default": "Orders & payment, Delivery, Returns & refunds, Your account, Products & stock" },
+    { "type": "text", "id": "band_title", "label": "Help band title", "default": "Didn't find your answer?" },
+    { "type": "text", "id": "band_text", "label": "Help band text", "default": "Email hello@mpgames.io — we reply within one working day." }
+  ],
+  "blocks": [
+    { "type": "faq", "name": "Question", "settings": [
+      { "type": "text", "id": "topic", "label": "Topic", "info": "Must match one of the section's topics exactly.", "default": "Orders & payment" },
+      { "type": "text", "id": "question", "label": "Question" },
+      { "type": "richtext", "id": "answer", "label": "Answer" }
+    ] }
+  ],
+  "enabled_on": { "templates": ["page"] },
+  "presets": [ { "name": "MP FAQs" } ]
+}
+{% endschema %}

@@ -1,0 +1,111 @@
+{%- comment -%}
+  MPGames "Highest rated on BGG" rail — compact ranked cards. Imported from Claude Design.
+{%- endcomment -%}
+
+{%- style -%}
+  .mp-top-{{ section.id }} .mp-top__pad { padding: 18px 0 6px; }
+  .mp-top-{{ section.id }} .mp-top__head { display: flex; justify-content: space-between; align-items: baseline; padding: 0 28px; margin-bottom: 6px; gap: 16px; }
+  .mp-top-{{ section.id }} .mp-top__title { font-size: 20px; font-weight: 700; color: #16323f; }
+  .mp-top-{{ section.id }} .mp-top__sub { font-size: 12.5px; color: #8a8278; margin-top: 1px; }
+  .mp-top-{{ section.id }} .mp-top__all { font-size: 12.5px; color: #f2872f; font-weight: 600; text-decoration: none; white-space: nowrap; }
+  .mp-top-{{ section.id }} .mp-top__track {
+    display: flex; gap: 14px; overflow-x: auto; padding: 12px 28px 14px;
+    scrollbar-width: thin; scrollbar-color: #c9c2b6 transparent;
+  }
+  .mp-top-{{ section.id }} .mp-top__track::-webkit-scrollbar { height: 8px; }
+  .mp-top-{{ section.id }} .mp-top__track::-webkit-scrollbar-thumb { background: #c9c2b6; border-radius: 8px; }
+  .mp-top-{{ section.id }} .mp-top__card {
+    flex: 0 0 268px; border: 1px solid #e7e0d4; border-radius: 10px; background: #fff;
+    display: flex; gap: 13px; padding: 13px; align-items: center; position: relative;
+  }
+  .mp-top-{{ section.id }} .mp-top__rank {
+    position: absolute; top: -9px; left: 13px; background: #16323f; color: #fff;
+    font-size: 12px; font-weight: 700; padding: 2px 9px; border-radius: 6px;
+  }
+  .mp-top-{{ section.id }} .mp-top__media {
+    width: 74px; height: 74px; border-radius: 8px; flex: none; background-size: cover; background-position: center;
+    background: repeating-linear-gradient(45deg,#efece6,#efece6 8px,#e6e2da 8px,#e6e2da 16px);
+  }
+  .mp-top-{{ section.id }} .mp-top__name { display: block; font-size: 14px; font-weight: 600; color: #16323f; line-height: 1.2; }
+  .mp-top-{{ section.id }} .mp-top__media { display: block; }
+  .mp-top-{{ section.id }} .mp-top__bgg { display: inline-flex; align-items: center; gap: 5px; background: #2b2233; border-radius: 5px; padding: 2px 7px; margin-top: 6px; }
+  .mp-top-{{ section.id }} .mp-top__bgg b { font-size: 10px; font-weight: 700; color: #fff; }
+  .mp-top-{{ section.id }} .mp-top__foot { display: flex; align-items: center; justify-content: space-between; margin-top: 9px; }
+  .mp-top-{{ section.id }} .mp-top__price { font-size: 16px; font-weight: 700; color: #16323f; }
+  .mp-top-{{ section.id }} .mp-top__add { background: #f2872f; color: #fff; border-radius: 6px; padding: 6px 11px; font-size: 12px; font-weight: 600; text-decoration: none; border: 0; cursor: pointer; }
+  .mp-top-{{ section.id }} .mp-top__add[disabled] { opacity: .45; cursor: not-allowed; }
+  .mp-top-{{ section.id }} .mp-top__addform { margin: 0; }
+  @media (max-width: 749px) { .mp-top-{{ section.id }} .mp-top__head, .mp-top-{{ section.id }} .mp-top__track { padding-left: 16px; padding-right: 16px; } }
+{%- endstyle -%}
+
+<div class="mp-cream mp-top-{{ section.id }}">
+  <div class="mp-col">
+    <div class="mp-top__pad">
+      <div class="mp-top__head">
+        <div>
+          <div class="mp-top__title mp-cond">{{ section.settings.title }}</div>
+          {%- if section.settings.subtitle != blank -%}<div class="mp-top__sub">{{ section.settings.subtitle }}</div>{%- endif -%}
+        </div>
+        {%- if section.settings.link_label != blank -%}
+          <a class="mp-top__all" href="{{ section.settings.link_url | default: '#' }}">{{ section.settings.link_label }} &#8594;</a>
+        {%- endif -%}
+      </div>
+      <div class="mp-top__track">
+        {%- for product in section.settings.collection.products limit: section.settings.products_to_show -%}
+          {%- liquid
+            assign bgg_mf = product.metafields.custom.bgg_rating
+            assign bgg = bgg_mf.value | times: 1.0
+            assign bgg_color = '#e0b441'
+            if bgg >= 8.0
+              assign bgg_color = '#5fbf7e'
+            elsif bgg >= 7.0
+              assign bgg_color = '#9ccf63'
+            endif
+          -%}
+          <div class="mp-top__card">
+            <div class="mp-top__rank mp-cond">#{{ forloop.index }}</div>
+            <a href="{{ product.url }}" class="mp-top__media"{% if product.featured_image %} style="background-image:url('{{ product.featured_image | image_url: width: 200 }}')"{% endif %} aria-label="{{ product.title | escape }}"></a>
+            <div style="flex:1">
+              {%- if product.type == 'Board Game Expansion' -%}<span style="display:inline-block;background:#ede7f3;color:#6a4f86;font-size:9px;font-weight:700;letter-spacing:.4px;padding:1px 6px;border-radius:5px;text-transform:uppercase;margin-bottom:4px">Expansion</span><br>{%- endif -%}
+              <a class="mp-top__name" href="{{ product.url }}" style="text-decoration:none;color:inherit">{{ product.title }}</a>
+              {%- if bgg_mf != blank -%}
+                <div class="mp-top__bgg"><b class="mp-cond">BGG</b><span style="font-size:11.5px;font-weight:700;color:{{ bgg_color }}">{{ bgg_mf.value }}</span></div>
+              {%- endif -%}
+              <div class="mp-top__foot">
+                <span class="mp-top__price mp-cond">{{ product.price | money }}</span>
+                <form action="{{ routes.cart_add_url }}" method="post" enctype="multipart/form-data" class="mp-top__addform">
+                  <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+                  <button type="submit" class="mp-top__add mp-cond"{% unless product.available %} disabled{% endunless %}>Add</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        {%- else -%}
+          {%- if request.design_mode -%}
+            <p style="padding:4px 0;color:#8a8278;font-size:13px">Pick a collection in this section's settings to show products.</p>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "MP Top rated rail",
+  "settings": [
+    { "type": "collection", "id": "collection", "label": "Collection", "info": "Order this collection by BGG rating (manual sort) — cards are numbered by position." },
+    { "type": "range", "id": "products_to_show", "min": 4, "max": 16, "step": 1, "label": "Products to show", "default": 8 },
+    { "type": "text", "id": "title", "label": "Title", "default": "Highest rated on BGG" },
+    { "type": "text", "id": "subtitle", "label": "Subtitle", "default": "The board game community's top-scoring titles" },
+    { "type": "text", "id": "link_label", "label": "Link label", "default": "See full ranking" },
+    { "type": "url", "id": "link_url", "label": "Link URL" }
+  ],
+  "presets": [
+    {
+      "name": "MP Top rated rail",
+      "settings": { "title": "Highest rated on BGG", "subtitle": "The board game community's top-scoring titles", "link_label": "See full ranking", "products_to_show": 8 }
+    }
+  ]
+}
+{% endschema %}

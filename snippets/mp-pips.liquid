@@ -1,0 +1,16 @@
+{%- comment -%}
+  Renders player-count "pips" — one meeple glyph per player, a + for 7 or more,
+  or a co-op handshake when count is 0. Usage: {% render 'mp-pips', count: 3 %}
+  Colour/size are set by the parent container (uses the glyph's own colour).
+{%- endcomment -%}
+{%- liquid
+  assign n = count | plus: 0
+-%}
+{%- if n <= 0 -%}
+  🤝
+{%- else -%}
+  {%- assign show = n -%}
+  {%- if show > 6 -%}{%- assign show = 6 -%}{%- endif -%}
+  {%- for i in (1..show) -%}♟{%- endfor -%}
+  {%- if n >= 7 -%}<span style="letter-spacing:0">+</span>{%- endif -%}
+{%- endif -%}

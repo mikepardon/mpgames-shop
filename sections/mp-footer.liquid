@@ -1,0 +1,112 @@
+{%- comment -%}
+  MPGames footer — dark multi-column footer with payment row.
+  Imported from Claude Design "MPGames Homepage".
+{%- endcomment -%}
+
+{%- style -%}
+  .mp-ft-{{ section.id }} { background: #0d2630; color: #9fb4bd; font-family: 'Barlow', ui-sans-serif, system-ui, sans-serif; }
+  .mp-ft-{{ section.id }} .mp-ft__in { width: 100%; padding: 38px 28px 0; }
+  .mp-ft-{{ section.id }} .mp-ft__cols {
+    display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 30px;
+    padding-bottom: 30px; border-bottom: 1px solid #1d3640;
+  }
+  .mp-ft-{{ section.id }} .mp-ft__logo { font-size: 24px; font-weight: 700; color: #fff; letter-spacing: .5px; }
+  .mp-ft-{{ section.id }} .mp-ft__logo span { color: #f2872f; }
+  .mp-ft-{{ section.id }} .mp-ft__blurb { font-size: 12.5px; line-height: 1.6; margin-top: 12px; max-width: 240px; }
+  .mp-ft-{{ section.id }} .mp-ft__h { color: #fff; font-size: 13.5px; font-weight: 600; margin-bottom: 12px; }
+  .mp-ft-{{ section.id }} .mp-ft__list { display: flex; flex-direction: column; gap: 9px; font-size: 12.5px; }
+  .mp-ft-{{ section.id }} .mp-ft__list a { color: inherit; text-decoration: none; }
+  .mp-ft-{{ section.id }} .mp-ft__policies {
+    display: flex; flex-wrap: wrap; gap: 8px 18px; padding: 16px 0 4px; font-size: 12px;
+    border-bottom: 1px solid #1d3640;
+  }
+  .mp-ft-{{ section.id }} .mp-ft__policies a { color: #9fb4bd; text-decoration: none; }
+  .mp-ft-{{ section.id }} .mp-ft__policies a:hover { color: #fff; }
+  .mp-ft-{{ section.id }} .mp-ft__bottom {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 18px 0 26px; font-size: 12px; gap: 16px; flex-wrap: wrap;
+  }
+  .mp-ft-{{ section.id }} .mp-ft__pay { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .mp-ft-{{ section.id }} .mp-ft__pay svg {
+    height: 24px; width: auto; background: #fff; border-radius: 4px; padding: 2px 4px;
+  }
+  @media (max-width: 749px) {
+    .mp-ft-{{ section.id }} .mp-ft__cols { grid-template-columns: 1fr 1fr; gap: 24px; }
+    .mp-ft-{{ section.id }} .mp-ft__in { padding: 28px 16px 0; }
+  }
+{%- endstyle -%}
+
+<div class="mp-ft-{{ section.id }}">
+  <div class="mp-ft__in">
+    <div class="mp-ft__cols">
+      <div>
+        <a href="{{ routes.root_url }}" class="mp-ft__logo mp-cond" aria-label="{{ shop.name }}"><img src="{{ 'MPGames-logo.png' | asset_url }}" alt="{{ shop.name | escape }}" width="190" height="30" style="height:30px;width:auto;display:block"></a>
+        <div class="mp-ft__blurb">{{ section.settings.blurb }}</div>
+      </div>
+      {%- for block in section.blocks -%}
+        <div {{ block.shopify_attributes }}>
+          <div class="mp-ft__h mp-cond">{{ block.settings.heading }}</div>
+          <div class="mp-ft__list">
+            {%- assign links = block.settings.links | newline_to_br | split: '<br />' -%}
+            {%- for link in links -%}
+              {%- assign t = link | strip -%}
+              {%- if t != blank -%}
+                {%- assign pair = t | split: '|' -%}
+                <a href="{{ pair[1] | strip | default: '#' }}">{{ pair[0] | strip }}</a>
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+        </div>
+      {%- endfor -%}
+    </div>
+    {%- if shop.policies.size > 0 -%}
+      <div class="mp-ft__policies">
+        {%- for policy in shop.policies -%}
+          {%- if policy != blank -%}<a href="{{ policy.url }}">{{ policy.title }}</a>{%- endif -%}
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+    <div class="mp-ft__bottom">
+      <span>{{ section.settings.legal }}</span>
+      {%- if shop.enabled_payment_types.size > 0 -%}
+        <span class="mp-ft__pay">
+          {%- for type in shop.enabled_payment_types -%}
+            {{ type | payment_type_svg_tag: class: 'mp-ft__payicon' }}
+          {%- endfor -%}
+        </span>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "MP Footer",
+  "settings": [
+    { "type": "textarea", "id": "blurb", "label": "Brand blurb", "default": "The UK's board game specialist — every title ranked by the data that matters." },
+    { "type": "text", "id": "legal", "label": "Legal line", "default": "© 2026 MPGames Ltd · Company No. 17064769 · Based in Stockport, UK" }
+  ],
+  "blocks": [
+    {
+      "type": "column",
+      "name": "Link column",
+      "settings": [
+        { "type": "text", "id": "heading", "label": "Heading", "default": "Shop" },
+        { "type": "textarea", "id": "links", "label": "Links (one per line)", "default": "New releases\nBest sellers\nTop 100 on BGG\n2-player games\nSale & clearance" }
+      ]
+    }
+  ],
+  "max_blocks": 4,
+  "presets": [
+    {
+      "name": "MP Footer",
+      "blocks": [
+        { "type": "column", "settings": { "heading": "Shop", "links": "New releases\nBest sellers\nTop 100 on BGG\n2-player games\nSale & clearance" } },
+        { "type": "column", "settings": { "heading": "Help", "links": "Delivery & returns\nTrack my order\nContact us\nFAQs\nGift cards" } },
+        { "type": "column", "settings": { "heading": "Company", "links": "About MPGames\nTrade enquiries\nCareers\nSustainability\nAffiliate programme" } }
+      ]
+    }
+  ],
+  "enabled_on": { "groups": ["footer"] }
+}
+{% endschema %}

@@ -1,0 +1,59 @@
+{%- comment -%}
+  MPGames twin promo banners. Imported from Claude Design.
+{%- endcomment -%}
+
+{%- style -%}
+  .mp-promo-{{ section.id }} .mp-promo__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding: 20px 28px 6px; }
+  .mp-promo-{{ section.id }} .mp-promo__card {
+    border-radius: 12px; padding: 26px 28px; position: relative; overflow: hidden;
+    min-height: 150px; display: flex; flex-direction: column; justify-content: center; text-decoration: none;
+  }
+  .mp-promo-{{ section.id }} .mp-promo__kicker { font-size: 12.5px; font-weight: 600; letter-spacing: .5px; }
+  .mp-promo-{{ section.id }} .mp-promo__title { color: #fff; font-size: 24px; font-weight: 700; margin-top: 6px; max-width: 300px; }
+  .mp-promo-{{ section.id }} .mp-promo__cta { color: #fff; font-size: 13.5px; font-weight: 600; margin-top: 12px; }
+  @media (max-width: 749px) { .mp-promo-{{ section.id }} .mp-promo__grid { grid-template-columns: 1fr; padding: 16px 16px 6px; } }
+{%- endstyle -%}
+
+<div class="mp-cream mp-promo-{{ section.id }}">
+  <div class="mp-col">
+    <div class="mp-promo__grid">
+      {%- for block in section.blocks -%}
+        <a class="mp-promo__card mp-cond" href="{{ block.settings.url | default: '#' }}" style="background: {{ block.settings.bg }}" {{ block.shopify_attributes }}>
+          <div class="mp-promo__kicker" style="color: {{ block.settings.kicker_color }}">{{ block.settings.kicker }}</div>
+          <div class="mp-promo__title">{{ block.settings.title }}</div>
+          <span class="mp-promo__cta">{{ block.settings.cta_label }} &#8594;</span>
+        </a>
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "MP Promo banners",
+  "max_blocks": 2,
+  "blocks": [
+    {
+      "type": "promo",
+      "name": "Promo",
+      "settings": [
+        { "type": "text", "id": "kicker", "label": "Kicker", "default": "HOBBYIST CORNER" },
+        { "type": "color", "id": "kicker_color", "label": "Kicker colour", "default": "#d7b8ef" },
+        { "type": "text", "id": "title", "label": "Title", "default": "Top 100 ranked on BoardGameGeek" },
+        { "type": "text", "id": "cta_label", "label": "CTA label", "default": "Explore the ranking" },
+        { "type": "url", "id": "url", "label": "URL" },
+        { "type": "text", "id": "bg", "label": "Background (CSS)", "default": "linear-gradient(115deg,#2b2233,#4a3a5c)" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "MP Promo banners",
+      "blocks": [
+        { "type": "promo", "settings": { "kicker": "HOBBYIST CORNER", "kicker_color": "#d7b8ef", "title": "Top 100 ranked on BoardGameGeek", "cta_label": "Explore the ranking", "bg": "linear-gradient(115deg,#2b2233,#4a3a5c)" } },
+        { "type": "promo", "settings": { "kicker": "NEW TO THE HOBBY?", "kicker_color": "#bfe9d2", "title": "Gateway games under £30", "cta_label": "Start here", "bg": "linear-gradient(115deg,#13513f,#2f8f5b)" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

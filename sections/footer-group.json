@@ -2,27 +2,39 @@
   "name": "t:sections.footer.name",
   "type": "footer",
   "sections": {
-    "footer": {
-      "type": "footer",
-      "blocks": {},
-      "block_order": [],
+    "mp-footer": {
+      "type": "mp-footer",
+      "blocks": {
+        "shop": {
+          "type": "column",
+          "settings": {
+            "heading": "Shop",
+            "links": "New releases|/collections/new-releases\nBest sellers|/collections/best-sellers\nTop rated on BGG|/collections/top-rated\nBrowse all|/collections\nSale & clearance|/collections/sale"
+          }
+        },
+        "help": {
+          "type": "column",
+          "settings": {
+            "heading": "Help",
+            "links": "Delivery & returns|/pages/delivery\nContact us|/pages/contact\nFAQs|/pages/faqs\nMy account|/account"
+          }
+        },
+        "company": {
+          "type": "column",
+          "settings": {
+            "heading": "Company",
+            "links": "About MPGames|/pages/about\nFrom the blog|/blogs/news\nBrowse the collection|/collections"
+          }
+        }
+      },
+      "block_order": ["shop", "help", "company"],
       "settings": {
-        "color_scheme": "scheme-1",
-        "newsletter_enable": true,
-        "newsletter_heading": "Subscribe to our emails",
-        "enable_follow_on_shop": true,
-        "show_social": true,
-        "enable_country_selector": true,
-        "enable_language_selector": true,
-        "payment_enable": true,
-        "show_policy": true,
-        "margin_top": 0,
-        "padding_top": 36,
-        "padding_bottom": 36
+        "blurb": "The UK's board game specialist — every title ranked by the data that matters.",
+        "legal": "© 2026 MPGames Ltd · Company No. 17064769 · Based in Stockport, UK"
       }
     }
   },
   "order": [
-    "footer"
+    "mp-footer"
   ]
 }

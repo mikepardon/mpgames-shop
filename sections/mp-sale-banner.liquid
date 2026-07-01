@@ -1,0 +1,55 @@
+{%- comment -%}
+  MPGames full-bleed sale CTA banner. Imported from Claude Design.
+{%- endcomment -%}
+
+{%- style -%}
+  .mp-sale-{{ section.id }} .mp-sale__wrap { padding: 14px 28px; }
+  .mp-sale-{{ section.id }} .mp-sale__card {
+    border-radius: 14px; padding: 34px 40px; display: flex; align-items: center;
+    justify-content: space-between; gap: 24px; position: relative; overflow: hidden;
+  }
+  .mp-sale-{{ section.id }} .mp-sale__badge { background: #d6402e; color: #fff; font-size: 12.5px; font-weight: 700; padding: 5px 13px; border-radius: 20px; }
+  .mp-sale-{{ section.id }} .mp-sale__title { color: #fff; font-size: 34px; font-weight: 700; margin-top: 14px; line-height: 1.05; }
+  .mp-sale-{{ section.id }} .mp-sale__sub { color: #cfe0e6; font-size: 14px; margin-top: 8px; }
+  .mp-sale-{{ section.id }} .mp-sale__btn {
+    background: #f2872f; color: #fff; font-weight: 700; font-size: 16px; padding: 14px 30px;
+    border-radius: 9px; white-space: nowrap; text-decoration: none;
+  }
+  @media (max-width: 749px) {
+    .mp-sale-{{ section.id }} .mp-sale__wrap { padding: 14px 16px; }
+    .mp-sale-{{ section.id }} .mp-sale__card { flex-direction: column; align-items: flex-start; padding: 26px 22px; }
+    .mp-sale-{{ section.id }} .mp-sale__title { font-size: 26px; }
+  }
+{%- endstyle -%}
+
+<div class="mp-cream mp-sale-{{ section.id }}">
+  <div class="mp-col">
+    <div class="mp-sale__wrap">
+      <div class="mp-sale__card" style="background: {{ section.settings.bg }}">
+        <div>
+          {%- if section.settings.badge != blank -%}<span class="mp-sale__badge mp-cond">{{ section.settings.badge }}</span>{%- endif -%}
+          <div class="mp-sale__title mp-cond">{{ section.settings.title }}</div>
+          <div class="mp-sale__sub">{{ section.settings.subtitle }}</div>
+        </div>
+        {%- if section.settings.button_label != blank -%}
+          <a class="mp-sale__btn mp-cond" href="{{ section.settings.button_url | default: '#' }}">{{ section.settings.button_label }} &#8594;</a>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "MP Sale banner",
+  "settings": [
+    { "type": "text", "id": "badge", "label": "Badge", "default": "ON SALE NOW" },
+    { "type": "text", "id": "title", "label": "Title", "default": "Save on this season's best games" },
+    { "type": "text", "id": "subtitle", "label": "Subtitle", "default": "Strategy, family & party games — while stocks last." },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "Shop all deals" },
+    { "type": "url", "id": "button_url", "label": "Button URL" },
+    { "type": "text", "id": "bg", "label": "Background (CSS)", "default": "linear-gradient(120deg,#16323f 0%,#1d4252 55%,#2c5466 100%)" }
+  ],
+  "presets": [ { "name": "MP Sale banner" } ]
+}
+{% endschema %}

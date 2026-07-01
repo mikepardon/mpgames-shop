@@ -1,0 +1,765 @@
+{%- comment -%}
+  MPGames product page — full custom product layout imported from Claude Design
+  "MPGames Product". Wired to real product data + custom.* board-game metafields.
+  Every data-driven element hides gracefully when its metafield is empty.
+{%- endcomment -%}
+
+{%- liquid
+  assign m = product.metafields.custom
+  assign variant = product.selected_or_first_available_variant
+
+  assign bgg = m.bgg_rating.value
+  assign bggn = bgg | times: 1.0
+  assign bgg_color = '#e0b441'
+  if bggn >= 8.0
+    assign bgg_color = '#5fbf7e'
+  elsif bggn >= 7.0
+    assign bgg_color = '#9ccf63'
+  endif
+
+  assign on_sale = false
+  if product.compare_at_price > product.price
+    assign on_sale = true
+    assign disc = product.compare_at_price | minus: product.price | times: 100.0 | divided_by: product.compare_at_price | round
+  endif
+
+  assign mechanics = m.mechanics.value
+  assign rscore = m.review_score.value
+  assign rcount = m.review_count.value
+-%}
+
+{%- style -%}
+  .mp-pdp-{{ section.id }} { background: #f4efe6; font-family: 'Barlow', ui-sans-serif, system-ui, sans-serif; color: #16323f; }
+  .mp-pdp-{{ section.id }} .pdp__wrap { max-width: 1200px; margin: 0 auto; padding: 0 28px; }
+  .mp-pdp-{{ section.id }} .pdp__crumb { padding: 16px 0 0; font-size: 12px; color: #9b948a; }
+  .mp-pdp-{{ section.id }} .pdp__crumb a { color: inherit; text-decoration: none; }
+  .mp-pdp-{{ section.id }} .pdp__crumb .sep { color: #cfc9be; margin: 0 5px; }
+
+  .mp-pdp-{{ section.id }} .pdp__top { display: flex; gap: 40px; padding: 18px 0 30px; }
+  .mp-pdp-{{ section.id }} .pdp__gallery { width: 540px; flex: none; }
+  .mp-pdp-{{ section.id }} .pdp__main {
+    position: relative; border-radius: 8px; overflow: hidden; background: #dfd9cd;
+    aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center;
+  }
+  .mp-pdp-{{ section.id }} .pdp__main img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .mp-pdp-{{ section.id }} .pdp__flag {
+    position: absolute; top: 14px; left: 14px; z-index: 2; background: #d6402e; color: #fff;
+    font-size: 13px; font-weight: 700; padding: 4px 11px; border-radius: 6px;
+  }
+  .mp-pdp-{{ section.id }} .pdp__thumbs { display: flex; gap: 11px; margin-top: 12px; flex-wrap: wrap; }
+  .mp-pdp-{{ section.id }} .pdp__thumb {
+    width: 86px; height: 86px; border-radius: 7px; overflow: hidden; border: 2px solid transparent;
+    cursor: pointer; background: #e6e0d4; padding: 0;
+  }
+  .mp-pdp-{{ section.id }} .pdp__thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .mp-pdp-{{ section.id }} .pdp__thumb.is-active { border-color: #16323f; }
+
+  .mp-pdp-{{ section.id }} .pdp__buy { flex: 1; min-width: 0; }
+  .mp-pdp-{{ section.id }} .pdp__vendor { font-size: 12.5px; font-weight: 600; color: #8a8278; letter-spacing: 1px; text-transform: uppercase; }
+  .mp-pdp-{{ section.id }} .pdp__title { font-size: 44px; font-weight: 700; line-height: 1.04; margin: 6px 0 0; }
+  .mp-pdp-{{ section.id }} .pdp__meta { display: flex; align-items: center; gap: 14px; margin-top: 13px; flex-wrap: wrap; }
+  .mp-pdp-{{ section.id }} .pdp__bgg { display: inline-flex; align-items: center; gap: 5px; background: #2b2233; border-radius: 6px; padding: 4px 9px; }
+  .mp-pdp-{{ section.id }} .pdp__bgg b { font-size: 11px; font-weight: 700; color: #fff; letter-spacing: .5px; }
+  .mp-pdp-{{ section.id }} .pdp__sub { font-size: 13px; color: #6b7a82; }
+  .mp-pdp-{{ section.id }} .pdp__divider { width: 1px; height: 14px; background: #d8d0c2; }
+  .mp-pdp-{{ section.id }} .pdp__stars { color: #f2872f; letter-spacing: 1px; }
+
+  .mp-pdp-{{ section.id }} .pdp__price { display: flex; align-items: baseline; gap: 13px; margin-top: 20px; }
+  .mp-pdp-{{ section.id }} .pdp__rrp { font-size: 18px; color: #9b948a; text-decoration: line-through; }
+  .mp-pdp-{{ section.id }} .pdp__now { font-size: 34px; font-weight: 700; }
+  .mp-pdp-{{ section.id }} .pdp__saletag { background: #f5d8a8; color: #9a6b16; font-size: 13px; font-weight: 700; padding: 5px 12px; border-radius: 20px; }
+  .mp-pdp-{{ section.id }} .pdp__tax { font-size: 12.5px; color: #8a8278; margin-top: 4px; }
+
+  .mp-pdp-{{ section.id }} .pdp__stock { display: flex; align-items: center; gap: 8px; margin-top: 16px; font-size: 13.5px; }
+  .mp-pdp-{{ section.id }} .pdp__dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+
+  .mp-pdp-{{ section.id }} .pdp__options { margin-top: 18px; }
+  .mp-pdp-{{ section.id }} .pdp__optgroup { margin-top: 12px; }
+  .mp-pdp-{{ section.id }} .pdp__optvals { display: flex; flex-wrap: wrap; gap: 8px; }
+  .mp-pdp-{{ section.id }} .pdp__opt { background: #fff; border: 1px solid #cdc6ba; border-radius: 8px; padding: 9px 15px; font-size: 13.5px; font-weight: 600; color: #16323f; cursor: pointer; font-family: inherit; }
+  .mp-pdp-{{ section.id }} .pdp__opt:hover { border-color: #16323f; }
+  .mp-pdp-{{ section.id }} .pdp__opt.is-active { background: #16323f; border-color: #16323f; color: #fff; }
+  .mp-pdp-{{ section.id }} .pdp__opt.is-soldout { color: #b6afa4; text-decoration: line-through; }
+  .mp-pdp-{{ section.id }} .pdp__qlabel { font-size: 12.5px; color: #6b7a82; margin: 22px 0 8px; }
+  .mp-pdp-{{ section.id }} .pdp__qty { display: inline-flex; align-items: center; border: 1px solid #cdc6ba; border-radius: 8px; overflow: hidden; background: #fff; }
+  .mp-pdp-{{ section.id }} .pdp__qty button { padding: 13px 18px; color: #6b7a82; font-size: 17px; background: none; border: 0; cursor: pointer; }
+  .mp-pdp-{{ section.id }} .pdp__qty input { width: 56px; text-align: center; padding: 13px 0; font-size: 16px; font-weight: 600; color: #16323f; border: 0; border-left: 1px solid #e7e0d4; border-right: 1px solid #e7e0d4; -moz-appearance: textfield; }
+  .mp-pdp-{{ section.id }} .pdp__qty input::-webkit-outer-spin-button,
+  .mp-pdp-{{ section.id }} .pdp__qty input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+  .mp-pdp-{{ section.id }} .pdp__actions { display: flex; gap: 11px; margin-top: 16px; }
+  .mp-pdp-{{ section.id }} .pdp__add { flex: 1; background: #16323f; color: #fff; border: 0; border-radius: 8px; padding: 15px; font-size: 16px; font-weight: 700; cursor: pointer; font-family: inherit; }
+  .mp-pdp-{{ section.id }} .pdp__wish { width: 54px; border: 1px solid #cdc6ba; background: #fff; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #6b7a82; font-size: 17px; cursor: pointer; }
+  .mp-pdp-{{ section.id }} .pdp__buynow { display: block; width: 100%; margin-top: 11px; background: #f2872f; color: #fff; border: 0; border-radius: 8px; padding: 15px; font-size: 16px; font-weight: 700; cursor: pointer; font-family: inherit; }
+  .mp-pdp-{{ section.id }} .pdp__add[disabled], .mp-pdp-{{ section.id }} .pdp__buynow[disabled] { opacity: .5; cursor: not-allowed; }
+
+  .mp-pdp-{{ section.id }} .pdp__reassure { border: 1px solid #e2ddd1; border-radius: 10px; background: #fbf9f4; margin-top: 18px; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; font-size: 12.5px; color: #4a443c; }
+  .mp-pdp-{{ section.id }} .pdp__reassure b { color: #16323f; }
+  .mp-pdp-{{ section.id }} .pdp__share { display: flex; gap: 18px; margin-top: 14px; font-size: 12.5px; color: #6b7a82; }
+
+  .mp-pdp-{{ section.id }} .pdp__cols { display: flex; gap: 30px; padding: 8px 0 30px; align-items: flex-start; }
+  .mp-pdp-{{ section.id }} .pdp__h { font-size: 24px; font-weight: 700; margin-bottom: 16px; }
+  .mp-pdp-{{ section.id }} .pdp__left { flex: 1; min-width: 0; }
+
+  .mp-pdp-{{ section.id }} .pdp__ratings { display: flex; border: 1px solid #e7ddcb; border-radius: 13px; background: #fff; overflow: hidden; margin-bottom: 14px; box-shadow: 0 1px 2px rgba(20,40,50,.04); flex-wrap: wrap; }
+  .mp-pdp-{{ section.id }} .pdp__rcell { flex: 1; min-width: 150px; padding: 15px 18px; border-right: 1px solid #efe7d8; }
+  .mp-pdp-{{ section.id }} .pdp__rcell .k { font-size: 11px; font-weight: 600; color: #9b948a; letter-spacing: .6px; }
+  .mp-pdp-{{ section.id }} .pdp__rcell .s { font-size: 27px; font-weight: 700; line-height: 1; }
+  .mp-pdp-{{ section.id }} .pdp__rcell .o { font-size: 13px; color: #b6afa4; }
+  .mp-pdp-{{ section.id }} .pdp__bar { height: 5px; border-radius: 6px; background: #ece8e0; margin-top: 9px; overflow: hidden; }
+  .mp-pdp-{{ section.id }} .pdp__bar span { display: block; height: 100%; border-radius: 6px; }
+
+  .mp-pdp-{{ section.id }} .pdp__specs { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; }
+  .mp-pdp-{{ section.id }} .pdp__spec { position: relative; border: 1px solid #e7ddcb; border-radius: 13px; background: #fff; padding: 15px 16px; min-height: 112px; display: flex; flex-direction: column; box-shadow: 0 1px 2px rgba(20,40,50,.04); overflow: hidden; }
+  .mp-pdp-{{ section.id }} .pdp__spec .accent { position: absolute; left: 0; top: 0; bottom: 0; width: 4px; }
+  .mp-pdp-{{ section.id }} .pdp__spec .ico { width: 34px; height: 34px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+  .mp-pdp-{{ section.id }} .pdp__spec .k { font-size: 11.5px; font-weight: 600; color: #9b948a; letter-spacing: .6px; }
+  .mp-pdp-{{ section.id }} .pdp__spec .v { font-size: 19px; font-weight: 700; margin-top: 13px; line-height: 1.18; }
+  .mp-pdp-{{ section.id }} .pdp__spec .vsub { font-size: 12px; color: #8a8278; margin-top: auto; padding-top: 5px; }
+
+  .mp-pdp-{{ section.id }} .pdp__play { width: 420px; flex: none; background: #16323f; border-radius: 14px; padding: 22px; color: #cfe0e6; }
+  .mp-pdp-{{ section.id }} .pdp__play h3 { font-size: 22px; font-weight: 700; color: #fff; margin: 0; }
+  .mp-pdp-{{ section.id }} .pdp__tabs { display: flex; gap: 4px; margin-top: 15px; background: #0f242e; border-radius: 9px; padding: 4px; }
+  .mp-pdp-{{ section.id }} .pdp__tab { flex: 1; text-align: center; cursor: pointer; font-size: 13px; font-weight: 600; padding: 9px 6px; border-radius: 7px; color: #9fb4bd; background: none; border: 0; font-family: inherit; }
+  .mp-pdp-{{ section.id }} .pdp__tab.is-active { background: #f2872f; color: #fff; }
+  .mp-pdp-{{ section.id }} .pdp__panel { margin-top: 16px; }
+  .mp-pdp-{{ section.id }} .pdp__panel[hidden] { display: none; }
+  .mp-pdp-{{ section.id }} .pdp__vid { display: block; text-decoration: none; }
+  .mp-pdp-{{ section.id }} .pdp__embed { position: relative; aspect-ratio: 16/9; border-radius: 11px; overflow: hidden; background: #0b1a22; }
+  .mp-pdp-{{ section.id }} .pdp__embed iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; display: block; }
+  .mp-pdp-{{ section.id }} .pdp__vidbox { position: relative; border-radius: 11px; overflow: hidden; background: #0b1a22; aspect-ratio: 16/9; display: flex; align-items: center; justify-content: center; }
+  .mp-pdp-{{ section.id }} .pdp__vidbox .bgpat { position: absolute; inset: 0; background: repeating-linear-gradient(45deg,#13313f,#13313f 12px,#102a36 12px,#102a36 24px); }
+  .mp-pdp-{{ section.id }} .pdp__playbtn { position: relative; z-index: 2; width: 58px; height: 58px; border-radius: 50%; background: #f2872f; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 20px; box-shadow: 0 4px 14px rgba(0,0,0,.4); }
+  .mp-pdp-{{ section.id }} .pdp__vidttl { font-size: 15px; font-weight: 700; color: #fff; margin-top: 11px; }
+  .mp-pdp-{{ section.id }} .pdp__link {
+    display: flex; align-items: center; gap: 13px; padding: 13px 15px; text-decoration: none;
+    background: #15303c; border: 1px solid #1d3640; border-radius: 10px; margin-bottom: 9px;
+  }
+  .mp-pdp-{{ section.id }} .pdp__link .nm { display: block; font-size: 14px; font-weight: 600; color: #fff; }
+  .mp-pdp-{{ section.id }} .pdp__link .mt { font-size: 11.5px; color: #7f97a2; }
+  .mp-pdp-{{ section.id }} .pdp__link .go { font-size: 12px; font-weight: 600; color: #f2872f; white-space: nowrap; margin-left: auto; }
+  .mp-pdp-{{ section.id }} .pdp__ext { display: flex; gap: 10px; margin-top: 16px; padding-top: 16px; border-top: 1px solid #25434f; }
+  .mp-pdp-{{ section.id }} .pdp__ext a { flex: 1; text-decoration: none; background: #1d4252; border-radius: 9px; padding: 12px; display: flex; align-items: center; gap: 9px; color: #fff; font-size: 13px; font-weight: 600; }
+
+  .mp-pdp-{{ section.id }} .pdp__desctabs { display: flex; gap: 26px; border-bottom: 1px solid #e2ddd1; font-size: 15px; color: #9b948a; font-weight: 600; }
+  .mp-pdp-{{ section.id }} .pdp__desctab { padding-bottom: 11px; cursor: pointer; background: none; border: 0; font-family: inherit; font-size: inherit; color: inherit; }
+  .mp-pdp-{{ section.id }} .pdp__desctab.is-active { color: #16323f; border-bottom: 2px solid #f2872f; }
+  .mp-pdp-{{ section.id }} .pdp__rte { font-size: 14.5px; line-height: 1.72; color: #3c3a34; margin-top: 18px; }
+  .mp-pdp-{{ section.id }} .pdp__rte p { margin: 0 0 14px; }
+  .mp-pdp-{{ section.id }} .pdp__feats { display: grid; grid-template-columns: 1fr 1fr; gap: 11px; margin-top: 14px; }
+  .mp-pdp-{{ section.id }} .pdp__feat { display: flex; gap: 10px; align-items: flex-start; font-size: 13.5px; color: #4a443c; }
+  .mp-pdp-{{ section.id }} .pdp__feat .ok { color: #2f8f5b; margin-top: 1px; }
+
+  .mp-pdp-{{ section.id }} .pdp__info { width: 420px; flex: none; border: 1px solid #e2ddd1; border-radius: 12px; background: #fff; overflow: hidden; }
+  .mp-pdp-{{ section.id }} .pdp__info h4 { font-size: 17px; font-weight: 700; padding: 16px 18px; border-bottom: 1px solid #efe9dd; margin: 0; }
+  .mp-pdp-{{ section.id }} .pdp__inforow { display: flex; justify-content: space-between; gap: 16px; padding: 11px 18px; border-bottom: 1px solid #f1ece2; font-size: 13px; }
+  .mp-pdp-{{ section.id }} .pdp__inforow .k { color: #9b948a; }
+  .mp-pdp-{{ section.id }} .pdp__inforow .v { font-weight: 600; text-align: right; }
+  .mp-pdp-{{ section.id }} .pdp__bars { padding: 15px 18px; }
+  .mp-pdp-{{ section.id }} .pdp__brow { margin-bottom: 13px; }
+  .mp-pdp-{{ section.id }} .pdp__brow .bl { display: flex; justify-content: space-between; font-size: 12.5px; color: #4a443c; margin-bottom: 5px; }
+  .mp-pdp-{{ section.id }} .pdp__brow .bl b { color: #16323f; }
+  .mp-pdp-{{ section.id }} .pdp__btrack { height: 7px; border-radius: 6px; background: #ece8e0; position: relative; overflow: hidden; }
+  .mp-pdp-{{ section.id }} .pdp__btrack span { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 6px; }
+
+  .mp-pdp-{{ section.id }} .pdp__also { padding: 8px 0 40px; }
+  .mp-pdp-{{ section.id }} .pdp__alsohead { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 14px; }
+  .mp-pdp-{{ section.id }} .pdp__grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; }
+  .mp-pdp-{{ section.id }} .pdp__card { border: 1px solid #e2ddd1; border-radius: 10px; overflow: hidden; background: #fff; display: flex; flex-direction: column; position: relative; }
+  .mp-pdp-{{ section.id }} .pdp__card .cmedia { height: 148px; background: repeating-linear-gradient(45deg,#efece6,#efece6 9px,#e6e2da 9px,#e6e2da 18px); display: flex; align-items: center; justify-content: center; }
+  .mp-pdp-{{ section.id }} .pdp__card .cmedia img { width: 100%; height: 100%; object-fit: cover; }
+  .mp-pdp-{{ section.id }} .pdp__card .cflag { position: absolute; top: 9px; left: 9px; z-index: 2; background: #d6402e; color: #fff; font-size: 12px; font-weight: 700; padding: 3px 8px; border-radius: 5px; }
+  .mp-pdp-{{ section.id }} .pdp__card .cbody { padding: 11px 12px 13px; display: flex; flex-direction: column; flex: 1; }
+  .mp-pdp-{{ section.id }} .pdp__card .cname { font-size: 13.5px; font-weight: 600; line-height: 1.25; text-decoration: none; color: #16323f; }
+  .mp-pdp-{{ section.id }} .pdp__card .cfoot { display: flex; align-items: flex-end; justify-content: space-between; margin-top: auto; padding-top: 11px; }
+  .mp-pdp-{{ section.id }} .pdp__card .cprice { font-size: 18px; font-weight: 700; }
+  .mp-pdp-{{ section.id }} .pdp__card .cadd { background: #f2872f; color: #fff; border-radius: 7px; padding: 8px 12px; font-size: 12.5px; font-weight: 600; text-decoration: none; }
+  .mp-pdp-{{ section.id }} .pdp__viewall { font-size: 12.5px; color: #f2872f; font-weight: 600; text-decoration: none; }
+  .mp-pdp-{{ section.id }} .pdp__exp-banner { background: #fff3e8; border: 1px solid #f2c79a; border-radius: 10px; padding: 13px 16px; margin: 0 0 4px; display: flex; align-items: center; gap: 10px; font-size: 13.5px; color: #7a4a16; }
+  .mp-pdp-{{ section.id }} .pdp__exp-banner a { color: #c2410c; font-weight: 700; }
+
+  @media (max-width: 989px) {
+    .mp-pdp-{{ section.id }} .pdp__top, .mp-pdp-{{ section.id }} .pdp__cols { flex-direction: column; }
+    .mp-pdp-{{ section.id }} .pdp__gallery, .mp-pdp-{{ section.id }} .pdp__play, .mp-pdp-{{ section.id }} .pdp__info { width: 100%; }
+    .mp-pdp-{{ section.id }} .pdp__grid { grid-template-columns: repeat(2,1fr); }
+  }
+  @media (max-width: 749px) {
+    .mp-pdp-{{ section.id }} .pdp__wrap { padding: 0 16px; }
+    .mp-pdp-{{ section.id }} .pdp__title { font-size: 32px; }
+    .mp-pdp-{{ section.id }} .pdp__specs { grid-template-columns: 1fr 1fr; }
+  }
+{%- endstyle -%}
+
+<div class="mp-pdp-{{ section.id }}" data-pdp>
+  <div class="pdp__wrap">
+
+    <!-- breadcrumb -->
+    <div class="pdp__crumb">
+      <a href="{{ routes.root_url }}">Home</a>
+      {%- if collection -%}<span class="sep">/</span><a href="{{ collection.url }}">{{ collection.title }}</a>{%- endif -%}
+      <span class="sep">/</span><span style="color:#6b7a82">{{ product.title }}</span>
+    </div>
+
+    <!-- gallery + buy box -->
+    <div class="pdp__top">
+      <div class="pdp__gallery">
+        <div class="pdp__main">
+          {%- if on_sale -%}<span class="pdp__flag">SALE · -{{ disc }}%</span>{%- endif -%}
+          {%- if product.featured_media -%}
+            <img id="pdp-main-{{ section.id }}" src="{{ product.featured_media | image_url: width: 1100 }}" alt="{{ product.featured_media.alt | escape | default: product.title }}" width="1100" height="1100">
+          {%- else -%}
+            <span style="font:13px ui-monospace,monospace;color:#a39c92">{{ product.title }}</span>
+          {%- endif -%}
+        </div>
+        {%- if product.media.size > 1 -%}
+          <div class="pdp__thumbs">
+            {%- for media in product.media limit: 8 -%}
+              <button type="button" class="pdp__thumb{% if forloop.first %} is-active{% endif %}" data-src="{{ media | image_url: width: 1100 }}" aria-label="View image {{ forloop.index }}">
+                <img src="{{ media | image_url: width: 180 }}" alt="" width="180" height="180" loading="lazy">
+              </button>
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+      </div>
+
+      <div class="pdp__buy">
+        {%- if product.vendor != blank -%}<div class="pdp__vendor">{{ product.vendor }}</div>{%- endif -%}
+        <h1 class="pdp__title">{{ product.title }}</h1>
+
+        <div class="pdp__meta">
+          {%- if bgg != blank -%}
+            <span class="pdp__bgg"><b>BGG</b><span style="font-size:13px;font-weight:700;color:{{ bgg_color }}">{{ bgg }}</span></span>
+            {%- if m.bgg_rank.value != blank -%}<span class="pdp__sub">rank #{{ m.bgg_rank.value }}</span>{%- endif -%}
+            <span class="pdp__divider"></span>
+          {%- endif -%}
+          <span class="pdp__sub"><div class="jdgm-widget jdgm-preview-badge" data-id="{{ product.id }}">{{ product.metafields.judgeme.badge }}</div></span>
+        </div>
+
+        <div class="pdp__price">
+          <span class="pdp__rrp" data-rrp{% unless on_sale %} hidden{% endunless %}>{{ product.compare_at_price | money }}</span>
+          <span class="pdp__now" data-price>{{ product.price | money }}</span>
+          <span class="pdp__saletag" data-saletag{% unless on_sale %} hidden{% endunless %}>Sale</span>
+        </div>
+        <div class="pdp__tax">Taxes included · {{ section.settings.delivery_line }}</div>
+
+        {%- unless product.has_only_default_variant -%}
+          <div class="pdp__options" data-options>
+            {%- for option in product.options_with_values -%}
+              <div class="pdp__optgroup" data-option-index="{{ forloop.index0 }}">
+                <div class="pdp__qlabel" style="margin:0 0 8px">{{ option.name }}</div>
+                <div class="pdp__optvals">
+                  {%- for value in option.values -%}
+                    <button type="button" class="pdp__opt{% if option.selected_value == value %} is-active{% endif %}" data-option-value data-value="{{ value | escape }}">{{ value }}</button>
+                  {%- endfor -%}
+                </div>
+              </div>
+            {%- endfor -%}
+          </div>
+        {%- endunless -%}
+
+        <div class="pdp__stock" data-stock>
+          {%- if product.available -%}
+            <span class="pdp__dot" style="background:#2f8f5b"></span><b style="color:#2f8f5b">In stock</b>
+            {%- if variant.inventory_management and variant.inventory_quantity > 0 -%}<span style="color:#6b7a82"> · {{ variant.inventory_quantity }} available</span>{%- endif -%}
+          {%- else -%}
+            <span class="pdp__dot" style="background:#d6402e"></span><b style="color:#d6402e">Out of stock</b>
+          {%- endif -%}
+        </div>
+
+        <div class="pdp__qlabel">Quantity</div>
+        <div class="pdp__qty">
+          <button type="button" data-q="-1" aria-label="Decrease quantity">&minus;</button>
+          <input type="number" id="pdp-qty-{{ section.id }}" value="1" min="1" inputmode="numeric">
+          <button type="button" data-q="1" aria-label="Increase quantity">+</button>
+        </div>
+
+        <div class="pdp__actions">
+          <button type="button" class="pdp__add" data-add="cart"{% unless product.available %} disabled{% endunless %}>Add to basket</button>
+        </div>
+        <button type="button" class="pdp__buynow" data-add="checkout"{% unless product.available %} disabled{% endunless %}>Buy it now</button>
+
+        <div class="pdp__reassure">
+          <span>&#128666; <b>Free UK delivery</b> on orders over £{{ settings.free_shipping_threshold }} · next working day dispatch</span>
+          <span>&#8634; <b>30-day returns</b> · unopened &amp; in original condition</span>
+          <span>&#9989; <b>100% official UK stock</b> · price-match promise</span>
+        </div>
+
+        <div class="pdp__share">
+          <span>&#8593; Share</span>
+          <span data-sku{% if variant.sku == blank %} hidden{% endif %}>SKU: {{ variant.sku }}</span>
+        </div>
+      </div>
+    </div>
+
+    {%- assign base_game = product.metafields.custom.base_game.value -%}
+    {%- if base_game != blank -%}
+      <div class="pdp__exp-banner">&#129513; <span><strong>This is an expansion.</strong> Requires <a href="{{ base_game.url }}">{{ base_game.title }}</a> to play.</span></div>
+    {%- endif -%}
+
+    <!-- Game at a glance + How to play -->
+    <div class="pdp__cols">
+      <div class="pdp__left">
+        <div class="pdp__h">Game at a glance</div>
+
+        <div class="pdp__ratings">
+          {%- if bgg != blank -%}
+            {%- assign bggpct = bggn | times: 10 | round -%}
+            <div class="pdp__rcell">
+              <div class="k">BOARDGAMEGEEK</div>
+              <div style="display:flex;align-items:baseline;gap:7px;margin-top:9px"><span class="s">{{ bgg }}</span><span class="o">/ 10</span></div>
+              <div class="pdp__bar"><span style="width:{{ bggpct }}%;background:{{ bgg_color }}"></span></div>
+              <div style="font-size:11.5px;color:#8a8278;margin-top:7px">{% if m.bgg_rank.value != blank %}rank #{{ m.bgg_rank.value }}{% else %}community rating{% endif %}</div>
+            </div>
+          {%- endif -%}
+          {%- if rcount != blank -%}
+            <div class="pdp__rcell">
+              <div class="k">CUSTOMER REVIEWS</div>
+              <div style="display:flex;align-items:baseline;gap:7px;margin-top:9px"><span class="s">{{ rscore }}</span><span class="o">/ 5</span></div>
+              <div class="pdp__bar"><span style="width:{{ rscore | times: 20 | round }}%;background:#f2872f"></span></div>
+              <div style="font-size:11.5px;color:#8a8278;margin-top:7px">{{ rcount }} verified reviews</div>
+            </div>
+          {%- endif -%}
+          {%- if m.awards.value != blank -%}
+            <div class="pdp__rcell" style="background:#faf4e9;border-right:0">
+              <div class="k" style="color:#b08a3c">AWARDS</div>
+              <div style="display:flex;align-items:center;gap:8px;margin-top:8px"><span style="font-size:20px">&#127942;</span><span style="font-size:14px;font-weight:700;line-height:1.15">{{ m.awards.value }}</span></div>
+            </div>
+          {%- endif -%}
+        </div>
+
+        <div class="pdp__specs">
+          {%- if m.player_count.value != blank -%}
+            <div class="pdp__spec"><span class="accent" style="background:#2c5466"></span>
+              <div style="display:flex;align-items:center;gap:10px"><span class="ico" style="background:#e7eef1">&#128101;</span><span class="k">PLAYERS</span></div>
+              <div class="v">{{ m.player_count.value }}</div>
+            </div>
+          {%- endif -%}
+          {%- if m.play_time.value != blank -%}
+            <div class="pdp__spec"><span class="accent" style="background:#f2872f"></span>
+              <div style="display:flex;align-items:center;gap:10px"><span class="ico" style="background:#fbeadb">&#9201;</span><span class="k">PLAY TIME</span></div>
+              <div class="v">{{ m.play_time.value }}</div>
+            </div>
+          {%- endif -%}
+          {%- if m.min_age.value != blank -%}
+            <div class="pdp__spec"><span class="accent" style="background:#2f8f5b"></span>
+              <div style="display:flex;align-items:center;gap:10px"><span class="ico" style="background:#e3f1e9">&#127919;</span><span class="k">AGE</span></div>
+              <div class="v">{{ m.min_age.value }}+</div><div class="vsub">publisher rating</div>
+            </div>
+          {%- endif -%}
+          {%- if m.weight.value != blank -%}
+            <div class="pdp__spec"><span class="accent" style="background:#6a4f86"></span>
+              <div style="display:flex;align-items:center;gap:10px"><span class="ico" style="background:#ede7f3">&#129504;</span><span class="k">COMPLEXITY</span></div>
+              <div class="v">{{ m.weight.value }} / 5</div>{% if m.complexity.value != blank %}<div class="vsub">{{ m.complexity.value }} weight</div>{% endif %}
+            </div>
+          {%- endif -%}
+          {%- if m.designer.value != blank -%}
+            <div class="pdp__spec"><span class="accent" style="background:#16323f"></span>
+              <div style="display:flex;align-items:center;gap:10px"><span class="ico" style="background:#e6ecee">&#9997;</span><span class="k">DESIGNER</span></div>
+              <div class="v" style="font-size:16px">{{ m.designer.value }}</div>
+            </div>
+          {%- endif -%}
+          {%- if m.year_published.value != blank -%}
+            <div class="pdp__spec"><span class="accent" style="background:#9a3b2e"></span>
+              <div style="display:flex;align-items:center;gap:10px"><span class="ico" style="background:#f3e3e0">&#128197;</span><span class="k">YEAR</span></div>
+              <div class="v">{{ m.year_published.value }}</div>{% if product.vendor != blank %}<div class="vsub">{{ product.vendor }}</div>{% endif %}
+            </div>
+          {%- endif -%}
+        </div>
+      </div>
+
+      <div class="pdp__play">
+        <h3>How to play</h3>
+
+        <div class="pdp__panel" data-panel="how">
+          {%- if m.youtube_id != blank -%}
+            <div class="pdp__embed">
+              <iframe src="https://www.youtube-nocookie.com/embed/{{ m.youtube_id }}" title="{{ product.title | escape }} — how to play" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+            </div>
+            <div class="pdp__vidttl">{{ product.title }} — How to Play</div>
+            <div style="font-size:12px;color:#9fb4bd;margin-top:2px">Video tutorial · {% if m.video_url != blank %}<a href="{{ m.video_url }}" target="_blank" rel="noopener" style="color:#f2872f;text-decoration:none">more videos</a>{% else %}playthroughs &amp; reviews{% endif %}</div>
+          {%- else -%}
+            <a class="pdp__vid" href="{{ m.how_to_play_url | default: m.video_url }}" target="_blank" rel="noopener">
+              <div class="pdp__vidbox"><span class="bgpat"></span><span class="pdp__playbtn">&#9654;</span></div>
+              <div class="pdp__vidttl">{{ product.title }} — How to Play</div>
+              <div style="font-size:12px;color:#9fb4bd;margin-top:2px">Video tutorials &amp; playthroughs</div>
+            </a>
+          {%- endif -%}
+        </div>
+
+        <div class="pdp__ext">
+          {%- if m.bgg_url != blank -%}<a href="{{ m.bgg_url }}" target="_blank" rel="noopener"><span style="font-size:15px">&#9733;</span><span>View on BGG</span></a>{%- endif -%}
+          {%- if m.bga_url != blank -%}<a href="{{ m.bga_url }}" target="_blank" rel="noopener"><span style="font-size:15px">&#9824;</span><span>Play on BGA</span></a>{%- endif -%}
+        </div>
+      </div>
+    </div>
+
+    <!-- description + game information -->
+    <div class="pdp__cols">
+      <div class="pdp__left">
+        <div class="pdp__desctabs">
+          <button type="button" class="pdp__desctab is-active" data-desc="desc">Description</button>
+          {%- if mechanics != blank and mechanics.size > 0 -%}<button type="button" class="pdp__desctab" data-desc="mech">Mechanics</button>{%- endif -%}
+          <button type="button" class="pdp__desctab" data-desc="delivery">Delivery &amp; returns</button>
+        </div>
+
+        <div class="pdp__descpanel" data-descpanel="desc">
+          <div class="pdp__rte">{{ product.description }}</div>
+        </div>
+        {%- if mechanics != blank and mechanics.size > 0 -%}
+          <div class="pdp__descpanel" data-descpanel="mech" hidden>
+            <div class="pdp__rte"><p>This game uses the following core mechanisms:</p>
+              <p>{% for mech in mechanics %}<span style="display:inline-block;background:#efe9dd;border-radius:20px;padding:5px 12px;margin:0 6px 8px 0;font-size:13px;font-weight:600;color:#4a443c">{{ mech }}</span>{% endfor %}</p>
+            </div>
+          </div>
+        {%- endif -%}
+        <div class="pdp__descpanel" data-descpanel="delivery" hidden>
+          <div class="pdp__rte">
+            <p><b>Free UK delivery</b> on orders over £{{ settings.free_shipping_threshold }}. Orders are dispatched the next working day.</p>
+            <p><b>30-day returns</b> on unopened items in their original condition. See our delivery &amp; returns policy for full details.</p>
+          </div>
+        </div>
+
+        {%- if section.settings.show_features -%}
+          <div class="pdp__h" style="font-size:17px;margin:24px 0 12px">Why you'll love it</div>
+          <div class="pdp__feats">
+            {%- if bgg != blank -%}<div class="pdp__feat"><span class="ok">&#10003;</span> Rated {{ bgg }} on BoardGameGeek{% if m.bgg_rank.value != blank %} · ranked #{{ m.bgg_rank.value }}{% endif %}</div>{%- endif -%}
+            {%- if m.complexity.value != blank -%}<div class="pdp__feat"><span class="ok">&#10003;</span> {{ m.complexity.value }}-weight — {{ m.play_time.value | default: 'a satisfying play length' }}</div>{%- endif -%}
+            {%- if m.player_count.value != blank -%}<div class="pdp__feat"><span class="ok">&#10003;</span> Plays {{ m.player_count.value }} players</div>{%- endif -%}
+            <div class="pdp__feat"><span class="ok">&#10003;</span> 100% official UK stock with price-match promise</div>
+          </div>
+        {%- endif -%}
+      </div>
+
+      <div class="pdp__info">
+        <h4>Game information</h4>
+        {%- if m.designer.value != blank -%}<div class="pdp__inforow"><span class="k">Designer</span><span class="v">{{ m.designer.value }}</span></div>{%- endif -%}
+        {%- if m.artist.value != blank -%}<div class="pdp__inforow"><span class="k">Artist</span><span class="v">{{ m.artist.value }}</span></div>{%- endif -%}
+        {%- if product.vendor != blank -%}<div class="pdp__inforow"><span class="k">Publisher</span><span class="v">{{ product.vendor }}</span></div>{%- endif -%}
+        {%- if m.year_published.value != blank -%}<div class="pdp__inforow"><span class="k">Year</span><span class="v">{{ m.year_published.value }}</span></div>{%- endif -%}
+        {%- if m.player_count.value != blank -%}<div class="pdp__inforow"><span class="k">Players</span><span class="v">{{ m.player_count.value }}</span></div>{%- endif -%}
+        {%- if m.play_time.value != blank -%}<div class="pdp__inforow"><span class="k">Play time</span><span class="v">{{ m.play_time.value }}</span></div>{%- endif -%}
+        {%- if m.min_age.value != blank -%}<div class="pdp__inforow"><span class="k">Age</span><span class="v">{{ m.min_age.value }}+</span></div>{%- endif -%}
+        {%- if m.bgg_rank.value != blank -%}<div class="pdp__inforow"><span class="k">BGG rank</span><span class="v">#{{ m.bgg_rank.value }}</span></div>{%- endif -%}
+        {%- if variant.barcode != blank -%}<div class="pdp__inforow"><span class="k">Barcode</span><span class="v">{{ variant.barcode }}</span></div>{%- endif -%}
+
+        {%- assign has_bars = false -%}
+        {%- if m.weight.value != blank or m.rating_strategy.value != blank or m.rating_luck.value != blank or m.rating_interaction.value != blank -%}{%- assign has_bars = true -%}{%- endif -%}
+        {%- if has_bars -%}
+          <div class="pdp__bars">
+            {%- if m.weight.value != blank -%}
+              <div class="pdp__brow"><div class="bl"><span>Complexity</span><b>{{ m.weight.value }} / 5</b></div><div class="pdp__btrack"><span style="width:{{ m.weight.value | times: 20 | round }}%;background:#9a3b2e"></span></div></div>
+            {%- endif -%}
+            {%- if m.rating_strategy.value != blank -%}
+              <div class="pdp__brow"><div class="bl"><span>Strategy</span><b>{{ m.rating_strategy.value }} / 5</b></div><div class="pdp__btrack"><span style="width:{{ m.rating_strategy.value | times: 20 | round }}%;background:#2c3f8f"></span></div></div>
+            {%- endif -%}
+            {%- if m.rating_luck.value != blank -%}
+              <div class="pdp__brow"><div class="bl"><span>Luck</span><b>{{ m.rating_luck.value }} / 5</b></div><div class="pdp__btrack"><span style="width:{{ m.rating_luck.value | times: 20 | round }}%;background:#3c3a34"></span></div></div>
+            {%- endif -%}
+            {%- if m.rating_interaction.value != blank -%}
+              <div class="pdp__brow"><div class="bl"><span>Interaction</span><b>{{ m.rating_interaction.value }} / 5</b></div><div class="pdp__btrack"><span style="width:{{ m.rating_interaction.value | times: 20 | round }}%;background:#2f8f5b"></span></div></div>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+
+    <!-- customer reviews (Judge.me) -->
+    <div class="pdp__reviews" id="reviews">
+      <div class="jdgm-widget jdgm-review-widget" data-id="{{ product.id }}">{{ product.metafields.judgeme.widget }}</div>
+    </div>
+
+    <!-- expansions for this game -->
+    {%- assign exps = product.metafields.custom.expansions.value -%}
+    {%- if exps != blank and exps.size > 0 -%}
+      <div class="pdp__also">
+        <div class="pdp__alsohead"><div class="pdp__h" style="margin:0">Expansions for {{ product.title }}</div></div>
+        <div class="pdp__grid">
+          {%- for rec in exps limit: 4 -%}
+            {%- liquid
+              assign rsale = false
+              if rec.compare_at_price > rec.price
+                assign rsale = true
+                assign rdisc = rec.compare_at_price | minus: rec.price | times: 100.0 | divided_by: rec.compare_at_price | round
+              endif
+            -%}
+            <div class="pdp__card">
+              {%- if rsale -%}<span class="cflag">-{{ rdisc }}%</span>{%- endif -%}
+              <a href="{{ rec.url }}" class="cmedia">{% if rec.featured_image %}<img src="{{ rec.featured_image | image_url: width: 360 }}" alt="{{ rec.title | escape }}" width="360" height="360" loading="lazy">{% endif %}</a>
+              <div class="cbody">
+                <a class="cname" href="{{ rec.url }}">{{ rec.title }}</a>
+                {%- if rec.vendor != blank -%}<div style="font-size:11.5px;color:#9b948a;margin-top:2px">{{ rec.vendor }}</div>{%- endif -%}
+                <div class="cfoot">
+                  <div>
+                    {%- if rsale -%}<span style="font-size:11px;color:#9b948a;text-decoration:line-through">{{ rec.compare_at_price | money }}</span>{%- endif -%}
+                    <div class="cprice">{{ rec.price | money }}</div>
+                  </div>
+                  <a class="cadd" href="{{ rec.url }}">View</a>
+                </div>
+              </div>
+            </div>
+          {%- endfor -%}
+        </div>
+      </div>
+    {%- endif -%}
+
+    <!-- customers also bought -->
+    {%- liquid
+      assign rel_source = section.settings.related_collection
+      if rel_source == blank
+        assign rel_source = product.collections.first
+      endif
+      assign also = rel_source.products
+    -%}
+    {%- if also.size > 0 -%}
+      <div class="pdp__also">
+        <div class="pdp__alsohead">
+          <div class="pdp__h" style="margin:0">{{ section.settings.also_heading }}</div>
+          {%- if rel_source.url -%}<a class="pdp__viewall" href="{{ rel_source.url }}">View all &#8594;</a>{%- endif -%}
+        </div>
+        <div class="pdp__grid">
+          {%- assign shown = 0 -%}
+          {%- for rec in also -%}
+            {%- if rec.id == product.id -%}{%- continue -%}{%- endif -%}
+            {%- if shown >= 4 -%}{%- break -%}{%- endif -%}
+            {%- assign shown = shown | plus: 1 -%}
+            {%- liquid
+              assign rbgg = rec.metafields.custom.bgg_rating.value
+              assign rbggn = rbgg | times: 1.0
+              assign rc = '#e0b441'
+              if rbggn >= 8.0
+                assign rc = '#5fbf7e'
+              elsif rbggn >= 7.0
+                assign rc = '#9ccf63'
+              endif
+              assign rsale = false
+              if rec.compare_at_price > rec.price
+                assign rsale = true
+                assign rdisc = rec.compare_at_price | minus: rec.price | times: 100.0 | divided_by: rec.compare_at_price | round
+              endif
+            -%}
+            <div class="pdp__card">
+              {%- if rsale -%}<span class="cflag">-{{ rdisc }}%</span>{%- endif -%}
+              <a href="{{ rec.url }}" class="cmedia">{% if rec.featured_image %}<img src="{{ rec.featured_image | image_url: width: 360 }}" alt="{{ rec.title | escape }}" width="360" height="360" loading="lazy">{% endif %}</a>
+              <div class="cbody">
+                {%- if rbgg != blank -%}
+                  <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
+                    <span style="display:inline-flex;align-items:center;gap:5px;background:#2b2233;border-radius:5px;padding:2px 6px"><span style="font-size:10px;font-weight:700;color:#fff;letter-spacing:.5px">BGG</span><span style="font-size:11px;font-weight:700;color:{{ rc }}">{{ rbgg }}</span></span>
+                    {%- if rec.metafields.custom.bgg_rank.value != blank -%}<span style="font-size:10.5px;color:#9b948a">rank #{{ rec.metafields.custom.bgg_rank.value }}</span>{%- endif -%}
+                  </div>
+                {%- endif -%}
+                <a class="cname" href="{{ rec.url }}">{{ rec.title }}</a>
+                {%- if rec.metafields.custom.player_count.value != blank or rec.metafields.custom.play_time.value != blank -%}
+                  <div style="display:flex;gap:10px;margin-top:7px;font-size:11px;color:#6b7a82">
+                    {%- if rec.metafields.custom.player_count.value != blank -%}<span>&#9823; {{ rec.metafields.custom.player_count.value }}</span>{%- endif -%}
+                    {%- if rec.metafields.custom.play_time.value != blank -%}<span>&#9201; {{ rec.metafields.custom.play_time.value }}</span>{%- endif -%}
+                  </div>
+                {%- endif -%}
+                <div class="cfoot">
+                  <div>
+                    {%- if rsale -%}<span style="font-size:11px;color:#9b948a;text-decoration:line-through">{{ rec.compare_at_price | money }}</span>{%- endif -%}
+                    <div class="cprice">{{ rec.price | money }}</div>
+                  </div>
+                  <a class="cadd" href="{{ rec.url }}">Add</a>
+                </div>
+              </div>
+            </div>
+          {%- endfor -%}
+        </div>
+      </div>
+    {%- endif -%}
+
+  </div>
+</div>
+
+{%- comment -%} Structured data for search engines (Product + Breadcrumb) {%- endcomment -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Product",
+      "name": {{ product.title | json }},
+      "url": {{ canonical_url | json }},
+      {% if product.featured_image %}"image": {{ product.featured_image | image_url: width: 1200 | prepend: "https:" | json }},{% endif %}
+      "description": {{ product.description | default: product.title | strip_html | truncatewords: 60 | json }},
+      {% if product.vendor != blank %}"brand": { "@type": "Brand", "name": {{ product.vendor | json }} },{% endif %}
+      {% if variant.sku != blank %}"sku": {{ variant.sku | json }},{% endif %}
+      {% if rcount != blank and rscore != blank %}"aggregateRating": { "@type": "AggregateRating", "ratingValue": "{{ rscore }}", "reviewCount": "{{ rcount }}", "bestRating": "5", "worstRating": "1" },{% endif %}
+      {% if product.variants.size > 1 %}
+      "offers": {
+        "@type": "AggregateOffer",
+        "priceCurrency": {{ cart.currency.iso_code | json }},
+        "lowPrice": {{ product.price_min | divided_by: 100.0 }},
+        "highPrice": {{ product.price_max | divided_by: 100.0 }},
+        "offerCount": {{ product.variants.size }},
+        "availability": "https://schema.org/{% if product.available %}InStock{% else %}OutOfStock{% endif %}",
+        "url": {{ canonical_url | json }}
+      }
+      {% else %}
+      "offers": {
+        "@type": "Offer",
+        "priceCurrency": {{ cart.currency.iso_code | json }},
+        "price": {{ variant.price | divided_by: 100.0 }},
+        "availability": "https://schema.org/{% if product.available %}InStock{% else %}OutOfStock{% endif %}",
+        "itemCondition": "https://schema.org/NewCondition",
+        "url": {{ canonical_url | json }}
+      }
+      {% endif %}
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": {{ shop.url | append: routes.root_url | json }} }{% if collection %},
+        { "@type": "ListItem", "position": 2, "name": {{ collection.title | json }}, "item": {{ shop.url | append: collection.url | json }} }{% endif %},
+        { "@type": "ListItem", "position": {% if collection %}3{% else %}2{% endif %}, "name": {{ product.title | json }}, "item": {{ canonical_url | json }} }
+      ]
+    }
+  ]
+}
+</script>
+
+<script>
+  (function () {
+    var root = document.currentScript.previousElementSibling;
+    if (!root || !root.hasAttribute('data-pdp')) {
+      root = document.querySelector('.mp-pdp-{{ section.id }}');
+    }
+    if (!root) return;
+
+    // gallery thumbnails
+    var main = root.querySelector('#pdp-main-{{ section.id }}');
+    root.querySelectorAll('.pdp__thumb').forEach(function (t) {
+      t.addEventListener('click', function () {
+        if (main) main.src = t.getAttribute('data-src');
+        root.querySelectorAll('.pdp__thumb').forEach(function (x) { x.classList.remove('is-active'); });
+        t.classList.add('is-active');
+      });
+    });
+
+    // quantity
+    var qty = root.querySelector('#pdp-qty-{{ section.id }}');
+    root.querySelectorAll('[data-q]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var v = parseInt(qty.value, 10) || 1;
+        v += parseInt(b.getAttribute('data-q'), 10);
+        if (v < 1) v = 1;
+        qty.value = v;
+      });
+    });
+
+    // how-to-play tabs
+    function activate(group, attr, val) {
+      root.querySelectorAll('[' + attr + ']').forEach(function (el) {
+        el.classList.toggle('is-active', el.getAttribute(attr) === val);
+      });
+      root.querySelectorAll('[' + group + ']').forEach(function (el) {
+        el.hidden = el.getAttribute(group) !== val;
+      });
+    }
+    root.querySelectorAll('[data-tab]').forEach(function (t) {
+      t.addEventListener('click', function () { activate('data-panel', 'data-tab', t.getAttribute('data-tab')); });
+    });
+    root.querySelectorAll('[data-desc]').forEach(function (t) {
+      t.addEventListener('click', function () { activate('data-descpanel', 'data-desc', t.getAttribute('data-desc')); });
+    });
+
+    // variant selection
+    var variants = [
+      {%- for v in product.variants -%}
+        { "id": {{ v.id }}, "options": {{ v.options | json }}, "available": {{ v.available }}, "price_str": {{ v.price | money | json }}, "compare_str": {% if v.compare_at_price > v.price %}{{ v.compare_at_price | money | json }}{% else %}null{% endif %}, "sku": {{ v.sku | json }}, "avail_qty": {% if v.inventory_management and v.inventory_quantity > 0 %}{{ v.inventory_quantity }}{% else %}0{% endif %} }{%- unless forloop.last -%},{%- endunless -%}
+      {%- endfor -%}
+    ];
+    var variantId = {{ variant.id | default: 'null' }};
+
+    var optionGroups = root.querySelectorAll('[data-options] [data-option-index]');
+    var priceEl = root.querySelector('[data-price]');
+    var rrpEl = root.querySelector('[data-rrp]');
+    var saleEl = root.querySelector('[data-saletag]');
+    var stockEl = root.querySelector('[data-stock]');
+    var skuEl = root.querySelector('[data-sku]');
+    var addBtn = root.querySelector('.pdp__add');
+    var buyBtn = root.querySelector('.pdp__buynow');
+
+    function currentSelections() {
+      return Array.prototype.map.call(optionGroups, function (group) {
+        var active = group.querySelector('.pdp__opt.is-active');
+        return active ? active.getAttribute('data-value') : null;
+      });
+    }
+    function matchVariant(sel) {
+      return variants.filter(function (v) {
+        return v.options.length === sel.length && v.options.every(function (o, i) { return o === sel[i]; });
+      })[0];
+    }
+    function updateForVariant(v) {
+      if (!v) {
+        variantId = null;
+        if (addBtn) { addBtn.disabled = true; addBtn.textContent = 'Unavailable'; }
+        if (buyBtn) buyBtn.disabled = true;
+        return;
+      }
+      variantId = v.id;
+      if (priceEl) priceEl.innerHTML = v.price_str;
+      if (rrpEl) { if (v.compare_str) { rrpEl.innerHTML = v.compare_str; rrpEl.hidden = false; } else { rrpEl.hidden = true; } }
+      if (saleEl) saleEl.hidden = !v.compare_str;
+      if (skuEl) { if (v.sku) { skuEl.textContent = 'SKU: ' + v.sku; skuEl.hidden = false; } else { skuEl.hidden = true; } }
+      if (stockEl) {
+        stockEl.innerHTML = v.available
+          ? '<span class="pdp__dot" style="background:#2f8f5b"></span><b style="color:#2f8f5b">In stock</b>' + (v.avail_qty > 0 ? '<span style="color:#6b7a82"> · ' + v.avail_qty + ' available</span>' : '')
+          : '<span class="pdp__dot" style="background:#d6402e"></span><b style="color:#d6402e">Out of stock</b>';
+      }
+      if (addBtn) { addBtn.disabled = !v.available; addBtn.textContent = v.available ? 'Add to basket' : 'Sold out'; }
+      if (buyBtn) buyBtn.disabled = !v.available;
+      try {
+        var url = new URL(window.location.href);
+        url.searchParams.set('variant', v.id);
+        window.history.replaceState({}, '', url);
+      } catch (e) {}
+    }
+    root.querySelectorAll('[data-option-value]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var group = btn.closest('[data-option-index]');
+        if (group) {
+          group.querySelectorAll('.pdp__opt').forEach(function (x) { x.classList.remove('is-active'); });
+          btn.classList.add('is-active');
+        }
+        updateForVariant(matchVariant(currentSelections()));
+      });
+    });
+
+    // add to cart / buy now
+    root.querySelectorAll('[data-add]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        if (!variantId) return;
+        var dest = btn.getAttribute('data-add') === 'checkout' ? '/checkout' : '{{ routes.cart_url }}';
+        btn.disabled = true;
+        fetch('{{ routes.cart_add_url }}', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify({ items: [{ id: variantId, quantity: parseInt(qty.value, 10) || 1 }] })
+        }).then(function (r) { return r.json(); }).then(function () {
+          window.location.href = dest;
+        }).catch(function () { btn.disabled = false; });
+      });
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "MP Product",
+  "settings": [
+    { "type": "header", "content": "Buy box" },
+    { "type": "text", "id": "delivery_line", "label": "Delivery line", "default": "Free UK delivery over £50" },
+    { "type": "checkbox", "id": "show_features", "label": "Show 'Why you'll love it'", "default": true },
+    { "type": "paragraph", "content": "Reviews, awards, BGA link & rating bars are read from product metafields (custom.review_score, custom.awards, etc.)." },
+    { "type": "header", "content": "Customers also bought" },
+    { "type": "text", "id": "also_heading", "label": "Heading", "default": "Customers also bought" },
+    { "type": "collection", "id": "related_collection", "label": "Related collection", "info": "Defaults to one of the product's own collections if left empty." }
+  ],
+  "enabled_on": { "templates": ["product"] },
+  "presets": [
+    { "name": "MP Product" }
+  ]
+}
+{% endschema %}

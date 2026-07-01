@@ -1,0 +1,77 @@
+{%- comment -%}
+  MPGames "Shop by designer" — grid of designer cards, each linked to that
+  designer's collection. Title and game count are read from the collection.
+{%- endcomment -%}
+
+{%- style -%}
+  .mp-dz-{{ section.id }} .mp-dz__pad { padding: 18px 28px 6px; }
+  .mp-dz-{{ section.id }} .mp-dz__head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 13px; }
+  .mp-dz-{{ section.id }} .mp-dz__title { font-size: 20px; font-weight: 700; color: #16323f; }
+  .mp-dz-{{ section.id }} .mp-dz__all { font-size: 12.5px; color: #f2872f; font-weight: 600; text-decoration: none; }
+  .mp-dz-{{ section.id }} .mp-dz__grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; }
+  .mp-dz-{{ section.id }} .mp-dz__cell {
+    border: 1px solid #e7e0d4; border-radius: 10px; background: #fbf9f4; padding: 14px 16px;
+    text-decoration: none; display: flex; align-items: center; gap: 12px;
+  }
+  .mp-dz-{{ section.id }} .mp-dz__av {
+    width: 38px; height: 38px; flex: none; border-radius: 50%; background: #16323f; color: #f2872f;
+    display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700;
+  }
+  .mp-dz-{{ section.id }} .mp-dz__name { font-size: 14px; font-weight: 600; color: #16323f; line-height: 1.2; }
+  .mp-dz-{{ section.id }} .mp-dz__count { font-size: 11.5px; color: #8a8278; margin-top: 2px; }
+  @media (max-width: 989px) { .mp-dz-{{ section.id }} .mp-dz__grid { grid-template-columns: repeat(2,1fr); } }
+  @media (max-width: 749px) { .mp-dz-{{ section.id }} .mp-dz__pad { padding: 18px 16px 6px; } }
+{%- endstyle -%}
+
+<div class="mp-cream mp-dz-{{ section.id }}">
+  <div class="mp-col">
+    <div class="mp-dz__pad">
+      <div class="mp-dz__head">
+        <div class="mp-dz__title mp-cond">{{ section.settings.title }}</div>
+        {%- if section.settings.link_label != blank -%}
+          <a class="mp-dz__all" href="{{ section.settings.link_url | default: '#' }}">{{ section.settings.link_label }} &#8594;</a>
+        {%- endif -%}
+      </div>
+      <div class="mp-dz__grid">
+        {%- for block in section.blocks -%}
+          {%- assign col = block.settings.collection -%}
+          {%- if col != blank -%}
+            <a class="mp-dz__cell" href="{{ col.url }}" {{ block.shopify_attributes }}>
+              <span class="mp-dz__av mp-cond">{{ col.title | slice: 0 }}</span>
+              <span>
+                <div class="mp-dz__name mp-cond">{{ col.title }}</div>
+                <div class="mp-dz__count">{{ col.all_products_count }} game{% if col.all_products_count != 1 %}s{% endif %}</div>
+              </span>
+            </a>
+          {%- elsif request.design_mode -%}
+            <div class="mp-dz__cell"><span style="color:#8a8278;font-size:12px">Pick a designer collection</span></div>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "MP Designers",
+  "max_blocks": 12,
+  "settings": [
+    { "type": "text", "id": "title", "label": "Title", "default": "Shop by designer" },
+    { "type": "text", "id": "link_label", "label": "Link label", "default": "All designers" },
+    { "type": "url", "id": "link_url", "label": "Link URL" }
+  ],
+  "blocks": [
+    {
+      "type": "designer",
+      "name": "Designer",
+      "settings": [
+        { "type": "collection", "id": "collection", "label": "Designer collection" }
+      ]
+    }
+  ],
+  "presets": [
+    { "name": "MP Designers" }
+  ]
+}
+{% endschema %}

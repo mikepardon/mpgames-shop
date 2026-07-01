@@ -1,0 +1,19 @@
+{
+  "sections": {
+    "mp_about": {
+      "type": "mp-about",
+      "blocks": {
+        "s1": { "type": "stat", "settings": { "number": "1,000s", "label": "games in stock" } },
+        "s2": { "type": "stat", "settings": { "number": "Every game", "label": "BGG-ranked" } },
+        "s3": { "type": "stat", "settings": { "number": "Free", "label": "UK delivery over £50" } },
+        "s4": { "type": "stat", "settings": { "number": "30-day", "label": "returns on unopened games" } },
+        "v1": { "type": "value", "settings": { "icon": "📊", "title": "Honest data", "body": "Real BGG scores and specs on every listing — we'd rather you bought the right game than the priciest one." } },
+        "v2": { "type": "value", "settings": { "icon": "📦", "title": "Fast & careful", "body": "Next working day dispatch, packed properly so corners arrive crisp. Free UK delivery over £50." } },
+        "v3": { "type": "value", "settings": { "icon": "🤝", "title": "Players first", "body": "A real team of gamers on support who've played what they sell — ask us anything before you buy." } }
+      },
+      "block_order": ["s1", "s2", "s3", "s4", "v1", "v2", "v3"],
+      "settings": {}
+    }
+  },
+  "order": ["mp_about"]
+}

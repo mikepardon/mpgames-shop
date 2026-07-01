@@ -1,0 +1,61 @@
+{%- comment -%} MPGames 404 — imported from Claude Design "MPGames 404". {%- endcomment -%}
+{%- style -%}
+  .mp-404-{{ section.id }} { background: #f4efe6; font-family: 'Barlow', ui-sans-serif, system-ui, sans-serif; color: #16323f; }
+  .mp-404-{{ section.id }} .e404 { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 56px 28px 64px; }
+  .mp-404-{{ section.id }} .e404__row { display: flex; align-items: center; gap: 18px; }
+  .mp-404-{{ section.id }} .e404__die { width: 84px; height: 84px; border-radius: 18px; background: #fff; border: 1px solid #e7ddcb; box-shadow: 0 4px 14px rgba(20,40,50,.08); display: flex; align-items: center; justify-content: center; font-size: 46px; }
+  .mp-404-{{ section.id }} .e404__num { font-size: 96px; font-weight: 700; line-height: 1; }
+  .mp-404-{{ section.id }} .e404__h { font-size: 32px; font-weight: 700; margin-top: 26px; }
+  .mp-404-{{ section.id }} .e404__p { font-size: 15px; color: #8a8278; margin-top: 10px; max-width: 460px; line-height: 1.6; }
+  .mp-404-{{ section.id }} .e404__search { max-width: 480px; width: 100%; margin-top: 24px; display: flex; background: #fff; border: 1px solid #e2ddd1; border-radius: 9px; overflow: hidden; }
+  .mp-404-{{ section.id }} .e404__search input { flex: 1; border: 0; outline: 0; padding: 13px 16px; font-size: 13.5px; font-family: inherit; }
+  .mp-404-{{ section.id }} .e404__search button { background: #f2872f; color: #fff; padding: 13px 22px; font-size: 14px; font-weight: 600; border: 0; cursor: pointer; font-family: inherit; }
+  .mp-404-{{ section.id }} .e404__btns { display: flex; gap: 11px; margin-top: 22px; flex-wrap: wrap; justify-content: center; }
+  .mp-404-{{ section.id }} .e404__btn { font-weight: 600; font-size: 14px; padding: 12px 24px; border-radius: 9px; text-decoration: none; }
+  .mp-404-{{ section.id }} .e404__btn--dark { background: #16323f; color: #fff; }
+  .mp-404-{{ section.id }} .e404__btn--ghost { background: #fff; border: 1px solid #d8d4cc; color: #16323f; }
+  .mp-404-{{ section.id }} .e404__poplabel { font-size: 12px; color: #9b948a; letter-spacing: .4px; margin: 34px 0 11px; }
+  .mp-404-{{ section.id }} .e404__chips { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; max-width: 560px; }
+  .mp-404-{{ section.id }} .e404__chip { background: #fff; border: 1px solid #e2ddd1; color: #4a443c; font-size: 13px; font-weight: 600; padding: 8px 15px; border-radius: 8px; text-decoration: none; }
+{%- endstyle -%}
+
+<div class="mp-404-{{ section.id }}">
+  <div class="e404">
+    <div class="e404__row">
+      <span class="e404__die" style="transform:rotate(-8deg)">&#9856;</span>
+      <span class="e404__num mp-cond">404</span>
+      <span class="e404__die" style="transform:rotate(9deg)">&#9861;</span>
+    </div>
+    <div class="e404__h mp-cond">{{ section.settings.heading }}</div>
+    <div class="e404__p">{{ section.settings.body }}</div>
+
+    <form class="e404__search" action="{{ routes.search_url }}" method="get" role="search">
+      <input type="search" name="q" placeholder="Search for a game…" aria-label="Search">
+      <button type="submit" class="mp-cond">Search</button>
+    </form>
+
+    <div class="e404__btns">
+      <a class="e404__btn e404__btn--dark mp-cond" href="{{ routes.root_url }}">Back to home</a>
+      <a class="e404__btn e404__btn--ghost mp-cond" href="/collections/all-games">Browse all games</a>
+    </div>
+
+    <div class="e404__poplabel">POPULAR RIGHT NOW</div>
+    <div class="e404__chips">
+      <a class="e404__chip mp-cond" href="/collections/best-sellers">Best sellers</a>
+      <a class="e404__chip mp-cond" href="/collections/top-rated">Top rated</a>
+      <a class="e404__chip mp-cond" href="/collections/new-releases">New releases</a>
+      <a class="e404__chip mp-cond" href="/collections/sale">Sale</a>
+      <a class="e404__chip mp-cond" href="/blogs/news">Read the blog</a>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "MP 404",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "This game's not on the table" },
+    { "type": "textarea", "id": "body", "label": "Body", "default": "The page you're after has been moved, sold out, or never existed. Let's get you back to the good stuff." }
+  ]
+}
+{% endschema %}

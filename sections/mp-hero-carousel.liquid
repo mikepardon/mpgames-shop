@@ -1,0 +1,142 @@
+{%- comment -%}
+  MPGames hero carousel — auto-rotating slides with arrows and dots.
+  Imported from Claude Design "MPGames Homepage". Slides are blocks.
+{%- endcomment -%}
+
+{%- style -%}
+  .mp-hero-{{ section.id }} .mp-hero__vp { position: relative; overflow: hidden; }
+  .mp-hero-{{ section.id }} .mp-hero__track { display: flex; transition: transform .5s cubic-bezier(.4,0,.2,1); }
+  .mp-hero-{{ section.id }} .mp-hero__slide {
+    flex: 0 0 100%; min-height: 340px; position: relative;
+    display: flex; flex-direction: column; justify-content: center; padding: 46px 56px;
+  }
+  .mp-hero-{{ section.id }} .mp-hero__tag {
+    background: #f2872f; color: #fff; font-size: 12.5px; font-weight: 600;
+    padding: 5px 13px; border-radius: 20px; align-self: flex-start;
+  }
+  .mp-hero-{{ section.id }} .mp-hero__title {
+    font-size: 44px; font-weight: 700; color: #fff; margin-top: 15px;
+    line-height: 1.04; max-width: 520px;
+  }
+  .mp-hero-{{ section.id }} .mp-hero__sub { color: #cfe0e6; font-size: 15px; margin-top: 12px; max-width: 440px; }
+  .mp-hero-{{ section.id }} .mp-hero__cta {
+    background: #fff; color: #16323f; font-weight: 600; font-size: 15px;
+    padding: 12px 24px; border-radius: 8px; align-self: flex-start; margin-top: 22px;
+    text-decoration: none;
+  }
+  .mp-hero-{{ section.id }} .mp-hero__arrow {
+    position: absolute; top: 50%; transform: translateY(-50%); width: 42px; height: 42px;
+    border-radius: 50%; background: rgba(255,255,255,.92); display: flex; align-items: center;
+    justify-content: center; color: #16323f; font-size: 20px; cursor: pointer; border: 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,.18);
+  }
+  .mp-hero-{{ section.id }} .mp-hero__arrow--prev { left: 16px; }
+  .mp-hero-{{ section.id }} .mp-hero__arrow--next { right: 16px; }
+  .mp-hero-{{ section.id }} .mp-hero__dots { position: absolute; bottom: 16px; left: 56px; display: flex; gap: 8px; }
+  .mp-hero-{{ section.id }} .mp-hero__dot {
+    width: 8px; height: 8px; border-radius: 8px; background: rgba(255,255,255,.55);
+    cursor: pointer; transition: all .3s; border: 0; padding: 0;
+  }
+  .mp-hero-{{ section.id }} .mp-hero__dot[aria-current="true"] { width: 26px; background: #f2872f; }
+  @media (max-width: 749px) {
+    .mp-hero-{{ section.id }} .mp-hero__slide { padding: 32px 20px; min-height: 280px; }
+    .mp-hero-{{ section.id }} .mp-hero__title { font-size: 30px; }
+    .mp-hero-{{ section.id }} .mp-hero__dots { left: 20px; }
+  }
+{%- endstyle -%}
+
+<div class="mp-cream mp-hero-{{ section.id }}">
+  <div class="mp-col">
+    <div class="mp-hero__vp" data-mp-hero data-autoplay="{{ section.settings.autoplay_seconds }}">
+      <div class="mp-hero__track" data-track>
+        {%- for block in section.blocks -%}
+          <div class="mp-hero__slide" style="background: {{ block.settings.bg }}" {{ block.shopify_attributes }}>
+            {%- if block.settings.kicker != blank -%}
+              <span class="mp-hero__tag mp-cond">{{ block.settings.kicker }}</span>
+            {%- endif -%}
+            <div class="mp-hero__title mp-cond">{{ block.settings.title }}</div>
+            <div class="mp-hero__sub">{{ block.settings.sub }}</div>
+            {%- if block.settings.cta_label != blank -%}
+              <a class="mp-hero__cta mp-cond" href="{{ block.settings.cta_url | default: '#' }}">{{ block.settings.cta_label }} &#8594;</a>
+            {%- endif -%}
+          </div>
+        {%- endfor -%}
+      </div>
+
+      {%- if section.blocks.size > 1 -%}
+        <button class="mp-hero__arrow mp-hero__arrow--prev" data-prev aria-label="Previous slide">&lsaquo;</button>
+        <button class="mp-hero__arrow mp-hero__arrow--next" data-next aria-label="Next slide">&rsaquo;</button>
+        <div class="mp-hero__dots" data-dots>
+          {%- for block in section.blocks -%}
+            <button class="mp-hero__dot" data-go="{{ forloop.index0 }}" aria-label="Go to slide {{ forloop.index }}"{% if forloop.first %} aria-current="true"{% endif %}></button>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+<script>
+  (function () {
+    var root = document.querySelector('.mp-hero-{{ section.id }} [data-mp-hero]');
+    if (!root) return;
+    var track = root.querySelector('[data-track]');
+    var dots = Array.prototype.slice.call(root.querySelectorAll('[data-go]'));
+    var count = track.children.length;
+    var i = 0, timer = null;
+    var delay = (parseFloat(root.getAttribute('data-autoplay')) || 0) * 1000;
+
+    function render() {
+      track.style.transform = 'translateX(-' + (i * 100) + '%)';
+      dots.forEach(function (d, idx) { d.setAttribute('aria-current', idx === i ? 'true' : 'false'); });
+    }
+    function go(n) { i = (n + count) % count; render(); }
+    function start() { if (delay > 0 && count > 1) { stop(); timer = setInterval(function () { go(i + 1); }, delay); } }
+    function stop() { if (timer) { clearInterval(timer); timer = null; } }
+
+    var prev = root.querySelector('[data-prev]');
+    var next = root.querySelector('[data-next]');
+    if (prev) prev.addEventListener('click', function () { go(i - 1); start(); });
+    if (next) next.addEventListener('click', function () { go(i + 1); start(); });
+    dots.forEach(function (d) { d.addEventListener('click', function () { go(parseInt(d.getAttribute('data-go'), 10)); start(); }); });
+    root.addEventListener('mouseenter', stop);
+    root.addEventListener('mouseleave', start);
+
+    render();
+    start();
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "MP Hero carousel",
+  "max_blocks": 6,
+  "blocks": [
+    {
+      "type": "slide",
+      "name": "Slide",
+      "settings": [
+        { "type": "text", "id": "kicker", "label": "Kicker / badge", "default": "TOP-RANKED TABLETOP" },
+        { "type": "text", "id": "title", "label": "Title", "default": "The biggest names in tabletop, all in one place" },
+        { "type": "textarea", "id": "sub", "label": "Subtitle", "default": "Games ranked by BoardGameGeek score, player count and play time." },
+        { "type": "text", "id": "cta_label", "label": "Button label", "default": "Shop the collection" },
+        { "type": "url", "id": "cta_url", "label": "Button URL" },
+        { "type": "text", "id": "bg", "label": "Background (CSS)", "default": "linear-gradient(120deg,#16323f,#2c5466)", "info": "A CSS color or gradient." }
+      ]
+    }
+  ],
+  "settings": [
+    { "type": "range", "id": "autoplay_seconds", "min": 0, "max": 10, "step": 1, "unit": "s", "label": "Autoplay interval (0 = off)", "default": 6 }
+  ],
+  "presets": [
+    {
+      "name": "MP Hero carousel",
+      "blocks": [
+        { "type": "slide", "settings": { "kicker": "TOP-RANKED TABLETOP", "title": "The biggest names in tabletop, all in one place", "sub": "Games ranked by BoardGameGeek score, player count and play time.", "cta_label": "Shop the collection", "bg": "linear-gradient(120deg,#16323f,#2c5466)" } },
+        { "type": "slide", "settings": { "kicker": "STAFF PICKS", "title": "Heavy euros for your next games night", "sub": "Hand-picked strategy titles rated 8.0+ on BGG — in stock and ready to ship.", "cta_label": "Browse strategy", "bg": "linear-gradient(120deg,#2b2233,#4a3a5c)" } },
+        { "type": "slide", "settings": { "kicker": "JUST LANDED", "title": "This month's new releases", "sub": "Be first to the table — fresh arrivals and pre-orders updated weekly.", "cta_label": "See what's new", "bg": "linear-gradient(120deg,#13513f,#2f8f5b)" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

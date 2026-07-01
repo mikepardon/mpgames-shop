@@ -1,0 +1,119 @@
+{%- comment -%} MPGames Contact — real contact form + channels sidebar. Imported from Claude Design. {%- endcomment -%}
+{%- style -%}
+  .mp-co-{{ section.id }} { font-family: 'Barlow', ui-sans-serif, system-ui, sans-serif; color: #16323f; padding-bottom: 44px; }
+  .mp-co-{{ section.id }} .co__head { max-width: 1080px; margin: 0 auto; padding: 18px 28px 4px; }
+  .mp-co-{{ section.id }} .co__h1 { font-size: 36px; font-weight: 700; }
+  .mp-co-{{ section.id }} .co__sub { font-size: 14.5px; color: #8a8278; margin-top: 6px; max-width: 600px; }
+  .mp-co-{{ section.id }} .co__body { display: flex; gap: 30px; max-width: 1080px; margin: 0 auto; padding: 22px 28px 0; align-items: flex-start; }
+  .mp-co-{{ section.id }} .co__form { flex: 1; min-width: 0; background: #fff; border: 1px solid #e7ddcb; border-radius: 14px; padding: 30px 32px; box-shadow: 0 1px 3px rgba(20,40,50,.05); }
+  .mp-co-{{ section.id }} .co__fh { font-size: 20px; font-weight: 700; }
+  .mp-co-{{ section.id }} .co__fs { font-size: 13px; color: #8a8278; margin-top: 4px; }
+  .mp-co-{{ section.id }} .co__row { display: flex; gap: 14px; margin-top: 18px; }
+  .mp-co-{{ section.id }} .co__row > div { flex: 1; }
+  .mp-co-{{ section.id }} .co__field { margin-top: 14px; }
+  .mp-co-{{ section.id }} .co__label { font-size: 12.5px; font-weight: 600; color: #4a443c; margin-bottom: 6px; display: block; }
+  .mp-co-{{ section.id }} .co__opt { color: #a39c92; font-weight: 400; }
+  .mp-co-{{ section.id }} .co__input, .mp-co-{{ section.id }} .co__select, .mp-co-{{ section.id }} .co__area { width: 100%; box-sizing: border-box; border: 1px solid #d8d4cc; border-radius: 8px; padding: 12px 14px; font-size: 13.5px; background: #fbfaf7; font-family: inherit; color: #16323f; }
+  .mp-co-{{ section.id }} .co__area { min-height: 120px; resize: vertical; }
+  .mp-co-{{ section.id }} .co__check { display: flex; align-items: flex-start; gap: 9px; margin-top: 14px; font-size: 12px; color: #6b6b62; line-height: 1.45; }
+  .mp-co-{{ section.id }} .co__btn { background: #f2872f; color: #fff; text-align: center; font-size: 15px; font-weight: 700; padding: 14px; border-radius: 9px; margin-top: 20px; border: 0; cursor: pointer; font-family: inherit; width: 100%; }
+  .mp-co-{{ section.id }} .co__ok { background: #e3f1e9; border: 1px solid #b6dcc6; color: #1f6b45; border-radius: 8px; padding: 12px 14px; font-size: 13px; margin-bottom: 16px; }
+  .mp-co-{{ section.id }} .co__err { background: #fdecea; border: 1px solid #f3c0bb; color: #9a3b2e; border-radius: 8px; padding: 10px 13px; font-size: 12.5px; margin-bottom: 14px; }
+  .mp-co-{{ section.id }} .co__side { width: 316px; flex: none; }
+  .mp-co-{{ section.id }} .co__chan { display: flex; flex-direction: column; gap: 14px; }
+  .mp-co-{{ section.id }} .co__card { border: 1px solid #e7ddcb; border-radius: 13px; background: #fff; padding: 18px; display: flex; gap: 14px; align-items: flex-start; box-shadow: 0 1px 2px rgba(20,40,50,.04); text-decoration: none; }
+  .mp-co-{{ section.id }} .co__ci { width: 42px; height: 42px; border-radius: 11px; display: flex; align-items: center; justify-content: center; font-size: 19px; flex: none; }
+  .mp-co-{{ section.id }} .co__ct { font-size: 15px; font-weight: 700; }
+  .mp-co-{{ section.id }} .co__cv { font-size: 13px; color: #16323f; font-weight: 600; margin-top: 3px; }
+  .mp-co-{{ section.id }} .co__cn { font-size: 12px; color: #8a8278; margin-top: 2px; }
+  .mp-co-{{ section.id }} .co__hours { border: 1px solid #e7ddcb; border-radius: 13px; background: #fff; overflow: hidden; margin-top: 14px; box-shadow: 0 1px 2px rgba(20,40,50,.04); }
+  .mp-co-{{ section.id }} .co__hh { font-size: 15px; font-weight: 700; padding: 15px 17px 11px; }
+  .mp-co-{{ section.id }} .co__hr { display: flex; justify-content: space-between; padding: 9px 17px; border-top: 1px solid #f1ece2; font-size: 13px; color: #4a443c; }
+  .mp-co-{{ section.id }} .co__faq { text-decoration: none; display: flex; align-items: center; justify-content: space-between; border: 1px dashed #cdc6ba; border-radius: 13px; background: #faf6ee; padding: 16px 18px; margin-top: 14px; }
+  @media (max-width: 749px) { .mp-co-{{ section.id }} .co__body { flex-direction: column; } .mp-co-{{ section.id }} .co__side { width: 100%; } .mp-co-{{ section.id }} .co__row { flex-direction: column; gap: 0; } }
+{%- endstyle -%}
+
+<div class="mp-co-{{ section.id }}">
+  <div class="co__head"><div class="co__h1 mp-cond">{{ section.settings.title }}</div><div class="co__sub">{{ section.settings.subtitle }}</div></div>
+
+  <div class="co__body">
+    <div class="co__form">
+      <div class="co__fh mp-cond">{{ section.settings.form_title }}</div>
+      <div class="co__fs">{{ section.settings.form_sub }}</div>
+      {%- form 'contact' -%}
+        {%- if form.posted_successfully? -%}<div class="co__ok">Thanks — your message is on its way. We'll reply by email within one working day.</div>{%- endif -%}
+        {%- if form.errors -%}<div class="co__err">{{ form.errors | default_errors }}</div>{%- endif -%}
+        <div class="co__row">
+          <div><label class="co__label" for="co-name-{{ section.id }}">Your name</label><input id="co-name-{{ section.id }}" class="co__input" type="text" name="contact[name]" value="{% if customer %}{{ customer.name }}{% endif %}" required></div>
+          <div><label class="co__label" for="co-email-{{ section.id }}">Email address</label><input id="co-email-{{ section.id }}" class="co__input" type="email" name="contact[email]" value="{% if customer %}{{ customer.email }}{% endif %}" required></div>
+        </div>
+        <div class="co__row">
+          <div><label class="co__label" for="co-order-{{ section.id }}">Order number <span class="co__opt">(optional)</span></label><input id="co-order-{{ section.id }}" class="co__input" type="text" name="contact[Order number]" placeholder="#MPG-000000"></div>
+          <div><label class="co__label" for="co-topic-{{ section.id }}">Topic</label>
+            <select id="co-topic-{{ section.id }}" class="co__select" name="contact[Topic]">
+              <option>Order &amp; delivery</option><option>Returns &amp; refunds</option><option>Product question</option><option>Trade enquiry</option><option>Something else</option>
+            </select>
+          </div>
+        </div>
+        <div class="co__field"><label class="co__label" for="co-msg-{{ section.id }}">Message</label><textarea id="co-msg-{{ section.id }}" class="co__area" name="contact[body]" placeholder="How can we help?" required></textarea></div>
+        <label class="co__check"><input type="checkbox" name="contact[Marketing opt-in]" value="yes" style="margin-top:2px"> Keep me updated with restock alerts and member deals.</label>
+        <button type="submit" class="co__btn mp-cond">Send message</button>
+      {%- endform -%}
+    </div>
+
+    <div class="co__side">
+      {%- assign channels = section.blocks | where: 'type', 'channel' -%}
+      {%- if channels.size > 0 -%}
+        <div class="co__chan">
+          {%- for b in channels -%}
+            <a class="co__card" {% if b.settings.href != blank %}href="{{ b.settings.href }}"{% endif %} {{ b.shopify_attributes }}>
+              <span class="co__ci" style="background:{{ b.settings.tint }}">{{ b.settings.icon }}</span>
+              <span><span class="co__ct mp-cond">{{ b.settings.title }}</span><span class="co__cv">{{ b.settings.value }}</span><span class="co__cn">{{ b.settings.note }}</span></span>
+            </a>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+
+      {%- assign hours = section.blocks | where: 'type', 'hour' -%}
+      {%- if hours.size > 0 -%}
+        <div class="co__hours">
+          <div class="co__hh mp-cond">Support hours</div>
+          {%- for b in hours -%}<div class="co__hr"><span>{{ b.settings.day }}</span><span style="color:#8a8278">{{ b.settings.time }}</span></div>{%- endfor -%}
+        </div>
+      {%- endif -%}
+
+      <a class="co__faq" href="/pages/faqs">
+        <span><span class="co__ct mp-cond" style="display:block">Looking for a quick answer?</span><span style="font-size:12.5px;color:#8a8278">Most questions are covered in our FAQs.</span></span>
+        <span style="color:#f2872f;font-size:18px">&#8250;</span>
+      </a>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "MP Contact",
+  "settings": [
+    { "type": "text", "id": "title", "label": "Title", "default": "Get in touch" },
+    { "type": "textarea", "id": "subtitle", "label": "Subtitle", "default": "Questions about an order, a game, or trade enquiries? Our team plays what they sell — we usually reply within one working day." },
+    { "type": "text", "id": "form_title", "label": "Form title", "default": "Send us a message" },
+    { "type": "text", "id": "form_sub", "label": "Form subtitle", "default": "Fill in the form and we'll get back to you by email." }
+  ],
+  "blocks": [
+    { "type": "channel", "name": "Contact channel", "settings": [
+      { "type": "text", "id": "icon", "label": "Icon", "default": "✉️" },
+      { "type": "color", "id": "tint", "label": "Tint", "default": "#fbeadb" },
+      { "type": "text", "id": "title", "label": "Title", "default": "Email us" },
+      { "type": "text", "id": "value", "label": "Value", "default": "hello@mpgames.io" },
+      { "type": "text", "id": "note", "label": "Note", "default": "Replies within 1 working day" },
+      { "type": "url", "id": "href", "label": "Link (optional)" }
+    ] },
+    { "type": "hour", "name": "Support hours row", "settings": [
+      { "type": "text", "id": "day", "label": "Day", "default": "Monday – Friday" },
+      { "type": "text", "id": "time", "label": "Time", "default": "9:00am – 5:00pm" }
+    ] }
+  ],
+  "enabled_on": { "templates": ["page"] },
+  "presets": [ { "name": "MP Contact" } ]
+}
+{% endschema %}

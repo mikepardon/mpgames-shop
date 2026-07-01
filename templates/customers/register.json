@@ -1,14 +1,13 @@
 {
   "sections": {
-    "main": {
-      "type": "main-register",
+    "mp_auth": {
+      "type": "mp-customers-login",
       "settings": {
-        "padding_top": 36,
-        "padding_bottom": 36
+        "default_tab": "register"
       }
     }
   },
   "order": [
-    "main"
+    "mp_auth"
   ]
 }

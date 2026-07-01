@@ -10,3 +10,5 @@ Thumbs.db
 .shopify
 node_modules
 *.zip
+.env
+.env.*

@@ -1,0 +1,177 @@
+{%- comment -%}
+  MPGames order detail — line items, totals, and addresses for a single order.
+  Uses the real Shopify `order` object.
+{%- endcomment -%}
+
+{%- style -%}
+  .mp-or-{{ section.id }} { background: #f4efe6; font-family: 'Barlow', ui-sans-serif, system-ui, sans-serif; color: #16323f; }
+  .mp-or-{{ section.id }} .or__wrap { max-width: 1040px; margin: 0 auto; padding: 34px 28px 48px; }
+  .mp-or-{{ section.id }} .or__back { font-size: 13px; font-weight: 600; color: #f2872f; text-decoration: none; }
+  .mp-or-{{ section.id }} .or__h { font-size: 28px; font-weight: 700; line-height: 1.1; margin: 10px 0 4px; }
+  .mp-or-{{ section.id }} .or__date { font-size: 13px; color: #8a8278; margin-bottom: 22px; }
+  .mp-or-{{ section.id }} .or__cancel { background: #fdecea; border: 1px solid #f3c0bb; color: #9a3b2e; border-radius: 8px; padding: 11px 14px; font-size: 13px; margin-bottom: 20px; }
+  .mp-or-{{ section.id }} .or__card { background: #fff; border: 1px solid #e7ddcb; border-radius: 14px; padding: 26px 28px; box-shadow: 0 1px 3px rgba(20,40,50,.05); }
+  .mp-or-{{ section.id }} table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  .mp-or-{{ section.id }} thead th { text-align: left; font-size: 11px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; color: #8a8278; padding: 0 12px 10px 0; border-bottom: 1px solid #ece5d8; }
+  .mp-or-{{ section.id }} thead th:last-child, .mp-or-{{ section.id }} tbody td:last-child, .mp-or-{{ section.id }} tfoot td:last-child { text-align: right; }
+  .mp-or-{{ section.id }} tbody td { padding: 14px 12px 14px 0; border-bottom: 1px solid #f1ece2; vertical-align: top; }
+  .mp-or-{{ section.id }} tbody a { color: #16323f; font-weight: 600; text-decoration: none; }
+  .mp-or-{{ section.id }} tbody a:hover { color: #f2872f; }
+  .mp-or-{{ section.id }} .or__props { font-size: 12px; color: #8a8278; margin-top: 4px; }
+  .mp-or-{{ section.id }} .or__fulfil { font-size: 12px; color: #1f6b45; margin-top: 6px; }
+  .mp-or-{{ section.id }} .or__fulfil a { color: #f2872f; }
+  .mp-or-{{ section.id }} tfoot td { padding: 9px 12px 9px 0; font-size: 13.5px; }
+  .mp-or-{{ section.id }} tfoot tr:first-child td { padding-top: 16px; }
+  .mp-or-{{ section.id }} tfoot .or__grand td { font-size: 16px; font-weight: 700; border-top: 1px solid #ece5d8; padding-top: 14px; }
+  .mp-or-{{ section.id }} s { color: #9b948a; }
+  .mp-or-{{ section.id }} .or__addrs { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
+  .mp-or-{{ section.id }} .or__ah { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+  .mp-or-{{ section.id }} .or__status { font-size: 12.5px; color: #4a443c; margin-bottom: 10px; }
+  .mp-or-{{ section.id }} .or__status b { color: #16323f; }
+  .mp-or-{{ section.id }} .or__addr { font-size: 13.5px; line-height: 1.6; color: #4a443c; }
+  .mp-or-{{ section.id }} .or__addr p { margin: 0; }
+  @media (max-width: 749px) {
+    .mp-or-{{ section.id }} .or__addrs { grid-template-columns: 1fr; }
+    .mp-or-{{ section.id }} thead { display: none; }
+    .mp-or-{{ section.id }} tbody tr { display: block; padding: 12px 0; border-bottom: 1px solid #f1ece2; }
+    .mp-or-{{ section.id }} tbody td { display: flex; justify-content: space-between; gap: 14px; padding: 6px 0; border-bottom: 0; text-align: right; }
+    .mp-or-{{ section.id }} tbody td::before { content: attr(data-label); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: #8a8278; text-align: left; }
+  }
+{%- endstyle -%}
+
+<div class="mp-or-{{ section.id }}">
+  <div class="or__wrap">
+    <a class="or__back" href="{{ routes.account_url }}">&#8592; Back to account</a>
+    <h1 class="or__h mp-cond">Order {{ order.name }}</h1>
+    <div class="or__date">Placed {{ order.created_at | date: '%d %B %Y at %H:%M' }}</div>
+
+    {%- if order.cancelled -%}
+      <div class="or__cancel">
+        This order was cancelled on {{ order.cancelled_at | date: '%d %B %Y' }}.
+        {%- if order.cancel_reason_label != blank %} Reason: {{ order.cancel_reason_label }}.{% endif -%}
+      </div>
+    {%- endif -%}
+
+    <div class="or__card">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Product</th>
+            <th scope="col">SKU</th>
+            <th scope="col">Price</th>
+            <th scope="col">Qty</th>
+            <th scope="col">Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          {%- for line_item in order.line_items -%}
+            <tr>
+              <td data-label="Product">
+                {%- if line_item.url != blank -%}
+                  <a href="{{ line_item.url }}">{{ line_item.title | escape }}</a>
+                {%- else -%}
+                  {{ line_item.title | escape }}
+                {%- endif -%}
+                {%- assign property_size = line_item.properties | size -%}
+                {%- unless line_item.product.has_only_default_variant -%}
+                  <div class="or__props">{{ line_item.variant.title | escape }}</div>
+                {%- endunless -%}
+                {%- if property_size != 0 -%}
+                  {%- for property in line_item.properties -%}
+                    {%- assign property_first_char = property.first | slice: 0 -%}
+                    {%- if property.last != blank and property_first_char != '_' -%}
+                      <div class="or__props">{{ property.first }}: {{ property.last }}</div>
+                    {%- endif -%}
+                  {%- endfor -%}
+                {%- endif -%}
+                {%- if line_item.fulfillment -%}
+                  <div class="or__fulfil">
+                    Fulfilled {{ line_item.fulfillment.created_at | date: '%d %b %Y' }}
+                    {%- if line_item.fulfillment.tracking_url %} · <a href="{{ line_item.fulfillment.tracking_url }}">Track shipment</a>{% endif -%}
+                  </div>
+                {%- endif -%}
+              </td>
+              <td data-label="SKU">{{ line_item.sku }}</td>
+              <td data-label="Price">
+                {%- if line_item.original_price != line_item.final_price -%}
+                  <s>{{ line_item.original_price | money }}</s> {{ line_item.final_price | money }}
+                {%- else -%}
+                  {{ line_item.final_price | money }}
+                {%- endif -%}
+              </td>
+              <td data-label="Qty">{{ line_item.quantity }}</td>
+              <td data-label="Total">
+                {%- if line_item.original_line_price != line_item.final_line_price -%}
+                  <s>{{ line_item.original_line_price | money }}</s> {{ line_item.final_line_price | money }}
+                {%- else -%}
+                  {{ line_item.final_line_price | money }}
+                {%- endif -%}
+              </td>
+            </tr>
+          {%- endfor -%}
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="4">Subtotal</td>
+            <td>{{ order.line_items_subtotal_price | money }}</td>
+          </tr>
+          {%- for discount_application in order.cart_level_discount_applications -%}
+            <tr>
+              <td colspan="4">Discount ({{ discount_application.title | escape }})</td>
+              <td>-{{ discount_application.total_allocated_amount | money }}</td>
+            </tr>
+          {%- endfor -%}
+          {%- for shipping_method in order.shipping_methods -%}
+            <tr>
+              <td colspan="4">Shipping ({{ shipping_method.title | escape }})</td>
+              <td>{{ shipping_method.price | money }}</td>
+            </tr>
+          {%- endfor -%}
+          {%- for tax_line in order.tax_lines -%}
+            <tr>
+              <td colspan="4">Tax ({{ tax_line.title | escape }} {{ tax_line.rate | times: 100 }}%)</td>
+              <td>{{ tax_line.price | money }}</td>
+            </tr>
+          {%- endfor -%}
+          {%- if order.total_duties -%}
+            <tr>
+              <td colspan="4">Duties</td>
+              <td>{{ order.total_duties | money }}</td>
+            </tr>
+          {%- endif -%}
+          {%- if order.total_refunded_amount > 0 -%}
+            <tr>
+              <td colspan="4">Refunded</td>
+              <td>-{{ order.total_refunded_amount | money_with_currency }}</td>
+            </tr>
+          {%- endif -%}
+          <tr class="or__grand">
+            <td colspan="4">Total</td>
+            <td>{{ order.total_net_amount | money_with_currency }}</td>
+          </tr>
+        </tfoot>
+      </table>
+
+      <div class="or__addrs">
+        <div>
+          <div class="or__ah mp-cond">Billing address</div>
+          <div class="or__status"><b>Payment:</b> {{ order.financial_status_label }}</div>
+          <div class="or__addr">{{ order.billing_address | format_address }}</div>
+        </div>
+        <div>
+          <div class="or__ah mp-cond">Shipping address</div>
+          <div class="or__status"><b>Fulfilment:</b> {{ order.fulfillment_status_label }}</div>
+          <div class="or__addr">{{ order.shipping_address | format_address }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "MP Order",
+  "settings": [],
+  "presets": [ { "name": "MP Order" } ]
+}
+{% endschema %}

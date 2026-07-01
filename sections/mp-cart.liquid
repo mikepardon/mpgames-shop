@@ -1,0 +1,325 @@
+{%- comment -%}
+  MPGames cart — real Shopify cart with AJAX qty/remove, free-shipping reward
+  tracker, order summary, promo code and upsell. Imported from Claude Design.
+{%- endcomment -%}
+
+{%- liquid
+  assign threshold = settings.free_shipping_threshold | times: 100
+  assign milestones = section.blocks | where: 'type', 'milestone'
+  assign max_amount = 0
+  for b in milestones
+    if b.settings.amount > max_amount
+      assign max_amount = b.settings.amount
+    endif
+  endfor
+  assign max_cents = max_amount | times: 100
+-%}
+
+{%- style -%}
+  .mp-ct-{{ section.id }} { font-family: 'Barlow', ui-sans-serif, system-ui, sans-serif; color: #16323f; padding-bottom: 44px; }
+  .mp-ct-{{ section.id }} .ct__wrap { max-width: 1240px; margin: 0 auto; padding: 0 28px; }
+  .mp-ct-{{ section.id }} .ct__crumb { padding: 15px 0 0; font-size: 12px; color: #9b948a; }
+  .mp-ct-{{ section.id }} .ct__crumb a { color: inherit; text-decoration: none; }
+  .mp-ct-{{ section.id }} .ct__crumb .sep { color: #cfc9be; margin: 0 5px; }
+  .mp-ct-{{ section.id }} .ct__h1 { font-size: 34px; font-weight: 700; padding: 18px 0 4px; }
+  .mp-ct-{{ section.id }} .ct__h1 span { color: #9b948a; font-weight: 600; }
+  .mp-ct-{{ section.id }} .ct__body { display: flex; gap: 28px; padding: 18px 0 10px; align-items: flex-start; }
+  .mp-ct-{{ section.id }} .ct__main { flex: 1; min-width: 0; }
+
+  .mp-ct-{{ section.id }} .ct__reward { border: 1px solid #e7ddcb; border-radius: 14px; background: #fff; padding: 20px 22px; box-shadow: 0 1px 3px rgba(20,40,50,.05); margin-bottom: 18px; }
+  .mp-ct-{{ section.id }} .ct__rhead { display: flex; align-items: center; gap: 9px; }
+  .mp-ct-{{ section.id }} .ct__rh { font-size: 16px; font-weight: 700; }
+  .mp-ct-{{ section.id }} .ct__track { position: relative; margin: 22px 6px 8px; }
+  .mp-ct-{{ section.id }} .ct__bar { height: 8px; border-radius: 8px; background: #ece8e0; overflow: hidden; }
+  .mp-ct-{{ section.id }} .ct__bar span { display: block; height: 100%; border-radius: 8px; background: linear-gradient(90deg,#f2872f,#f5a85f); transition: width .4s ease; }
+  .mp-ct-{{ section.id }} .ct__dot { position: absolute; top: -7px; transform: translateX(-50%); }
+  .mp-ct-{{ section.id }} .ct__dot span { display: flex; width: 22px; height: 22px; border-radius: 50%; align-items: center; justify-content: center; font-size: 11px; border: 2px solid #fff; box-shadow: 0 1px 3px rgba(20,40,50,.2); }
+  .mp-ct-{{ section.id }} .ct__labels { position: relative; height: 34px; margin: 0 6px; }
+  .mp-ct-{{ section.id }} .ct__lab { position: absolute; transform: translateX(-50%); text-align: center; width: 96px; }
+  .mp-ct-{{ section.id }} .ct__lab .a { font-size: 12px; font-weight: 700; }
+  .mp-ct-{{ section.id }} .ct__lab .r { font-size: 10.5px; color: #8a8278; line-height: 1.2; margin-top: 1px; }
+
+  .mp-ct-{{ section.id }} .ct__colhead { display: grid; grid-template-columns: 1fr 150px 110px 34px; gap: 14px; padding: 0 4px 10px; border-bottom: 1px solid #e2ddd1; font: 11px ui-monospace, monospace; color: #a39c92; }
+  .mp-ct-{{ section.id }} .ct__line { display: grid; grid-template-columns: 1fr 150px 110px 34px; gap: 14px; align-items: center; padding: 16px 4px; border-bottom: 1px solid #efe7d8; }
+  .mp-ct-{{ section.id }} .ct__prod { display: flex; gap: 14px; align-items: center; min-width: 0; }
+  .mp-ct-{{ section.id }} .ct__img { width: 74px; height: 74px; border-radius: 9px; flex: none; background: #efece6 center/cover; object-fit: cover; }
+  .mp-ct-{{ section.id }} .ct__bgg { display: inline-flex; align-items: center; gap: 5px; background: #2b2233; border-radius: 5px; padding: 2px 6px; margin-bottom: 5px; }
+  .mp-ct-{{ section.id }} .ct__bgg b { font-size: 9.5px; font-weight: 700; color: #fff; letter-spacing: .5px; }
+  .mp-ct-{{ section.id }} .ct__name { font-size: 16px; font-weight: 700; line-height: 1.2; color: #16323f; text-decoration: none; }
+  .mp-ct-{{ section.id }} .ct__meta { font-size: 12px; color: #8a8278; margin-top: 2px; }
+  .mp-ct-{{ section.id }} .ct__stock { font-size: 11.5px; color: #2f8f5b; margin-top: 4px; display: flex; align-items: center; gap: 5px; }
+  .mp-ct-{{ section.id }} .ct__stock.is-low { color: #d68a1e; font-weight: 600; }
+  .mp-ct-{{ section.id }} .ct__stock.is-out { color: #c0392b; font-weight: 600; }
+  .mp-ct-{{ section.id }} .ct__qty { display: inline-flex; align-items: center; border: 1px solid #cdc6ba; border-radius: 8px; overflow: hidden; background: #fff; }
+  .mp-ct-{{ section.id }} .ct__qty button { padding: 9px 13px; color: #6b7a82; font-size: 15px; cursor: pointer; background: none; border: 0; }
+  .mp-ct-{{ section.id }} .ct__qty .n { padding: 9px 14px; font-size: 14px; font-weight: 600; border-left: 1px solid #e7e0d4; border-right: 1px solid #e7e0d4; min-width: 20px; text-align: center; }
+  .mp-ct-{{ section.id }} .ct__qtywrap { display: flex; justify-content: center; }
+  .mp-ct-{{ section.id }} .ct__line-total { text-align: right; }
+  .mp-ct-{{ section.id }} .ct__lt { font-size: 17px; font-weight: 700; }
+  .mp-ct-{{ section.id }} .ct__ea { font-size: 11px; color: #9b948a; }
+  .mp-ct-{{ section.id }} .ct__rm { width: 28px; height: 28px; border-radius: 7px; border: 1px solid #e2ddd1; display: flex; align-items: center; justify-content: center; color: #b06a5c; font-size: 13px; cursor: pointer; background: #fff; }
+  .mp-ct-{{ section.id }} .ct__continue { display: inline-flex; align-items: center; gap: 8px; margin-top: 18px; color: #16323f; font-size: 14px; font-weight: 600; text-decoration: none; }
+
+  .mp-ct-{{ section.id }} .ct__nudge { margin-top: 26px; }
+  .mp-ct-{{ section.id }} .ct__nh { font-size: 17px; font-weight: 700; margin-bottom: 4px; }
+  .mp-ct-{{ section.id }} .ct__ns { font-size: 12.5px; color: #8a8278; margin-bottom: 14px; }
+  .mp-ct-{{ section.id }} .ct__recs { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; }
+  .mp-ct-{{ section.id }} .ct__rec { border: 1px solid #e7ddcb; border-radius: 11px; background: #fff; padding: 12px; display: flex; gap: 12px; align-items: center; box-shadow: 0 1px 2px rgba(20,40,50,.04); }
+  .mp-ct-{{ section.id }} .ct__recimg { width: 54px; height: 54px; border-radius: 8px; flex: none; background: #efece6 center/cover; object-fit: cover; }
+  .mp-ct-{{ section.id }} .ct__recn { font-size: 13.5px; font-weight: 700; line-height: 1.2; color: #16323f; text-decoration: none; }
+  .mp-ct-{{ section.id }} .ct__recfoot { display: flex; align-items: center; justify-content: space-between; margin-top: 7px; }
+  .mp-ct-{{ section.id }} .ct__recp { font-size: 15px; font-weight: 700; }
+  .mp-ct-{{ section.id }} .ct__recadd { background: #f2872f; color: #fff; border: 0; border-radius: 6px; padding: 6px 11px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit; }
+
+  .mp-ct-{{ section.id }} .ct__side { width: 360px; flex: none; position: sticky; top: 16px; }
+  .mp-ct-{{ section.id }} .ct__sum { border: 1px solid #e7ddcb; border-radius: 14px; background: #fff; overflow: hidden; box-shadow: 0 1px 3px rgba(20,40,50,.05); }
+  .mp-ct-{{ section.id }} .ct__sh { font-size: 18px; font-weight: 700; padding: 18px 20px 0; }
+  .mp-ct-{{ section.id }} .ct__srow { display: flex; justify-content: space-between; font-size: 13.5px; color: #4a443c; margin-bottom: 10px; }
+  .mp-ct-{{ section.id }} .ct__promo { display: flex; gap: 8px; margin: 4px 0 14px; }
+  .mp-ct-{{ section.id }} .ct__promo input { flex: 1; border: 1px solid #d8d4cc; border-radius: 8px; padding: 10px 12px; font-size: 12.5px; background: #fbfaf7; font-family: inherit; }
+  .mp-ct-{{ section.id }} .ct__promo button { background: #16323f; color: #fff; border: 0; border-radius: 8px; padding: 10px 16px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; }
+  .mp-ct-{{ section.id }} .ct__total { border-top: 1px solid #efe7d8; padding: 16px 20px; }
+  .mp-ct-{{ section.id }} .ct__trow { display: flex; justify-content: space-between; align-items: baseline; }
+  .mp-ct-{{ section.id }} .ct__tl { font-size: 18px; font-weight: 700; }
+  .mp-ct-{{ section.id }} .ct__tv { font-size: 24px; font-weight: 700; }
+  .mp-ct-{{ section.id }} .ct__note { font-size: 11.5px; color: #8a8278; margin-top: 3px; }
+  .mp-ct-{{ section.id }} .ct__checkout { width: 100%; background: #f2872f; color: #fff; text-align: center; font-size: 16px; font-weight: 700; padding: 15px; border-radius: 10px; margin-top: 16px; border: 0; cursor: pointer; font-family: inherit; }
+  .mp-ct-{{ section.id }} .ct__pays { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 7px; margin-top: 12px; }
+  .mp-ct-{{ section.id }} .ct__pays svg { height: 24px; width: auto; }
+  .mp-ct-{{ section.id }} .ct__reassure { border: 1px solid #e7ddcb; border-radius: 14px; background: #fff; padding: 16px 18px; margin-top: 16px; display: flex; flex-direction: column; gap: 10px; font-size: 12.5px; color: #4a443c; box-shadow: 0 1px 2px rgba(20,40,50,.04); }
+  .mp-ct-{{ section.id }} .ct__reassure b { color: #16323f; }
+
+  .mp-ct-{{ section.id }} .ct__empty { background: #fff; border: 1px solid #e7ddcb; border-radius: 14px; padding: 48px; text-align: center; box-shadow: 0 1px 3px rgba(20,40,50,.05); }
+  .mp-ct-{{ section.id }} .ct__empty a { display: inline-block; margin-top: 16px; background: #f2872f; color: #fff; padding: 12px 24px; border-radius: 9px; text-decoration: none; font-weight: 700; }
+
+  @media (max-width: 989px) { .mp-ct-{{ section.id }} .ct__body { flex-direction: column; } .mp-ct-{{ section.id }} .ct__side { width: 100%; position: static; } .mp-ct-{{ section.id }} .ct__recs { grid-template-columns: 1fr; } }
+  @media (max-width: 749px) { .mp-ct-{{ section.id }} .ct__wrap { padding: 0 16px; } .mp-ct-{{ section.id }} .ct__colhead { display: none; } .mp-ct-{{ section.id }} .ct__line { grid-template-columns: 1fr auto; grid-auto-rows: auto; } }
+{%- endstyle -%}
+
+<section class="mp-ct-{{ section.id }}" data-cart>
+  <div class="ct__wrap">
+    <div class="ct__crumb"><a href="{{ routes.root_url }}">Home</a><span class="sep">/</span><span style="color:#6b7a82">Your basket</span></div>
+    <div class="ct__h1 mp-cond">Your basket <span>({{ cart.item_count }})</span></div>
+
+    {%- if cart.item_count == 0 -%}
+      <div class="ct__empty">
+        <div style="font-size:40px">&#128722;</div>
+        <div class="ct__nh mp-cond" style="font-size:22px;margin-top:8px">Your basket is empty</div>
+        <div class="ct__ns">Browse our games, ranked by the data that matters.</div>
+        <a href="/collections/all-games" class="mp-cond">Start shopping</a>
+      </div>
+    {%- else -%}
+      <div class="ct__body">
+        <div class="ct__main">
+          <!-- reward tracker -->
+          {%- if milestones.size > 0 -%}
+            {%- liquid
+              assign next_label = ''
+              assign remaining = 0
+              for b in milestones
+                assign cents = b.settings.amount | times: 100
+                if cart.total_price < cents and next_label == ''
+                  assign next_label = b.settings.label
+                  assign remaining = cents | minus: cart.total_price
+                endif
+              endfor
+              assign fill = cart.total_price | times: 100.0 | divided_by: max_cents
+              if fill > 100
+                assign fill = 100
+              endif
+            -%}
+            {%- assign final_label = milestones.last.settings.label -%}
+            <div class="ct__reward">
+              <div class="ct__rhead">
+                <span style="font-size:18px">{% if next_label != blank %}&#127873;{% else %}&#127881;{% endif %}</span>
+                <span class="ct__rh mp-cond">{% if next_label != blank %}Spend {{ remaining | money }} more to unlock {{ next_label | upcase }}{% else %}You've unlocked {{ final_label | upcase }}!{% endif %}</span>
+              </div>
+              <div class="ct__track"{% if milestones.size == 1 %} style="margin-bottom:0"{% endif %}>
+                <div class="ct__bar"><span style="width:{{ fill }}%"></span></div>
+                {%- if milestones.size > 1 -%}
+                  {%- for b in milestones -%}
+                    {%- assign reached = false -%}{%- assign cents = b.settings.amount | times: 100 -%}{%- if cart.total_price >= cents -%}{%- assign reached = true -%}{%- endif -%}
+                    {%- assign pos = b.settings.amount | times: 100.0 | divided_by: max_amount -%}
+                    <div class="ct__dot" style="left:{{ pos }}%"><span style="background:{% if reached %}#2f8f5b{% else %}#fff{% endif %};color:{% if reached %}#fff{% else %}#b6afa4{% endif %}">{% if reached %}&#10003;{% else %}{{ b.settings.icon }}{% endif %}</span></div>
+                  {%- endfor -%}
+                {%- endif -%}
+              </div>
+              {%- if milestones.size > 1 -%}
+                <div class="ct__labels">
+                  {%- for b in milestones -%}
+                    {%- assign reached = false -%}{%- assign cents = b.settings.amount | times: 100 -%}{%- if cart.total_price >= cents -%}{%- assign reached = true -%}{%- endif -%}
+                    {%- assign pos = b.settings.amount | times: 100.0 | divided_by: max_amount -%}
+                    <div class="ct__lab" style="left:{{ pos }}%"><div class="a mp-cond" style="color:{% if reached %}#2f8f5b{% else %}#16323f{% endif %}">£{{ b.settings.amount }}</div><div class="r">{{ b.settings.label }}</div></div>
+                  {%- endfor -%}
+                </div>
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+
+          <div class="ct__colhead"><span>PRODUCT</span><span style="text-align:center">QUANTITY</span><span style="text-align:right">TOTAL</span><span></span></div>
+
+          {%- for item in cart.items -%}
+            {%- liquid
+              assign bgg = item.product.metafields.custom.bgg_rating.value
+              assign bggn = bgg | times: 1.0
+              assign bc = '#c79a1e'
+              if bggn >= 8.0
+                assign bc = '#3f8f5a'
+              elsif bggn >= 7.0
+                assign bc = '#7aa83c'
+              endif
+            -%}
+            <div class="ct__line" data-key="{{ item.key }}">
+              <div class="ct__prod">
+                <a href="{{ item.url }}">{% if item.image %}<img class="ct__img" src="{{ item.image | image_url: width: 160 }}" alt="{{ item.title | escape }}" width="74" height="74">{% else %}<span class="ct__img"></span>{% endif %}</a>
+                <div style="min-width:0">
+                  {%- if bgg != blank -%}<div class="ct__bgg"><b class="mp-cond">BGG</b><span style="font-size:10.5px;font-weight:700;color:{{ bc }}">{{ bgg }}</span></div>{%- endif -%}
+                  <a class="ct__name mp-cond" href="{{ item.url }}">{{ item.product.title }}</a>
+                  <div class="ct__meta">{{ item.product.vendor }}{% if item.product.metafields.custom.player_count.value %} · {{ item.product.metafields.custom.player_count.value }} players{% endif %}</div>
+                  {%- liquid
+                    assign v = item.variant
+                    assign inv = v.inventory_quantity
+                  -%}
+                  {%- if v.inventory_management == blank -%}
+                    <div class="ct__stock"><span style="width:6px;height:6px;border-radius:50%;background:#2f8f5b;display:inline-block"></span>In stock</div>
+                  {%- elsif inv > 3 -%}
+                    <div class="ct__stock"><span style="width:6px;height:6px;border-radius:50%;background:#2f8f5b;display:inline-block"></span>3+ in stock</div>
+                  {%- elsif inv > 0 -%}
+                    <div class="ct__stock is-low"><span style="width:6px;height:6px;border-radius:50%;background:#d68a1e;display:inline-block"></span>Only {{ inv }} left</div>
+                  {%- else -%}
+                    <div class="ct__stock is-out"><span style="width:6px;height:6px;border-radius:50%;background:#c0392b;display:inline-block"></span>Out of stock</div>
+                  {%- endif -%}
+                </div>
+              </div>
+              <div class="ct__qtywrap">
+                <div class="ct__qty">
+                  <button type="button" data-change="{{ item.quantity | minus: 1 }}" aria-label="Decrease">&minus;</button>
+                  <span class="n mp-cond">{{ item.quantity }}</span>
+                  <button type="button" data-change="{{ item.quantity | plus: 1 }}" aria-label="Increase">+</button>
+                </div>
+              </div>
+              <div class="ct__line-total">
+                <div class="ct__lt mp-cond">{{ item.final_line_price | money }}</div>
+                {%- if item.quantity > 1 -%}<div class="ct__ea">{{ item.final_price | money }} ea</div>{%- endif -%}
+              </div>
+              <button type="button" class="ct__rm" data-change="0" aria-label="Remove">&times;</button>
+            </div>
+          {%- endfor -%}
+
+          <a href="/collections/all-games" class="ct__continue mp-cond">&#8592; Continue shopping</a>
+
+          {%- assign cart_pids = cart.items | map: 'product_id' -%}
+          {%- assign upsell = section.settings.upsell_collection.products -%}
+          {%- if upsell.size > 0 -%}
+            <div class="ct__nudge">
+              <div class="ct__nh mp-cond">{{ section.settings.upsell_heading }}</div>
+              <div class="ct__ns">Hand-picked add-ons loved by the BGG community.</div>
+              <div class="ct__recs">
+                {%- assign shown = 0 -%}
+                {%- for product in upsell -%}
+                  {%- if cart_pids contains product.id -%}{%- continue -%}{%- endif -%}
+                  {%- if shown >= 3 -%}{%- break -%}{%- endif -%}
+                  {%- assign shown = shown | plus: 1 -%}
+                  <div class="ct__rec">
+                    <a href="{{ product.url }}">{% if product.featured_image %}<img class="ct__recimg" src="{{ product.featured_image | image_url: width: 120 }}" alt="{{ product.title | escape }}" width="54" height="54">{% else %}<span class="ct__recimg"></span>{% endif %}</a>
+                    <div style="flex:1;min-width:0">
+                      <a class="ct__recn mp-cond" href="{{ product.url }}">{{ product.title }}</a>
+                      <div class="ct__recfoot">
+                        <span class="ct__recp mp-cond">{{ product.price | money }}</span>
+                        <button type="button" class="ct__recadd mp-cond" data-add="{{ product.selected_or_first_available_variant.id }}">Add</button>
+                      </div>
+                    </div>
+                  </div>
+                {%- endfor -%}
+              </div>
+            </div>
+          {%- endif -%}
+        </div>
+
+        <!-- summary -->
+        <div class="ct__side">
+          <div class="ct__sum">
+            <div class="ct__sh mp-cond">Order summary</div>
+            <div style="padding:16px 20px 6px">
+              <div class="ct__srow"><span>Subtotal ({{ cart.item_count }} items)</span><span class="mp-cond" style="font-weight:600">{{ cart.items_subtotal_price | money }}</span></div>
+              {%- for d in cart.cart_level_discount_applications -%}
+                <div class="ct__srow"><span>{{ d.title }}</span><span class="mp-cond" style="font-weight:600;color:#2f8f5b">&minus; {{ d.total_allocated_amount | money }}</span></div>
+              {%- endfor -%}
+              <div class="ct__srow"><span>Shipping</span><span class="mp-cond" style="font-weight:600;color:{% if cart.total_price >= threshold %}#2f8f5b{% else %}#4a443c{% endif %}">{% if cart.total_price >= threshold %}FREE{% else %}Calculated at checkout{% endif %}</span></div>
+              <form class="ct__promo" data-promo>
+                <input type="text" name="code" placeholder="Discount or gift card code" aria-label="Discount code">
+                <button type="submit" class="mp-cond">Apply</button>
+              </form>
+            </div>
+            <div class="ct__total">
+              <div class="ct__trow"><span class="ct__tl mp-cond">Total</span><span class="ct__tv mp-cond">{{ cart.total_price | money }}</span></div>
+              <div class="ct__note">Taxes included. Shipping calculated at checkout.</div>
+              <form action="{{ routes.cart_url }}" method="post">
+                <button type="submit" name="checkout" class="ct__checkout mp-cond">Checkout securely &#8594;</button>
+              </form>
+              {%- if shop.enabled_payment_types.size > 0 -%}
+                <div class="ct__pays">
+                  {%- for type in shop.enabled_payment_types -%}{{ type | payment_type_svg_tag }}{%- endfor -%}
+                </div>
+              {%- endif -%}
+            </div>
+          </div>
+          <div class="ct__reassure">
+            <span>&#128666; <b class="mp-cond">Next working day dispatch</b> on orders</span>
+            <span>&#8634; <b class="mp-cond">30-day returns</b> on unopened games</span>
+            <span>&#128274; <b class="mp-cond">Secure checkout</b> · encrypted payments</span>
+          </div>
+        </div>
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+<script>
+  (function () {
+    var root = document.querySelector('.mp-ct-{{ section.id }}');
+    if (!root) return;
+    function post(url, body) { return fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(body) }); }
+    root.querySelectorAll('[data-change]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var line = btn.closest('[data-key]');
+        btn.disabled = true;
+        post('/cart/change.js', { id: line.getAttribute('data-key'), quantity: parseInt(btn.getAttribute('data-change'), 10) })
+          .then(function () { window.location.reload(); });
+      });
+    });
+    root.querySelectorAll('[data-add]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        btn.disabled = true;
+        post('/cart/add.js', { items: [{ id: parseInt(btn.getAttribute('data-add'), 10), quantity: 1 }] })
+          .then(function () { window.location.reload(); });
+      });
+    });
+    var promo = root.querySelector('[data-promo]');
+    if (promo) promo.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var code = promo.querySelector('input').value.trim();
+      if (code) window.location.href = '/discount/' + encodeURIComponent(code) + '?redirect=/cart';
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "MP Cart",
+  "settings": [
+    { "type": "paragraph", "content": "Free shipping threshold is set globally in Theme settings → MPGames store." },
+    { "type": "collection", "id": "upsell_collection", "label": "Upsell collection" },
+    { "type": "text", "id": "upsell_heading", "label": "Upsell heading", "default": "Add a little more to level up" }
+  ],
+  "blocks": [
+    { "type": "milestone", "name": "Reward milestone", "settings": [
+      { "type": "number", "id": "amount", "label": "Spend amount (£)", "default": 40 },
+      { "type": "text", "id": "label", "label": "Reward label", "default": "Free UK shipping" },
+      { "type": "text", "id": "icon", "label": "Icon", "default": "🚚" }
+    ] }
+  ],
+  "enabled_on": { "templates": ["cart"] },
+  "presets": [ { "name": "MP Cart" } ]
+}
+{% endschema %}

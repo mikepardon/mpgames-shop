@@ -1,0 +1,79 @@
+{%- comment -%}
+  MPGames "Shop by publisher" grid. Imported from Claude Design.
+{%- endcomment -%}
+
+{%- style -%}
+  .mp-pub-{{ section.id }} .mp-pub__pad { padding: 18px 28px 6px; }
+  .mp-pub-{{ section.id }} .mp-pub__head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 13px; }
+  .mp-pub-{{ section.id }} .mp-pub__title { font-size: 20px; font-weight: 700; color: #16323f; }
+  .mp-pub-{{ section.id }} .mp-pub__all { font-size: 12.5px; color: #f2872f; font-weight: 600; text-decoration: none; }
+  .mp-pub-{{ section.id }} .mp-pub__grid { display: grid; grid-template-columns: repeat(6,1fr); gap: 12px; }
+  .mp-pub-{{ section.id }} .mp-pub__cell {
+    border: 1px solid #e7e0d4; border-radius: 10px; height: 74px; display: flex; flex-direction: column; gap: 6px;
+    align-items: center; justify-content: center; background: #fbf9f4; text-align: center; padding: 0 10px; text-decoration: none;
+  }
+  .mp-pub-{{ section.id }} .mp-pub__av { width: 32px; height: 32px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 12.5px; font-weight: 700; color: #fff; flex: none; }
+  .mp-pub-{{ section.id }} .mp-pub__av--logo { background: #fff; border: 1px solid #eee; overflow: hidden; padding: 3px; box-sizing: border-box; }
+  .mp-pub-{{ section.id }} .mp-pub__av--logo img { width: 100%; height: 100%; object-fit: contain; display: block; }
+  .mp-pub-{{ section.id }} .mp-pub__name { font-size: 13px; font-weight: 700; color: #16323f; letter-spacing: .2px; line-height: 1.15; }
+  @media (max-width: 989px) { .mp-pub-{{ section.id }} .mp-pub__grid { grid-template-columns: repeat(3,1fr); } }
+  @media (max-width: 749px) { .mp-pub-{{ section.id }} .mp-pub__grid { grid-template-columns: repeat(2,1fr); } .mp-pub-{{ section.id }} .mp-pub__pad { padding: 18px 16px 6px; } }
+{%- endstyle -%}
+
+<div class="mp-cream mp-pub-{{ section.id }}">
+  <div class="mp-col">
+    <div class="mp-pub__pad">
+      <div class="mp-pub__head">
+        <div class="mp-pub__title mp-cond">{{ section.settings.title }}</div>
+        {%- if section.settings.link_label != blank -%}
+          <a class="mp-pub__all" href="{{ section.settings.link_url | default: '#' }}">{{ section.settings.link_label }} &#8594;</a>
+        {%- endif -%}
+      </div>
+      <div class="mp-pub__grid">
+        {%- assign source = section.settings.collection -%}
+        {%- if source != blank -%}
+          {%- assign vendors = source.products | map: 'vendor' | uniq -%}
+          {%- assign pub_palette = '#2c5466,#2f8f5b,#9a3b2e,#6a4f86,#c2772a,#16323f' | split: ',' -%}
+          {%- assign logo_handles = section.settings.logo_handles | split: ',' -%}
+          {%- for vendor in vendors limit: section.settings.count -%}
+            {%- if vendor != blank -%}
+              {%- assign vhandle = vendor | handleize -%}
+              {%- assign vw = vendor | split: ' ' -%}
+              {%- assign initials = vw[0] | slice: 0 -%}
+              {%- if vw.size > 1 -%}{%- assign second = vw[1] | slice: 0 -%}{%- assign initials = initials | append: second -%}{%- endif -%}
+              {%- assign cidx = forloop.index0 | modulo: 6 -%}
+              {%- assign pcolor = pub_palette[cidx] -%}
+              <a class="mp-pub__cell" href="/collections/publisher-{{ vhandle }}">
+                {%- if logo_handles contains vhandle -%}
+                  <span class="mp-pub__av mp-pub__av--logo"><img src="{{ 'pub-' | append: vhandle | append: '.png' | asset_url }}" alt="{{ vendor | escape }}" width="32" height="32" loading="lazy"></span>
+                {%- else -%}
+                  <span class="mp-pub__av mp-cond" style="background:{{ pcolor }}">{{ initials | upcase }}</span>
+                {%- endif -%}
+                <span class="mp-pub__name mp-cond">{{ vendor }}</span>
+              </a>
+            {%- endif -%}
+          {%- endfor -%}
+        {%- elsif request.design_mode -%}
+          <p style="color:#8a8278;font-size:13px">Pick a collection in this section's settings — publishers are read from its products.</p>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "MP Publishers",
+  "settings": [
+    { "type": "text", "id": "title", "label": "Title", "default": "Shop by publisher" },
+    { "type": "collection", "id": "collection", "label": "Collection", "info": "Publisher names are the unique vendors of this collection's products." },
+    { "type": "range", "id": "count", "min": 4, "max": 24, "step": 1, "label": "Max publishers", "default": 12 },
+    { "type": "text", "id": "logo_handles", "label": "Publisher logo handles", "info": "Vendor handles with a pub-<handle>.png asset; others show a monogram.", "default": "stonemaier-games,roxley-games,z-man-games,cephalofair-games,stronghold-games,capstone-games,greater-than-games,plan-b-games,catan-studio,days-of-wonder,flatout-games,starling-games,repos-production,space-cowboys,leder-games,dire-wolf,czech-games-edition,kosmos,cocktail-games,delicious-games,burnt-island-games" },
+    { "type": "text", "id": "link_label", "label": "Link label", "default": "All brands" },
+    { "type": "url", "id": "link_url", "label": "Link URL" }
+  ],
+  "presets": [
+    { "name": "MP Publishers", "settings": { "title": "Shop by publisher", "count": 12 } }
+  ]
+}
+{% endschema %}

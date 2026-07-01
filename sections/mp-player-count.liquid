@@ -1,0 +1,71 @@
+{%- comment -%}
+  MPGames "Shop by player count" tiles. Imported from Claude Design.
+{%- endcomment -%}
+
+{%- style -%}
+  .mp-pc-{{ section.id }} .mp-pc__pad { padding: 18px 28px 6px; }
+  .mp-pc-{{ section.id }} .mp-pc__title { font-size: 20px; font-weight: 700; color: #16323f; margin-bottom: 13px; }
+  .mp-pc-{{ section.id }} .mp-pc__grid { display: grid; grid-template-columns: repeat(6,1fr); gap: 12px; }
+  .mp-pc-{{ section.id }} .mp-pc__tile {
+    border: 1px solid #e7e0d4; border-radius: 11px; padding: 16px 10px; text-align: center;
+    background: #fbf9f4; text-decoration: none; display: block;
+  }
+  .mp-pc-{{ section.id }} .mp-pc__pips { color: #f2872f; font-size: 15px; letter-spacing: 2px; line-height: 1; margin-bottom: 8px; min-height: 16px; }
+  .mp-pc-{{ section.id }} .mp-pc__n { font-size: 22px; font-weight: 700; color: #16323f; }
+  .mp-pc-{{ section.id }} .mp-pc__label { font-size: 11.5px; color: #8a8278; margin-top: 2px; }
+  @media (max-width: 749px) { .mp-pc-{{ section.id }} .mp-pc__grid { grid-template-columns: repeat(3,1fr); } .mp-pc-{{ section.id }} .mp-pc__pad { padding: 18px 16px 6px; } }
+{%- endstyle -%}
+
+<div class="mp-cream mp-pc-{{ section.id }}">
+  <div class="mp-col">
+    <div class="mp-pc__pad">
+      <div class="mp-pc__title mp-cond">{{ section.settings.title }}</div>
+      <div class="mp-pc__grid">
+        {%- for block in section.blocks -%}
+          {%- assign col = block.settings.collection -%}
+          <a class="mp-pc__tile" href="{% if col != blank %}{{ col.url }}{% else %}{{ block.settings.url | default: '#' }}{% endif %}" {{ block.shopify_attributes }}>
+            <div class="mp-pc__pips mp-cond">{% render 'mp-pips', count: block.settings.pips %}</div>
+            <div class="mp-pc__n mp-cond">{{ block.settings.number }}</div>
+            <div class="mp-pc__label">{{ block.settings.label }}</div>
+          </a>
+        {%- endfor -%}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "MP Player count",
+  "max_blocks": 12,
+  "settings": [
+    { "type": "text", "id": "title", "label": "Title", "default": "Shop by player count" }
+  ],
+  "blocks": [
+    {
+      "type": "tile",
+      "name": "Tile",
+      "settings": [
+        { "type": "text", "id": "number", "label": "Number", "default": "2" },
+        { "type": "text", "id": "label", "label": "Label", "default": "Two-player" },
+        { "type": "range", "id": "pips", "min": 0, "max": 7, "step": 1, "label": "Player pips (0 = co-op icon)", "default": 2 },
+        { "type": "collection", "id": "collection", "label": "Collection (link target)" },
+        { "type": "url", "id": "url", "label": "URL (fallback)" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "MP Player count",
+      "blocks": [
+        { "type": "tile", "settings": { "number": "1", "label": "Solo" } },
+        { "type": "tile", "settings": { "number": "2", "label": "Two-player" } },
+        { "type": "tile", "settings": { "number": "3–4", "label": "Small group" } },
+        { "type": "tile", "settings": { "number": "5–6", "label": "Game night" } },
+        { "type": "tile", "settings": { "number": "7+", "label": "Party" } },
+        { "type": "tile", "settings": { "number": "Co-op", "label": "Team up" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

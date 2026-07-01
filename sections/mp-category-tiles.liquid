@@ -1,0 +1,82 @@
+{%- comment -%}
+  MPGames category tiles — "Shop by category" grid. Imported from Claude Design.
+{%- endcomment -%}
+
+{%- style -%}
+  .mp-cat-{{ section.id }} .mp-cat__pad { padding: 28px 28px 6px; }
+  .mp-cat-{{ section.id }} .mp-cat__head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 14px; }
+  .mp-cat-{{ section.id }} .mp-cat__title { font-size: 20px; font-weight: 700; color: #16323f; }
+  .mp-cat-{{ section.id }} .mp-cat__all { font-size: 12.5px; color: #f2872f; font-weight: 600; text-decoration: none; }
+  .mp-cat-{{ section.id }} .mp-cat__grid { display: grid; grid-template-columns: repeat(6,1fr); gap: 12px; }
+  .mp-cat-{{ section.id }} .mp-cat__tile {
+    border: 1px solid #e7e0d4; border-radius: 11px; padding: 18px 12px; text-align: center;
+    background: #fbf9f4; text-decoration: none; display: block;
+  }
+  .mp-cat-{{ section.id }} .mp-cat__icon { font-size: 26px; }
+  .mp-cat-{{ section.id }} .mp-cat__name { font-size: 14px; font-weight: 600; color: #16323f; margin-top: 8px; }
+  .mp-cat-{{ section.id }} .mp-cat__count { font-size: 11px; color: #8a8278; margin-top: 1px; }
+  @media (max-width: 989px) { .mp-cat-{{ section.id }} .mp-cat__grid { grid-template-columns: repeat(3,1fr); } }
+  @media (max-width: 749px) { .mp-cat-{{ section.id }} .mp-cat__grid { grid-template-columns: repeat(2,1fr); } .mp-cat-{{ section.id }} .mp-cat__pad { padding: 24px 16px 6px; } }
+{%- endstyle -%}
+
+<div class="mp-cream mp-cat-{{ section.id }}">
+  <div class="mp-col">
+    <div class="mp-cat__pad">
+      <div class="mp-cat__head">
+        <div class="mp-cat__title mp-cond">{{ section.settings.title }}</div>
+        {%- if section.settings.link_label != blank -%}
+          <a class="mp-cat__all" href="{{ section.settings.link_url | default: '#' }}">{{ section.settings.link_label }} &#8594;</a>
+        {%- endif -%}
+      </div>
+      <div class="mp-cat__grid">
+        {%- for block in section.blocks -%}
+          {%- assign col = block.settings.collection -%}
+          <a class="mp-cat__tile" href="{% if col != blank %}{{ col.url }}{% else %}{{ block.settings.url | default: '#' }}{% endif %}" {{ block.shopify_attributes }}>
+            <div class="mp-cat__icon">{{ block.settings.icon }}</div>
+            <div class="mp-cat__name mp-cond">{% if col != blank %}{{ col.title }}{% else %}{{ block.settings.name }}{% endif %}</div>
+            <div class="mp-cat__count">{% if col != blank %}{{ col.all_products_count }} games{% elsif block.settings.count != blank %}{{ block.settings.count }}{% endif %}</div>
+          </a>
+        {%- endfor -%}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "MP Category tiles",
+  "max_blocks": 12,
+  "settings": [
+    { "type": "text", "id": "title", "label": "Title", "default": "Shop by category" },
+    { "type": "text", "id": "link_label", "label": "Link label", "default": "All categories" },
+    { "type": "url", "id": "link_url", "label": "Link URL" }
+  ],
+  "blocks": [
+    {
+      "type": "category",
+      "name": "Category",
+      "settings": [
+        { "type": "text", "id": "icon", "label": "Icon (emoji)", "default": "♟" },
+        { "type": "collection", "id": "collection", "label": "Collection", "info": "Name, count and link come from the collection. Fields below are a fallback when no collection is chosen." },
+        { "type": "text", "id": "name", "label": "Name (fallback)", "default": "Strategy" },
+        { "type": "text", "id": "count", "label": "Count label (fallback)" },
+        { "type": "url", "id": "url", "label": "URL (fallback)" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "MP Category tiles",
+      "settings": { "title": "Shop by category", "link_label": "All categories" },
+      "blocks": [
+        { "type": "category", "settings": { "icon": "♟", "name": "Strategy" } },
+        { "type": "category", "settings": { "icon": "♚", "name": "Family" } },
+        { "type": "category", "settings": { "icon": "🎉", "name": "Party" } },
+        { "type": "category", "settings": { "icon": "♥", "name": "2-Player" } },
+        { "type": "category", "settings": { "icon": "🃏", "name": "Card Games" } },
+        { "type": "category", "settings": { "icon": "🤝", "name": "Co-op" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

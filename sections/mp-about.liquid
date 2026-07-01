@@ -1,0 +1,100 @@
+{%- comment -%} MPGames About — imported from Claude Design "MPGames About". {%- endcomment -%}
+{%- style -%}
+  .mp-ab-{{ section.id }} { font-family: 'Barlow', ui-sans-serif, system-ui, sans-serif; color: #16323f; padding-bottom: 52px; }
+  .mp-ab-{{ section.id }} .ab__hero { background: linear-gradient(115deg,#16323f 0%,#1d4252 60%,#2c5466 100%); padding: 48px 28px 52px; text-align: center; background-size: cover; background-position: center; }
+  .mp-ab-{{ section.id }} .ab__kick { display: inline-block; background: rgba(242,135,47,.18); color: #ffd2b0; font-size: 12px; font-weight: 600; padding: 5px 14px; border-radius: 20px; letter-spacing: .5px; }
+  .mp-ab-{{ section.id }} .ab__htitle { font-size: 44px; font-weight: 700; color: #fff; margin: 16px auto 0; line-height: 1.05; max-width: 680px; }
+  .mp-ab-{{ section.id }} .ab__hsub { color: #cfe0e6; font-size: 16px; margin: 14px auto 0; max-width: 600px; line-height: 1.6; }
+  .mp-ab-{{ section.id }} .ab__stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 1px; background: #e7ddcb; }
+  .mp-ab-{{ section.id }} .ab__stat { background: #fbf9f4; padding: 24px; text-align: center; }
+  .mp-ab-{{ section.id }} .ab__statn { font-size: 30px; font-weight: 700; }
+  .mp-ab-{{ section.id }} .ab__statl { font-size: 12.5px; color: #8a8278; margin-top: 3px; }
+  .mp-ab-{{ section.id }} .ab__story { display: flex; gap: 40px; padding: 44px 28px 10px; max-width: 1080px; margin: 0 auto; align-items: center; }
+  .mp-ab-{{ section.id }} .ab__skick { font-size: 13px; font-weight: 600; color: #f2872f; letter-spacing: .6px; }
+  .mp-ab-{{ section.id }} .ab__sh { font-size: 28px; font-weight: 700; margin-top: 8px; line-height: 1.15; }
+  .mp-ab-{{ section.id }} .ab__sbody { font-size: 15px; color: #4a443c; line-height: 1.7; margin-top: 14px; }
+  .mp-ab-{{ section.id }} .ab__sbody p { margin: 0 0 14px; }
+  .mp-ab-{{ section.id }} .ab__simg { width: 380px; flex: none; height: 300px; border-radius: 14px; background: repeating-linear-gradient(45deg,#e6e0d4,#e6e0d4 13px,#ded7c9 13px,#ded7c9 26px) center/cover; }
+  .mp-ab-{{ section.id }} .ab__vals { padding: 34px 28px 6px; max-width: 1080px; margin: 0 auto; }
+  .mp-ab-{{ section.id }} .ab__valh { font-size: 24px; font-weight: 700; margin-bottom: 16px; }
+  .mp-ab-{{ section.id }} .ab__valgrid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
+  .mp-ab-{{ section.id }} .ab__val { border: 1px solid #e7ddcb; border-radius: 13px; background: #fff; padding: 22px; box-shadow: 0 1px 2px rgba(20,40,50,.04); }
+  .mp-ab-{{ section.id }} .ab__valt { font-size: 17px; font-weight: 700; margin-top: 11px; }
+  .mp-ab-{{ section.id }} .ab__vald { font-size: 13.5px; color: #6b6b62; line-height: 1.6; margin-top: 6px; }
+  .mp-ab-{{ section.id }} .ab__cta { margin: 34px 28px 0; border-radius: 14px; background: #2b2233; padding: 32px 40px; display: flex; align-items: center; justify-content: space-between; gap: 30px; max-width: 1224px; }
+  .mp-ab-{{ section.id }} .ab__ctat { color: #fff; font-size: 24px; font-weight: 700; }
+  .mp-ab-{{ section.id }} .ab__ctas { color: #c5b9d4; font-size: 13.5px; margin-top: 6px; }
+  .mp-ab-{{ section.id }} .ab__ctab { background: #f2872f; color: #fff; font-weight: 700; font-size: 15px; padding: 13px 26px; border-radius: 9px; text-decoration: none; white-space: nowrap; }
+  @media (max-width: 989px) { .mp-ab-{{ section.id }} .ab__stats { grid-template-columns: repeat(2,1fr); } .mp-ab-{{ section.id }} .ab__story { flex-direction: column; } .mp-ab-{{ section.id }} .ab__simg { width: 100%; } .mp-ab-{{ section.id }} .ab__valgrid { grid-template-columns: 1fr; } .mp-ab-{{ section.id }} .ab__cta { flex-direction: column; align-items: flex-start; } }
+{%- endstyle -%}
+
+<div class="mp-ab-{{ section.id }}">
+  <div class="ab__hero"{% if section.settings.hero_image %} style="background-image:linear-gradient(115deg,rgba(22,50,63,.9),rgba(44,84,102,.78)),url('{{ section.settings.hero_image | image_url: width: 1800 }}')"{% endif %}>
+    <span class="ab__kick mp-cond">{{ section.settings.kicker }}</span>
+    <div class="ab__htitle mp-cond">{{ section.settings.title }}</div>
+    <div class="ab__hsub">{{ section.settings.subtitle }}</div>
+  </div>
+
+  {%- assign stats = section.blocks | where: 'type', 'stat' -%}
+  {%- if stats.size > 0 -%}
+    <div class="ab__stats">
+      {%- for b in stats -%}<div class="ab__stat" {{ b.shopify_attributes }}><div class="ab__statn mp-cond">{{ b.settings.number }}</div><div class="ab__statl">{{ b.settings.label }}</div></div>{%- endfor -%}
+    </div>
+  {%- endif -%}
+
+  <div class="ab__story">
+    <div style="flex:1">
+      <div class="ab__skick mp-cond">{{ section.settings.story_kicker }}</div>
+      <div class="ab__sh mp-cond">{{ section.settings.story_heading }}</div>
+      <div class="ab__sbody">{{ section.settings.story_body }}</div>
+    </div>
+    <div class="ab__simg"{% if section.settings.story_image %} style="background-image:url('{{ section.settings.story_image | image_url: width: 760 }}')"{% endif %}></div>
+  </div>
+
+  {%- assign values = section.blocks | where: 'type', 'value' -%}
+  {%- if values.size > 0 -%}
+    <div class="ab__vals">
+      <div class="ab__valh mp-cond">{{ section.settings.values_heading }}</div>
+      <div class="ab__valgrid">
+        {%- for b in values -%}
+          <div class="ab__val" {{ b.shopify_attributes }}><div style="font-size:26px">{{ b.settings.icon }}</div><div class="ab__valt mp-cond">{{ b.settings.title }}</div><div class="ab__vald">{{ b.settings.body }}</div></div>
+        {%- endfor -%}
+      </div>
+    </div>
+  {%- endif -%}
+
+  <div class="ab__cta" style="margin-left:auto;margin-right:auto">
+    <div><div class="ab__ctat mp-cond">{{ section.settings.cta_title }}</div><div class="ab__ctas">{{ section.settings.cta_text }}</div></div>
+    <a class="ab__ctab mp-cond" href="{{ section.settings.cta_url | default: '/collections/all-games' }}">{{ section.settings.cta_label }} &#8594;</a>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "MP About",
+  "settings": [
+    { "type": "text", "id": "kicker", "label": "Kicker", "default": "OUR STORY" },
+    { "type": "text", "id": "title", "label": "Title", "default": "We're here to get the right game to your table" },
+    { "type": "textarea", "id": "subtitle", "label": "Subtitle", "default": "MPGames exists to help people find games they'll actually love — using real data, not guesswork." },
+    { "type": "image_picker", "id": "hero_image", "label": "Hero background" },
+    { "type": "header", "content": "Story" },
+    { "type": "text", "id": "story_kicker", "label": "Story kicker", "default": "HOW WE STARTED" },
+    { "type": "text", "id": "story_heading", "label": "Story heading", "default": "The UK's data-driven board game shop" },
+    { "type": "richtext", "id": "story_body", "label": "Story body", "default": "<p>When we couldn't find a shop that told us whether a game was actually any good — not just whether it was in stock — we built one. Every product page surfaces the BoardGameGeek score, ranking, player count and play time, so you can shop on substance.</p><p>We're a small team of players and packers, writing the guides we wish we'd had when we started.</p>" },
+    { "type": "image_picker", "id": "story_image", "label": "Story image" },
+    { "type": "header", "content": "Values" },
+    { "type": "text", "id": "values_heading", "label": "Values heading", "default": "What we care about" },
+    { "type": "header", "content": "CTA band" },
+    { "type": "text", "id": "cta_title", "label": "CTA title", "default": "Ready to find your next favourite?" },
+    { "type": "text", "id": "cta_text", "label": "CTA text", "default": "Browse our collection, ranked by the data that matters." },
+    { "type": "text", "id": "cta_label", "label": "CTA button", "default": "Browse the collection" },
+    { "type": "url", "id": "cta_url", "label": "CTA URL" }
+  ],
+  "blocks": [
+    { "type": "stat", "name": "Stat", "settings": [ { "type": "text", "id": "number", "label": "Number", "default": "1,000s" }, { "type": "text", "id": "label", "label": "Label", "default": "games in stock" } ] },
+    { "type": "value", "name": "Value", "settings": [ { "type": "text", "id": "icon", "label": "Icon (emoji)", "default": "📊" }, { "type": "text", "id": "title", "label": "Title", "default": "Honest data" }, { "type": "textarea", "id": "body", "label": "Body", "default": "Real BGG scores and specs on every listing." } ] }
+  ],
+  "enabled_on": { "templates": ["page"] },
+  "presets": [ { "name": "MP About" } ]
+}
+{% endschema %}

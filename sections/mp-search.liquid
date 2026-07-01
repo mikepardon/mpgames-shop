@@ -1,0 +1,319 @@
+{%- comment -%}
+  MPGames search results — result header, quick matches (collection/vendor),
+  faceted filter sidebar (search.filters), sort toolbar, product results grid
+  wired to custom.* metafields, and pagination. Imported from Claude Design
+  "MPGames Search". Header/footer come from the shared mp-header / mp-footer
+  sections, so this section renders the page body only.
+{%- endcomment -%}
+
+{%- style -%}
+  .mp-se-{{ section.id }} { background: #f4efe6; font-family: 'Barlow', ui-sans-serif, system-ui, sans-serif; color: #16323f; }
+  .mp-se-{{ section.id }} .se__wrap { max-width: 1240px; margin: 0 auto; padding: 0 28px; }
+
+  .mp-se-{{ section.id }} .se__form { padding: 22px 0 0; }
+  .mp-se-{{ section.id }} .se__bar { display: flex; align-items: center; background: #fff; border-radius: 7px; overflow: hidden; border: 2px solid #f2872f; max-width: 640px; margin: 0 auto; }
+  .mp-se-{{ section.id }} .se__bar input { flex: 1; border: 0; padding: 12px 14px; font-size: 13px; color: #16323f; font-family: inherit; outline: none; min-width: 0; }
+  .mp-se-{{ section.id }} .se__bar button { background: #f2872f; color: #fff; border: 0; padding: 12px 20px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; }
+
+  .mp-se-{{ section.id }} .se__head { padding: 20px 0 0; text-align: center; }
+  .mp-se-{{ section.id }} .se__kicker { font-size: 13px; color: #8a8278; }
+  .mp-se-{{ section.id }} .se__title-row { display: flex; align-items: baseline; justify-content: center; gap: 12px; margin-top: 3px; flex-wrap: wrap; }
+  .mp-se-{{ section.id }} .se__title { font-size: 32px; font-weight: 700; color: #16323f; }
+  .mp-se-{{ section.id }} .se__count { font-size: 14px; color: #8a8278; }
+
+  .mp-se-{{ section.id }} .se__quick { display: flex; gap: 12px; flex-wrap: wrap; padding: 16px 0 0; }
+  .mp-se-{{ section.id }} .se__qcard { text-decoration: none; display: flex; align-items: center; gap: 11px; background: #fff; border: 1px solid #e7ddcb; border-radius: 11px; padding: 11px 15px; box-shadow: 0 1px 2px rgba(20,40,50,.04); }
+  .mp-se-{{ section.id }} .se__qicon { width: 34px; height: 34px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex: none; }
+  .mp-se-{{ section.id }} .se__qkind { font-size: 10.5px; color: #9b948a; letter-spacing: .4px; text-transform: uppercase; }
+  .mp-se-{{ section.id }} .se__qname { display: block; font-size: 14px; font-weight: 700; color: #16323f; line-height: 1.1; }
+  .mp-se-{{ section.id }} .se__qcount { font-size: 12px; color: #a39c92; margin-left: 4px; }
+
+  .mp-se-{{ section.id }} .se__body { display: flex; gap: 24px; padding: 22px 0 30px; align-items: flex-start; }
+  .mp-se-{{ section.id }} .se__side { width: 230px; flex: none; }
+  .mp-se-{{ section.id }} .se__panel { background: #fff; border: 1px solid #e7ddcb; border-radius: 13px; overflow: hidden; box-shadow: 0 1px 2px rgba(20,40,50,.04); }
+  .mp-se-{{ section.id }} .se__phead { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; background: #16323f; }
+  .mp-se-{{ section.id }} .se__phead span:first-child { font-size: 15px; font-weight: 700; color: #fff; }
+  .mp-se-{{ section.id }} .se__clear { font-size: 12px; color: #ffd2b0; text-decoration: none; }
+  .mp-se-{{ section.id }} .se__group { padding: 14px 16px; border-bottom: 1px solid #efe7d8; }
+  .mp-se-{{ section.id }} .se__group:last-child { border-bottom: 0; }
+  .mp-se-{{ section.id }} .se__gh { font-size: 12.5px; font-weight: 700; color: #16323f; margin-bottom: 10px; }
+  .mp-se-{{ section.id }} .se__opts { display: flex; flex-direction: column; gap: 9px; font-size: 12.5px; color: #4a443c; }
+  .mp-se-{{ section.id }} .se__opt { display: flex; align-items: center; gap: 9px; text-decoration: none; color: inherit; }
+  .mp-se-{{ section.id }} .se__box { width: 15px; height: 15px; border: 1.5px solid #b6afa4; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; color: #fff; font-size: 10px; flex: none; }
+  .mp-se-{{ section.id }} .se__opt.is-on .se__box { background: #16323f; border-color: #16323f; }
+  .mp-se-{{ section.id }} .se__cnt { color: #9b948a; margin-left: auto; }
+  .mp-se-{{ section.id }} .se__price { display: flex; gap: 8px; align-items: center; }
+  .mp-se-{{ section.id }} .se__price input { width: 78px; border: 1px solid #d8d4cc; border-radius: 6px; padding: 7px 9px; font-size: 12.5px; font-family: inherit; }
+  .mp-se-{{ section.id }} .se__price button { background: #16323f; color: #fff; border: 0; border-radius: 6px; padding: 7px 11px; font-size: 12px; cursor: pointer; font-family: inherit; }
+
+  .mp-se-{{ section.id }} .se__main { flex: 1; min-width: 0; }
+  .mp-se-{{ section.id }} .se__toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; gap: 12px; flex-wrap: wrap; }
+  .mp-se-{{ section.id }} .se__active { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #6b7a82; flex-wrap: wrap; }
+  .mp-se-{{ section.id }} .se__achip { display: inline-flex; align-items: center; gap: 6px; background: #eef3f5; border: 1px solid #cfdde3; border-radius: 6px; padding: 4px 10px; color: #16323f; text-decoration: none; }
+  .mp-se-{{ section.id }} .se__clearall { color: #f2872f; font-weight: 600; text-decoration: none; }
+  .mp-se-{{ section.id }} .se__sort select { background: #fff; border: 1px solid #d8d4cc; border-radius: 7px; padding: 8px 12px; color: #16323f; font-size: 12.5px; font-family: inherit; cursor: pointer; }
+
+  .mp-se-{{ section.id }} .se__grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
+  .mp-se-{{ section.id }} .se__card { border: 1px solid #e7ddcb; border-radius: 12px; overflow: hidden; background: #fff; display: flex; flex-direction: column; position: relative; box-shadow: 0 1px 2px rgba(20,40,50,.04); }
+  .mp-se-{{ section.id }} .se__flag { position: absolute; top: 10px; left: 10px; z-index: 2; background: #d6402e; color: #fff; font-size: 12px; font-weight: 700; padding: 3px 8px; border-radius: 5px; }
+  .mp-se-{{ section.id }} .se__wish { position: absolute; top: 10px; right: 10px; z-index: 2; background: #fff; border: 1px solid #e7e0d4; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; color: #8a8278; font-size: 13px; }
+  .mp-se-{{ section.id }} .se__media { height: 168px; display: flex; align-items: center; justify-content: center; background: repeating-linear-gradient(45deg,#efece6,#efece6 9px,#e6e2da 9px,#e6e2da 18px); }
+  .mp-se-{{ section.id }} .se__media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .mp-se-{{ section.id }} .se__cbody { padding: 13px 14px 15px; display: flex; flex-direction: column; flex: 1; }
+  .mp-se-{{ section.id }} .se__bgg { display: inline-flex; align-items: center; gap: 5px; background: #2b2233; border-radius: 5px; padding: 2px 7px; }
+  .mp-se-{{ section.id }} .se__bgg b { font-size: 10px; font-weight: 700; color: #fff; letter-spacing: .5px; }
+  .mp-se-{{ section.id }} .se__name { font-size: 15px; font-weight: 700; color: #16323f; line-height: 1.22; text-decoration: none; }
+  .mp-se-{{ section.id }} .se__pub { font-size: 11.5px; color: #9b948a; margin-top: 2px; }
+  .mp-se-{{ section.id }} .se__metarow { display: flex; gap: 13px; margin-top: 9px; font-size: 11px; color: #6b7a82; flex-wrap: wrap; }
+  .mp-se-{{ section.id }} .se__foot { display: flex; align-items: flex-end; justify-content: space-between; margin-top: auto; padding-top: 12px; }
+  .mp-se-{{ section.id }} .se__rrp { font-size: 11px; color: #9b948a; text-decoration: line-through; }
+  .mp-se-{{ section.id }} .se__pr { font-size: 18px; font-weight: 700; color: #16323f; }
+  .mp-se-{{ section.id }} .se__add { background: #f2872f; color: #fff; border: 0; border-radius: 7px; padding: 9px 14px; font-size: 12.5px; font-weight: 600; cursor: pointer; font-family: inherit; }
+  .mp-se-{{ section.id }} .se__add[disabled] { opacity: .5; cursor: not-allowed; }
+  .mp-se-{{ section.id }} .se__card form { margin: 0; }
+
+  .mp-se-{{ section.id }} .se__pager { text-align: center; margin-top: 26px; }
+  .mp-se-{{ section.id }} .se__more { display: inline-flex; align-items: center; gap: 8px; }
+  .mp-se-{{ section.id }} .se__more a, .mp-se-{{ section.id }} .se__more span { border: 1px solid #d8d4cc; border-radius: 8px; padding: 11px 18px; color: #6b7a82; text-decoration: none; font-size: 13px; }
+  .mp-se-{{ section.id }} .se__more .is-current { border-color: #16323f; background: #16323f; color: #fff; font-weight: 600; }
+  .mp-se-{{ section.id }} .se__showing { font-size: 12px; color: #9b948a; margin-top: 10px; }
+
+  .mp-se-{{ section.id }} .se__empty { background: #fff; border: 1px solid #e7ddcb; border-radius: 12px; padding: 44px; text-align: center; color: #6b7a82; }
+  .mp-se-{{ section.id }} .se__empty .se__title { font-size: 22px; display: block; margin-bottom: 8px; }
+
+  @media (max-width: 989px) {
+    .mp-se-{{ section.id }} .se__body { flex-direction: column; }
+    .mp-se-{{ section.id }} .se__side { width: 100%; }
+    .mp-se-{{ section.id }} .se__grid { grid-template-columns: repeat(2,1fr); }
+  }
+  @media (max-width: 749px) {
+    .mp-se-{{ section.id }} .se__wrap { padding: 0 16px; }
+    .mp-se-{{ section.id }} .se__grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+    .mp-se-{{ section.id }} .se__title { font-size: 26px; }
+  }
+{%- endstyle -%}
+
+<section class="mp-se-{{ section.id }}">
+  <div class="se__wrap">
+
+    {%- comment -%} search box (re-search) {%- endcomment -%}
+    <form action="{{ routes.search_url }}" method="get" role="search" class="se__form">
+      <input type="hidden" name="type" value="product">
+      <input type="hidden" name="options[prefix]" value="last">
+      <div class="se__bar">
+        <input type="search" name="q" value="{{ search.terms | escape }}" placeholder="Search games, designers, publishers…" aria-label="Search">
+        <button type="submit" class="mp-cond">Search</button>
+      </div>
+    </form>
+
+    {%- if search.performed -%}
+      {%- comment -%} result header {%- endcomment -%}
+      <div class="se__head">
+        <div class="se__kicker">Search results for</div>
+        <div class="se__title-row">
+          <div class="se__title mp-cond">&ldquo;{{ search.terms | escape }}&rdquo;</div>
+          <div class="se__count">{{ search.results_count }} {% if search.results_count == 1 %}result{% else %}results{% endif %} found</div>
+        </div>
+      </div>
+
+      {%- paginate search.results by section.settings.results_per_page -%}
+        {%- liquid
+          assign start = paginate.current_offset | plus: 1
+          assign finish = paginate.current_offset | plus: search.results.size
+        -%}
+        <div class="se__body">
+
+          {%- comment -%} filter sidebar {%- endcomment -%}
+          <aside class="se__side">
+            <div class="se__panel">
+              <div class="se__phead">
+                <span class="mp-cond">Refine results</span>
+                {%- if search.filters.size > 0 -%}<a class="se__clear" href="{{ routes.search_url }}?q={{ search.terms | url_encode }}&amp;type=product">Clear all</a>{%- endif -%}
+              </div>
+
+              {%- if search.filters.size > 0 -%}
+                {%- for f in search.filters -%}
+                  <div class="se__group">
+                    <div class="se__gh">{{ f.label }}</div>
+                    {%- if f.type == 'price_range' -%}
+                      <form method="get" class="se__price">
+                        <input type="hidden" name="q" value="{{ search.terms | escape }}">
+                        <input type="hidden" name="type" value="product">
+                        <input type="hidden" name="options[prefix]" value="last">
+                        {%- for af in search.filters -%}
+                          {%- unless af.type == 'price_range' -%}{%- for v in af.active_values -%}<input type="hidden" name="{{ v.param_name }}" value="{{ v.value }}">{%- endfor -%}{%- endunless -%}
+                        {%- endfor -%}
+                        <input type="number" name="{{ f.min_value.param_name }}" placeholder="{{ f.range_min | money_without_currency | default: 'Min' }}" value="{{ f.min_value.value }}" min="0">
+                        <input type="number" name="{{ f.max_value.param_name }}" placeholder="{{ f.range_max | money_without_currency | default: 'Max' }}" value="{{ f.max_value.value }}" min="0">
+                        <button type="submit">Go</button>
+                      </form>
+                    {%- else -%}
+                      <div class="se__opts">
+                        {%- for v in f.values -%}
+                          <a class="se__opt{% if v.active %} is-on{% endif %}" href="{% if v.active %}{{ v.url_to_remove }}{% else %}{{ v.url_to_add }}{% endif %}">
+                            <span class="se__box">{% if v.active %}&#10003;{% endif %}</span>
+                            <span>{{ v.label }}</span>
+                            <span class="se__cnt">{{ v.count }}</span>
+                          </a>
+                        {%- endfor -%}
+                      </div>
+                    {%- endif -%}
+                  </div>
+                {%- endfor -%}
+              {%- else -%}
+                <div class="se__group" style="color:#8a8278;font-size:12.5px;border-bottom:0">
+                  No filters configured. Enable filters in <em>Search &amp; Discovery → Filters</em> (e.g. availability, player count, BGG score, publisher) and they appear here automatically.
+                </div>
+              {%- endif -%}
+            </div>
+          </aside>
+
+          {%- comment -%} results {%- endcomment -%}
+          <div class="se__main">
+
+            {%- comment -%} toolbar: active filter chips + sort {%- endcomment -%}
+            <div class="se__toolbar">
+              <div class="se__active">
+                {%- assign any_active = false -%}
+                {%- for f in search.filters -%}
+                  {%- for v in f.active_values -%}
+                    {%- assign any_active = true -%}
+                    <a class="se__achip" href="{{ v.url_to_remove }}">{{ v.label }} &times;</a>
+                  {%- endfor -%}
+                  {%- if f.type == 'price_range' and f.min_value.value or f.max_value.value -%}
+                    {%- assign any_active = true -%}
+                    <a class="se__achip" href="{{ f.url_to_remove }}">{{ f.min_value.value | default: 0 | money }}&ndash;{{ f.max_value.value | default: f.range_max | money }} &times;</a>
+                  {%- endif -%}
+                {%- endfor -%}
+                {%- if any_active -%}<a class="se__clearall" href="{{ routes.search_url }}?q={{ search.terms | url_encode }}&amp;type=product">Clear all</a>{%- endif -%}
+              </div>
+              <form method="get" class="se__sort">
+                <input type="hidden" name="q" value="{{ search.terms | escape }}">
+                <input type="hidden" name="type" value="product">
+                <input type="hidden" name="options[prefix]" value="last">
+                {%- for f in search.filters -%}
+                  {%- for v in f.active_values -%}<input type="hidden" name="{{ v.param_name }}" value="{{ v.value }}">{%- endfor -%}
+                  {%- if f.type == 'price_range' -%}
+                    {%- if f.min_value.value -%}<input type="hidden" name="{{ f.min_value.param_name }}" value="{{ f.min_value.value }}">{%- endif -%}
+                    {%- if f.max_value.value -%}<input type="hidden" name="{{ f.max_value.param_name }}" value="{{ f.max_value.value }}">{%- endif -%}
+                  {%- endif -%}
+                {%- endfor -%}
+                <select name="sort_by" onchange="this.form.submit()" aria-label="Sort by">
+                  {%- assign current_sort = search.sort_by | default: search.default_sort_by -%}
+                  {%- for opt in search.sort_options -%}
+                    <option value="{{ opt.value }}"{% if opt.value == current_sort %} selected{% endif %}>Sort: {{ opt.name }}</option>
+                  {%- endfor -%}
+                </select>
+              </form>
+            </div>
+
+            {%- if search.results.size > 0 -%}
+              <div class="se__grid">
+                {%- for item in search.results -%}
+                  {%- if item.object_type == 'product' -%}
+                    {%- assign product = item -%}
+                    {%- liquid
+                      assign cb = product.metafields.custom.bgg_rating.value
+                      assign cbn = cb | times: 1.0
+                      assign cc = '#e0b441'
+                      if cbn >= 8.0
+                        assign cc = '#5fbf7e'
+                      elsif cbn >= 7.0
+                        assign cc = '#9ccf63'
+                      endif
+                      assign csale = false
+                      if product.compare_at_price > product.price
+                        assign csale = true
+                        assign cdisc = product.compare_at_price | minus: product.price | times: 100.0 | divided_by: product.compare_at_price | round
+                      endif
+                      assign players = product.metafields.custom.player_count.value
+                      assign playtime = product.metafields.custom.play_time.value
+                    -%}
+                    <div class="se__card">
+                      {%- if csale -%}<span class="se__flag mp-cond">-{{ cdisc }}%</span>{%- endif -%}
+                      <a href="{{ product.url }}" class="se__media">{% if product.featured_image %}<img src="{{ product.featured_image | image_url: width: 420 }}" alt="{{ product.title | escape }}" width="420" height="420" loading="lazy">{% else %}<span style="font:11px ui-monospace,monospace;color:#a39c92">box art</span>{% endif %}</a>
+                      <div class="se__cbody">
+                        {%- if cb != blank -%}
+                          <div style="display:flex;align-items:center;gap:6px;margin-bottom:7px">
+                            <span class="se__bgg"><b class="mp-cond">BGG</b><span style="font-size:11.5px;font-weight:700;color:{{ cc }}">{{ cb }}</span></span>
+                            {%- if product.metafields.custom.bgg_rank.value != blank -%}<span style="font-size:10.5px;color:#9b948a">rank #{{ product.metafields.custom.bgg_rank.value }}</span>{%- endif -%}
+                          </div>
+                        {%- endif -%}
+                        <a class="se__name mp-cond" href="{{ product.url }}">{{ product.title }}</a>
+                        {%- if product.vendor != blank -%}<div class="se__pub">{{ product.vendor }}</div>{%- endif -%}
+                        {%- if players != blank or playtime != blank -%}
+                          <div class="se__metarow">
+                            {%- if players != blank -%}<span>&#9823; {{ players }}</span>{%- endif -%}
+                            {%- if playtime != blank -%}<span>&#9201; {{ playtime }}</span>{%- endif -%}
+                          </div>
+                        {%- endif -%}
+                        <div class="se__foot">
+                          <div>
+                            {%- if csale -%}<span class="se__rrp">{{ product.compare_at_price | money }}</span>{%- endif -%}
+                            <div class="se__pr mp-cond">{{ product.price | money }}</div>
+                          </div>
+                          <form action="{{ routes.cart_add_url }}" method="post" enctype="multipart/form-data">
+                            <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+                            <button type="submit" class="se__add mp-cond"{% unless product.available %} disabled{% endunless %}>Add</button>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                  {%- endif -%}
+                {%- endfor -%}
+              </div>
+
+              {%- if paginate.pages > 1 -%}
+                <div class="se__pager">
+                  <div class="se__more">
+                    {%- if paginate.previous -%}<a href="{{ paginate.previous.url }}">&lsaquo; Prev</a>{%- endif -%}
+                    {%- for part in paginate.parts -%}
+                      {%- if part.is_link -%}<a href="{{ part.url }}">{{ part.title }}</a>
+                      {%- elsif part.title == paginate.current_page -%}<span class="is-current mp-cond">{{ part.title }}</span>
+                      {%- else -%}<span style="border:0">{{ part.title }}</span>{%- endif -%}
+                    {%- endfor -%}
+                    {%- if paginate.next -%}<a href="{{ paginate.next.url }}">Next &rsaquo;</a>{%- endif -%}
+                  </div>
+                  <div class="se__showing">Showing {{ start }}&ndash;{{ finish }} of {{ search.results_count }}</div>
+                </div>
+              {%- else -%}
+                <div class="se__pager"><div class="se__showing">Showing all {{ search.results_count }} results</div></div>
+              {%- endif -%}
+
+            {%- else -%}
+              <div class="se__empty">
+                <span class="se__title mp-cond">No results for &ldquo;{{ search.terms | escape }}&rdquo;</span>
+                Try a different spelling, a designer or publisher name, or <a href="{{ routes.all_products_collection_url }}" style="color:#f2872f">browse all games</a>.
+              </div>
+            {%- endif -%}
+
+          </div>
+        </div>
+      {%- endpaginate -%}
+
+    {%- else -%}
+      {%- comment -%} no query yet {%- endcomment -%}
+      <div class="se__head">
+        <div class="se__title mp-cond">Search MPGames</div>
+        <div class="se__count" style="margin-top:6px">Find games by title, designer, publisher or mechanic — ranked by the data that matters.</div>
+      </div>
+      <div class="se__body" style="display:block">
+        <div class="se__empty">Start typing above to search the catalogue.</div>
+      </div>
+    {%- endif -%}
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "MP Search",
+  "settings": [
+    { "type": "range", "id": "results_per_page", "min": 6, "max": 24, "step": 3, "label": "Results per page", "default": 12 }
+  ],
+  "enabled_on": { "templates": ["search"] },
+  "presets": [
+    { "name": "MP Search" }
+  ]
+}
+{% endschema %}

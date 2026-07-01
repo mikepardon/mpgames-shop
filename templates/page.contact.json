@@ -1,25 +1,17 @@
 {
   "sections": {
-    "main": {
-      "type": "main-page",
-      "settings": {
-        "padding_top": 36,
-        "padding_bottom": 36
-      }
-    },
-    "form": {
-      "type": "contact-form",
-      "settings": {
-        "heading": "",
-        "heading_size": "h1",
-        "color_scheme": "scheme-1",
-        "padding_top": 36,
-        "padding_bottom": 36
-      }
+    "mp_contact": {
+      "type": "mp-contact",
+      "blocks": {
+        "ch1": { "type": "channel", "settings": { "icon": "✉️", "tint": "#fbeadb", "title": "Email us", "value": "hello@mpgames.io", "note": "Replies within 1 working day", "href": "mailto:hello@mpgames.io" } },
+        "ch2": { "type": "channel", "settings": { "icon": "📍", "tint": "#e7eef1", "title": "Based in", "value": "Stockport, UK", "note": "MPGames Ltd · Company No. 17064769" } },
+        "h1": { "type": "hour", "settings": { "day": "Monday – Friday", "time": "9:00am – 5:00pm" } },
+        "h2": { "type": "hour", "settings": { "day": "Saturday", "time": "10:00am – 2:00pm" } },
+        "h3": { "type": "hour", "settings": { "day": "Sunday & bank holidays", "time": "Closed" } }
+      },
+      "block_order": ["ch1", "ch2", "h1", "h2", "h3"],
+      "settings": {}
     }
   },
-  "order": [
-    "main",
-    "form"
-  ]
+  "order": ["mp_contact"]
 }

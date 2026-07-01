@@ -1,10 +1,11 @@
 {
   "sections": {
-    "main": {
-      "type": "main-404"
+    "mp_404": {
+      "type": "mp-404",
+      "settings": {}
     }
   },
   "order": [
-    "main"
+    "mp_404"
   ]
 }

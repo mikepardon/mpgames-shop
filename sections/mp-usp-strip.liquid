@@ -1,0 +1,58 @@
+{%- comment -%}
+  MPGames USP strip — four value-prop cells. Imported from Claude Design.
+{%- endcomment -%}
+
+{%- style -%}
+  .mp-usp-{{ section.id }} .mp-usp__grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1px; background: #e7e0d4; }
+  .mp-usp-{{ section.id }} .mp-usp__cell { background: #fbf9f4; padding: 16px 22px; display: flex; gap: 12px; align-items: center; }
+  .mp-usp-{{ section.id }} .mp-usp__icon { font-size: 20px; }
+  .mp-usp-{{ section.id }} .mp-usp__txt { font-size: 12.5px; color: #4a443c; }
+  .mp-usp-{{ section.id }} .mp-usp__txt b { color: #16323f; }
+  .mp-usp-{{ section.id }} .mp-usp__sub { color: #8a8278; }
+  @media (max-width: 749px) { .mp-usp-{{ section.id }} .mp-usp__grid { grid-template-columns: repeat(2,1fr); } }
+{%- endstyle -%}
+
+<div class="mp-cream mp-usp-{{ section.id }}">
+  <div class="mp-col">
+    <div class="mp-usp__grid">
+      {%- for block in section.blocks -%}
+        <div class="mp-usp__cell" {{ block.shopify_attributes }}>
+          <span class="mp-usp__icon">{{ block.settings.icon }}</span>
+          <div class="mp-usp__txt">
+            <b class="mp-cond">{{ block.settings.title }}</b>
+            <div class="mp-usp__sub">{{ block.settings.subtitle }}</div>
+          </div>
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "MP USP strip",
+  "max_blocks": 4,
+  "blocks": [
+    {
+      "type": "usp",
+      "name": "USP",
+      "settings": [
+        { "type": "text", "id": "icon", "label": "Icon (emoji)", "default": "🚚" },
+        { "type": "text", "id": "title", "label": "Title", "default": "Next working day dispatch" },
+        { "type": "text", "id": "subtitle", "label": "Subtitle", "default": "On all orders" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "MP USP strip",
+      "blocks": [
+        { "type": "usp", "settings": { "icon": "🚚", "title": "Next working day dispatch", "subtitle": "On all orders" } },
+        { "type": "usp", "settings": { "icon": "🏆", "title": "BGG-ranked browsing", "subtitle": "Shop by score" } },
+        { "type": "usp", "settings": { "icon": "💰", "title": "Price-match promise", "subtitle": "Found it cheaper? Tell us" } },
+        { "type": "usp", "settings": { "icon": "🔄", "title": "30-day returns", "subtitle": "On unopened games" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

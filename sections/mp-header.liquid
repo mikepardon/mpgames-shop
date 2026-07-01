@@ -1,0 +1,234 @@
+{%- comment -%}
+  MPGames header — logo, search, account / wishlist / basket, and mega-nav.
+  Imported from Claude Design "MPGames Homepage".
+  This section also loads the Barlow web fonts and defines the shared
+  `.mp-cond` (condensed) helper class used across all MP* sections.
+{%- endcomment -%}
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Semi+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
+
+{%- style -%}
+  .mp-cond { font-family: 'Barlow Semi Condensed', ui-sans-serif, sans-serif; }
+
+  /* shared layout helpers used by every MP* homepage section */
+  .mp-cream { background: #e9e4da; font-family: 'Barlow', ui-sans-serif, system-ui, sans-serif; }
+  .mp-col { width: 100%; background: #fff; }
+
+  .mp-hd-{{ section.id }} { font-family: 'Barlow', ui-sans-serif, system-ui, sans-serif; }
+
+  /* row 1 */
+  .mp-hd-{{ section.id }} .mp-hd__bar { background: #16323f; }
+  .mp-hd-{{ section.id }} .mp-hd__in {
+    width: 100%;
+    padding: 15px 28px; display: flex; align-items: center; gap: 24px;
+  }
+  .mp-hd-{{ section.id }} .mp-hd__logo {
+    font-size: 26px; font-weight: 700; color: #fff; white-space: nowrap;
+    letter-spacing: .5px; text-decoration: none; display: flex; align-items: center;
+  }
+  .mp-hd-{{ section.id }} .mp-hd__logo span { color: #f2872f; }
+  .mp-hd-{{ section.id }} .mp-hd__logo img { display: block; width: auto; }
+  .mp-hd-{{ section.id }} .mp-hd__logo .mp-hd__logo-mark { display: none; height: 34px; }
+  .mp-hd-{{ section.id }} .mp-hd__search {
+    flex: 1; display: flex; align-items: center; background: #fff;
+    border-radius: 7px; overflow: hidden; min-width: 0;
+  }
+  .mp-hd-{{ section.id }} .mp-hd__cats {
+    padding: 0 13px; font-size: 12.5px; color: #6b7a82;
+    border-right: 1px solid #e2ddd4; white-space: nowrap;
+  }
+  .mp-hd-{{ section.id }} .mp-hd__search input {
+    flex: 1; border: 0; outline: 0; padding: 11px 13px; font-size: 13px;
+    color: #16323f; font-family: inherit; min-width: 0; background: transparent;
+  }
+  .mp-hd-{{ section.id }} .mp-hd__search input::placeholder { color: #a39c92; }
+  .mp-hd-{{ section.id }} .mp-hd__search button {
+    background: #f2872f; color: #fff; padding: 11px 18px; font-size: 13px;
+    font-weight: 600; border: 0; cursor: pointer; font-family: inherit; white-space: nowrap;
+  }
+  .mp-hd-{{ section.id }} .mp-hd__util {
+    display: flex; gap: 22px; color: #dce6ea; font-size: 12.5px;
+    align-items: center; white-space: nowrap;
+  }
+  .mp-hd-{{ section.id }} .mp-hd__util a { color: inherit; text-decoration: none; }
+  .mp-hd-{{ section.id }} .mp-hd__stack { display: flex; flex-direction: column; line-height: 1.3; }
+  .mp-hd-{{ section.id }} .mp-hd__muted { color: #9fb4bd; font-size: 11px; }
+  .mp-hd-{{ section.id }} .mp-hd__white { color: #fff; }
+  .mp-hd-{{ section.id }} .mp-hd__basket {
+    display: inline-flex; align-items: center; gap: 8px; background: #1d4252;
+    border: 1px solid #2c5466; border-radius: 7px; padding: 8px 13px;
+  }
+  .mp-hd-{{ section.id }} .mp-hd__wish { display: flex; align-items: center; gap: 7px; }
+
+  /* row 2 — mega nav */
+  .mp-hd-{{ section.id }} .mp-nav { background: #1d4252; position: relative; }
+  .mp-hd-{{ section.id }} .mp-nav__in {
+    width: 100%; padding: 0 28px; display: flex; gap: 0;
+    color: #dce6ea; font-size: 14px; font-weight: 500;
+  }
+  .mp-hd-{{ section.id }} .mp-nav__item { position: static; display: flex; align-items: center; }
+  .mp-hd-{{ section.id }} .mp-nav__top {
+    color: #dce6ea; text-decoration: none; padding: 12px 16px; white-space: nowrap;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .mp-hd-{{ section.id }} .mp-nav__top.is-sale { color: #ffd2b0; font-weight: 600; }
+  .mp-hd-{{ section.id }} .mp-nav__sale-spacer { margin-left: auto; }
+  .mp-hd-{{ section.id }} .mp-nav__caret { font-size: 10px; opacity: .8; }
+  .mp-hd-{{ section.id }} .mp-nav__item:hover .mp-nav__top,
+  .mp-hd-{{ section.id }} .mp-nav__top:hover { background: #16323f; color: #fff; }
+
+  .mp-hd-{{ section.id }} .mp-mega {
+    display: none; position: absolute; left: 0; right: 0; top: 100%; z-index: 60;
+    background: #16323f; border-top: 2px solid #f2872f; box-shadow: 0 18px 44px rgba(0,0,0,.4);
+  }
+  .mp-hd-{{ section.id }} .mp-nav__item:hover .mp-mega { display: block; }
+  .mp-hd-{{ section.id }} .mp-mega__in { max-width: 1200px; margin: 0 auto; padding: 26px 28px; display: flex; gap: 34px; }
+  .mp-hd-{{ section.id }} .mp-mega__col { flex: 1; min-width: 0; }
+  .mp-hd-{{ section.id }} .mp-mega__h {
+    color: #fff; font-size: 13px; font-weight: 700; letter-spacing: .6px; text-transform: uppercase;
+    border-bottom: 1px solid #25434f; padding-bottom: 9px; margin-bottom: 10px;
+  }
+  .mp-hd-{{ section.id }} .mp-mega__link { display: block; color: #9fb4bd; text-decoration: none; font-size: 13.5px; padding: 6px 0; }
+  .mp-hd-{{ section.id }} .mp-mega__link:hover { color: #f2872f; }
+  .mp-hd-{{ section.id }} .mp-mega__all { display: inline-block; margin-top: 9px; color: #f2872f; font-weight: 600; font-size: 12.5px; text-decoration: none; }
+  .mp-hd-{{ section.id }} .mp-mega__feature {
+    width: 270px; flex: none; margin-left: auto; background: #0f242e; border: 1px solid #25434f;
+    border-radius: 12px; padding: 16px; text-align: center;
+  }
+  .mp-hd-{{ section.id }} .mp-mega__fh { color: #fff; font-weight: 700; font-size: 15px; line-height: 1.2; }
+  .mp-hd-{{ section.id }} .mp-mega__fsub { color: #9fb4bd; font-size: 12px; margin-top: 3px; }
+  .mp-hd-{{ section.id }} .mp-mega__fprice { color: #f2872f; font-weight: 700; font-size: 19px; margin-top: 8px; }
+  .mp-hd-{{ section.id }} .mp-mega__fimg { display: block; margin: 11px 0; border-radius: 8px; overflow: hidden; background: #dfd9cd; aspect-ratio: 1/1; }
+  .mp-hd-{{ section.id }} .mp-mega__fimg img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .mp-hd-{{ section.id }} .mp-mega__feature form { margin: 0; }
+  .mp-hd-{{ section.id }} .mp-mega__fadd { width: 100%; background: #f2872f; color: #fff; border: 0; border-radius: 8px; padding: 11px; font-weight: 700; cursor: pointer; font-family: inherit; font-size: 13.5px; }
+
+  @media (max-width: 989px) {
+    .mp-hd-{{ section.id }} .mp-hd__util .mp-hd__stack span:first-child,
+    .mp-hd-{{ section.id }} .mp-hd__muted { display: none; }
+    .mp-hd-{{ section.id }} .mp-mega { display: none !important; }
+    .mp-hd-{{ section.id }} .mp-nav__in { overflow-x: auto; scrollbar-width: none; }
+    .mp-hd-{{ section.id }} .mp-nav__in::-webkit-scrollbar { display: none; }
+    .mp-hd-{{ section.id }} .mp-nav__caret { display: none; }
+  }
+  @media (max-width: 749px) {
+    .mp-hd-{{ section.id }} .mp-hd__in { flex-wrap: wrap; gap: 12px; padding: 12px 16px; }
+    .mp-hd-{{ section.id }} .mp-hd__search { order: 3; flex: 1 0 100%; }
+    .mp-hd-{{ section.id }} .mp-hd__cats { display: none; }
+    .mp-hd-{{ section.id }} .mp-hd__util { margin-left: auto; gap: 16px; }
+    .mp-hd-{{ section.id }} .mp-hd__wish span:last-child { display: none; }
+    .mp-hd-{{ section.id }} .mp-nav__in { padding: 0 16px; }
+    .mp-hd-{{ section.id }} .mp-hd__logo .mp-hd__logo-full { display: none; }
+    .mp-hd-{{ section.id }} .mp-hd__logo .mp-hd__logo-mark { display: block; }
+  }
+{%- endstyle -%}
+
+<div class="mp-hd-{{ section.id }}">
+  <!-- row 1 -->
+  <div class="mp-hd__bar">
+    <div class="mp-hd__in">
+      <a class="mp-hd__logo mp-cond" href="{{ routes.root_url }}" aria-label="{{ shop.name }}">
+        {%- if section.settings.logo != blank -%}
+          <img src="{{ section.settings.logo | image_url: width: 600 }}" alt="{{ shop.name | escape }}" width="200" height="{{ section.settings.logo_height }}" style="height:{{ section.settings.logo_height }}px">
+        {%- else -%}
+          <img class="mp-hd__logo-full" src="{{ 'MPGames-logo.png' | asset_url }}" alt="{{ shop.name | escape }}" width="200" height="{{ section.settings.logo_height | default: 34 }}" style="height:{{ section.settings.logo_height | default: 34 }}px">
+          <img class="mp-hd__logo-mark" src="{{ 'MPGames-mark.png' | asset_url }}" alt="{{ shop.name | escape }}" width="34" height="34">
+        {%- endif -%}
+      </a>
+
+      <form action="{{ routes.search_url }}" method="get" role="search" class="mp-hd__search">
+        <input type="hidden" name="type" value="product">
+        <input type="hidden" name="options[prefix]" value="last">
+        <span class="mp-hd__cats">All categories &#9662;</span>
+        <input type="search" name="q" placeholder="{{ section.settings.search_placeholder }}" aria-label="Search">
+        <button type="submit">Search</button>
+      </form>
+
+      <div class="mp-hd__util">
+        <a href="{{ routes.account_url }}" class="mp-hd__stack">
+          <span class="mp-hd__muted">Account</span>
+          <span class="mp-hd__white">{% if customer %}{{ customer.first_name | default: 'Account' }}{% else %}Sign in{% endif %} &#9662;</span>
+        </a>
+        <a href="{{ routes.cart_url }}" class="mp-hd__basket">
+          <span>&#128722;</span>
+          <span class="mp-hd__stack">
+            <span class="mp-hd__muted">Basket</span>
+            <span class="mp-hd__white" style="font-weight:600">{{ cart.item_count }} &middot; {{ cart.total_price | money }}</span>
+          </span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- row 2 — mega nav -->
+  {%- assign mp_menu = linklists[section.settings.menu] -%}
+  {%- assign featured = all_products[section.settings.featured_product] -%}
+  <nav class="mp-nav mp-cond" aria-label="Primary">
+    <div class="mp-nav__in">
+      {%- if section.settings.menu != blank and mp_menu.links.size > 0 -%}
+        {%- for link in mp_menu.links -%}
+          {%- if link.links.size > 0 -%}
+            <div class="mp-nav__item">
+              <a class="mp-nav__top" href="{{ link.url }}">{{ link.title }} <span class="mp-nav__caret">&#9662;</span></a>
+              <div class="mp-mega">
+                <div class="mp-mega__in">
+                  {%- for col in link.links -%}
+                    <div class="mp-mega__col">
+                      <div class="mp-mega__h">{{ col.title }}</div>
+                      {%- for sub in col.links -%}
+                        <a class="mp-mega__link" href="{{ sub.url }}">{{ sub.title }}</a>
+                      {%- endfor -%}
+                      {%- if col.url != blank and col.url != '/' -%}
+                        <a class="mp-mega__all" href="{{ col.url }}">Shop all &raquo;</a>
+                      {%- endif -%}
+                    </div>
+                  {%- endfor -%}
+                  {%- if featured != blank -%}
+                    <div class="mp-mega__feature">
+                      <div class="mp-mega__fh">{{ featured.title }}</div>
+                      <div class="mp-mega__fsub">{{ featured.vendor }}{% if featured.metafields.custom.player_count.value != blank %} · {{ featured.metafields.custom.player_count.value }} players{% endif %}</div>
+                      <div class="mp-mega__fprice">{{ featured.price | money }}</div>
+                      <a class="mp-mega__fimg" href="{{ featured.url }}">{% if featured.featured_image %}<img src="{{ featured.featured_image | image_url: width: 360 }}" alt="{{ featured.title | escape }}" width="360" height="360" loading="lazy">{% endif %}</a>
+                      <form action="{{ routes.cart_add_url }}" method="post" enctype="multipart/form-data">
+                        <input type="hidden" name="id" value="{{ featured.selected_or_first_available_variant.id }}">
+                        <button type="submit" class="mp-mega__fadd"{% unless featured.available %} disabled{% endunless %}>Add to cart</button>
+                      </form>
+                    </div>
+                  {%- endif -%}
+                </div>
+              </div>
+            </div>
+          {%- else -%}
+            <a class="mp-nav__top{% if link.title == 'Sale' %} is-sale{% endif %}" href="{{ link.url }}">{{ link.title }}</a>
+          {%- endif -%}
+        {%- endfor -%}
+      {%- else -%}
+        <a class="mp-nav__top" href="{{ section.settings.all_url | default: '/collections/all-games' }}">All Games</a>
+        <a class="mp-nav__top" href="/collections/new-releases">New In</a>
+        <a class="mp-nav__top" href="/collections/cat-strategy">Strategy</a>
+        <a class="mp-nav__top" href="/collections/cat-family">Family</a>
+        <a class="mp-nav__top" href="/collections/players-2">2-Player</a>
+        <a class="mp-nav__top is-sale" href="{{ section.settings.sale_url | default: '/collections/sale' }}">Sale</a>
+      {%- endif -%}
+    </div>
+  </nav>
+</div>
+
+{% schema %}
+{
+  "name": "MP Header",
+  "settings": [
+    { "type": "image_picker", "id": "logo", "label": "Logo", "info": "Defaults to the bundled MPGames-logo.png asset." },
+    { "type": "range", "id": "logo_height", "min": 22, "max": 56, "step": 2, "unit": "px", "label": "Logo height", "default": 34 },
+    { "type": "text", "id": "search_placeholder", "label": "Search placeholder", "default": "Search games, designers, publishers…" },
+    { "type": "link_list", "id": "menu", "label": "Mega-nav menu", "info": "Leave empty to use the built-in real-collection links." },
+    { "type": "url", "id": "all_url", "label": "All Games link", "info": "Defaults to /collections/all-games." },
+    { "type": "product", "id": "featured_product", "label": "Mega-menu featured product" },
+    { "type": "url", "id": "wishlist_url", "label": "Wishlist URL" },
+    { "type": "url", "id": "sale_url", "label": "Sale link URL", "info": "Defaults to /collections/sale." }
+  ],
+  "enabled_on": { "groups": ["header"] }
+}
+{% endschema %}

@@ -1,0 +1,12 @@
+# Editor "safe write" temp files (JetBrains/IntelliJ write *.tmp.<pid>.<hash>
+# then rename) — the theme uploader rejects their filenames as illegal.
+*.tmp
+*.tmp.*
+*___jb_tmp___
+*___jb_old___
+
+# IDE / VCS noise
+.idea/
+.git/
+.env
+.env.*

@@ -4,12 +4,15 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="theme-color" content="">
+    <meta name="theme-color" content="#0d2630">
     <link rel="canonical" href="{{ canonical_url }}">
 
     {%- if settings.favicon != blank -%}
       <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
+    {%- else -%}
+      <link rel="icon" type="image/png" href="{{ 'MPGames-favicon-512.png' | asset_url }}">
     {%- endif -%}
+    <link rel="apple-touch-icon" href="{{ 'MPGames-mark.png' | asset_url }}">
 
     {%- unless settings.type_header_font.system? and settings.type_body_font.system? -%}
       <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
@@ -27,6 +30,38 @@
     {% endif %}
 
     {% render 'meta-tags' %}
+
+    {%- if request.page_type == 'index' -%}
+      <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": {{ shop.name | json }},
+        "url": {{ shop.url | append: routes.root_url | json }},
+        "logo": {% if settings.logo != blank %}{{ settings.logo | image_url: width: 400 | prepend: "https:" | json }}{% else %}{{ 'MPGames-logo.png' | asset_url | prepend: "https:" | json }}{% endif %},
+        "email": "hello@mpgames.io",
+        "legalName": "MPGames Ltd",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Stockport",
+          "addressCountry": "GB"
+        }
+      }
+      </script>
+      <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": {{ shop.name | json }},
+        "url": {{ shop.url | append: routes.root_url | json }},
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "{{ shop.url }}/search?q={search_term_string}",
+          "query-input": "required name=search_term_string"
+        }
+      }
+      </script>
+    {%- endif -%}
 
     <script type="module">
       import * as StandardEvents from 'https://cdn.shopify.com/storefront/standard-events.js';

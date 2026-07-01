@@ -1,0 +1,123 @@
+{%- comment -%}
+  MPGames account dashboard — order history + account details.
+  Uses real Shopify customer.orders / customer.default_address objects.
+{%- endcomment -%}
+
+{%- style -%}
+  .mp-ac-{{ section.id }} { background: #f4efe6; font-family: 'Barlow', ui-sans-serif, system-ui, sans-serif; color: #16323f; }
+  .mp-ac-{{ section.id }} .ac__wrap { max-width: 1040px; margin: 0 auto; padding: 34px 28px 48px; }
+  .mp-ac-{{ section.id }} .ac__top { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; margin-bottom: 22px; }
+  .mp-ac-{{ section.id }} .ac__kicker { font-size: 12px; font-weight: 700; letter-spacing: .6px; color: #f2872f; text-transform: uppercase; }
+  .mp-ac-{{ section.id }} .ac__h { font-size: 28px; font-weight: 700; line-height: 1.1; margin-top: 4px; }
+  .mp-ac-{{ section.id }} .ac__logout { flex: none; font-size: 13px; font-weight: 600; color: #16323f; text-decoration: none; border: 1px solid #d8d4cc; border-radius: 8px; padding: 9px 16px; background: #fff; white-space: nowrap; }
+  .mp-ac-{{ section.id }} .ac__logout:hover { border-color: #f2872f; color: #f2872f; }
+  .mp-ac-{{ section.id }} .ac__grid { display: grid; grid-template-columns: 1fr 320px; gap: 20px; align-items: start; }
+  .mp-ac-{{ section.id }} .ac__card { background: #fff; border: 1px solid #e7ddcb; border-radius: 14px; padding: 26px 28px; box-shadow: 0 1px 3px rgba(20,40,50,.05); }
+  .mp-ac-{{ section.id }} .ac__ch { font-size: 17px; font-weight: 700; margin-bottom: 16px; }
+  .mp-ac-{{ section.id }} table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  .mp-ac-{{ section.id }} thead th { text-align: left; font-size: 11px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; color: #8a8278; padding: 0 12px 10px 0; border-bottom: 1px solid #ece5d8; }
+  .mp-ac-{{ section.id }} tbody td { padding: 13px 12px 13px 0; border-bottom: 1px solid #f1ece2; vertical-align: top; }
+  .mp-ac-{{ section.id }} tbody tr:last-child td { border-bottom: 0; }
+  .mp-ac-{{ section.id }} .ac__ordno a { color: #16323f; font-weight: 700; text-decoration: none; }
+  .mp-ac-{{ section.id }} .ac__ordno a:hover { color: #f2872f; }
+  .mp-ac-{{ section.id }} .ac__pill { display: inline-block; font-size: 11.5px; font-weight: 600; padding: 3px 9px; border-radius: 20px; background: #f1ece2; color: #4a443c; white-space: nowrap; }
+  .mp-ac-{{ section.id }} .ac__pill--paid { background: #e3f1e9; color: #1f6b45; }
+  .mp-ac-{{ section.id }} .ac__pill--pending { background: #fbeadb; color: #a45a12; }
+  .mp-ac-{{ section.id }} .ac__empty { font-size: 13.5px; color: #8a8278; }
+  .mp-ac-{{ section.id }} .ac__addr { font-size: 13.5px; line-height: 1.6; color: #4a443c; }
+  .mp-ac-{{ section.id }} .ac__addr p { margin: 0; }
+  .mp-ac-{{ section.id }} .ac__link { display: inline-block; margin-top: 14px; font-size: 13px; font-weight: 600; color: #f2872f; text-decoration: none; }
+  .mp-ac-{{ section.id }} .ac__pager { display: flex; gap: 8px; margin-top: 18px; }
+  .mp-ac-{{ section.id }} .ac__pager a, .mp-ac-{{ section.id }} .ac__pager span { font-size: 13px; font-weight: 600; padding: 7px 12px; border-radius: 7px; text-decoration: none; color: #16323f; border: 1px solid #e7ddcb; }
+  .mp-ac-{{ section.id }} .ac__pager span[aria-current] { background: #16323f; color: #fff; border-color: #16323f; }
+  @media (max-width: 749px) {
+    .mp-ac-{{ section.id }} .ac__grid { grid-template-columns: 1fr; }
+    .mp-ac-{{ section.id }} thead { display: none; }
+    .mp-ac-{{ section.id }} tbody td { display: flex; justify-content: space-between; gap: 14px; padding: 8px 0; border-bottom: 0; }
+    .mp-ac-{{ section.id }} tbody tr { display: block; padding: 12px 0; border-bottom: 1px solid #f1ece2; }
+    .mp-ac-{{ section.id }} tbody td::before { content: attr(data-label); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: #8a8278; }
+  }
+{%- endstyle -%}
+
+<div class="mp-ac-{{ section.id }}">
+  <div class="ac__wrap">
+    <div class="ac__top">
+      <div>
+        <div class="ac__kicker mp-cond">MPGames account</div>
+        <h1 class="ac__h mp-cond">
+          {%- if customer.first_name != blank -%}Hello, {{ customer.first_name }}{%- else -%}Your account{%- endif -%}
+        </h1>
+      </div>
+      <a class="ac__logout" href="{{ routes.account_logout_url }}">Sign out</a>
+    </div>
+
+    <div class="ac__grid">
+      <div class="ac__card">
+        <div class="ac__ch mp-cond">Order history</div>
+        {%- paginate customer.orders by 20 -%}
+          {%- if customer.orders.size > 0 -%}
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Order</th>
+                  <th scope="col">Date</th>
+                  <th scope="col">Payment</th>
+                  <th scope="col">Fulfilment</th>
+                  <th scope="col">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                {%- for order in customer.orders -%}
+                  <tr>
+                    <td class="ac__ordno" data-label="Order"><a href="{{ order.customer_url }}">{{ order.name }}</a></td>
+                    <td data-label="Date">{{ order.created_at | date: '%d %b %Y' }}</td>
+                    <td data-label="Payment">
+                      {%- assign fs = order.financial_status -%}
+                      <span class="ac__pill{% if fs == 'paid' %} ac__pill--paid{% elsif fs == 'pending' or fs == 'authorized' %} ac__pill--pending{% endif %}">{{ order.financial_status_label }}</span>
+                    </td>
+                    <td data-label="Fulfilment"><span class="ac__pill{% if order.fulfillment_status == 'fulfilled' %} ac__pill--paid{% endif %}">{{ order.fulfillment_status_label }}</span></td>
+                    <td data-label="Total">{{ order.total_net_amount | money_with_currency }}</td>
+                  </tr>
+                {%- endfor -%}
+              </tbody>
+            </table>
+
+            {%- if paginate.pages > 1 -%}
+              <nav class="ac__pager" aria-label="Order history pages">
+                {%- for part in paginate.parts -%}
+                  {%- if part.is_link -%}
+                    <a href="{{ part.url }}">{{ part.title }}</a>
+                  {%- elsif part.title == paginate.current_page -%}
+                    <span aria-current="page">{{ part.title }}</span>
+                  {%- else -%}
+                    <span>{{ part.title }}</span>
+                  {%- endif -%}
+                {%- endfor -%}
+              </nav>
+            {%- endif -%}
+          {%- else -%}
+            <p class="ac__empty">You haven't placed any orders yet. <a class="ac__link" style="margin:0" href="{{ routes.all_products_collection_url }}">Start browsing games &#8594;</a></p>
+          {%- endif -%}
+        {%- endpaginate -%}
+      </div>
+
+      <div class="ac__card">
+        <div class="ac__ch mp-cond">Account details</div>
+        {%- if customer.default_address != blank -%}
+          <div class="ac__addr">{{ customer.default_address | format_address }}</div>
+        {%- else -%}
+          <p class="ac__empty">No default address saved yet.</p>
+        {%- endif -%}
+        <a class="ac__link" href="{{ routes.account_addresses_url }}">Manage addresses ({{ customer.addresses_count }}) &#8594;</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "MP Account",
+  "settings": [],
+  "presets": [ { "name": "MP Account" } ]
+}
+{% endschema %}

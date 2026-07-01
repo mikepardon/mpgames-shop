@@ -1,0 +1,28 @@
+{
+  "sections": {
+    "mp_faqs": {
+      "type": "mp-faqs",
+      "blocks": {
+        "q1": { "type": "faq", "settings": { "topic": "Orders & payment", "question": "What payment methods do you accept?", "answer": "<p>We accept all major cards (Visa, Mastercard, Amex), PayPal, Apple Pay, Google Pay and Klarna for pay-in-3.</p>" } },
+        "q2": { "type": "faq", "settings": { "topic": "Orders & payment", "question": "Can I amend or cancel my order?", "answer": "<p>If your order hasn't been dispatched yet, contact us as soon as possible and we'll do our best. Once it's on its way, use our 30-day returns instead.</p>" } },
+        "q3": { "type": "faq", "settings": { "topic": "Orders & payment", "question": "Do you offer gift wrapping?", "answer": "<p>Yes — add gift wrap at checkout for £2.99 per item, with an optional handwritten message card.</p>" } },
+        "q4": { "type": "faq", "settings": { "topic": "Orders & payment", "question": "Is it safe to pay on your site?", "answer": "<p>Absolutely. All payments are processed through PCI-compliant, fully encrypted providers. We never store your card details.</p>" } },
+        "q5": { "type": "faq", "settings": { "topic": "Delivery", "question": "How much is delivery?", "answer": "<p>Free on UK orders over £50. Under that, standard delivery starts at £3.49. Express and next-day options are available at checkout.</p>" } },
+        "q6": { "type": "faq", "settings": { "topic": "Delivery", "question": "How quickly will my order arrive?", "answer": "<p>Orders are dispatched the next working day. Standard delivery then takes 2–3 working days.</p>" } },
+        "q7": { "type": "faq", "settings": { "topic": "Delivery", "question": "Do you ship internationally?", "answer": "<p>Yes, to over 40 countries. Rates and estimated times are shown at checkout based on your address.</p>" } },
+        "q8": { "type": "faq", "settings": { "topic": "Returns & refunds", "question": "What is your returns policy?", "answer": "<p>Unopened games can be returned within 30 days for a full refund. Start your return from your account or your dispatch email.</p>" } },
+        "q9": { "type": "faq", "settings": { "topic": "Returns & refunds", "question": "Who pays for return postage?", "answer": "<p>For change-of-mind returns, return postage is at your cost. For damaged or faulty items, we cover it and send a prepaid label.</p>" } },
+        "q10": { "type": "faq", "settings": { "topic": "Returns & refunds", "question": "When will I get my refund?", "answer": "<p>Refunds are processed within 3–5 working days of your return reaching our warehouse, back to your original payment method.</p>" } },
+        "q11": { "type": "faq", "settings": { "topic": "Your account", "question": "Do I need an account to order?", "answer": "<p>No — you can check out as a guest. An account just makes reordering, tracking and returns faster.</p>" } },
+        "q12": { "type": "faq", "settings": { "topic": "Your account", "question": "How do I reset my password?", "answer": "<p>Click 'Sign in', then 'Forgot password', and we'll email you a secure reset link.</p>" } },
+        "q13": { "type": "faq", "settings": { "topic": "Your account", "question": "How do I track my order?", "answer": "<p>Sign in and open the order, or use the tracking link in your dispatch email.</p>" } },
+        "q14": { "type": "faq", "settings": { "topic": "Products & stock", "question": "What do the BGG scores on listings mean?", "answer": "<p>Every product shows its BoardGameGeek community rating out of 10 and its overall rank — a quick, honest gauge of how the hobby rates a game.</p>" } },
+        "q15": { "type": "faq", "settings": { "topic": "Products & stock", "question": "Is everything you sell in stock?", "answer": "<p>Stock status is live on every listing. 'Pre-order' items show an expected date; we only charge when they ship.</p>" } },
+        "q16": { "type": "faq", "settings": { "topic": "Products & stock", "question": "Are your games official UK editions?", "answer": "<p>Yes — 100% official UK stock sourced directly from publishers and authorised distributors.</p>" } }
+      },
+      "block_order": ["q1","q2","q3","q4","q5","q6","q7","q8","q9","q10","q11","q12","q13","q14","q15","q16"],
+      "settings": {}
+    }
+  },
+  "order": ["mp_faqs"]
+}

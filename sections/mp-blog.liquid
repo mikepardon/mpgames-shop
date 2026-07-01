@@ -1,0 +1,220 @@
+{%- comment -%}
+  MPGames blog listing — masthead, tag chips, featured post, article grid with
+  pagination, and a sidebar. Imported from Claude Design "MPGames Blog".
+  Reads the real Shopify blog + articles.
+{%- endcomment -%}
+
+{%- style -%}
+  .mp-bl-{{ section.id }} { background: #f4efe6; font-family: 'Barlow', ui-sans-serif, system-ui, sans-serif; color: #16323f; }
+  .mp-bl-{{ section.id }} .bl__wrap { max-width: 1200px; margin: 0 auto; padding: 0 28px; }
+  .mp-bl-{{ section.id }} .bl__mast { text-align: center; padding: 32px 0 8px; }
+  .mp-bl-{{ section.id }} .bl__kicker { font-size: 12.5px; font-weight: 600; color: #f2872f; letter-spacing: 1.5px; }
+  .mp-bl-{{ section.id }} .bl__h1 { font-size: 40px; font-weight: 700; margin: 8px 0 0; }
+  .mp-bl-{{ section.id }} .bl__sub { font-size: 14.5px; color: #8a8278; margin: 8px auto 0; max-width: 560px; }
+  .mp-bl-{{ section.id }} .bl__chips { display: flex; gap: 9px; justify-content: center; flex-wrap: wrap; padding: 18px 0 6px; }
+  .mp-bl-{{ section.id }} .bl__chip { background: #fff; border: 1px solid #e2ddd1; color: #4a443c; font-size: 13px; font-weight: 600; padding: 8px 16px; border-radius: 8px; text-decoration: none; }
+  .mp-bl-{{ section.id }} .bl__chip.is-active { background: #16323f; border-color: #16323f; color: #fff; }
+
+  .mp-bl-{{ section.id }} .bl__feat { display: flex; gap: 0; border: 1px solid #e7ddcb; border-radius: 14px; overflow: hidden; background: #fff; box-shadow: 0 1px 3px rgba(20,40,50,.05); text-decoration: none; margin-top: 18px; }
+  .mp-bl-{{ section.id }} .bl__featimg { width: 580px; flex: none; min-height: 320px; position: relative; background: repeating-linear-gradient(45deg,#e6e0d4,#e6e0d4 13px,#ded7c9 13px,#ded7c9 26px); background-size: cover; background-position: center; }
+  .mp-bl-{{ section.id }} .bl__featlabel { position: absolute; top: 16px; left: 16px; background: #f2872f; color: #fff; font-size: 12px; font-weight: 700; padding: 5px 12px; border-radius: 6px; }
+  .mp-bl-{{ section.id }} .bl__featbody { flex: 1; padding: 34px 36px; display: flex; flex-direction: column; justify-content: center; }
+  .mp-bl-{{ section.id }} .bl__tag { font-size: 12px; font-weight: 600; color: #f2872f; letter-spacing: .6px; text-transform: uppercase; }
+  .mp-bl-{{ section.id }} .bl__feath { font-size: 30px; font-weight: 700; margin-top: 9px; line-height: 1.12; }
+  .mp-bl-{{ section.id }} .bl__featex { font-size: 14.5px; color: #6b6b62; line-height: 1.6; margin-top: 12px; }
+  .mp-bl-{{ section.id }} .bl__by { display: flex; align-items: center; gap: 11px; margin-top: 20px; }
+  .mp-bl-{{ section.id }} .bl__av { width: 38px; height: 38px; border-radius: 50%; background: #e6e2da; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #8a8278; flex: none; text-transform: uppercase; }
+  .mp-bl-{{ section.id }} .bl__byline { font-size: 12.5px; color: #8a8278; }
+  .mp-bl-{{ section.id }} .bl__byline b { color: #16323f; }
+  .mp-bl-{{ section.id }} .bl__read { margin-left: auto; color: #f2872f; font-size: 14px; font-weight: 700; }
+
+  .mp-bl-{{ section.id }} .bl__body { display: flex; gap: 30px; padding: 24px 0 30px; align-items: flex-start; }
+  .mp-bl-{{ section.id }} .bl__main { flex: 1; min-width: 0; }
+  .mp-bl-{{ section.id }} .bl__lh { font-size: 20px; font-weight: 700; margin-bottom: 16px; }
+  .mp-bl-{{ section.id }} .bl__grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
+  .mp-bl-{{ section.id }} .bl__card { border: 1px solid #e7ddcb; border-radius: 12px; overflow: hidden; background: #fff; display: flex; flex-direction: column; box-shadow: 0 1px 2px rgba(20,40,50,.04); text-decoration: none; }
+  .mp-bl-{{ section.id }} .bl__cimg { height: 160px; position: relative; background: repeating-linear-gradient(45deg,#efece6,#efece6 9px,#e6e2da 9px,#e6e2da 18px); background-size: cover; background-position: center; }
+  .mp-bl-{{ section.id }} .bl__ctag { position: absolute; top: 10px; left: 10px; background: rgba(22,50,63,.9); color: #fff; font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 5px; }
+  .mp-bl-{{ section.id }} .bl__cbody { padding: 15px 16px 17px; display: flex; flex-direction: column; flex: 1; }
+  .mp-bl-{{ section.id }} .bl__ch { font-size: 17px; font-weight: 700; line-height: 1.22; }
+  .mp-bl-{{ section.id }} .bl__cex { font-size: 13px; color: #6b6b62; line-height: 1.5; margin-top: 8px; }
+  .mp-bl-{{ section.id }} .bl__cmeta { display: flex; align-items: center; gap: 8px; margin-top: auto; padding-top: 14px; font-size: 11.5px; color: #9b948a; }
+  .mp-bl-{{ section.id }} .bl__cav { width: 26px; height: 26px; border-radius: 50%; background: #e6e2da; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #8a8278; text-transform: uppercase; }
+
+  .mp-bl-{{ section.id }} .bl__pager { display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 28px; font-size: 13px; color: #6b7a82; }
+  .mp-bl-{{ section.id }} .bl__pager a, .mp-bl-{{ section.id }} .bl__pager span { border: 1px solid #d8d4cc; border-radius: 7px; padding: 8px 13px; text-decoration: none; color: #6b7a82; }
+  .mp-bl-{{ section.id }} .bl__pager .is-current { border-color: #16323f; background: #16323f; color: #fff; }
+
+  .mp-bl-{{ section.id }} .bl__side { width: 300px; flex: none; }
+  .mp-bl-{{ section.id }} .bl__panel { border: 1px solid #e7ddcb; border-radius: 12px; background: #fff; overflow: hidden; box-shadow: 0 1px 2px rgba(20,40,50,.04); margin-bottom: 18px; }
+  .mp-bl-{{ section.id }} .bl__ph { font-size: 16px; font-weight: 700; padding: 16px 18px 12px; }
+  .mp-bl-{{ section.id }} .bl__pop { text-decoration: none; display: flex; gap: 13px; align-items: center; padding: 12px 18px; border-top: 1px solid #f1ece2; }
+  .mp-bl-{{ section.id }} .bl__popn { font-size: 24px; font-weight: 700; color: #e0d6c4; flex: none; width: 24px; }
+  .mp-bl-{{ section.id }} .bl__popt { font-size: 13.5px; font-weight: 600; color: #16323f; line-height: 1.25; }
+  .mp-bl-{{ section.id }} .bl__popm { font-size: 11.5px; color: #9b948a; margin-top: 3px; }
+  .mp-bl-{{ section.id }} .bl__topic { display: flex; justify-content: space-between; padding: 11px 18px; border-top: 1px solid #f1ece2; font-size: 13px; color: #4a443c; text-decoration: none; }
+  .mp-bl-{{ section.id }} .bl__news { border-radius: 12px; background: #2b2233; padding: 22px; }
+  .mp-bl-{{ section.id }} .bl__news h3 { color: #fff; font-size: 18px; font-weight: 700; margin: 0; }
+  .mp-bl-{{ section.id }} .bl__news p { color: #c5b9d4; font-size: 12.5px; margin: 6px 0 0; line-height: 1.5; }
+  .mp-bl-{{ section.id }} .bl__news input { width: 100%; box-sizing: border-box; background: #fff; border: 0; border-radius: 8px; padding: 11px 14px; font-size: 13px; margin-top: 14px; font-family: inherit; }
+  .mp-bl-{{ section.id }} .bl__news button { width: 100%; background: #f2872f; color: #fff; font-weight: 700; font-size: 14px; padding: 11px; border: 0; border-radius: 8px; margin-top: 9px; cursor: pointer; font-family: inherit; }
+
+  @media (max-width: 989px) {
+    .mp-bl-{{ section.id }} .bl__body { flex-direction: column; }
+    .mp-bl-{{ section.id }} .bl__side { width: 100%; }
+    .mp-bl-{{ section.id }} .bl__feat { flex-direction: column; }
+    .mp-bl-{{ section.id }} .bl__featimg { width: 100%; min-height: 220px; }
+    .mp-bl-{{ section.id }} .bl__grid { grid-template-columns: repeat(2,1fr); }
+  }
+  @media (max-width: 749px) {
+    .mp-bl-{{ section.id }} .bl__wrap { padding: 0 16px; }
+    .mp-bl-{{ section.id }} .bl__h1 { font-size: 30px; }
+    .mp-bl-{{ section.id }} .bl__grid { grid-template-columns: 1fr; }
+  }
+{%- endstyle -%}
+
+{%- liquid
+  assign cur_tag = current_tags | first
+-%}
+
+<section class="mp-bl-{{ section.id }}">
+  <div class="bl__wrap">
+
+    <div class="bl__mast">
+      <div class="bl__kicker mp-cond">{{ section.settings.kicker }}</div>
+      <h1 class="bl__h1 mp-cond">{{ section.settings.heading | default: blog.title }}</h1>
+      {%- if section.settings.subtitle != blank -%}<div class="bl__sub">{{ section.settings.subtitle }}</div>{%- endif -%}
+    </div>
+
+    {%- if blog.all_tags.size > 0 -%}
+      <div class="bl__chips">
+        <a class="bl__chip mp-cond{% unless cur_tag %} is-active{% endunless %}" href="{{ blog.url }}">All articles</a>
+        {%- for tag in blog.all_tags -%}
+          <a class="bl__chip mp-cond{% if cur_tag == tag %} is-active{% endif %}" href="{{ blog.url }}/tagged/{{ tag | handleize }}">{{ tag }}</a>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+
+    {%- paginate blog.articles by section.settings.posts_per_page -%}
+      {%- assign featured = blog.articles.first -%}
+
+      {%- if paginate.current_page == 1 and featured -%}
+        {%- assign fwords = featured.content | strip_html | split: ' ' | size -%}
+        {%- assign fread = fwords | divided_by: 200 | plus: 1 -%}
+        {%- assign fparts = featured.author | split: ' ' -%}
+        <a class="bl__feat" href="{{ featured.url }}">
+          <div class="bl__featimg"{% if featured.image %} style="background-image:url('{{ featured.image | image_url: width: 1200 }}')"{% endif %}>
+            <span class="bl__featlabel mp-cond">FEATURED</span>
+          </div>
+          <div class="bl__featbody">
+            {%- if featured.tags.first -%}<div class="bl__tag mp-cond">{{ featured.tags.first }}</div>{%- endif -%}
+            <div class="bl__feath mp-cond">{{ featured.title }}</div>
+            <div class="bl__featex">{{ featured.excerpt_or_content | strip_html | truncatewords: 32 }}</div>
+            <div class="bl__by">
+              <span class="bl__av">{{ fparts.first | slice: 0 }}{{ fparts.last | slice: 0 }}</span>
+              <div class="bl__byline"><b>{{ featured.author }}</b><div>{{ fread }} min read · {{ featured.published_at | date: '%-d %b %Y' }}</div></div>
+              <span class="bl__read mp-cond">Read article &#8594;</span>
+            </div>
+          </div>
+        </a>
+      {%- endif -%}
+
+      <div class="bl__body">
+        <div class="bl__main">
+          <div class="bl__lh mp-cond">{% if cur_tag %}{{ cur_tag }}{% else %}Latest articles{% endif %}</div>
+          {%- if blog.articles.size > 0 -%}
+            <div class="bl__grid">
+              {%- for article in blog.articles -%}
+                {%- if paginate.current_page == 1 and forloop.first -%}{%- continue -%}{%- endif -%}
+                {%- liquid
+                  assign awords = article.content | strip_html | split: ' ' | size
+                  assign aread = awords | divided_by: 200 | plus: 1
+                  assign aparts = article.author | split: ' '
+                -%}
+                <a class="bl__card" href="{{ article.url }}">
+                  <div class="bl__cimg"{% if article.image %} style="background-image:url('{{ article.image | image_url: width: 600 }}')"{% endif %}>
+                    {%- if article.tags.first -%}<span class="bl__ctag mp-cond">{{ article.tags.first }}</span>{%- endif -%}
+                  </div>
+                  <div class="bl__cbody">
+                    <div class="bl__ch mp-cond">{{ article.title }}</div>
+                    <div class="bl__cex">{{ article.excerpt_or_content | strip_html | truncatewords: 20 }}</div>
+                    <div class="bl__cmeta">
+                      <span class="bl__cav">{{ aparts.first | slice: 0 }}{{ aparts.last | slice: 0 }}</span>
+                      {{ article.author }} · {{ aread }} min · {{ article.published_at | date: '%-d %b' }}
+                    </div>
+                  </div>
+                </a>
+              {%- endfor -%}
+            </div>
+
+            {%- if paginate.pages > 1 -%}
+              <div class="bl__pager">
+                {%- if paginate.previous -%}<a href="{{ paginate.previous.url }}">&lsaquo; Prev</a>{%- else -%}<span style="color:#cbc4b8">&lsaquo; Prev</span>{%- endif -%}
+                {%- for part in paginate.parts -%}
+                  {%- if part.is_link -%}<a href="{{ part.url }}">{{ part.title }}</a>
+                  {%- elsif part.title == paginate.current_page -%}<span class="is-current mp-cond">{{ part.title }}</span>
+                  {%- else -%}<span style="border:0;color:#a39c92">{{ part.title }}</span>{%- endif -%}
+                {%- endfor -%}
+                {%- if paginate.next -%}<a href="{{ paginate.next.url }}">Next &rsaquo;</a>{%- else -%}<span style="color:#cbc4b8">Next &rsaquo;</span>{%- endif -%}
+              </div>
+            {%- endif -%}
+          {%- else -%}
+            <p style="color:#8a8278">No articles yet.</p>
+          {%- endif -%}
+        </div>
+
+        <aside class="bl__side">
+          <div class="bl__panel">
+            <div class="bl__ph mp-cond">Most popular</div>
+            {%- for article in blog.articles limit: 4 -%}
+              {%- assign pwords = article.content | strip_html | split: ' ' | size -%}
+              {%- assign pread = pwords | divided_by: 200 | plus: 1 -%}
+              <a class="bl__pop" href="{{ article.url }}">
+                <span class="bl__popn mp-cond">{{ forloop.index }}</span>
+                <div><div class="bl__popt mp-cond">{{ article.title }}</div><div class="bl__popm">{{ pread }} min read</div></div>
+              </a>
+            {%- endfor -%}
+          </div>
+
+          {%- if blog.all_tags.size > 0 -%}
+            <div class="bl__panel">
+              <div class="bl__ph mp-cond">Browse by topic</div>
+              {%- for tag in blog.all_tags -%}
+                <a class="bl__topic" href="{{ blog.url }}/tagged/{{ tag | handleize }}"><span>{{ tag }}</span><span style="color:#9b948a">&#8594;</span></a>
+              {%- endfor -%}
+            </div>
+          {%- endif -%}
+
+          <div class="bl__news">
+            <h3 class="mp-cond">{{ section.settings.news_title }}</h3>
+            <p>{{ section.settings.news_text }}</p>
+            {%- form 'customer' -%}
+              <input type="hidden" name="contact[tags]" value="newsletter">
+              <input type="email" name="contact[email]" placeholder="Your email address" required>
+              <button type="submit" class="mp-cond">Subscribe</button>
+            {%- endform -%}
+          </div>
+        </aside>
+      </div>
+    {%- endpaginate -%}
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "MP Blog",
+  "settings": [
+    { "type": "range", "id": "posts_per_page", "min": 6, "max": 15, "step": 3, "label": "Posts per page", "default": 9 },
+    { "type": "text", "id": "kicker", "label": "Kicker", "default": "THE MPGAMES BLOG" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Guides, reviews & tabletop talk" },
+    { "type": "textarea", "id": "subtitle", "label": "Subtitle", "default": "Buying guides, deep-dive reviews and game-night inspiration from the MPGames team and the wider hobby." },
+    { "type": "text", "id": "news_title", "label": "Newsletter title", "default": "Get the weekly roundup" },
+    { "type": "textarea", "id": "news_text", "label": "Newsletter text", "default": "New articles, restock alerts and member deals — straight to your inbox." }
+  ],
+  "enabled_on": { "templates": ["blog"] },
+  "presets": [
+    { "name": "MP Blog" }
+  ]
+}
+{% endschema %}

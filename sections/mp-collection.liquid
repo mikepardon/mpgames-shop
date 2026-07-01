@@ -1,0 +1,315 @@
+{%- comment -%}
+  MPGames collection page — hero, sort toolbar, real faceted filter sidebar
+  (Shopify collection.filters), product grid wired to custom.* metafields, and
+  pagination. Imported from Claude Design "MPGames Collection".
+{%- endcomment -%}
+
+{%- style -%}
+  .mp-cl-{{ section.id }} { background: #f4efe6; font-family: 'Barlow', ui-sans-serif, system-ui, sans-serif; color: #16323f; }
+  .mp-cl-{{ section.id }} .cl__wrap { max-width: 1240px; margin: 0 auto; padding: 0 28px; }
+  .mp-cl-{{ section.id }} .cl__crumb { padding: 15px 0 0; font-size: 12px; color: #9b948a; }
+  .mp-cl-{{ section.id }} .cl__crumb a { color: inherit; text-decoration: none; }
+  .mp-cl-{{ section.id }} .cl__crumb .sep { color: #cfc9be; margin: 0 5px; }
+
+  .mp-cl-{{ section.id }} .cl__hero {
+    margin-top: 14px; border-radius: 14px; padding: 30px 34px; position: relative; overflow: hidden;
+    background: linear-gradient(115deg,#16323f 0%,#1d4252 60%,#2c5466 100%);
+    display: flex; justify-content: space-between; align-items: flex-end; gap: 20px;
+    background-size: cover; background-position: center;
+  }
+  .mp-cl-{{ section.id }} .cl__brand { background: #fff; border-radius: 12px; padding: 9px; width: 64px; height: 64px; display: flex; align-items: center; justify-content: center; margin-bottom: 14px; box-shadow: 0 2px 8px rgba(0,0,0,.18); }
+  .mp-cl-{{ section.id }} .cl__brand img { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; display: block; }
+  .mp-cl-{{ section.id }} .cl__badge { background: rgba(242,135,47,.18); color: #ffd2b0; font-size: 12px; font-weight: 600; padding: 4px 12px; border-radius: 20px; letter-spacing: .4px; }
+  .mp-cl-{{ section.id }} .cl__htitle { font-size: 38px; font-weight: 700; color: #fff; margin-top: 12px; line-height: 1.04; }
+  .mp-cl-{{ section.id }} .cl__hdesc { color: #cfe0e6; font-size: 14px; margin-top: 8px; max-width: 560px; }
+  .mp-cl-{{ section.id }} .cl__htags { display: flex; gap: 8px; flex-wrap: wrap; max-width: 360px; justify-content: flex-end; }
+  .mp-cl-{{ section.id }} .cl__htag { background: rgba(255,255,255,.12); color: #fff; font-size: 12.5px; font-weight: 600; padding: 7px 13px; border-radius: 20px; }
+
+  .mp-cl-{{ section.id }} .cl__chips { display: flex; gap: 9px; padding: 18px 0 4px; overflow-x: auto; scrollbar-width: none; }
+  .mp-cl-{{ section.id }} .cl__chips::-webkit-scrollbar { display: none; }
+  .mp-cl-{{ section.id }} .cl__chip { background: #fff; border: 1px solid #e2ddd1; color: #4a443c; font-size: 13px; font-weight: 600; padding: 8px 15px; border-radius: 8px; white-space: nowrap; text-decoration: none; }
+  .mp-cl-{{ section.id }} .cl__chip.is-active { background: #16323f; border-color: #16323f; color: #fff; }
+
+  .mp-cl-{{ section.id }} .cl__toolbar { display: flex; align-items: center; justify-content: space-between; padding: 14px 0 6px; gap: 12px; flex-wrap: wrap; }
+  .mp-cl-{{ section.id }} .cl__count { font-size: 13px; color: #8a8278; }
+  .mp-cl-{{ section.id }} .cl__count b { color: #16323f; }
+  .mp-cl-{{ section.id }} .cl__sort select { background: #fff; border: 1px solid #d8d4cc; border-radius: 7px; padding: 9px 13px; color: #16323f; font-size: 12.5px; font-family: inherit; cursor: pointer; }
+
+  .mp-cl-{{ section.id }} .cl__body { display: flex; gap: 24px; padding: 6px 0 30px; align-items: flex-start; }
+  .mp-cl-{{ section.id }} .cl__side { width: 236px; flex: none; }
+  .mp-cl-{{ section.id }} .cl__panel { background: #fff; border: 1px solid #e7ddcb; border-radius: 13px; overflow: hidden; box-shadow: 0 1px 2px rgba(20,40,50,.04); }
+  .mp-cl-{{ section.id }} .cl__phead { display: flex; justify-content: space-between; align-items: center; padding: 15px 17px; background: #16323f; }
+  .mp-cl-{{ section.id }} .cl__phead span:first-child { font-size: 15px; font-weight: 700; color: #fff; }
+  .mp-cl-{{ section.id }} .cl__clear { font-size: 12px; color: #ffd2b0; text-decoration: none; }
+  .mp-cl-{{ section.id }} .cl__active { padding: 13px 17px; border-bottom: 1px solid #efe7d8; display: flex; flex-wrap: wrap; gap: 7px; }
+  .mp-cl-{{ section.id }} .cl__achip { display: inline-flex; align-items: center; gap: 6px; background: #eef3f5; border: 1px solid #cfdde3; border-radius: 6px; padding: 4px 9px; font-size: 11.5px; color: #16323f; text-decoration: none; }
+  .mp-cl-{{ section.id }} .cl__group { padding: 14px 17px; border-bottom: 1px solid #efe7d8; }
+  .mp-cl-{{ section.id }} .cl__gh { font-size: 12.5px; font-weight: 700; color: #16323f; margin-bottom: 10px; }
+  .mp-cl-{{ section.id }} .cl__opts { display: flex; flex-direction: column; gap: 9px; font-size: 12.5px; color: #4a443c; }
+  .mp-cl-{{ section.id }} .cl__opt { display: flex; align-items: center; gap: 9px; text-decoration: none; color: inherit; }
+  .mp-cl-{{ section.id }} .cl__box { width: 15px; height: 15px; border: 1.5px solid #b6afa4; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; color: #fff; font-size: 10px; flex: none; }
+  .mp-cl-{{ section.id }} .cl__opt.is-on .cl__box { background: #16323f; border-color: #16323f; }
+  .mp-cl-{{ section.id }} .cl__cnt { color: #9b948a; margin-left: auto; }
+  .mp-cl-{{ section.id }} .cl__price { display: flex; gap: 8px; align-items: center; }
+  .mp-cl-{{ section.id }} .cl__price input { width: 78px; border: 1px solid #d8d4cc; border-radius: 6px; padding: 7px 9px; font-size: 12.5px; font-family: inherit; }
+  .mp-cl-{{ section.id }} .cl__price button { background: #16323f; color: #fff; border: 0; border-radius: 6px; padding: 7px 11px; font-size: 12px; cursor: pointer; font-family: inherit; }
+
+  .mp-cl-{{ section.id }} .cl__main { flex: 1; min-width: 0; }
+  .mp-cl-{{ section.id }} .cl__grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 18px; }
+  .mp-cl-{{ section.id }} .cl__card { border: 1px solid #e7ddcb; border-radius: 12px; overflow: hidden; background: #fff; display: flex; flex-direction: column; position: relative; box-shadow: 0 1px 2px rgba(20,40,50,.04); }
+  .mp-cl-{{ section.id }} .cl__flag { position: absolute; top: 10px; left: 10px; z-index: 2; background: #d6402e; color: #fff; font-size: 12px; font-weight: 700; padding: 3px 8px; border-radius: 5px; }
+  .mp-cl-{{ section.id }} .cl__wish { position: absolute; top: 10px; right: 10px; z-index: 2; background: #fff; border: 1px solid #e7e0d4; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; color: #8a8278; font-size: 13px; }
+  .mp-cl-{{ section.id }} .cl__media { height: 170px; display: flex; align-items: center; justify-content: center; background: repeating-linear-gradient(45deg,#efece6,#efece6 9px,#e6e2da 9px,#e6e2da 18px); }
+  .mp-cl-{{ section.id }} .cl__media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .mp-cl-{{ section.id }} .cl__cbody { padding: 13px 14px 15px; display: flex; flex-direction: column; flex: 1; }
+  .mp-cl-{{ section.id }} .cl__bgg { display: inline-flex; align-items: center; gap: 5px; background: #2b2233; border-radius: 5px; padding: 2px 7px; }
+  .mp-cl-{{ section.id }} .cl__bgg b { font-size: 10px; font-weight: 700; color: #fff; letter-spacing: .5px; }
+  .mp-cl-{{ section.id }} .cl__name { font-size: 14.5px; font-weight: 600; color: #16323f; line-height: 1.25; text-decoration: none; }
+  .mp-cl-{{ section.id }} .cl__pub { font-size: 11.5px; color: #9b948a; margin-top: 2px; }
+  .mp-cl-{{ section.id }} .cl__metarow { display: flex; gap: 13px; margin-top: 9px; font-size: 11px; color: #6b7a82; flex-wrap: wrap; }
+  .mp-cl-{{ section.id }} .cl__stock { display: flex; align-items: center; gap: 6px; margin-top: 10px; font-size: 11px; }
+  .mp-cl-{{ section.id }} .cl__foot { display: flex; align-items: flex-end; justify-content: space-between; margin-top: auto; padding-top: 12px; }
+  .mp-cl-{{ section.id }} .cl__rrp { font-size: 11px; color: #9b948a; text-decoration: line-through; }
+  .mp-cl-{{ section.id }} .cl__pr { font-size: 19px; font-weight: 700; color: #16323f; }
+  .mp-cl-{{ section.id }} .cl__add { background: #f2872f; color: #fff; border: 0; border-radius: 7px; padding: 9px 14px; font-size: 12.5px; font-weight: 600; cursor: pointer; font-family: inherit; }
+  .mp-cl-{{ section.id }} .cl__add[disabled] { opacity: .5; cursor: not-allowed; }
+  .mp-cl-{{ section.id }} .cl__card form { margin: 0; }
+
+  .mp-cl-{{ section.id }} .cl__pager { display: flex; justify-content: space-between; align-items: center; margin-top: 26px; }
+  .mp-cl-{{ section.id }} .cl__pager .pg { font-size: 12.5px; color: #8a8278; }
+  .mp-cl-{{ section.id }} .cl__pages { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+  .mp-cl-{{ section.id }} .cl__pages a, .mp-cl-{{ section.id }} .cl__pages span { border: 1px solid #d8d4cc; border-radius: 7px; padding: 8px 13px; color: #6b7a82; text-decoration: none; }
+  .mp-cl-{{ section.id }} .cl__pages .is-current { border-color: #16323f; background: #16323f; color: #fff; }
+  .mp-cl-{{ section.id }} .cl__empty { background: #fff; border: 1px solid #e7ddcb; border-radius: 12px; padding: 40px; text-align: center; color: #6b7a82; }
+
+  @media (max-width: 989px) {
+    .mp-cl-{{ section.id }} .cl__body { flex-direction: column; }
+    .mp-cl-{{ section.id }} .cl__side { width: 100%; }
+    .mp-cl-{{ section.id }} .cl__grid { grid-template-columns: repeat(2,1fr); }
+    .mp-cl-{{ section.id }} .cl__hero { flex-direction: column; align-items: flex-start; }
+    .mp-cl-{{ section.id }} .cl__htags { justify-content: flex-start; max-width: none; }
+  }
+  @media (max-width: 749px) {
+    .mp-cl-{{ section.id }} .cl__wrap { padding: 0 16px; }
+    .mp-cl-{{ section.id }} .cl__grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+    .mp-cl-{{ section.id }} .cl__htitle { font-size: 30px; }
+  }
+{%- endstyle -%}
+
+{%- liquid
+  assign hero_tags = collection.metafields.custom.hero_tags.value
+  assign brand_logo = collection.metafields.custom.logo.value
+-%}
+
+<section class="mp-cl-{{ section.id }}">
+  <div class="cl__wrap">
+
+    <div class="cl__crumb">
+      <a href="{{ routes.root_url }}">Home</a><span class="sep">/</span><span style="color:#6b7a82">{{ collection.title }}</span>
+    </div>
+
+    <div class="cl__hero"{% if collection.image %} style="background-image:linear-gradient(115deg,rgba(22,50,63,.92),rgba(44,84,102,.78)),url('{{ collection.image | image_url: width: 1600 }}')"{% endif %}>
+      <div>
+        {%- if brand_logo != blank -%}
+          <div class="cl__brand"><img src="{{ brand_logo | asset_url }}" alt="{{ collection.title | escape }}" width="64" height="64"></div>
+        {%- endif -%}
+        <span class="cl__badge mp-cond">{{ collection.products_count }} GAMES</span>
+        <div class="cl__htitle mp-cond">{{ collection.title }}</div>
+        {%- if collection.description != blank -%}<div class="cl__hdesc">{{ collection.description | strip_html | truncatewords: 40 }}</div>{%- endif -%}
+      </div>
+      {%- if hero_tags != blank and hero_tags.size > 0 -%}
+        <div class="cl__htags">
+          {%- for t in hero_tags limit: 4 -%}<span class="cl__htag mp-cond">{{ t }}</span>{%- endfor -%}
+        </div>
+      {%- endif -%}
+    </div>
+
+    {%- if section.settings.chips_menu != blank and linklists[section.settings.chips_menu].links.size > 0 -%}
+      <div class="cl__chips">
+        {%- for link in linklists[section.settings.chips_menu].links -%}
+          <a class="cl__chip mp-cond{% if link.active or link.url == collection.url %} is-active{% endif %}" href="{{ link.url }}">{{ link.title }}</a>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+
+    {%- paginate collection.products by section.settings.products_per_page -%}
+      {%- liquid
+        assign start = paginate.current_offset | plus: 1
+        assign finish = paginate.current_offset | plus: collection.products.size
+      -%}
+      <div class="cl__toolbar">
+        <div class="cl__count">Showing <b>{{ start }}–{{ finish }}</b> of <b>{{ collection.products_count }}</b> games</div>
+        <form method="get" class="cl__sort">
+          {%- for f in collection.filters -%}
+            {%- for v in f.active_values -%}<input type="hidden" name="{{ v.param_name }}" value="{{ v.value }}">{%- endfor -%}
+            {%- if f.type == 'price_range' -%}
+              {%- if f.min_value.value -%}<input type="hidden" name="{{ f.min_value.param_name }}" value="{{ f.min_value.value }}">{%- endif -%}
+              {%- if f.max_value.value -%}<input type="hidden" name="{{ f.max_value.param_name }}" value="{{ f.max_value.value }}">{%- endif -%}
+            {%- endif -%}
+          {%- endfor -%}
+          <select name="sort_by" onchange="this.form.submit()" aria-label="Sort by">
+            {%- assign current_sort = collection.sort_by | default: collection.default_sort_by -%}
+            {%- for opt in collection.sort_options -%}
+              <option value="{{ opt.value }}"{% if opt.value == current_sort %} selected{% endif %}>Sort: {{ opt.name }}</option>
+            {%- endfor -%}
+          </select>
+        </form>
+      </div>
+
+      <div class="cl__body">
+        <!-- filters -->
+        <aside class="cl__side">
+          <div class="cl__panel">
+            <div class="cl__phead">
+              <span class="mp-cond">Filter</span>
+              <a class="cl__clear" href="{{ collection.url }}">Clear all</a>
+            </div>
+
+            {%- assign any_active = false -%}
+            {%- for f in collection.filters -%}{%- if f.active_values.size > 0 or f.min_value.value or f.max_value.value -%}{%- assign any_active = true -%}{%- endif -%}{%- endfor -%}
+            {%- if any_active -%}
+              <div class="cl__active">
+                {%- for f in collection.filters -%}
+                  {%- for v in f.active_values -%}
+                    <a class="cl__achip" href="{{ v.url_to_remove }}">{{ v.label }} &times;</a>
+                  {%- endfor -%}
+                  {%- if f.type == 'price_range' and f.min_value.value or f.max_value.value -%}
+                    <a class="cl__achip" href="{{ f.url_to_remove }}">{{ f.min_value.value | default: 0 | money }}–{{ f.max_value.value | default: f.range_max | money }} &times;</a>
+                  {%- endif -%}
+                {%- endfor -%}
+              </div>
+            {%- endif -%}
+
+            {%- for f in collection.filters -%}
+              <div class="cl__group">
+                <div class="cl__gh">{{ f.label }}</div>
+                {%- if f.type == 'price_range' -%}
+                  <form method="get" class="cl__price">
+                    {%- for af in collection.filters -%}
+                      {%- unless af.type == 'price_range' -%}{%- for v in af.active_values -%}<input type="hidden" name="{{ v.param_name }}" value="{{ v.value }}">{%- endfor -%}{%- endunless -%}
+                    {%- endfor -%}
+                    {%- if collection.sort_by != blank -%}<input type="hidden" name="sort_by" value="{{ collection.sort_by }}">{%- endif -%}
+                    <input type="number" name="{{ f.min_value.param_name }}" placeholder="{{ f.range_min | money_without_currency | default: 'Min' }}" value="{{ f.min_value.value }}" min="0">
+                    <input type="number" name="{{ f.max_value.param_name }}" placeholder="{{ f.range_max | money_without_currency | default: 'Max' }}" value="{{ f.max_value.value }}" min="0">
+                    <button type="submit">Go</button>
+                  </form>
+                {%- else -%}
+                  <div class="cl__opts">
+                    {%- for v in f.values -%}
+                      <a class="cl__opt{% if v.active %} is-on{% endif %}" href="{% if v.active %}{{ v.url_to_remove }}{% else %}{{ v.url_to_add }}{% endif %}">
+                        <span class="cl__box">{% if v.active %}&#10003;{% endif %}</span>
+                        <span>{{ v.label }}</span>
+                        <span class="cl__cnt">{{ v.count }}</span>
+                      </a>
+                    {%- endfor -%}
+                  </div>
+                {%- endif -%}
+              </div>
+            {%- else -%}
+              <div class="cl__group" style="color:#8a8278;font-size:12.5px">
+                No filters configured yet. Enable product filters in <em>Search &amp; Discovery → Filters</em> (e.g. BGG rating, player count) and they'll appear here automatically.
+              </div>
+            {%- endfor -%}
+          </div>
+        </aside>
+
+        <!-- grid -->
+        <div class="cl__main">
+          {%- if collection.products.size > 0 -%}
+            <div class="cl__grid">
+              {%- for product in collection.products -%}
+                {%- liquid
+                  assign cb = product.metafields.custom.bgg_rating.value
+                  assign cbn = cb | times: 1.0
+                  assign cc = '#e0b441'
+                  if cbn >= 8.0
+                    assign cc = '#5fbf7e'
+                  elsif cbn >= 7.0
+                    assign cc = '#9ccf63'
+                  endif
+                  assign csale = false
+                  if product.compare_at_price > product.price
+                    assign csale = true
+                    assign cdisc = product.compare_at_price | minus: product.price | times: 100.0 | divided_by: product.compare_at_price | round
+                  endif
+                  assign players = product.metafields.custom.player_count.value
+                  assign playtime = product.metafields.custom.play_time.value
+                  assign age = product.metafields.custom.min_age.value
+                -%}
+                <div class="cl__card">
+                  {%- if csale -%}<span class="cl__flag mp-cond">-{{ cdisc }}%</span>{%- endif -%}
+                  <a href="{{ product.url }}" class="cl__media">{% if product.featured_image %}<img src="{{ product.featured_image | image_url: width: 420 }}" alt="{{ product.title | escape }}" width="420" height="420" loading="lazy">{% endif %}</a>
+                  <div class="cl__cbody">
+                    {%- if product.type == 'Board Game Expansion' -%}<span style="display:inline-block;width:fit-content;background:#ede7f3;color:#6a4f86;font-size:9.5px;font-weight:700;letter-spacing:.4px;padding:2px 7px;border-radius:5px;text-transform:uppercase;margin-bottom:7px">Expansion</span>{%- endif -%}
+                    {%- if cb != blank -%}
+                      <div style="display:flex;align-items:center;gap:6px;margin-bottom:7px">
+                        <span class="cl__bgg"><b class="mp-cond">BGG</b><span style="font-size:11.5px;font-weight:700;color:{{ cc }}">{{ cb }}</span></span>
+                        {%- if product.metafields.custom.bgg_rank.value != blank -%}<span style="font-size:10.5px;color:#9b948a">rank #{{ product.metafields.custom.bgg_rank.value }}</span>{%- endif -%}
+                      </div>
+                    {%- endif -%}
+                    <a class="cl__name" href="{{ product.url }}">{{ product.title }}</a>
+                    {%- if product.vendor != blank -%}<div class="cl__pub">{{ product.vendor }}</div>{%- endif -%}
+                    {%- if players != blank or playtime != blank or age != blank -%}
+                      <div class="cl__metarow">
+                        {%- if players != blank -%}<span>&#9823; {{ players }}</span>{%- endif -%}
+                        {%- if playtime != blank -%}<span>&#9201; {{ playtime }}</span>{%- endif -%}
+                        {%- if age != blank -%}<span>&#9817; {{ age }}+</span>{%- endif -%}
+                      </div>
+                    {%- endif -%}
+                    {%- if product.available -%}
+                      <div class="cl__stock" style="color:#2f8f5b"><span style="width:7px;height:7px;border-radius:50%;background:#2f8f5b;display:inline-block"></span>In stock</div>
+                    {%- else -%}
+                      <div class="cl__stock" style="color:#d6402e"><span style="width:7px;height:7px;border-radius:50%;background:#d6402e;display:inline-block"></span>Sold out</div>
+                    {%- endif -%}
+                    <div class="cl__foot">
+                      <div>
+                        {%- if csale -%}<span class="cl__rrp">RRP {{ product.compare_at_price | money }}</span>{%- endif -%}
+                        <div class="cl__pr mp-cond">{{ product.price | money }}</div>
+                      </div>
+                      <form action="{{ routes.cart_add_url }}" method="post" enctype="multipart/form-data">
+                        <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+                        <button type="submit" class="cl__add mp-cond"{% unless product.available %} disabled{% endunless %}>Add</button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              {%- endfor -%}
+            </div>
+
+            {%- if paginate.pages > 1 -%}
+              <div class="cl__pager">
+                <span class="pg">Page {{ paginate.current_page }} of {{ paginate.pages }}</span>
+                <div class="cl__pages">
+                  {%- if paginate.previous -%}<a href="{{ paginate.previous.url }}">&lsaquo; Prev</a>{%- else -%}<span style="color:#cbc4b8">&lsaquo; Prev</span>{%- endif -%}
+                  {%- for part in paginate.parts -%}
+                    {%- if part.is_link -%}<a href="{{ part.url }}">{{ part.title }}</a>
+                    {%- elsif part.title == paginate.current_page -%}<span class="is-current mp-cond">{{ part.title }}</span>
+                    {%- else -%}<span style="border:0;color:#a39c92">{{ part.title }}</span>{%- endif -%}
+                  {%- endfor -%}
+                  {%- if paginate.next -%}<a href="{{ paginate.next.url }}">Next &rsaquo;</a>{%- else -%}<span style="color:#cbc4b8">Next &rsaquo;</span>{%- endif -%}
+                </div>
+              </div>
+            {%- endif -%}
+          {%- else -%}
+            <div class="cl__empty">No games match these filters. <a href="{{ collection.url }}" style="color:#f2872f">Clear all filters</a></div>
+          {%- endif -%}
+        </div>
+      </div>
+    {%- endpaginate -%}
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "MP Collection",
+  "settings": [
+    { "type": "range", "id": "products_per_page", "min": 8, "max": 24, "step": 4, "label": "Products per page", "default": 12 },
+    { "type": "link_list", "id": "chips_menu", "label": "Subcategory chips menu", "info": "Optional row of related-collection chips under the hero." }
+  ],
+  "enabled_on": { "templates": ["collection"] },
+  "presets": [
+    { "name": "MP Collection" }
+  ]
+}
+{% endschema %}
