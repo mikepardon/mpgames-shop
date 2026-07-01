@@ -90,6 +90,7 @@
     color: #fff; font-size: 13px; font-weight: 700; letter-spacing: .6px; text-transform: uppercase;
     border-bottom: 1px solid #25434f; padding-bottom: 9px; margin-bottom: 10px;
   }
+  .mp-hd-{{ section.id }} .mp-mega__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 26px; }
   .mp-hd-{{ section.id }} .mp-mega__link { display: block; color: #9fb4bd; text-decoration: none; font-size: 13.5px; padding: 6px 0; }
   .mp-hd-{{ section.id }} .mp-mega__link:hover { color: #f2872f; }
   .mp-hd-{{ section.id }} .mp-mega__all { display: inline-block; margin-top: 9px; color: #f2872f; font-weight: 600; font-size: 12.5px; text-decoration: none; }
@@ -105,13 +106,52 @@
   .mp-hd-{{ section.id }} .mp-mega__feature form { margin: 0; }
   .mp-hd-{{ section.id }} .mp-mega__fadd { width: 100%; background: #f2872f; color: #fff; border: 0; border-radius: 8px; padding: 11px; font-weight: 700; cursor: pointer; font-family: inherit; font-size: 13.5px; }
 
+  /* mobile drawer chrome (hidden on desktop) */
+  .mp-hd-{{ section.id }} .mp-hd__burger {
+    display: none; align-items: center; justify-content: center; flex: none;
+    width: 40px; height: 40px; margin-right: 2px; padding: 0; cursor: pointer;
+    background: #1d4252; border: 1px solid #2c5466; border-radius: 8px; color: #fff; font-size: 17px;
+  }
+  .mp-hd-{{ section.id }} .mp-mnav__bar { display: none; }
+  .mp-hd-{{ section.id }} .mp-nav__backdrop { display: none; }
+
   @media (max-width: 989px) {
     .mp-hd-{{ section.id }} .mp-hd__util .mp-hd__stack span:first-child,
     .mp-hd-{{ section.id }} .mp-hd__muted { display: none; }
-    .mp-hd-{{ section.id }} .mp-mega { display: none !important; }
-    .mp-hd-{{ section.id }} .mp-nav__in { overflow-x: auto; scrollbar-width: none; }
-    .mp-hd-{{ section.id }} .mp-nav__in::-webkit-scrollbar { display: none; }
-    .mp-hd-{{ section.id }} .mp-nav__caret { display: none; }
+    .mp-hd-{{ section.id }} .mp-hd__burger { display: inline-flex; }
+
+    /* nav becomes an off-canvas drawer */
+    .mp-hd-{{ section.id }} .mp-nav {
+      position: fixed; top: 0; left: 0; bottom: 0; width: 86%; max-width: 340px; z-index: 210;
+      background: #16323f; overflow-y: auto; -webkit-overflow-scrolling: touch;
+      transform: translateX(-100%); transition: transform .25s ease; visibility: hidden;
+    }
+    .mp-hd-{{ section.id }}.is-mopen .mp-nav { transform: translateX(0); visibility: visible; }
+    .mp-hd-{{ section.id }} .mp-mnav__bar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 15px 18px; border-bottom: 1px solid #25434f; color: #fff; font-size: 15px; font-weight: 700; letter-spacing: .4px;
+    }
+    .mp-hd-{{ section.id }} .mp-mnav__bar button { background: none; border: 0; color: #9fb4bd; font-size: 26px; line-height: 1; cursor: pointer; padding: 0 4px; }
+    .mp-hd-{{ section.id }} .mp-nav__in { flex-direction: column; align-items: stretch; padding: 6px 0 30px; gap: 0; overflow: visible; }
+    .mp-hd-{{ section.id }} .mp-nav__item { display: block; }
+    .mp-hd-{{ section.id }} .mp-nav__top { padding: 15px 20px; justify-content: space-between; border-bottom: 1px solid #1d3640; width: 100%; box-sizing: border-box; }
+    .mp-hd-{{ section.id }} .mp-nav__caret { display: inline; transition: transform .2s ease; }
+    .mp-hd-{{ section.id }} .mp-nav__item.is-open > .mp-nav__top .mp-nav__caret { transform: rotate(180deg); }
+
+    /* mega turns into inline accordion content */
+    .mp-hd-{{ section.id }} .mp-mega { position: static; display: none !important; box-shadow: none; border-top: 0; background: #12292f; }
+    .mp-hd-{{ section.id }} .mp-nav__item.is-open .mp-mega { display: block !important; }
+    .mp-hd-{{ section.id }} .mp-mega__in { flex-direction: column; gap: 10px; max-width: none; margin: 0; padding: 10px 20px 18px; }
+    .mp-hd-{{ section.id }} .mp-mega__feature { display: none; }
+    .mp-hd-{{ section.id }} .mp-mega__grid { grid-template-columns: 1fr 1fr; gap: 0 18px; }
+    .mp-hd-{{ section.id }} .mp-mega__h { border-bottom-color: #1d3640; }
+
+    /* backdrop */
+    .mp-hd-{{ section.id }} .mp-nav__backdrop {
+      display: block; position: fixed; inset: 0; z-index: 205; background: rgba(9,20,26,.55);
+      opacity: 0; pointer-events: none; transition: opacity .25s ease;
+    }
+    .mp-hd-{{ section.id }}.is-mopen .mp-nav__backdrop { opacity: 1; pointer-events: auto; }
   }
   @media (max-width: 749px) {
     .mp-hd-{{ section.id }} .mp-hd__in { flex-wrap: wrap; gap: 12px; padding: 12px 16px; }
@@ -129,6 +169,7 @@
   <!-- row 1 -->
   <div class="mp-hd__bar">
     <div class="mp-hd__in">
+      <button type="button" class="mp-hd__burger" data-burger aria-label="Open menu" aria-expanded="false" aria-controls="mp-nav-{{ section.id }}">&#9776;</button>
       <a class="mp-hd__logo mp-cond" href="{{ routes.root_url }}" aria-label="{{ shop.name }}">
         {%- if section.settings.logo != blank -%}
           <img src="{{ section.settings.logo | image_url: width: 600 }}" alt="{{ shop.name | escape }}" width="200" height="{{ section.settings.logo_height }}" style="height:{{ section.settings.logo_height }}px">
@@ -165,10 +206,21 @@
   <!-- row 2 — mega nav -->
   {%- assign mp_menu = linklists[section.settings.menu] -%}
   {%- assign featured = all_products[section.settings.featured_product] -%}
-  <nav class="mp-nav mp-cond" aria-label="Primary">
+  <nav class="mp-nav mp-cond" id="mp-nav-{{ section.id }}" aria-label="Primary">
+    <div class="mp-mnav__bar"><span>Menu</span><button type="button" data-mnav-close aria-label="Close menu">&times;</button></div>
     <div class="mp-nav__in">
       {%- if section.settings.menu != blank and mp_menu.links.size > 0 -%}
         {%- for link in mp_menu.links -%}
+          {%- assign lt = link.title | downcase -%}
+          {%- assign auto_kind = '' -%}
+          {%- if lt contains 'designer' -%}{%- assign auto_kind = 'designer' -%}{%- elsif lt contains 'shop' -%}{%- assign auto_kind = 'category' -%}{%- endif -%}
+          {%- capture auto_links -%}
+            {%- if auto_kind == 'designer' -%}
+              {%- for c in collections -%}{%- if c.handle contains 'designer-' -%}<a class="mp-mega__link" href="{{ c.url }}">{{ c.title }}</a>{%- endif -%}{%- endfor -%}
+            {%- elsif auto_kind == 'category' -%}
+              {%- for c in collections -%}{%- if c.handle contains 'cat-' -%}<a class="mp-mega__link" href="{{ c.url }}">{{ c.title }}</a>{%- endif -%}{%- endfor -%}
+            {%- endif -%}
+          {%- endcapture -%}
           {%- if link.links.size > 0 -%}
             <div class="mp-nav__item">
               <a class="mp-nav__top" href="{{ link.url }}">{{ link.title }} <span class="mp-nav__caret">&#9662;</span></a>
@@ -200,6 +252,31 @@
                 </div>
               </div>
             </div>
+          {%- elsif auto_links != blank -%}
+            <div class="mp-nav__item">
+              <a class="mp-nav__top" href="{{ link.url }}">{{ link.title }} <span class="mp-nav__caret">&#9662;</span></a>
+              <div class="mp-mega">
+                <div class="mp-mega__in">
+                  <div class="mp-mega__col">
+                    <div class="mp-mega__h">{% if auto_kind == 'designer' %}Shop by designer{% else %}Shop by category{% endif %}</div>
+                    <div class="mp-mega__grid">{{ auto_links }}</div>
+                    <a class="mp-mega__all" href="{{ link.url }}">Shop all &raquo;</a>
+                  </div>
+                  {%- if featured != blank -%}
+                    <div class="mp-mega__feature">
+                      <div class="mp-mega__fh">{{ featured.title }}</div>
+                      <div class="mp-mega__fsub">{{ featured.vendor }}{% if featured.metafields.custom.player_count.value != blank %} · {{ featured.metafields.custom.player_count.value }} players{% endif %}</div>
+                      <div class="mp-mega__fprice">{{ featured.price | money }}</div>
+                      <a class="mp-mega__fimg" href="{{ featured.url }}">{% if featured.featured_image %}<img src="{{ featured.featured_image | image_url: width: 360 }}" alt="{{ featured.title | escape }}" width="360" height="360" loading="lazy">{% endif %}</a>
+                      <form action="{{ routes.cart_add_url }}" method="post" enctype="multipart/form-data">
+                        <input type="hidden" name="id" value="{{ featured.selected_or_first_available_variant.id }}">
+                        <button type="submit" class="mp-mega__fadd"{% unless featured.available %} disabled{% endunless %}>Add to cart</button>
+                      </form>
+                    </div>
+                  {%- endif -%}
+                </div>
+              </div>
+            </div>
           {%- else -%}
             <a class="mp-nav__top{% if link.title == 'Sale' %} is-sale{% endif %}" href="{{ link.url }}">{{ link.title }}</a>
           {%- endif -%}
@@ -214,7 +291,27 @@
       {%- endif -%}
     </div>
   </nav>
+  <div class="mp-nav__backdrop" data-mnav-backdrop></div>
 </div>
+
+<script>
+  (function () {
+    var root = document.querySelector('.mp-hd-{{ section.id }}');
+    if (!root) return;
+    var mq = window.matchMedia('(max-width: 989px)');
+    var burger = root.querySelector('[data-burger]');
+    function open() { root.classList.add('is-mopen'); if (burger) burger.setAttribute('aria-expanded', 'true'); document.body.style.overflow = 'hidden'; }
+    function close() { root.classList.remove('is-mopen'); if (burger) burger.setAttribute('aria-expanded', 'false'); document.body.style.overflow = ''; }
+    if (burger) burger.addEventListener('click', open);
+    root.querySelectorAll('[data-mnav-close], [data-mnav-backdrop]').forEach(function (el) { el.addEventListener('click', close); });
+    root.querySelectorAll('.mp-nav__item > .mp-nav__top').forEach(function (a) {
+      a.addEventListener('click', function (e) {
+        if (mq.matches) { e.preventDefault(); a.parentElement.classList.toggle('is-open'); }
+      });
+    });
+    mq.addEventListener('change', function (e) { if (!e.matches) close(); });
+  })();
+</script>
 
 {% schema %}
 {

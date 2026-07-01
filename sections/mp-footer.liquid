@@ -68,10 +68,14 @@
     {%- endif -%}
     <div class="mp-ft__bottom">
       <span>{{ section.settings.legal }}</span>
-      {%- if shop.enabled_payment_types.size > 0 -%}
+      {%- assign pay_types = shop.enabled_payment_types -%}
+      {%- if pay_types.size == 0 and section.settings.payment_fallback != blank -%}
+        {%- assign pay_types = section.settings.payment_fallback | split: ',' -%}
+      {%- endif -%}
+      {%- if pay_types.size > 0 -%}
         <span class="mp-ft__pay">
-          {%- for type in shop.enabled_payment_types -%}
-            {{ type | payment_type_svg_tag: class: 'mp-ft__payicon' }}
+          {%- for type in pay_types -%}
+            {{ type | strip | payment_type_svg_tag: class: 'mp-ft__payicon' }}
           {%- endfor -%}
         </span>
       {%- endif -%}
@@ -84,7 +88,8 @@
   "name": "MP Footer",
   "settings": [
     { "type": "textarea", "id": "blurb", "label": "Brand blurb", "default": "The UK's board game specialist — every title ranked by the data that matters." },
-    { "type": "text", "id": "legal", "label": "Legal line", "default": "© 2026 MPGames Ltd · Company No. 17064769 · Based in Stockport, UK" }
+    { "type": "text", "id": "legal", "label": "Legal line", "default": "© 2026 MPGames Ltd · Company No. 17064769 · Based in Stockport, UK" },
+    { "type": "text", "id": "payment_fallback", "label": "Payment icons (fallback)", "info": "Shown only until live payment providers are enabled in Settings → Payments. Comma-separated Shopify payment type keys.", "default": "visa, master, american_express, discover, diners_club, maestro, apple_pay, google_pay, paypal, shopify_pay, unionpay" }
   ],
   "blocks": [
     {
