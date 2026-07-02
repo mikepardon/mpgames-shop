@@ -36,11 +36,14 @@
           }
         }
       },
-      "block_order": ["shop", "help", "company"],
+      "block_order": [
+        "shop",
+        "help",
+        "company"
+      ],
       "settings": {
         "blurb": "The UK's board game specialist — every title ranked by the data that matters.",
-        "legal": "© 2026 MPGames Ltd · Company No. 17064769 · Based in Stockport, UK",
-        "payment_fallback": "visa, master, american_express, discover, diners_club, maestro, apple_pay, google_pay, paypal, shopify_pay, unionpay"
+        "legal": "© 2026 MPGames Ltd · Company No. 17064769 · Based in Stockport, UK"
       }
     }
   },
