@@ -36,11 +36,10 @@
         "c1": { "type": "category", "settings": { "icon": "♟", "collection": "cat-strategy" } },
         "c2": { "type": "category", "settings": { "icon": "♚", "collection": "cat-family" } },
         "c3": { "type": "category", "settings": { "icon": "🃏", "collection": "cat-card" } },
-        "c4": { "type": "category", "settings": { "icon": "⚙", "collection": "cat-engine" } },
-        "c5": { "type": "category", "settings": { "icon": "🤝", "collection": "cat-coop" } },
-        "c6": { "type": "category", "settings": { "icon": "👷", "collection": "cat-worker" } }
+        "c4": { "type": "category", "settings": { "icon": "👷", "collection": "cat-worker" } },
+        "c5": { "type": "category", "settings": { "icon": "🧩", "collection": "expansions" } }
       },
-      "block_order": ["c1", "c2", "c3", "c4", "c5", "c6"],
+      "block_order": ["c1", "c2", "c3", "c4", "c5"],
       "settings": { "title": "Shop by category", "link_label": "All categories", "link_url": "/collections/all-games" }
     },
     "mp_promos": {
@@ -84,16 +83,11 @@
     "mp_designers": {
       "type": "mp-designers",
       "blocks": {
-        "d1": { "type": "designer", "settings": { "collection": "designer-martin-wallace" } },
-        "d2": { "type": "designer", "settings": { "collection": "designer-jamey-stegmaier" } },
-        "d3": { "type": "designer", "settings": { "collection": "designer-elizabeth-hargrave" } },
-        "d4": { "type": "designer", "settings": { "collection": "designer-cole-wehrle" } },
-        "d5": { "type": "designer", "settings": { "collection": "designer-klaus-teuber" } },
-        "d6": { "type": "designer", "settings": { "collection": "designer-antoine-bauza" } },
-        "d7": { "type": "designer", "settings": { "collection": "designer-alan-r-moon" } },
-        "d8": { "type": "designer", "settings": { "collection": "designer-paul-dennen" } }
+        "d1": { "type": "designer", "settings": { "collection": "designer-fabio-lopiano-nestore-mangone" } },
+        "d2": { "type": "designer", "settings": { "collection": "designer-maxime-barbier" } },
+        "d3": { "type": "designer", "settings": { "collection": "designer-nate-hayden" } }
       },
-      "block_order": ["d1", "d2", "d3", "d4", "d5", "d6", "d7", "d8"],
+      "block_order": ["d1", "d2", "d3"],
       "settings": { "title": "Shop by designer", "link_label": "All designers", "link_url": "/collections" }
     },
     "mp_editorial": {

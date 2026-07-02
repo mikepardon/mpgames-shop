@@ -12,20 +12,25 @@
     "mp_delivery": {
       "type": "mp-delivery",
       "blocks": {
-        "h1": { "type": "highlight", "settings": { "icon": "🚚", "title": "Free UK delivery over £50", "body": "Orders under £50 ship from £3.49. Next working day dispatch, Mon–Fri." } },
+        "h1": { "type": "highlight", "settings": { "icon": "🚚", "title": "Free UK delivery over £50", "body": "UK orders under £50 ship for £4.99 (Standard) or £6.99 (Express). Dispatched Mon–Fri." } },
         "h2": { "type": "highlight", "settings": { "icon": "↺", "title": "30-day returns", "body": "Changed your mind? Send unopened games back within 30 days for a full refund." } },
-        "h3": { "type": "highlight", "settings": { "icon": "🌎", "title": "Worldwide shipping", "body": "We ship to 40+ countries. Rates and times are calculated at checkout." } },
-        "p1": { "type": "ship", "settings": { "name": "Standard (Royal Mail Tracked 48)", "time": "2–3 working days", "cost": "£3.49" } },
-        "p2": { "type": "ship", "settings": { "name": "Express (Royal Mail Tracked 24)", "time": "1–2 working days", "cost": "£5.99" } },
-        "p3": { "type": "ship", "settings": { "name": "Next-day (DPD, order by 2pm)", "time": "Next working day", "cost": "£7.99" } },
-        "p4": { "type": "ship", "settings": { "name": "Free delivery (orders over £50)", "time": "2–3 working days", "cost": "FREE" } },
+        "h3": { "type": "highlight", "settings": { "icon": "🌎", "title": "Worldwide shipping", "body": "We ship to the EU, and 13 more countries worldwide, plus calculated rates for the rest of the world at checkout." } },
+        "p1": { "type": "ship", "settings": { "name": "UK Standard", "time": "3–5 business days", "cost": "£4.99" } },
+        "p2": { "type": "ship", "settings": { "name": "UK Standard (orders over £50)", "time": "3–5 business days", "cost": "FREE" } },
+        "p3": { "type": "ship", "settings": { "name": "UK Express", "time": "1–2 business days", "cost": "£6.99" } },
+        "p4": { "type": "ship", "settings": { "name": "EU — Standard international", "time": "3–5 business days", "cost": "£14.99" } },
+        "p5": { "type": "ship", "settings": { "name": "International — Standard international", "time": "3–5 business days", "cost": "£23.99" } },
+        "p6": { "type": "ship", "settings": { "name": "Rest of world (DHL Express / FedEx)", "time": "Calculated transit time", "cost": "Calculated at checkout" } },
         "t1": { "type": "step", "settings": { "title": "Start your return", "body": "Sign in and open the order, or use the link in your dispatch email." } },
         "t2": { "type": "step", "settings": { "title": "Print your label", "body": "We email a prepaid returns label — just attach it to the parcel." } },
         "t3": { "type": "step", "settings": { "title": "Drop it off", "body": "Post it at any Royal Mail post office or parcel locker." } },
         "t4": { "type": "step", "settings": { "title": "Get refunded", "body": "Refund processed 3–5 days after it reaches our warehouse." } }
       },
-      "block_order": ["h1", "h2", "h3", "p1", "p2", "p3", "p4", "t1", "t2", "t3", "t4"],
-      "settings": {}
+      "block_order": ["h1", "h2", "h3", "p1", "p2", "p3", "p4", "p5", "p6", "t1", "t2", "t3", "t4"],
+      "settings": {
+        "table_heading": "Delivery options",
+        "table_note": "Delivery estimates are from dispatch, not order date. EU covers 27 member countries; International covers the United Arab Emirates, Australia, Canada and 10 more. Everywhere else is quoted live at checkout via DHL Express or FedEx. Remote UK postcodes (Highlands & Islands) may take 1–2 extra days."
+      }
     }
   },
   "order": ["mp_delivery"]
