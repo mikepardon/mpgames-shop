@@ -130,7 +130,7 @@
             {%- if vw.size > 1 -%}{%- assign second = vw[1] | slice: 0 -%}{%- assign initials = initials | append: second -%}{%- endif -%}
             {%- assign cidx = forloop.index0 | modulo: 6 -%}
             {%- assign pcolor = pub_palette[cidx] -%}
-            <a class="ci__pub" href="/collections/publisher-{{ vhandle }}">
+            <a class="ci__pub" href="/collections/vendors?q={{ vendor | url_encode }}">
               {%- if logo_handles contains vhandle -%}
                 <span class="ci__pubav ci__pubav--logo"><img src="{{ 'pub-' | append: vhandle | append: '.png' | asset_url }}" alt="{{ vendor | escape }}" width="34" height="34" loading="lazy"></span>
               {%- else -%}
