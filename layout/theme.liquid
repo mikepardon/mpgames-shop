@@ -436,18 +436,5 @@
     {%- if settings.cart_type == 'drawer' -%}
       <script src="{{ 'cart-drawer.js' | asset_url }}" defer="defer"></script>
     {%- endif -%}
-
-    {%- comment -%} Google Customer Reviews — site-wide badge (opt-in survey lives on the order-confirmation page, configured in checkout, not here). {%- endcomment -%}
-    <script id="merchantWidgetScript" src="https://www.gstatic.com/shopping/merchant/merchantwidget.js" defer></script>
-    <script>
-      merchantWidgetScript.addEventListener('load', function () {
-        merchantwidget.start({
-          // REQUIRED
-          merchant_id: 5817787477,
-          // OPTIONAL — 'BOTTOM_LEFT' | 'BOTTOM_RIGHT' | 'INLINE'
-          position: 'BOTTOM_LEFT'
-        });
-      });
-    </script>
   </body>
 </html>

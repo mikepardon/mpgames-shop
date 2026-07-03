@@ -22,6 +22,7 @@
   }
   .mp-ft-{{ section.id }} .mp-ft__policies a { color: #9fb4bd; text-decoration: none; }
   .mp-ft-{{ section.id }} .mp-ft__policies a:hover { color: #fff; }
+  .mp-ft-{{ section.id }} .mp-ft__gcr { padding: 20px 0 4px; border-top: 1px solid #1d3640; }
   .mp-ft-{{ section.id }} .mp-ft__bottom {
     display: flex; justify-content: space-between; align-items: center;
     padding: 18px 0 26px; font-size: 12px; gap: 16px; flex-wrap: wrap;
@@ -66,6 +67,19 @@
         {%- endfor -%}
       </div>
     {%- endif -%}
+    {%- comment -%} Google Customer Reviews — inline seller-rating badge {%- endcomment -%}
+    <div class="mp-ft__gcr"><div id="gcr-badge-{{ section.id }}"></div></div>
+    <script src="https://apis.google.com/js/platform.js?onload=renderGcrBadge{{ section.id }}" async defer></script>
+    <script>
+      window['renderGcrBadge{{ section.id }}'] = function () {
+        var el = document.getElementById('gcr-badge-{{ section.id }}');
+        if (!el || !window.gapi) return;
+        window.gapi.load('ratingbadge', function () {
+          window.gapi.ratingbadge.render(el, { "merchant_id": 5817787477, "position": "INLINE" });
+        });
+      };
+    </script>
+
     <div class="mp-ft__bottom">
       <span>{{ section.settings.legal }}</span>
       {%- assign pay_types = shop.enabled_payment_types -%}
