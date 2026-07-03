@@ -58,6 +58,7 @@
   .mp-cl-{{ section.id }} .cl__grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 18px; }
   .mp-cl-{{ section.id }} .cl__card { border: 1px solid #e7ddcb; border-radius: 12px; overflow: hidden; background: #fff; display: flex; flex-direction: column; position: relative; box-shadow: 0 1px 2px rgba(20,40,50,.04); }
   .mp-cl-{{ section.id }} .cl__flag { position: absolute; top: 10px; left: 10px; z-index: 2; background: #d6402e; color: #fff; font-size: 12px; font-weight: 700; padding: 3px 8px; border-radius: 5px; }
+  .mp-cl-{{ section.id }} .cl__flag--pre { background: #f2872f; letter-spacing: .3px; }
   .mp-cl-{{ section.id }} .cl__wish { position: absolute; top: 10px; right: 10px; z-index: 2; background: #fff; border: 1px solid #e7e0d4; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; color: #8a8278; font-size: 13px; }
   .mp-cl-{{ section.id }} .cl__media { height: 170px; display: flex; align-items: center; justify-content: center; background: repeating-linear-gradient(45deg,#efece6,#efece6 9px,#e6e2da 9px,#e6e2da 18px); }
   .mp-cl-{{ section.id }} .cl__media img { width: 100%; height: 100%; object-fit: cover; display: block; }
@@ -244,9 +245,11 @@
                   assign players = product.metafields.custom.player_count.value
                   assign playtime = product.metafields.custom.play_time.value
                   assign age = product.metafields.custom.min_age.value
+                  assign cpre = product.metafields.custom.is_preorder.value
                 -%}
                 <div class="cl__card">
-                  {%- if csale -%}<span class="cl__flag mp-cond">-{{ cdisc }}%</span>{%- endif -%}
+                  {%- if cpre -%}<span class="cl__flag cl__flag--pre mp-cond">PRE-ORDER</span>
+                  {%- elsif csale -%}<span class="cl__flag mp-cond">-{{ cdisc }}%</span>{%- endif -%}
                   <a href="{{ product.url }}" class="cl__media">{% if product.featured_image %}<img src="{{ product.featured_image | image_url: width: 420 }}" alt="{{ product.title | escape }}" width="420" height="420" loading="lazy">{% endif %}</a>
                   <div class="cl__cbody">
                     {%- if product.type == 'Board Game Expansion' -%}<span style="display:inline-block;width:fit-content;background:#ede7f3;color:#6a4f86;font-size:9.5px;font-weight:700;letter-spacing:.4px;padding:2px 7px;border-radius:5px;text-transform:uppercase;margin-bottom:7px">Expansion</span>{%- endif -%}
@@ -265,7 +268,9 @@
                         {%- if age != blank -%}<span>&#9817; {{ age }}+</span>{%- endif -%}
                       </div>
                     {%- endif -%}
-                    {%- if product.available -%}
+                    {%- if cpre -%}
+                      <div class="cl__stock" style="color:#b4560f"><span style="width:7px;height:7px;border-radius:50%;background:#f2872f;display:inline-block"></span>Pre-order{% if product.metafields.custom.preorder_eta.value != blank %} · {{ product.metafields.custom.preorder_eta.value }}{% endif %}</div>
+                    {%- elsif product.available -%}
                       <div class="cl__stock" style="color:#2f8f5b"><span style="width:7px;height:7px;border-radius:50%;background:#2f8f5b;display:inline-block"></span>In stock</div>
                     {%- else -%}
                       <div class="cl__stock" style="color:#d6402e"><span style="width:7px;height:7px;border-radius:50%;background:#d6402e;display:inline-block"></span>Sold out</div>
@@ -277,7 +282,7 @@
                       </div>
                       <form action="{{ routes.cart_add_url }}" method="post" enctype="multipart/form-data">
                         <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
-                        <button type="submit" class="cl__add mp-cond"{% unless product.available %} disabled{% endunless %}>Add</button>
+                        <button type="submit" class="cl__add mp-cond"{% unless product.available %} disabled{% endunless %}>{% if cpre %}Pre-order{% else %}Add{% endif %}</button>
                       </form>
                     </div>
                   </div>

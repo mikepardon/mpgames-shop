@@ -50,6 +50,7 @@
   .mp-ct-{{ section.id }} .ct__stock { font-size: 11.5px; color: #2f8f5b; margin-top: 4px; display: flex; align-items: center; gap: 5px; }
   .mp-ct-{{ section.id }} .ct__stock.is-low { color: #d68a1e; font-weight: 600; }
   .mp-ct-{{ section.id }} .ct__stock.is-out { color: #c0392b; font-weight: 600; }
+  .mp-ct-{{ section.id }} .ct__stock.is-pre { color: #b4560f; font-weight: 600; }
   .mp-ct-{{ section.id }} .ct__qty { display: inline-flex; align-items: center; border: 1px solid #cdc6ba; border-radius: 8px; overflow: hidden; background: #fff; }
   .mp-ct-{{ section.id }} .ct__qty button { padding: 9px 13px; color: #6b7a82; font-size: 15px; cursor: pointer; background: none; border: 0; }
   .mp-ct-{{ section.id }} .ct__qty .n { padding: 9px 14px; font-size: 14px; font-weight: 600; border-left: 1px solid #e7e0d4; border-right: 1px solid #e7e0d4; min-width: 20px; text-align: center; }
@@ -179,8 +180,12 @@
                   {%- liquid
                     assign v = item.variant
                     assign inv = v.inventory_quantity
+                    assign item_preorder = item.product.metafields.custom.is_preorder.value
+                    assign item_eta = item.product.metafields.custom.preorder_eta.value
                   -%}
-                  {%- if v.inventory_management == blank -%}
+                  {%- if item_preorder -%}
+                    <div class="ct__stock is-pre"><span style="width:6px;height:6px;border-radius:50%;background:#f2872f;display:inline-block"></span>Pre-order{% if item_eta != blank %} · ships {{ item_eta }}{% endif %}</div>
+                  {%- elsif v.inventory_management == blank -%}
                     <div class="ct__stock"><span style="width:6px;height:6px;border-radius:50%;background:#2f8f5b;display:inline-block"></span>In stock</div>
                   {%- elsif inv > 3 -%}
                     <div class="ct__stock"><span style="width:6px;height:6px;border-radius:50%;background:#2f8f5b;display:inline-block"></span>3+ in stock</div>

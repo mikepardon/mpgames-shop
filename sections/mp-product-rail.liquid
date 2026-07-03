@@ -47,6 +47,7 @@
     font-size: 12px; font-weight: 700; padding: 3px 8px; border-radius: 5px;
   }
   .mp-rail-{{ section.id }} .mp-card__flag--sale { background: #d6402e; }
+  .mp-rail-{{ section.id }} .mp-card__flag--pre { background: #f2872f; }
   .mp-rail-{{ section.id }} .mp-card__flag--badge { background: #16323f; font-size: 11px; }
   .mp-rail-{{ section.id }} .mp-card__wish {
     position: absolute; top: 9px; right: 9px; z-index: 2; background: #fff; border: 1px solid #e7e0d4;
@@ -122,6 +123,7 @@
               assign on_sale = true
               assign discount = product.compare_at_price | minus: product.price | times: 100.0 | divided_by: product.compare_at_price | round
             endif
+            assign is_pre = product.metafields.custom.is_preorder.value
             assign badge = ''
             if product.tags contains 'PRE-ORDER'
               assign badge = 'PRE-ORDER'
@@ -130,7 +132,9 @@
             endif
           -%}
           <div class="mp-card">
-            {%- if style == 'bestseller' and on_sale -%}
+            {%- if is_pre -%}
+              <span class="mp-card__flag mp-card__flag--pre mp-cond">PRE-ORDER</span>
+            {%- elsif style == 'bestseller' and on_sale -%}
               <span class="mp-card__flag mp-card__flag--sale mp-cond">-{{ discount }}%</span>
             {%- elsif style == 'release' and badge != blank -%}
               <span class="mp-card__flag mp-card__flag--badge mp-cond">{{ badge }}</span>
@@ -168,7 +172,7 @@
                 <form action="{{ routes.cart_add_url }}" method="post" enctype="multipart/form-data" class="mp-card__addform">
                   <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
                   <button type="submit" class="mp-card__add{% if style == 'release' %} mp-card__add--ghost{% endif %} mp-cond"{% unless product.available %} disabled{% endunless %}>
-                    {%- if style == 'release' -%}{{ section.settings.release_action | default: 'Add' }}{%- else -%}Add{%- endif -%}
+                    {%- if is_pre -%}Pre-order{%- elsif style == 'release' -%}{{ section.settings.release_action | default: 'Add' }}{%- else -%}Add{%- endif -%}
                   </button>
                 </form>
               </div>

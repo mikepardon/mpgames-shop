@@ -66,6 +66,7 @@
             elsif bgg >= 7.0
               assign bgg_color = '#9ccf63'
             endif
+            assign is_pre = product.metafields.custom.is_preorder.value
           -%}
           <div class="mp-top__card">
             <div class="mp-top__rank mp-cond">#{{ forloop.index }}</div>
@@ -80,7 +81,7 @@
                 <span class="mp-top__price mp-cond">{{ product.price | money }}</span>
                 <form action="{{ routes.cart_add_url }}" method="post" enctype="multipart/form-data" class="mp-top__addform">
                   <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
-                  <button type="submit" class="mp-top__add mp-cond"{% unless product.available %} disabled{% endunless %}>Add</button>
+                  <button type="submit" class="mp-top__add mp-cond"{% unless product.available %} disabled{% endunless %}>{% if is_pre %}Pre-order{% else %}Add{% endif %}</button>
                 </form>
               </div>
             </div>
