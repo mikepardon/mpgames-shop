@@ -83,11 +83,16 @@
     "mp_designers": {
       "type": "mp-designers",
       "blocks": {
-        "d1": { "type": "designer", "settings": { "collection": "designer-fabio-lopiano-nestore-mangone" } },
-        "d2": { "type": "designer", "settings": { "collection": "designer-maxime-barbier" } },
-        "d3": { "type": "designer", "settings": { "collection": "designer-nate-hayden" } }
+        "d1": { "type": "designer", "settings": { "collection": "designer-fabio-lopiano" } },
+        "d2": { "type": "designer", "settings": { "collection": "designer-nestore-mangone" } },
+        "d3": { "type": "designer", "settings": { "collection": "designer-maxime-barbier" } },
+        "d4": { "type": "designer", "settings": { "collection": "designer-nate-hayden" } },
+        "d5": { "type": "designer", "settings": { "collection": "designer-paolo-mori" } },
+        "d6": { "type": "designer", "settings": { "collection": "designer-remo-conzadori" } },
+        "d7": { "type": "designer", "settings": { "collection": "designer-mikhail-gurevich" } },
+        "d8": { "type": "designer", "settings": { "collection": "designer-chris-castagnetto" } }
       },
-      "block_order": ["d1", "d2", "d3"],
+      "block_order": ["d1", "d2", "d3", "d4", "d5", "d6", "d7", "d8"],
       "settings": { "title": "Shop by designer", "link_label": "All designers", "link_url": "/collections" }
     },
     "mp_editorial": {
