@@ -92,19 +92,7 @@
         }
       }
       </script>
-      <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "WebSite",
-        "name": {{ shop.name | json }},
-        "url": {{ shop.url | append: routes.root_url | json }},
-        "potentialAction": {
-          "@type": "SearchAction",
-          "target": "{{ shop.url }}/search?q={search_term_string}",
-          "query-input": "required name=search_term_string"
-        }
-      }
-      </script>
+      {%- comment -%} WebSite/SearchAction schema intentionally omitted — Shopify injects it via content_for_header; a second copy would duplicate it. {%- endcomment -%}
     {%- endif -%}
 
     <script type="module">

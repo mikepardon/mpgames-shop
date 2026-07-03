@@ -215,7 +215,7 @@
           <div class="pdp__thumbs">
             {%- for media in product.media limit: 8 -%}
               <button type="button" class="pdp__thumb{% if forloop.first %} is-active{% endif %}" data-src="{{ media | image_url: width: 1100 }}" aria-label="View image {{ forloop.index }}">
-                <img src="{{ media | image_url: width: 180 }}" alt="" width="180" height="180" loading="lazy">
+                <img src="{{ media | image_url: width: 180 }}" alt="{{ media.alt | default: product.title | escape }}" width="180" height="180" loading="lazy">
               </button>
             {%- endfor -%}
           </div>

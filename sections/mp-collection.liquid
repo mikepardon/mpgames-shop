@@ -89,10 +89,19 @@
     .mp-cl-{{ section.id }} .cl__hero { flex-direction: column; align-items: flex-start; }
     .mp-cl-{{ section.id }} .cl__htags { justify-content: flex-start; max-width: none; }
   }
+  .mp-cl-{{ section.id }} .cl__about { max-width: 880px; margin: 20px auto 0; padding: 34px 28px 8px; border-top: 1px solid #e7ddcb; }
+  .mp-cl-{{ section.id }} .cl__abouth { font-size: 22px; font-weight: 700; color: #16323f; margin: 0 0 12px; }
+  .mp-cl-{{ section.id }} .cl__aboutbody { font-size: 14.5px; line-height: 1.75; color: #4a443c; }
+  .mp-cl-{{ section.id }} .cl__aboutbody p { margin: 0 0 14px; }
+  .mp-cl-{{ section.id }} .cl__aboutbody h2, .mp-cl-{{ section.id }} .cl__aboutbody h3 { font-size: 17px; font-weight: 700; color: #16323f; margin: 20px 0 8px; }
+  .mp-cl-{{ section.id }} .cl__aboutbody ul { margin: 0 0 14px; padding-left: 20px; }
+  .mp-cl-{{ section.id }} .cl__aboutbody li { margin: 0 0 6px; }
+  .mp-cl-{{ section.id }} .cl__aboutbody a { color: #f2872f; }
   @media (max-width: 749px) {
     .mp-cl-{{ section.id }} .cl__wrap { padding: 0 16px; }
     .mp-cl-{{ section.id }} .cl__grid { grid-template-columns: 1fr 1fr; gap: 12px; }
     .mp-cl-{{ section.id }} .cl__htitle { font-size: 30px; }
+    .mp-cl-{{ section.id }} .cl__about { padding: 28px 4px 8px; }
   }
 {%- endstyle -%}
 
@@ -296,6 +305,13 @@
         </div>
       </div>
     {%- endpaginate -%}
+
+    {%- if collection.description != blank -%}
+      <div class="cl__about">
+        <h2 class="cl__abouth mp-cond">About {{ collection.title }}</h2>
+        <div class="cl__aboutbody rte">{{ collection.description }}</div>
+      </div>
+    {%- endif -%}
 
   </div>
 </section>
