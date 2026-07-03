@@ -1,16 +1,28 @@
 {%- comment -%}
   MPGames twin promo banners. Imported from Claude Design.
+  Each banner supports two layouts (per block):
+   - "text"  : gradient (or image) background with kicker / title / CTA overlay
+   - "image" : the whole banner is a clickable image, no text — fits the image
+               either at its natural aspect (no crop) or cover (fill & crop).
 {%- endcomment -%}
 
 {%- style -%}
-  .mp-promo-{{ section.id }} .mp-promo__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding: 20px 28px 6px; }
+  .mp-promo-{{ section.id }} .mp-promo__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding: 20px 28px 6px; align-items: start; }
   .mp-promo-{{ section.id }} .mp-promo__card {
     border-radius: 12px; padding: 26px 28px; position: relative; overflow: hidden;
     min-height: 150px; display: flex; flex-direction: column; justify-content: center; text-decoration: none;
+    background-size: cover; background-position: center;
   }
   .mp-promo-{{ section.id }} .mp-promo__kicker { font-size: 12.5px; font-weight: 600; letter-spacing: .5px; }
   .mp-promo-{{ section.id }} .mp-promo__title { color: #fff; font-size: 24px; font-weight: 700; margin-top: 6px; max-width: 300px; }
   .mp-promo-{{ section.id }} .mp-promo__cta { color: #fff; font-size: 13.5px; font-weight: 600; margin-top: 12px; }
+
+  /* image-only layout */
+  .mp-promo-{{ section.id }} .mp-promo__card--image { padding: 0; min-height: 0; line-height: 0; background: #f4efe6; display: block; }
+  .mp-promo-{{ section.id }} .mp-promo__img { display: block; width: 100%; height: auto; }
+  .mp-promo-{{ section.id }} .mp-promo__card--cover { min-height: 160px; }
+  .mp-promo-{{ section.id }} .mp-promo__card--cover .mp-promo__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+
   @media (max-width: 749px) { .mp-promo-{{ section.id }} .mp-promo__grid { grid-template-columns: 1fr; padding: 16px 16px 6px; } }
 {%- endstyle -%}
 
@@ -18,11 +30,20 @@
   <div class="mp-col">
     <div class="mp-promo__grid">
       {%- for block in section.blocks -%}
-        <a class="mp-promo__card mp-cond" href="{{ block.settings.url | default: '#' }}" style="background: {{ block.settings.bg }}" {{ block.shopify_attributes }}>
-          <div class="mp-promo__kicker" style="color: {{ block.settings.kicker_color }}">{{ block.settings.kicker }}</div>
-          <div class="mp-promo__title">{{ block.settings.title }}</div>
-          <span class="mp-promo__cta">{{ block.settings.cta_label }} &#8594;</span>
-        </a>
+        {%- assign b = block.settings -%}
+        {%- if b.layout == 'image' and b.image != blank -%}
+          <a class="mp-promo__card mp-promo__card--image mp-promo__card--{{ b.image_fit }}" href="{{ b.url | default: '#' }}" aria-label="{{ b.title | default: shop.name | escape }}" {{ block.shopify_attributes }}>
+            <img class="mp-promo__img" src="{{ b.image | image_url: width: 1400 }}" alt="{{ b.title | escape }}" width="{{ b.image.width }}" height="{{ b.image.height }}" loading="lazy">
+          </a>
+        {%- else -%}
+          <a class="mp-promo__card mp-cond" href="{{ b.url | default: '#' }}"
+            {%- if b.image != blank %} style="background-image: linear-gradient(rgba(15,20,32,.42),rgba(15,20,32,.42)), url('{{ b.image | image_url: width: 1200 }}')"
+            {%- else %} style="background: {{ b.bg }}"{% endif %} {{ block.shopify_attributes }}>
+            {%- if b.kicker != blank -%}<div class="mp-promo__kicker" style="color: {{ b.kicker_color }}">{{ b.kicker }}</div>{%- endif -%}
+            {%- if b.title != blank -%}<div class="mp-promo__title">{{ b.title }}</div>{%- endif -%}
+            {%- if b.cta_label != blank -%}<span class="mp-promo__cta">{{ b.cta_label }} &#8594;</span>{%- endif -%}
+          </a>
+        {%- endif -%}
       {%- endfor -%}
     </div>
   </div>
@@ -37,11 +58,28 @@
       "type": "promo",
       "name": "Promo",
       "settings": [
+        {
+          "type": "select", "id": "layout", "label": "Layout", "default": "text",
+          "options": [
+            { "value": "text", "label": "Text & button" },
+            { "value": "image", "label": "Image only (whole banner clickable)" }
+          ]
+        },
+        { "type": "image_picker", "id": "image", "label": "Image", "info": "Required for the Image-only layout. In the Text layout it's used as a background behind the text (with a dark overlay)." },
+        {
+          "type": "select", "id": "image_fit", "label": "Image fit", "default": "natural",
+          "info": "Image-only layout: 'Fit whole image' shows the full image with no crop; 'Fill & crop' fills a fixed banner height.",
+          "options": [
+            { "value": "natural", "label": "Fit whole image (no crop)" },
+            { "value": "cover", "label": "Fill & crop to banner" }
+          ]
+        },
+        { "type": "url", "id": "url", "label": "Link" },
+        { "type": "header", "content": "Text layout" },
         { "type": "text", "id": "kicker", "label": "Kicker", "default": "HOBBYIST CORNER" },
         { "type": "color", "id": "kicker_color", "label": "Kicker colour", "default": "#d7b8ef" },
         { "type": "text", "id": "title", "label": "Title", "default": "Top 100 ranked on BoardGameGeek" },
         { "type": "text", "id": "cta_label", "label": "CTA label", "default": "Explore the ranking" },
-        { "type": "url", "id": "url", "label": "URL" },
         { "type": "text", "id": "bg", "label": "Background (CSS)", "default": "linear-gradient(115deg,#2b2233,#4a3a5c)" }
       ]
     }
