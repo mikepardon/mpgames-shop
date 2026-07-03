@@ -278,6 +278,8 @@
         </div>
         <button type="button" class="pdp__buynow" data-add="checkout"{% unless product.available %} disabled{% endunless %}>Buy it now</button>
 
+        <div id="preproduct-pledge" data-id="{{ product.id }}" data-starting-variant="{{ product.selected_or_first_available_variant.id }}" style="text-align:left!important;"></div>
+
         <div class="pdp__reassure">
           <span>&#128666; <b>Free UK delivery</b> on orders over £{{ settings.free_shipping_threshold }} · next working day dispatch</span>
           <span>&#8634; <b>30-day returns</b> · unopened &amp; in original condition</span>
