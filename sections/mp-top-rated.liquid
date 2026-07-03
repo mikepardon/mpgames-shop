@@ -35,7 +35,12 @@
   .mp-top-{{ section.id }} .mp-top__add { background: #f2872f; color: #fff; border-radius: 6px; padding: 6px 11px; font-size: 12px; font-weight: 600; text-decoration: none; border: 0; cursor: pointer; }
   .mp-top-{{ section.id }} .mp-top__add[disabled] { opacity: .45; cursor: not-allowed; }
   .mp-top-{{ section.id }} .mp-top__addform { margin: 0; }
-  @media (max-width: 749px) { .mp-top-{{ section.id }} .mp-top__head, .mp-top-{{ section.id }} .mp-top__track { padding-left: 16px; padding-right: 16px; } }
+  @media (max-width: 749px) {
+    .mp-top-{{ section.id }} .mp-top__head, .mp-top-{{ section.id }} .mp-top__track { padding-left: 16px; padding-right: 16px; }
+    .mp-top-{{ section.id }} .mp-top__card { flex-basis: 80vw; max-width: 300px; align-items: flex-start; }
+    .mp-top-{{ section.id }} .mp-top__name { overflow-wrap: anywhere; }
+    .mp-top-{{ section.id }} .mp-top__foot { flex-wrap: wrap; gap: 8px; }
+  }
 {%- endstyle -%}
 
 <div class="mp-cream mp-top-{{ section.id }}">
@@ -65,7 +70,7 @@
           <div class="mp-top__card">
             <div class="mp-top__rank mp-cond">#{{ forloop.index }}</div>
             <a href="{{ product.url }}" class="mp-top__media"{% if product.featured_image %} style="background-image:url('{{ product.featured_image | image_url: width: 200 }}')"{% endif %} aria-label="{{ product.title | escape }}"></a>
-            <div style="flex:1">
+            <div style="flex:1;min-width:0">
               {%- if product.type == 'Board Game Expansion' -%}<span style="display:inline-block;background:#ede7f3;color:#6a4f86;font-size:9px;font-weight:700;letter-spacing:.4px;padding:1px 6px;border-radius:5px;text-transform:uppercase;margin-bottom:4px">Expansion</span><br>{%- endif -%}
               <a class="mp-top__name" href="{{ product.url }}" style="text-decoration:none;color:inherit">{{ product.title }}</a>
               {%- if bgg_mf != blank -%}
