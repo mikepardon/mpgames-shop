@@ -23,6 +23,9 @@
     assign disc = product.compare_at_price | minus: product.price | times: 100.0 | divided_by: product.compare_at_price | round
   endif
 
+  assign is_preorder = m.is_preorder.value
+  assign preorder_eta = m.preorder_eta.value
+
   assign mechanics = m.mechanics.value
   assign rscore = m.review_score.value
   assign rcount = m.review_count.value
@@ -93,6 +96,10 @@
   .mp-pdp-{{ section.id }} .pdp__buynow { display: block; width: 100%; margin-top: 11px; background: #f2872f; color: #fff; border: 0; border-radius: 8px; padding: 15px; font-size: 16px; font-weight: 700; cursor: pointer; font-family: inherit; }
   .mp-pdp-{{ section.id }} .pdp__add[disabled], .mp-pdp-{{ section.id }} .pdp__buynow[disabled] { opacity: .5; cursor: not-allowed; }
   .mp-pdp-{{ section.id }} .pdp__appblocks { margin-top: 12px; }
+  .mp-pdp-{{ section.id }} .pdp__preorder { margin-top: 14px; border: 1px solid #f2c79a; background: #fff5ec; border-radius: 10px; padding: 12px 14px; }
+  .mp-pdp-{{ section.id }} .pdp__preorder-h { font-weight: 700; color: #b4560f; font-size: 14px; display: flex; align-items: center; gap: 7px; }
+  .mp-pdp-{{ section.id }} .pdp__preorder-b { font-size: 12.5px; color: #6b5a48; line-height: 1.55; margin-top: 4px; }
+  .mp-pdp-{{ section.id }} .pdp__preorder-b b { color: #b4560f; }
 
   .mp-pdp-{{ section.id }} .pdp__reassure { border: 1px solid #e2ddd1; border-radius: 10px; background: #fbf9f4; margin-top: 18px; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; font-size: 12.5px; color: #4a443c; }
   .mp-pdp-{{ section.id }} .pdp__reassure b { color: #16323f; }
@@ -259,13 +266,22 @@
         {%- endunless -%}
 
         <div class="pdp__stock" data-stock>
-          {%- if product.available -%}
+          {%- if is_preorder -%}
+            <span class="pdp__dot" style="background:#f2872f"></span><b style="color:#b4560f">Available to pre-order</b>
+          {%- elsif product.available -%}
             <span class="pdp__dot" style="background:#2f8f5b"></span><b style="color:#2f8f5b">In stock</b>
             {%- if variant.inventory_management and variant.inventory_quantity > 0 -%}<span style="color:#6b7a82"> · {{ variant.inventory_quantity }} available</span>{%- endif -%}
           {%- else -%}
             <span class="pdp__dot" style="background:#d6402e"></span><b style="color:#d6402e">Out of stock</b>
           {%- endif -%}
         </div>
+
+        {%- if is_preorder -%}
+          <div class="pdp__preorder">
+            <div class="pdp__preorder-h mp-cond">&#128640; Pre-order only</div>
+            <div class="pdp__preorder-b">This title hasn&rsquo;t been released yet &mdash; order now to reserve your copy.{% if preorder_eta != blank %} <b>Estimated dispatch: {{ preorder_eta }}.</b>{% endif %} You&rsquo;ll be charged today and we&rsquo;ll ship it as soon as stock arrives.</div>
+          </div>
+        {%- endif -%}
 
         <div class="pdp__qlabel">Quantity</div>
         <div class="pdp__qty">
@@ -275,9 +291,9 @@
         </div>
 
         <div class="pdp__actions">
-          <button type="button" class="pdp__add" data-add="cart"{% unless product.available %} disabled{% endunless %}>Add to basket</button>
+          <button type="button" class="pdp__add" data-add="cart"{% unless product.available %} disabled{% endunless %}>{% if is_preorder %}Pre-order now{% else %}Add to basket{% endif %}</button>
         </div>
-        <button type="button" class="pdp__buynow" data-add="checkout"{% unless product.available %} disabled{% endunless %}>Buy it now</button>
+        <button type="button" class="pdp__buynow" data-add="checkout"{% unless product.available %} disabled{% endunless %}>{% if is_preorder %}Pre-order &amp; checkout{% else %}Buy it now{% endif %}</button>
 
         {%- if section.blocks.size > 0 -%}
           <div class="pdp__appblocks">
@@ -688,6 +704,7 @@
     var skuEl = root.querySelector('[data-sku]');
     var addBtn = root.querySelector('.pdp__add');
     var buyBtn = root.querySelector('.pdp__buynow');
+    var isPreorder = {% if is_preorder %}true{% else %}false{% endif %};
 
     function currentSelections() {
       return Array.prototype.map.call(optionGroups, function (group) {
@@ -713,11 +730,13 @@
       if (saleEl) saleEl.hidden = !v.compare_str;
       if (skuEl) { if (v.sku) { skuEl.textContent = 'SKU: ' + v.sku; skuEl.hidden = false; } else { skuEl.hidden = true; } }
       if (stockEl) {
-        stockEl.innerHTML = v.available
-          ? '<span class="pdp__dot" style="background:#2f8f5b"></span><b style="color:#2f8f5b">In stock</b>' + (v.avail_qty > 0 ? '<span style="color:#6b7a82"> · ' + v.avail_qty + ' available</span>' : '')
-          : '<span class="pdp__dot" style="background:#d6402e"></span><b style="color:#d6402e">Out of stock</b>';
+        stockEl.innerHTML = isPreorder
+          ? '<span class="pdp__dot" style="background:#f2872f"></span><b style="color:#b4560f">Available to pre-order</b>'
+          : (v.available
+            ? '<span class="pdp__dot" style="background:#2f8f5b"></span><b style="color:#2f8f5b">In stock</b>' + (v.avail_qty > 0 ? '<span style="color:#6b7a82"> · ' + v.avail_qty + ' available</span>' : '')
+            : '<span class="pdp__dot" style="background:#d6402e"></span><b style="color:#d6402e">Out of stock</b>');
       }
-      if (addBtn) { addBtn.disabled = !v.available; addBtn.textContent = v.available ? 'Add to basket' : 'Sold out'; }
+      if (addBtn) { addBtn.disabled = !v.available; addBtn.textContent = !v.available ? 'Sold out' : (isPreorder ? 'Pre-order now' : 'Add to basket'); }
       if (buyBtn) buyBtn.disabled = !v.available;
       try {
         var url = new URL(window.location.href);
