@@ -213,12 +213,23 @@
         {%- for link in mp_menu.links -%}
           {%- assign lt = link.title | downcase -%}
           {%- assign auto_kind = '' -%}
-          {%- if lt contains 'designer' -%}{%- assign auto_kind = 'designer' -%}{%- elsif lt contains 'shop' -%}{%- assign auto_kind = 'category' -%}{%- endif -%}
+          {%- if lt contains 'designer' -%}{%- assign auto_kind = 'designer' -%}{%- elsif lt contains 'publisher' or lt contains 'vendor' or lt contains 'brand' -%}{%- assign auto_kind = 'vendor' -%}{%- elsif lt contains 'shop' -%}{%- assign auto_kind = 'category' -%}{%- endif -%}
           {%- capture auto_links -%}
             {%- if auto_kind == 'designer' -%}
-              {%- for c in collections -%}{%- if c.handle contains 'designer-' -%}<a class="mp-mega__link" href="{{ c.url }}">{{ c.title }}</a>{%- endif -%}{%- endfor -%}
+              {%- comment -%} Real designers only: any designer-* collection that currently has products. {%- endcomment -%}
+              {%- for c in collections -%}{%- if c.handle contains 'designer-' and c.all_products_count > 0 -%}<a class="mp-mega__link" href="{{ c.url }}">{{ c.title | remove: 'Designer:' | strip }}</a>{%- endif -%}{%- endfor -%}
+            {%- elsif auto_kind == 'vendor' -%}
+              {%- comment -%} Actual publishers/vendors in the catalogue, de-duplicated from live products. {%- endcomment -%}
+              {%- assign seen_vendors = '|' -%}
+              {%- for p in collections['all-games'].products -%}
+                {%- assign vkey = '|' | append: p.vendor | downcase | append: '|' -%}
+                {%- unless p.vendor == blank or seen_vendors contains vkey -%}
+                  {%- assign seen_vendors = seen_vendors | append: p.vendor | downcase | append: '|' -%}
+                  <a class="mp-mega__link" href="/collections/vendors?q={{ p.vendor | url_encode }}">{{ p.vendor }}</a>
+                {%- endunless -%}
+              {%- endfor -%}
             {%- elsif auto_kind == 'category' -%}
-              {%- for c in collections -%}{%- if c.handle contains 'cat-' -%}<a class="mp-mega__link" href="{{ c.url }}">{{ c.title }}</a>{%- endif -%}{%- endfor -%}
+              {%- for c in collections -%}{%- if c.handle contains 'cat-' and c.all_products_count > 0 -%}<a class="mp-mega__link" href="{{ c.url }}">{{ c.title }}</a>{%- endif -%}{%- endfor -%}
             {%- endif -%}
           {%- endcapture -%}
           {%- if link.links.size > 0 -%}
@@ -258,7 +269,7 @@
               <div class="mp-mega">
                 <div class="mp-mega__in">
                   <div class="mp-mega__col">
-                    <div class="mp-mega__h">{% if auto_kind == 'designer' %}Shop by designer{% else %}Shop by category{% endif %}</div>
+                    <div class="mp-mega__h">{% if auto_kind == 'designer' %}Shop by designer{% elsif auto_kind == 'vendor' %}Shop by publisher{% else %}Shop by category{% endif %}</div>
                     <div class="mp-mega__grid">{{ auto_links }}</div>
                     <a class="mp-mega__all" href="{{ link.url }}">Shop all &raquo;</a>
                   </div>
