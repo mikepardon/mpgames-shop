@@ -9,7 +9,13 @@
   .mp-hero-{{ section.id }} .mp-hero__slide {
     flex: 0 0 100%; min-height: 340px; position: relative;
     display: flex; flex-direction: column; justify-content: center; padding: 46px 56px;
+    background-size: cover; background-position: center;
   }
+  .mp-hero-{{ section.id }} .mp-hero__slide--image { padding: 0; }
+  .mp-hero-{{ section.id }} .mp-hero__img { display: block; width: 100%; height: auto; }
+  .mp-hero-{{ section.id }} .mp-hero__slide--cover { min-height: 340px; }
+  .mp-hero-{{ section.id }} .mp-hero__slide--cover .mp-hero__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .mp-hero-{{ section.id }} .mp-hero__vh { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
   .mp-hero-{{ section.id }} .mp-hero__tag {
     background: #f2872f; color: #fff; font-size: 12.5px; font-weight: 600;
     padding: 5px 13px; border-radius: 20px; align-self: flex-start;
@@ -40,6 +46,8 @@
   .mp-hero-{{ section.id }} .mp-hero__dot[aria-current="true"] { width: 26px; background: #f2872f; }
   @media (max-width: 749px) {
     .mp-hero-{{ section.id }} .mp-hero__slide { padding: 32px 20px; min-height: 280px; }
+    .mp-hero-{{ section.id }} .mp-hero__slide--image { padding: 0; }
+    .mp-hero-{{ section.id }} .mp-hero__slide--cover { min-height: 220px; }
     .mp-hero-{{ section.id }} .mp-hero__title { font-size: 30px; }
     .mp-hero-{{ section.id }} .mp-hero__dots { left: 20px; }
   }
@@ -50,16 +58,29 @@
     <div class="mp-hero__vp" data-mp-hero data-autoplay="{{ section.settings.autoplay_seconds }}">
       <div class="mp-hero__track" data-track>
         {%- for block in section.blocks -%}
-          <div class="mp-hero__slide" style="background: {{ block.settings.bg }}" {{ block.shopify_attributes }}>
-            {%- if block.settings.kicker != blank -%}
-              <span class="mp-hero__tag mp-cond">{{ block.settings.kicker }}</span>
+          {%- assign s = block.settings -%}
+          {%- if s.layout == 'image' and s.image != blank -%}
+            {%- capture slide_inner -%}
+              {%- if forloop.first -%}<h1 class="mp-hero__vh">{{ s.title | default: shop.name }}</h1>{%- endif -%}
+              <img class="mp-hero__img" src="{{ s.image | image_url: width: 2000 }}" alt="{{ s.title | escape }}" width="{{ s.image.width }}" height="{{ s.image.height }}"{% unless forloop.first %} loading="lazy"{% endunless %}>
+            {%- endcapture -%}
+            {%- if s.cta_url != blank -%}
+              <a class="mp-hero__slide mp-hero__slide--image mp-hero__slide--{{ s.image_fit }}" href="{{ s.cta_url }}" aria-label="{{ s.title | default: shop.name | escape }}" {{ block.shopify_attributes }}>{{ slide_inner }}</a>
+            {%- else -%}
+              <div class="mp-hero__slide mp-hero__slide--image mp-hero__slide--{{ s.image_fit }}" {{ block.shopify_attributes }}>{{ slide_inner }}</div>
             {%- endif -%}
-            {%- if forloop.first -%}<h1 class="mp-hero__title mp-cond" style="margin:0">{{ block.settings.title }}</h1>{%- else -%}<div class="mp-hero__title mp-cond">{{ block.settings.title }}</div>{%- endif -%}
-            <div class="mp-hero__sub">{{ block.settings.sub }}</div>
-            {%- if block.settings.cta_label != blank -%}
-              <a class="mp-hero__cta mp-cond" href="{{ block.settings.cta_url | default: '#' }}">{{ block.settings.cta_label }} &#8594;</a>
-            {%- endif -%}
-          </div>
+          {%- else -%}
+            <div class="mp-hero__slide" {% if s.image != blank %}style="background-image: linear-gradient(rgba(15,20,32,.45),rgba(15,20,32,.45)), url('{{ s.image | image_url: width: 2000 }}')"{% else %}style="background: {{ s.bg }}"{% endif %} {{ block.shopify_attributes }}>
+              {%- if s.kicker != blank -%}
+                <span class="mp-hero__tag mp-cond">{{ s.kicker }}</span>
+              {%- endif -%}
+              {%- if forloop.first -%}<h1 class="mp-hero__title mp-cond" style="margin:0">{{ s.title }}</h1>{%- else -%}<div class="mp-hero__title mp-cond">{{ s.title }}</div>{%- endif -%}
+              {%- if s.sub != blank -%}<div class="mp-hero__sub">{{ s.sub }}</div>{%- endif -%}
+              {%- if s.cta_label != blank -%}
+                <a class="mp-hero__cta mp-cond" href="{{ s.cta_url | default: '#' }}">{{ s.cta_label }} &#8594;</a>
+              {%- endif -%}
+            </div>
+          {%- endif -%}
         {%- endfor -%}
       </div>
 
@@ -116,12 +137,29 @@
       "type": "slide",
       "name": "Slide",
       "settings": [
+        {
+          "type": "select", "id": "layout", "label": "Layout", "default": "text",
+          "options": [
+            { "value": "text", "label": "Text & button" },
+            { "value": "image", "label": "Image only (whole slide clickable)" }
+          ]
+        },
+        { "type": "image_picker", "id": "image", "label": "Image", "info": "Required for the Image-only layout. In the Text layout it's used as a background behind the text (with a dark overlay)." },
+        {
+          "type": "select", "id": "image_fit", "label": "Image fit", "default": "cover",
+          "info": "Image-only layout: 'Fill & crop' keeps a consistent hero height; 'Fit whole image' shows the full image with no crop (height follows the image — best when every slide uses the same image shape).",
+          "options": [
+            { "value": "cover", "label": "Fill & crop to hero" },
+            { "value": "natural", "label": "Fit whole image (no crop)" }
+          ]
+        },
+        { "type": "url", "id": "cta_url", "label": "Link", "info": "Where the slide/button goes. Makes the whole slide clickable in the Image-only layout." },
+        { "type": "header", "content": "Text layout" },
         { "type": "text", "id": "kicker", "label": "Kicker / badge", "default": "TOP-RANKED TABLETOP" },
-        { "type": "text", "id": "title", "label": "Title", "default": "The biggest names in tabletop, all in one place" },
+        { "type": "text", "id": "title", "label": "Title", "default": "The biggest names in tabletop, all in one place", "info": "Also used as the image alt text / hidden heading in the Image-only layout." },
         { "type": "textarea", "id": "sub", "label": "Subtitle", "default": "Games ranked by BoardGameGeek score, player count and play time." },
         { "type": "text", "id": "cta_label", "label": "Button label", "default": "Shop the collection" },
-        { "type": "url", "id": "cta_url", "label": "Button URL" },
-        { "type": "text", "id": "bg", "label": "Background (CSS)", "default": "linear-gradient(120deg,#16323f,#2c5466)", "info": "A CSS color or gradient." }
+        { "type": "text", "id": "bg", "label": "Background (CSS)", "default": "linear-gradient(120deg,#16323f,#2c5466)", "info": "A CSS color or gradient (used when no image is set)." }
       ]
     }
   ],
