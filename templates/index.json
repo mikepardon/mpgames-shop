@@ -25,38 +25,10 @@
             "cta_label": "Shop the collection",
             "bg": "linear-gradient(120deg,#16323f,#2c5466)"
           }
-        },
-        "s2": {
-          "type": "slide",
-          "settings": {
-            "layout": "text",
-            "image_fit": "cover",
-            "cta_url": "",
-            "kicker": "STAFF PICKS",
-            "title": "Heavy euros for your next games night",
-            "sub": "Hand-picked strategy titles rated 8.0+ on BGG — in stock and ready to ship.",
-            "cta_label": "Browse strategy",
-            "bg": "linear-gradient(120deg,#2b2233,#4a3a5c)"
-          }
-        },
-        "s3": {
-          "type": "slide",
-          "settings": {
-            "layout": "text",
-            "image_fit": "cover",
-            "cta_url": "",
-            "kicker": "JUST LANDED",
-            "title": "This month's new releases",
-            "sub": "Be first to the table — fresh arrivals and pre-orders updated weekly.",
-            "cta_label": "See what's new",
-            "bg": "linear-gradient(120deg,#13513f,#2f8f5b)"
-          }
         }
       },
       "block_order": [
-        "s1",
-        "s2",
-        "s3"
+        "s1"
       ],
       "settings": {
         "autoplay_seconds": 6
