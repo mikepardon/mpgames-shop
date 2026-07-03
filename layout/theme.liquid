@@ -18,11 +18,30 @@
       <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
     {%- endunless -%}
 
+    {%- liquid
+      assign seo_title = page_title
+      case request.page_type
+        when 'index'
+          assign seo_title = shop.name | append: ' — Board Games Ranked by BoardGameGeek | Fast UK Delivery'
+        when 'product'
+          # only enrich when the merchant hasn't set a custom SEO title
+          if page_title == product.title
+            assign seo_title = product.title | append: ' – ' | append: product.vendor | append: ' ' | append: product.type
+          endif
+        when 'collection'
+          if page_title == collection.title
+            assign lc = collection.title | downcase
+            unless lc contains 'game'
+              assign seo_title = collection.title | append: ' Board Games'
+            endunless
+          endif
+      endcase
+    -%}
     <title>
-      {{ page_title }}
+      {{ seo_title }}
       {%- if current_tags %} &ndash; tagged "{{ current_tags | join: ', ' }}"{% endif -%}
       {%- if current_page != 1 %} &ndash; Page {{ current_page }}{% endif -%}
-      {%- unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless -%}
+      {%- unless seo_title contains shop.name %} &ndash; {{ shop.name }}{% endunless -%}
     </title>
 
     {%- liquid
