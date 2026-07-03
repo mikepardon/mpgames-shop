@@ -184,7 +184,7 @@
                     assign item_eta = item.product.metafields.custom.preorder_eta.value
                   -%}
                   {%- if item_preorder -%}
-                    <div class="ct__stock is-pre"><span style="width:6px;height:6px;border-radius:50%;background:#f2872f;display:inline-block"></span>Pre-order{% if item_eta != blank %} · ships {{ item_eta }}{% endif %}</div>
+                    <div class="ct__stock is-pre"><span style="width:6px;height:6px;border-radius:50%;background:#f2872f;display:inline-block"></span>Pre-order{% if item_eta != blank %} · ETA {{ item_eta }}{% endif %}</div>
                   {%- elsif v.inventory_management == blank -%}
                     <div class="ct__stock"><span style="width:6px;height:6px;border-radius:50%;background:#2f8f5b;display:inline-block"></span>In stock</div>
                   {%- elsif inv > 3 -%}

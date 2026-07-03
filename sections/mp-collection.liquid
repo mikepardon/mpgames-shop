@@ -269,7 +269,7 @@
                       </div>
                     {%- endif -%}
                     {%- if cpre -%}
-                      <div class="cl__stock" style="color:#b4560f"><span style="width:7px;height:7px;border-radius:50%;background:#f2872f;display:inline-block"></span>Pre-order{% if product.metafields.custom.preorder_eta.value != blank %} · {{ product.metafields.custom.preorder_eta.value }}{% endif %}</div>
+                      <div class="cl__stock" style="color:#b4560f"><span style="width:7px;height:7px;border-radius:50%;background:#f2872f;display:inline-block"></span>Pre-order{% if product.metafields.custom.preorder_eta.value != blank %} · ETA {{ product.metafields.custom.preorder_eta.value }}{% endif %}</div>
                     {%- elsif product.available -%}
                       <div class="cl__stock" style="color:#2f8f5b"><span style="width:7px;height:7px;border-radius:50%;background:#2f8f5b;display:inline-block"></span>In stock</div>
                     {%- else -%}
