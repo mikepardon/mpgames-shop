@@ -12,96 +12,415 @@
     "mp_hero": {
       "type": "mp-hero-carousel",
       "blocks": {
-        "s1": { "type": "slide", "settings": { "kicker": "TOP-RANKED TABLETOP", "title": "The biggest names in tabletop, all in one place", "sub": "Games ranked by BoardGameGeek score, player count and play time.", "cta_label": "Shop the collection", "bg": "linear-gradient(120deg,#16323f,#2c5466)" } },
-        "s2": { "type": "slide", "settings": { "kicker": "STAFF PICKS", "title": "Heavy euros for your next games night", "sub": "Hand-picked strategy titles rated 8.0+ on BGG — in stock and ready to ship.", "cta_label": "Browse strategy", "bg": "linear-gradient(120deg,#2b2233,#4a3a5c)" } },
-        "s3": { "type": "slide", "settings": { "kicker": "JUST LANDED", "title": "This month's new releases", "sub": "Be first to the table — fresh arrivals and pre-orders updated weekly.", "cta_label": "See what's new", "bg": "linear-gradient(120deg,#13513f,#2f8f5b)" } }
+        "s1": {
+          "type": "slide",
+          "settings": {
+            "layout": "image",
+            "image": "shopify://shop_images/Drillers_Pre-order_Banner.png",
+            "image_fit": "natural",
+            "cta_url": "shopify://products/drillers-1",
+            "kicker": "TOP-RANKED TABLETOP",
+            "title": "The biggest names in tabletop, all in one place",
+            "sub": "Games ranked by BoardGameGeek score, player count and play time.",
+            "cta_label": "Shop the collection",
+            "bg": "linear-gradient(120deg,#16323f,#2c5466)"
+          }
+        },
+        "s2": {
+          "type": "slide",
+          "settings": {
+            "layout": "text",
+            "image_fit": "cover",
+            "cta_url": "",
+            "kicker": "STAFF PICKS",
+            "title": "Heavy euros for your next games night",
+            "sub": "Hand-picked strategy titles rated 8.0+ on BGG — in stock and ready to ship.",
+            "cta_label": "Browse strategy",
+            "bg": "linear-gradient(120deg,#2b2233,#4a3a5c)"
+          }
+        },
+        "s3": {
+          "type": "slide",
+          "settings": {
+            "layout": "text",
+            "image_fit": "cover",
+            "cta_url": "",
+            "kicker": "JUST LANDED",
+            "title": "This month's new releases",
+            "sub": "Be first to the table — fresh arrivals and pre-orders updated weekly.",
+            "cta_label": "See what's new",
+            "bg": "linear-gradient(120deg,#13513f,#2f8f5b)"
+          }
+        }
       },
-      "block_order": ["s1", "s2", "s3"],
-      "settings": { "autoplay_seconds": 6 }
+      "block_order": [
+        "s1",
+        "s2",
+        "s3"
+      ],
+      "settings": {
+        "autoplay_seconds": 6
+      }
     },
     "mp_usp": {
       "type": "mp-usp-strip",
       "blocks": {
-        "u1": { "type": "usp", "settings": { "icon": "🚚", "title": "Next working day dispatch", "subtitle": "On all orders" } },
-        "u2": { "type": "usp", "settings": { "icon": "🏆", "title": "BGG-ranked browsing", "subtitle": "Shop by score" } },
-        "u3": { "type": "usp", "settings": { "icon": "💰", "title": "Price-match promise", "subtitle": "Found it cheaper? Tell us" } },
-        "u4": { "type": "usp", "settings": { "icon": "🔄", "title": "30-day returns", "subtitle": "On unopened games" } }
+        "u1": {
+          "type": "usp",
+          "settings": {
+            "icon": "🚚",
+            "title": "Next working day dispatch",
+            "subtitle": "On all orders"
+          }
+        },
+        "u2": {
+          "type": "usp",
+          "settings": {
+            "icon": "🏆",
+            "title": "BGG-ranked browsing",
+            "subtitle": "Shop by score"
+          }
+        },
+        "u3": {
+          "type": "usp",
+          "settings": {
+            "icon": "💰",
+            "title": "Price-match promise",
+            "subtitle": "Found it cheaper? Tell us"
+          }
+        },
+        "u4": {
+          "type": "usp",
+          "settings": {
+            "icon": "🔄",
+            "title": "30-day returns",
+            "subtitle": "On unopened games"
+          }
+        }
       },
-      "block_order": ["u1", "u2", "u3", "u4"],
+      "block_order": [
+        "u1",
+        "u2",
+        "u3",
+        "u4"
+      ],
       "settings": {}
     },
     "mp_categories": {
       "type": "mp-category-tiles",
       "blocks": {
-        "c1": { "type": "category", "settings": { "icon": "♟", "collection": "cat-strategy" } },
-        "c2": { "type": "category", "settings": { "icon": "♚", "collection": "cat-family" } },
-        "c3": { "type": "category", "settings": { "icon": "🃏", "collection": "cat-card" } },
-        "c4": { "type": "category", "settings": { "icon": "👷", "collection": "cat-worker" } },
-        "c5": { "type": "category", "settings": { "icon": "🧩", "collection": "expansions" } }
+        "c1": {
+          "type": "category",
+          "settings": {
+            "icon": "♟",
+            "collection": "cat-strategy",
+            "name": "Strategy",
+            "count": "",
+            "url": ""
+          }
+        },
+        "c2": {
+          "type": "category",
+          "settings": {
+            "icon": "♚",
+            "collection": "cat-family",
+            "name": "Strategy",
+            "count": "",
+            "url": ""
+          }
+        },
+        "c3": {
+          "type": "category",
+          "settings": {
+            "icon": "🃏",
+            "collection": "cat-card",
+            "name": "Strategy",
+            "count": "",
+            "url": ""
+          }
+        },
+        "c4": {
+          "type": "category",
+          "settings": {
+            "icon": "👷",
+            "collection": "cat-worker",
+            "name": "Strategy",
+            "count": "",
+            "url": ""
+          }
+        },
+        "c5": {
+          "type": "category",
+          "settings": {
+            "icon": "🧩",
+            "collection": "expansions",
+            "name": "Strategy",
+            "count": "",
+            "url": ""
+          }
+        }
       },
-      "block_order": ["c1", "c2", "c3", "c4", "c5"],
-      "settings": { "title": "Shop by category", "link_label": "All categories", "link_url": "/collections/all-games" }
+      "block_order": [
+        "c1",
+        "c2",
+        "c3",
+        "c4",
+        "c5"
+      ],
+      "settings": {
+        "title": "Shop by category",
+        "link_label": "All categories",
+        "link_url": "/collections/all-games"
+      }
     },
     "mp_promos": {
       "type": "mp-promo-banners",
       "blocks": {
-        "p1": { "type": "promo", "settings": { "kicker": "HOBBYIST CORNER", "kicker_color": "#d7b8ef", "title": "Top 100 ranked on BoardGameGeek", "cta_label": "Explore the ranking", "url": "/collections/top-rated", "bg": "linear-gradient(115deg,#2b2233,#4a3a5c)" } },
-        "p2": { "type": "promo", "settings": { "kicker": "NEW TO THE HOBBY?", "kicker_color": "#bfe9d2", "title": "Gateway games under £30", "cta_label": "Start here", "url": "/collections/all-games?filter.v.price.lte=30", "bg": "linear-gradient(115deg,#13513f,#2f8f5b)" } }
+        "p1": {
+          "type": "promo",
+          "settings": {
+            "layout": "text",
+            "image_fit": "natural",
+            "url": "/collections/top-rated",
+            "kicker": "HOBBYIST CORNER",
+            "kicker_color": "#d7b8ef",
+            "title": "Top 100 ranked on BoardGameGeek",
+            "cta_label": "Explore the ranking",
+            "bg": "linear-gradient(115deg,#2b2233,#4a3a5c)"
+          }
+        },
+        "p2": {
+          "type": "promo",
+          "settings": {
+            "layout": "text",
+            "image_fit": "natural",
+            "url": "/collections/all-games?filter.v.price.lte=30",
+            "kicker": "NEW TO THE HOBBY?",
+            "kicker_color": "#bfe9d2",
+            "title": "Gateway games under £30",
+            "cta_label": "Start here",
+            "bg": "linear-gradient(115deg,#13513f,#2f8f5b)"
+          }
+        }
       },
-      "block_order": ["p1", "p2"],
+      "block_order": [
+        "p1",
+        "p2"
+      ],
       "settings": {}
     },
     "mp_bestsellers": {
       "type": "mp-product-rail",
-      "settings": { "collection": "best-sellers", "products_to_show": 8, "title": "Best sellers this month", "view_all_label": "View all", "card_style": "bestseller" }
+      "settings": {
+        "collection": "best-sellers",
+        "products_to_show": 8,
+        "title": "Best sellers this month",
+        "subtitle": "",
+        "view_all_label": "View all",
+        "view_all_url": "",
+        "card_style": "bestseller",
+        "release_action": "Add"
+      }
     },
     "mp_toprated": {
       "type": "mp-top-rated",
-      "settings": { "collection": "top-rated", "products_to_show": 8, "title": "Highest rated on BGG", "subtitle": "The board game community's top-scoring titles", "link_label": "See full ranking" }
+      "settings": {
+        "collection": "top-rated",
+        "products_to_show": 8,
+        "title": "Highest rated on BGG",
+        "subtitle": "The board game community's top-scoring titles",
+        "link_label": "See full ranking",
+        "link_url": ""
+      }
     },
     "mp_players": {
       "type": "mp-player-count",
       "blocks": {
-        "n1": { "type": "tile", "settings": { "number": "1", "label": "Solo", "pips": 1, "collection": "players-solo" } },
-        "n2": { "type": "tile", "settings": { "number": "2", "label": "Two-player", "pips": 2, "collection": "players-2" } },
-        "n3": { "type": "tile", "settings": { "number": "3–4", "label": "Small group", "pips": 4, "collection": "players-3-4" } },
-        "n4": { "type": "tile", "settings": { "number": "5–6", "label": "Game night", "pips": 6, "collection": "players-5-6" } },
-        "n5": { "type": "tile", "settings": { "number": "7+", "label": "Party", "pips": 7, "collection": "players-7" } },
-        "n6": { "type": "tile", "settings": { "number": "Co-op", "label": "Team up", "pips": 0, "collection": "players-coop" } }
+        "n1": {
+          "type": "tile",
+          "settings": {
+            "number": "1",
+            "label": "Solo",
+            "pips": 1,
+            "collection": "players-solo",
+            "url": ""
+          }
+        },
+        "n2": {
+          "type": "tile",
+          "settings": {
+            "number": "2",
+            "label": "Two-player",
+            "pips": 2,
+            "collection": "players-2",
+            "url": ""
+          }
+        },
+        "n3": {
+          "type": "tile",
+          "settings": {
+            "number": "3–4",
+            "label": "Small group",
+            "pips": 4,
+            "collection": "players-3-4",
+            "url": ""
+          }
+        },
+        "n4": {
+          "type": "tile",
+          "settings": {
+            "number": "5–6",
+            "label": "Game night",
+            "pips": 6,
+            "collection": "players-5-6",
+            "url": ""
+          }
+        },
+        "n5": {
+          "type": "tile",
+          "settings": {
+            "number": "7+",
+            "label": "Party",
+            "pips": 7,
+            "collection": "players-7",
+            "url": ""
+          }
+        },
+        "n6": {
+          "type": "tile",
+          "settings": {
+            "number": "Co-op",
+            "label": "Team up",
+            "pips": 0,
+            "collection": "players-coop",
+            "url": ""
+          }
+        }
       },
-      "block_order": ["n1", "n2", "n3", "n4", "n5", "n6"],
-      "settings": { "title": "Shop by player count" }
+      "block_order": [
+        "n1",
+        "n2",
+        "n3",
+        "n4",
+        "n5",
+        "n6"
+      ],
+      "settings": {
+        "title": "Shop by player count"
+      }
     },
     "mp_newreleases": {
       "type": "mp-product-rail",
-      "settings": { "collection": "new-releases", "products_to_show": 8, "title": "New & upcoming releases", "view_all_label": "View all new in", "card_style": "release", "release_action": "Add" }
+      "settings": {
+        "collection": "new-releases",
+        "products_to_show": 8,
+        "title": "New & upcoming releases",
+        "subtitle": "",
+        "view_all_label": "View all new in",
+        "view_all_url": "",
+        "card_style": "release",
+        "release_action": "Add"
+      }
     },
     "mp_publishers": {
       "type": "mp-publishers",
-      "settings": { "title": "Shop by publisher", "collection": "all-games", "count": 12, "link_label": "All brands", "link_url": "/collections/all-games" }
+      "settings": {
+        "title": "Shop by publisher",
+        "collection": "all-games",
+        "count": 12,
+        "logo_handles": "stonemaier-games,roxley-games,z-man-games,cephalofair-games,stronghold-games,capstone-games,greater-than-games,plan-b-games,catan-studio,days-of-wonder,flatout-games,starling-games,repos-production,space-cowboys,leder-games,dire-wolf,czech-games-edition,kosmos,cocktail-games,delicious-games,burnt-island-games",
+        "link_label": "All brands",
+        "link_url": "/collections/all-games"
+      }
     },
     "mp_designers": {
       "type": "mp-designers",
       "blocks": {
-        "d1": { "type": "designer", "settings": { "collection": "designer-fabio-lopiano" } },
-        "d2": { "type": "designer", "settings": { "collection": "designer-nestore-mangone" } },
-        "d3": { "type": "designer", "settings": { "collection": "designer-maxime-barbier" } },
-        "d4": { "type": "designer", "settings": { "collection": "designer-nate-hayden" } },
-        "d5": { "type": "designer", "settings": { "collection": "designer-paolo-mori" } },
-        "d6": { "type": "designer", "settings": { "collection": "designer-remo-conzadori" } },
-        "d7": { "type": "designer", "settings": { "collection": "designer-mikhail-gurevich" } },
-        "d8": { "type": "designer", "settings": { "collection": "designer-chris-castagnetto" } }
+        "d1": {
+          "type": "designer",
+          "settings": {
+            "collection": "designer-fabio-lopiano"
+          }
+        },
+        "d2": {
+          "type": "designer",
+          "settings": {
+            "collection": "designer-nestore-mangone"
+          }
+        },
+        "d3": {
+          "type": "designer",
+          "settings": {
+            "collection": "designer-maxime-barbier"
+          }
+        },
+        "d4": {
+          "type": "designer",
+          "settings": {
+            "collection": "designer-nate-hayden"
+          }
+        },
+        "d5": {
+          "type": "designer",
+          "settings": {
+            "collection": "designer-paolo-mori"
+          }
+        },
+        "d6": {
+          "type": "designer",
+          "settings": {
+            "collection": "designer-remo-conzadori"
+          }
+        },
+        "d7": {
+          "type": "designer",
+          "settings": {
+            "collection": "designer-mikhail-gurevich"
+          }
+        },
+        "d8": {
+          "type": "designer",
+          "settings": {
+            "collection": "designer-chris-castagnetto"
+          }
+        }
       },
-      "block_order": ["d1", "d2", "d3", "d4", "d5", "d6", "d7", "d8"],
-      "settings": { "title": "Shop by designer", "link_label": "All designers", "link_url": "/collections" }
+      "block_order": [
+        "d1",
+        "d2",
+        "d3",
+        "d4",
+        "d5",
+        "d6",
+        "d7",
+        "d8"
+      ],
+      "settings": {
+        "title": "Shop by designer",
+        "link_label": "All designers",
+        "link_url": "/collections"
+      }
     },
     "mp_editorial": {
       "type": "mp-editorial",
-      "settings": { "title": "From the MPGames blog", "blog": "news", "articles_to_show": 3, "link_label": "All articles", "link_url": "/blogs/news" }
+      "settings": {
+        "title": "From the MPGames blog",
+        "blog": "news",
+        "articles_to_show": 3,
+        "link_label": "All articles",
+        "link_url": "/blogs/news"
+      }
     },
     "mp_newsletter": {
       "type": "mp-newsletter",
-      "settings": { "title": "Join the MPGames club", "subtitle": "Early access to restocks, new releases and the guides we publish each week.", "button_label": "Sign up" }
+      "settings": {
+        "title": "Join the MPGames club",
+        "subtitle": "Early access to restocks, new releases and the guides we publish each week.",
+        "placeholder": "Enter your email address",
+        "button_label": "Sign up",
+        "success_text": "Thanks for subscribing!",
+        "consent_text": "Yes, email me restocks, new releases and offers. I can unsubscribe anytime — see our"
+      }
     }
   },
   "order": [
