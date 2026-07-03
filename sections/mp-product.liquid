@@ -118,7 +118,7 @@
   .mp-pdp-{{ section.id }} .pdp__spec .vsub { font-size: 12px; color: #8a8278; margin-top: auto; padding-top: 5px; }
 
   .mp-pdp-{{ section.id }} .pdp__play { width: 420px; flex: none; background: #16323f; border-radius: 14px; padding: 22px; color: #cfe0e6; }
-  .mp-pdp-{{ section.id }} .pdp__play h3 { font-size: 22px; font-weight: 700; color: #fff; margin: 0; }
+  .mp-pdp-{{ section.id }} .pdp__play h2 { font-size: 22px; font-weight: 700; color: #fff; margin: 0; }
   .mp-pdp-{{ section.id }} .pdp__tabs { display: flex; gap: 4px; margin-top: 15px; background: #0f242e; border-radius: 9px; padding: 4px; }
   .mp-pdp-{{ section.id }} .pdp__tab { flex: 1; text-align: center; cursor: pointer; font-size: 13px; font-weight: 600; padding: 9px 6px; border-radius: 7px; color: #9fb4bd; background: none; border: 0; font-family: inherit; }
   .mp-pdp-{{ section.id }} .pdp__tab.is-active { background: #f2872f; color: #fff; }
@@ -151,7 +151,7 @@
   .mp-pdp-{{ section.id }} .pdp__feat .ok { color: #2f8f5b; margin-top: 1px; }
 
   .mp-pdp-{{ section.id }} .pdp__info { width: 420px; flex: none; border: 1px solid #e2ddd1; border-radius: 12px; background: #fff; overflow: hidden; }
-  .mp-pdp-{{ section.id }} .pdp__info h4 { font-size: 17px; font-weight: 700; padding: 16px 18px; border-bottom: 1px solid #efe9dd; margin: 0; }
+  .mp-pdp-{{ section.id }} .pdp__info h3 { font-size: 17px; font-weight: 700; padding: 16px 18px; border-bottom: 1px solid #efe9dd; margin: 0; }
   .mp-pdp-{{ section.id }} .pdp__inforow { display: flex; justify-content: space-between; gap: 16px; padding: 11px 18px; border-bottom: 1px solid #f1ece2; font-size: 13px; }
   .mp-pdp-{{ section.id }} .pdp__inforow .k { color: #9b948a; }
   .mp-pdp-{{ section.id }} .pdp__inforow .v { font-weight: 600; text-align: right; }
@@ -368,7 +368,7 @@
       </div>
 
       <div class="pdp__play">
-        <h3>How to play</h3>
+        <h2>How to play</h2>
 
         <div class="pdp__panel" data-panel="how">
           {%- if m.youtube_id != blank -%}
@@ -431,7 +431,7 @@
       </div>
 
       <div class="pdp__info">
-        <h4>Game information</h4>
+        <h3>Game information</h3>
         {%- if m.designer.value != blank -%}<div class="pdp__inforow"><span class="k">Designer</span><span class="v">{{ m.designer.value }}</span></div>{%- endif -%}
         {%- if m.artist.value != blank -%}<div class="pdp__inforow"><span class="k">Artist</span><span class="v">{{ m.artist.value }}</span></div>{%- endif -%}
         {%- if product.vendor != blank -%}<div class="pdp__inforow"><span class="k">Publisher</span><span class="v">{{ product.vendor }}</span></div>{%- endif -%}

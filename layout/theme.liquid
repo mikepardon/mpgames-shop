@@ -25,11 +25,36 @@
       {%- unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless -%}
     </title>
 
-    {% if page_description %}
-      <meta name="description" content="{{ page_description | escape }}">
-    {% endif %}
+    {%- liquid
+      assign meta_desc = page_description
+      if meta_desc == blank
+        case request.page_type
+          when 'collection'
+            assign meta_desc = collection.description
+            if meta_desc == blank
+              assign meta_desc = 'Shop ' | append: collection.title | append: ' at MPGames — board games ranked by BoardGameGeek score, with fast UK delivery and 30-day returns.'
+            endif
+          when 'product'
+            assign meta_desc = product.description
+          when 'page'
+            assign meta_desc = page.content | default: page.title
+          when 'article'
+            assign meta_desc = article.excerpt_or_content
+          when 'blog'
+            assign meta_desc = blog.title | append: ' — board game guides, reviews and tabletop talk from the MPGames team.'
+          when 'index'
+            assign meta_desc = shop.description | default: 'MPGames — the biggest names in tabletop, ranked by BoardGameGeek score. Fast next-day UK dispatch and 30-day returns.'
+          else
+            assign meta_desc = shop.description
+        endcase
+      endif
+      assign meta_desc = meta_desc | strip_html | strip_newlines | truncate: 157
+    -%}
+    {%- if meta_desc != blank -%}
+      <meta name="description" content="{{ meta_desc | escape }}">
+    {%- endif -%}
 
-    {% render 'meta-tags' %}
+    {% render 'meta-tags', meta_desc: meta_desc %}
 
     {%- if request.page_type == 'index' -%}
       <script type="application/ld+json">

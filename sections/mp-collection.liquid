@@ -114,7 +114,7 @@
           <div class="cl__brand"><img src="{{ brand_logo | asset_url }}" alt="{{ collection.title | escape }}" width="64" height="64"></div>
         {%- endif -%}
         <span class="cl__badge mp-cond">{{ collection.products_count }} GAMES</span>
-        <div class="cl__htitle mp-cond">{{ collection.title }}</div>
+        <h1 class="cl__htitle mp-cond" style="margin:0">{{ collection.title }}</h1>
         {%- if collection.description != blank -%}<div class="cl__hdesc">{{ collection.description | strip_html | truncatewords: 40 }}</div>{%- endif -%}
       </div>
       {%- if hero_tags != blank and hero_tags.size > 0 -%}

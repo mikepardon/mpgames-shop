@@ -54,7 +54,7 @@
             {%- if block.settings.kicker != blank -%}
               <span class="mp-hero__tag mp-cond">{{ block.settings.kicker }}</span>
             {%- endif -%}
-            <div class="mp-hero__title mp-cond">{{ block.settings.title }}</div>
+            {%- if forloop.first -%}<h1 class="mp-hero__title mp-cond" style="margin:0">{{ block.settings.title }}</h1>{%- else -%}<div class="mp-hero__title mp-cond">{{ block.settings.title }}</div>{%- endif -%}
             <div class="mp-hero__sub">{{ block.settings.sub }}</div>
             {%- if block.settings.cta_label != blank -%}
               <a class="mp-hero__cta mp-cond" href="{{ block.settings.cta_url | default: '#' }}">{{ block.settings.cta_label }} &#8594;</a>

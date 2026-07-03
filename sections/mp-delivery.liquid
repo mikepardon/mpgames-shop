@@ -34,7 +34,7 @@
 
 <div class="mp-dl-{{ section.id }}">
   <div class="dl__wrap" style="max-width:1224px">
-    <div class="dl__head"><div class="dl__h1 mp-cond">{{ section.settings.title }}</div><div class="dl__sub">{{ section.settings.subtitle }}</div></div>
+    <div class="dl__head"><h1 class="dl__h1 mp-cond" style="margin:0">{{ section.settings.title }}</h1><div class="dl__sub">{{ section.settings.subtitle }}</div></div>
   </div>
 
   {%- assign highlights = section.blocks | where: 'type', 'highlight' -%}

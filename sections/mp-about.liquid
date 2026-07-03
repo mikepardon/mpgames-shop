@@ -31,7 +31,7 @@
 <div class="mp-ab-{{ section.id }}">
   <div class="ab__hero"{% if section.settings.hero_image %} style="background-image:linear-gradient(115deg,rgba(22,50,63,.9),rgba(44,84,102,.78)),url('{{ section.settings.hero_image | image_url: width: 1800 }}')"{% endif %}>
     <span class="ab__kick mp-cond">{{ section.settings.kicker }}</span>
-    <div class="ab__htitle mp-cond">{{ section.settings.title }}</div>
+    <h1 class="ab__htitle mp-cond">{{ section.settings.title }}</h1>
     <div class="ab__hsub">{{ section.settings.subtitle }}</div>
   </div>
 

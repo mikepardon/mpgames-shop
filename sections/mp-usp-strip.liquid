@@ -9,7 +9,10 @@
   .mp-usp-{{ section.id }} .mp-usp__txt { font-size: 12.5px; color: #4a443c; }
   .mp-usp-{{ section.id }} .mp-usp__txt b { color: #16323f; }
   .mp-usp-{{ section.id }} .mp-usp__sub { color: #8a8278; }
-  @media (max-width: 749px) { .mp-usp-{{ section.id }} .mp-usp__grid { grid-template-columns: repeat(2,1fr); } }
+  @media (max-width: 749px) {
+    .mp-usp-{{ section.id }} .mp-usp__grid { grid-template-columns: repeat(2,1fr); }
+    .mp-usp-{{ section.id }} .mp-usp__cell { flex-direction: column; align-items: center; text-align: center; gap: 6px; padding: 16px 12px; }
+  }
 {%- endstyle -%}
 
 <div class="mp-cream mp-usp-{{ section.id }}">
