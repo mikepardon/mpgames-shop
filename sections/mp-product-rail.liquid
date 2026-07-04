@@ -104,10 +104,51 @@
 
       <div class="mp-rail__track" data-track>
         {%- liquid
-          assign rail_products = section.settings.collection.products
+          assign source = section.settings.source | default: 'collection'
           assign limit = section.settings.products_to_show
+          assign handle_list = ''
+
+          if source == 'newest' or source == 'stock'
+            assign keyed = ''
+            for p in collections.all.products
+              if source == 'stock'
+                assign k = 0
+                for v in p.variants
+                  assign vq = v.inventory_quantity | default: 0
+                  assign k = k | plus: vq
+                endfor
+                assign k = k | plus: 1000000
+              else
+                assign k = p.created_at | date: '%s'
+              endif
+              assign keyed = keyed | append: k | append: '|' | append: p.handle | append: ','
+            endfor
+            assign keyed = keyed | split: ',' | sort | reverse
+            for entry in keyed
+              assign parts = entry | split: '|'
+              assign handle_list = handle_list | append: parts[1] | append: ','
+            endfor
+          elsif source == 'preorder'
+            for p in collections.all.products
+              if p.metafields.custom.is_preorder.value
+                assign handle_list = handle_list | append: p.handle | append: ','
+              endif
+            endfor
+          else
+            for p in section.settings.collection.products
+              assign handle_list = handle_list | append: p.handle | append: ','
+            endfor
+          endif
+
+          assign handles = handle_list | split: ','
+          assign shown = 0
         -%}
-        {%- for product in rail_products limit: limit -%}
+        {%- for handle in handles -%}
+          {%- if handle == blank -%}{%- continue -%}{%- endif -%}
+          {%- if shown >= limit -%}{%- break -%}{%- endif -%}
+          {%- assign product = all_products[handle] -%}
+          {%- if product == empty -%}{%- continue -%}{%- endif -%}
+          {%- assign shown = shown | plus: 1 -%}
           {%- liquid
             assign bgg_mf = product.metafields.custom.bgg_rating
             assign bgg = bgg_mf.value | times: 1.0
@@ -179,11 +220,10 @@
               </div>
             </div>
           </div>
-        {%- else -%}
-          {%- if request.design_mode -%}
-            <p style="padding:4px 0;color:#8a8278;font-size:13px">Pick a collection in this section's settings to show products.</p>
-          {%- endif -%}
         {%- endfor -%}
+        {%- if shown == 0 and request.design_mode -%}
+          <p style="padding:4px 0;color:#8a8278;font-size:13px">Pick a collection (or a source) in this section's settings to show products.</p>
+        {%- endif -%}
       </div>
     </div>
   </div>
@@ -207,6 +247,16 @@
 {
   "name": "MP Product rail",
   "settings": [
+    {
+      "type": "select", "id": "source", "label": "Products from", "default": "collection",
+      "info": "Newest / Pre-orders / Most stock draw from all products and ignore the collection.",
+      "options": [
+        { "value": "collection", "label": "Collection (below)" },
+        { "value": "newest", "label": "Newest added products" },
+        { "value": "preorder", "label": "Pre-orders only" },
+        { "value": "stock", "label": "Most stock first" }
+      ]
+    },
     { "type": "collection", "id": "collection", "label": "Collection" },
     { "type": "range", "id": "products_to_show", "min": 4, "max": 16, "step": 1, "label": "Products to show", "default": 8 },
     { "type": "text", "id": "title", "label": "Title", "default": "Best sellers this month" },
@@ -229,7 +279,11 @@
     },
     {
       "name": "MP Product rail (new releases)",
-      "settings": { "title": "New & upcoming releases", "view_all_label": "View all new in", "card_style": "release", "products_to_show": 8 }
+      "settings": { "title": "New & upcoming releases", "view_all_label": "View all new in", "card_style": "release", "source": "newest", "products_to_show": 10 }
+    },
+    {
+      "name": "MP Product rail (pre-orders)",
+      "settings": { "title": "Pre-orders", "view_all_label": "View all pre-orders", "card_style": "release", "source": "preorder", "release_action": "Pre-order", "products_to_show": 10 }
     }
   ]
 }

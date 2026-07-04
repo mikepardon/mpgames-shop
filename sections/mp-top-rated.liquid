@@ -56,7 +56,22 @@
         {%- endif -%}
       </div>
       <div class="mp-top__track">
-        {%- for product in section.settings.collection.products limit: section.settings.products_to_show -%}
+        {%- liquid
+          assign keyed = ''
+          for p in section.settings.collection.products
+            assign r = p.metafields.custom.bgg_rating.value | default: 0 | times: 10 | round | plus: 100000
+            assign keyed = keyed | append: r | append: '|' | append: p.handle | append: ','
+          endfor
+          assign keyed = keyed | split: ',' | sort | reverse
+          assign shown = 0
+        -%}
+        {%- for entry in keyed -%}
+          {%- if entry == blank -%}{%- continue -%}{%- endif -%}
+          {%- if shown >= section.settings.products_to_show -%}{%- break -%}{%- endif -%}
+          {%- assign parts = entry | split: '|' -%}
+          {%- assign product = all_products[parts[1]] -%}
+          {%- if product == empty -%}{%- continue -%}{%- endif -%}
+          {%- assign shown = shown | plus: 1 -%}
           {%- liquid
             assign bgg_mf = product.metafields.custom.bgg_rating
             assign bgg = bgg_mf.value | times: 1.0
@@ -69,7 +84,7 @@
             assign is_pre = product.metafields.custom.is_preorder.value
           -%}
           <div class="mp-top__card">
-            <div class="mp-top__rank mp-cond">#{{ forloop.index }}</div>
+            <div class="mp-top__rank mp-cond">#{{ shown }}</div>
             <a href="{{ product.url }}" class="mp-top__media"{% if product.featured_image %} style="background-image:url('{{ product.featured_image | image_url: width: 200 }}')"{% endif %} aria-label="{{ product.title | escape }}"></a>
             <div style="flex:1;min-width:0">
               {%- if product.type == 'Board Game Expansion' -%}<span style="display:inline-block;background:#ede7f3;color:#6a4f86;font-size:9px;font-weight:700;letter-spacing:.4px;padding:1px 6px;border-radius:5px;text-transform:uppercase;margin-bottom:4px">Expansion</span><br>{%- endif -%}
@@ -86,11 +101,10 @@
               </div>
             </div>
           </div>
-        {%- else -%}
-          {%- if request.design_mode -%}
-            <p style="padding:4px 0;color:#8a8278;font-size:13px">Pick a collection in this section's settings to show products.</p>
-          {%- endif -%}
         {%- endfor -%}
+        {%- if shown == 0 and request.design_mode -%}
+          <p style="padding:4px 0;color:#8a8278;font-size:13px">Pick a collection in this section's settings to show products.</p>
+        {%- endif -%}
       </div>
     </div>
   </div>
@@ -100,7 +114,7 @@
 {
   "name": "MP Top rated rail",
   "settings": [
-    { "type": "collection", "id": "collection", "label": "Collection", "info": "Order this collection by BGG rating (manual sort) — cards are numbered by position." },
+    { "type": "collection", "id": "collection", "label": "Collection", "info": "Cards are sorted automatically by BGG rating (highest first) and numbered." },
     { "type": "range", "id": "products_to_show", "min": 4, "max": 16, "step": 1, "label": "Products to show", "default": 8 },
     { "type": "text", "id": "title", "label": "Title", "default": "Highest rated on BGG" },
     { "type": "text", "id": "subtitle", "label": "Subtitle", "default": "The board game community's top-scoring titles" },

@@ -184,6 +184,7 @@
     "mp_bestsellers": {
       "type": "mp-product-rail",
       "settings": {
+        "source": "stock",
         "collection": "best-sellers",
         "products_to_show": 8,
         "title": "Best sellers this month",
@@ -284,14 +285,29 @@
     "mp_newreleases": {
       "type": "mp-product-rail",
       "settings": {
+        "source": "newest",
         "collection": "new-releases",
-        "products_to_show": 8,
+        "products_to_show": 10,
         "title": "New & upcoming releases",
         "subtitle": "",
         "view_all_label": "View all new in",
         "view_all_url": "",
         "card_style": "release",
         "release_action": "Add"
+      }
+    },
+    "mp_preorders": {
+      "type": "mp-product-rail",
+      "settings": {
+        "source": "preorder",
+        "collection": "new-releases",
+        "products_to_show": 10,
+        "title": "Pre-orders",
+        "subtitle": "Reserve upcoming titles now — dispatched on release",
+        "view_all_label": "View all pre-orders",
+        "view_all_url": "",
+        "card_style": "release",
+        "release_action": "Pre-order"
       }
     },
     "mp_publishers": {
@@ -404,6 +420,7 @@
     "mp_toprated",
     "mp_players",
     "mp_newreleases",
+    "mp_preorders",
     "mp_publishers",
     "mp_designers",
     "mp_editorial",
