@@ -57,8 +57,12 @@
       </div>
       <div class="mp-top__track">
         {%- liquid
+          assign rated_products = section.settings.collection.products
+          if section.settings.collection == blank
+            assign rated_products = collections.all.products
+          endif
           assign keyed = ''
-          for p in section.settings.collection.products
+          for p in rated_products
             assign r = p.metafields.custom.bgg_rating.value | default: 0 | times: 10 | round | plus: 100000
             assign keyed = keyed | append: r | append: '|' | append: p.handle | append: ','
           endfor

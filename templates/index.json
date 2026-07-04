@@ -198,8 +198,8 @@
     "mp_toprated": {
       "type": "mp-top-rated",
       "settings": {
-        "collection": "top-rated",
-        "products_to_show": 8,
+        "collection": "",
+        "products_to_show": 5,
         "title": "Highest rated on BGG",
         "subtitle": "The board game community's top-scoring titles",
         "link_label": "See full ranking",
