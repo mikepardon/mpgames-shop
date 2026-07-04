@@ -189,8 +189,13 @@
 
       <div class="mp-hd__util">
         <a href="{{ routes.account_url }}" class="mp-hd__stack">
-          <span class="mp-hd__muted">Account</span>
-          <span class="mp-hd__white">{% if customer %}{{ customer.first_name | default: 'Account' }}{% else %}Sign in{% endif %} &#9662;</span>
+          {%- if customer -%}
+            <span class="mp-hd__muted">{% if customer.first_name != blank %}Hello{% else %}Account{% endif %}</span>
+            <span class="mp-hd__white">{{ customer.first_name | default: 'My account' }} &#9662;</span>
+          {%- else -%}
+            <span class="mp-hd__muted">Account</span>
+            <span class="mp-hd__white">Sign in &#9662;</span>
+          {%- endif -%}
         </a>
         <a href="{{ routes.cart_url }}" class="mp-hd__basket">
           <span>&#128722;</span>
