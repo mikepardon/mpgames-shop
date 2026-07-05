@@ -10,11 +10,18 @@
 
   assign bgg = m.bgg_rating.value
   assign bggn = bgg | times: 1.0
+  assign bggdisp = bggn | round: 1
   assign bgg_color = '#e0b441'
   if bggn >= 8.0
     assign bgg_color = '#5fbf7e'
   elsif bggn >= 7.0
     assign bgg_color = '#9ccf63'
+  endif
+
+  assign weight = m.weight.value
+  assign show_weight = false
+  if weight != blank and weight > 0
+    assign show_weight = true
   endif
 
   assign on_sale = false
@@ -236,7 +243,7 @@
 
         <div class="pdp__meta">
           {%- if bgg != blank -%}
-            <span class="pdp__bgg"><b>BGG</b><span style="font-size:13px;font-weight:700;color:{{ bgg_color }}">{{ bgg }}</span></span>
+            <span class="pdp__bgg"><b>BGG</b><span style="font-size:13px;font-weight:700;color:{{ bgg_color }}">{{ bggdisp }}</span></span>
             {%- if m.bgg_rank.value != blank -%}<span class="pdp__sub">rank #{{ m.bgg_rank.value }}</span>{%- endif -%}
             <span class="pdp__divider"></span>
           {%- endif -%}
@@ -318,7 +325,11 @@
 
     {%- assign base_game = product.metafields.custom.base_game.value -%}
     {%- if base_game != blank -%}
-      <div class="pdp__exp-banner">&#129513; <span><strong>This is an expansion.</strong> Requires <a href="{{ base_game.url }}">{{ base_game.title }}</a> to play.</span></div>
+      {%- if product.metafields.custom.standalone.value -%}
+        <div class="pdp__exp-banner">&#129513; <span><strong>This is an expansion of <a href="{{ base_game.url }}">{{ base_game.title }}</a></strong> but it can be played standalone with the base game.</span></div>
+      {%- else -%}
+        <div class="pdp__exp-banner">&#129513; <span><strong>This is an expansion.</strong> Requires <a href="{{ base_game.url }}">{{ base_game.title }}</a> to play.</span></div>
+      {%- endif -%}
     {%- endif -%}
 
     <!-- Game at a glance + How to play -->
@@ -331,7 +342,7 @@
             {%- assign bggpct = bggn | times: 10 | round -%}
             <div class="pdp__rcell">
               <div class="k">BOARDGAMEGEEK</div>
-              <div style="display:flex;align-items:baseline;gap:7px;margin-top:9px"><span class="s">{{ bgg }}</span><span class="o">/ 10</span></div>
+              <div style="display:flex;align-items:baseline;gap:7px;margin-top:9px"><span class="s">{{ bggdisp }}</span><span class="o">/ 10</span></div>
               <div class="pdp__bar"><span style="width:{{ bggpct }}%;background:{{ bgg_color }}"></span></div>
               <div style="font-size:11.5px;color:#8a8278;margin-top:7px">{% if m.bgg_rank.value != blank %}rank #{{ m.bgg_rank.value }}{% else %}community rating{% endif %}</div>
             </div>
@@ -371,7 +382,7 @@
               <div class="v">{{ m.min_age.value }}+</div><div class="vsub">publisher rating</div>
             </div>
           {%- endif -%}
-          {%- if m.weight.value != blank -%}
+          {%- if show_weight -%}
             <div class="pdp__spec"><span class="accent" style="background:#6a4f86"></span>
               <div style="display:flex;align-items:center;gap:10px"><span class="ico" style="background:#ede7f3">&#129504;</span><span class="k">COMPLEXITY</span></div>
               <div class="v">{{ m.weight.value }} / 5</div>{% if m.complexity.value != blank %}<div class="vsub">{{ m.complexity.value }} weight</div>{% endif %}
@@ -447,7 +458,7 @@
         {%- if section.settings.show_features -%}
           <div class="pdp__h" style="font-size:17px;margin:24px 0 12px">Why you'll love it</div>
           <div class="pdp__feats">
-            {%- if bgg != blank -%}<div class="pdp__feat"><span class="ok">&#10003;</span> Rated {{ bgg }} on BoardGameGeek{% if m.bgg_rank.value != blank %} · ranked #{{ m.bgg_rank.value }}{% endif %}</div>{%- endif -%}
+            {%- if bgg != blank -%}<div class="pdp__feat"><span class="ok">&#10003;</span> Rated {{ bggdisp }} on BoardGameGeek{% if m.bgg_rank.value != blank %} · ranked #{{ m.bgg_rank.value }}{% endif %}</div>{%- endif -%}
             {%- if m.complexity.value != blank -%}<div class="pdp__feat"><span class="ok">&#10003;</span> {{ m.complexity.value }}-weight — {{ m.play_time.value | default: 'a satisfying play length' }}</div>{%- endif -%}
             {%- if m.player_count.value != blank -%}<div class="pdp__feat"><span class="ok">&#10003;</span> Plays {{ m.player_count.value }} players</div>{%- endif -%}
             <div class="pdp__feat"><span class="ok">&#10003;</span> 100% official UK stock with price-match promise</div>
@@ -468,10 +479,10 @@
         {%- if variant.barcode != blank -%}<div class="pdp__inforow"><span class="k">Barcode</span><span class="v">{{ variant.barcode }}</span></div>{%- endif -%}
 
         {%- assign has_bars = false -%}
-        {%- if m.weight.value != blank or m.rating_strategy.value != blank or m.rating_luck.value != blank or m.rating_interaction.value != blank -%}{%- assign has_bars = true -%}{%- endif -%}
+        {%- if show_weight or m.rating_strategy.value != blank or m.rating_luck.value != blank or m.rating_interaction.value != blank -%}{%- assign has_bars = true -%}{%- endif -%}
         {%- if has_bars -%}
           <div class="pdp__bars">
-            {%- if m.weight.value != blank -%}
+            {%- if show_weight -%}
               <div class="pdp__brow"><div class="bl"><span>Complexity</span><b>{{ m.weight.value }} / 5</b></div><div class="pdp__btrack"><span style="width:{{ m.weight.value | times: 20 | round }}%;background:#9a3b2e"></span></div></div>
             {%- endif -%}
             {%- if m.rating_strategy.value != blank -%}
@@ -550,6 +561,7 @@
             {%- liquid
               assign rbgg = rec.metafields.custom.bgg_rating.value
               assign rbggn = rbgg | times: 1.0
+              assign rbggdisp = rbggn | round: 1
               assign rc = '#e0b441'
               if rbggn >= 8.0
                 assign rc = '#5fbf7e'
@@ -568,7 +580,7 @@
               <div class="cbody">
                 {%- if rbgg != blank -%}
                   <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
-                    <span style="display:inline-flex;align-items:center;gap:5px;background:#2b2233;border-radius:5px;padding:2px 6px"><span style="font-size:10px;font-weight:700;color:#fff;letter-spacing:.5px">BGG</span><span style="font-size:11px;font-weight:700;color:{{ rc }}">{{ rbgg }}</span></span>
+                    <span style="display:inline-flex;align-items:center;gap:5px;background:#2b2233;border-radius:5px;padding:2px 6px"><span style="font-size:10px;font-weight:700;color:#fff;letter-spacing:.5px">BGG</span><span style="font-size:11px;font-weight:700;color:{{ rc }}">{{ rbggdisp }}</span></span>
                     {%- if rec.metafields.custom.bgg_rank.value != blank -%}<span style="font-size:10.5px;color:#9b948a">rank #{{ rec.metafields.custom.bgg_rank.value }}</span>{%- endif -%}
                   </div>
                 {%- endif -%}
