@@ -23,6 +23,13 @@
   if weight != blank and weight > 0
     assign show_weight = true
   endif
+-%}
+{%- comment -%} Designer/artist fields may hold several names (comma- or semicolon-separated); link each person to its own collection {%- endcomment -%}
+{%- assign designer_names = m.designer.value | replace: ';', ',' | split: ',' -%}
+{%- capture designer_links -%}{%- for n in designer_names -%}{%- assign nm = n | strip -%}{%- if forloop.first == false -%}, {% endif -%}<a href="/collections/designer-{{ nm | handle }}">{{ nm }}</a>{%- endfor -%}{%- endcapture -%}
+{%- assign artist_names = m.artist.value | replace: ';', ',' | split: ',' -%}
+{%- capture artist_links -%}{%- for n in artist_names -%}{%- assign nm = n | strip -%}{%- if forloop.first == false -%}, {% endif -%}<a href="/collections/artist-{{ nm | handle }}">{{ nm }}</a>{%- endfor -%}{%- endcapture -%}
+{%- liquid
 
   assign on_sale = false
   if product.compare_at_price > product.price
@@ -66,6 +73,8 @@
 
   .mp-pdp-{{ section.id }} .pdp__buy { flex: 1; min-width: 0; }
   .mp-pdp-{{ section.id }} .pdp__vendor { font-size: 12.5px; font-weight: 600; color: #8a8278; letter-spacing: 1px; text-transform: uppercase; }
+  .mp-pdp-{{ section.id }} .pdp__vendor a { color: inherit; text-decoration: none; }
+  .mp-pdp-{{ section.id }} .pdp__vendor a:hover { color: #c2410c; }
   .mp-pdp-{{ section.id }} .pdp__title { font-size: 44px; font-weight: 700; line-height: 1.04; margin: 6px 0 0; }
   .mp-pdp-{{ section.id }} .pdp__meta { display: flex; align-items: center; gap: 14px; margin-top: 13px; flex-wrap: wrap; }
   .mp-pdp-{{ section.id }} .pdp__bgg { display: inline-flex; align-items: center; gap: 5px; background: #2b2233; border-radius: 6px; padding: 4px 9px; }
@@ -131,6 +140,8 @@
   .mp-pdp-{{ section.id }} .pdp__spec .k { font-size: 11.5px; font-weight: 600; color: #9b948a; letter-spacing: .6px; }
   .mp-pdp-{{ section.id }} .pdp__spec .v { font-size: 19px; font-weight: 700; margin-top: 13px; line-height: 1.18; }
   .mp-pdp-{{ section.id }} .pdp__spec .vsub { font-size: 12px; color: #8a8278; margin-top: auto; padding-top: 5px; }
+  .mp-pdp-{{ section.id }} .pdp__spec .v a, .mp-pdp-{{ section.id }} .pdp__spec .vsub a { color: inherit; text-decoration: none; border-bottom: 1px solid #cdc6ba; }
+  .mp-pdp-{{ section.id }} .pdp__spec .v a:hover, .mp-pdp-{{ section.id }} .pdp__spec .vsub a:hover { color: #c2410c; border-bottom-color: #c2410c; }
 
   .mp-pdp-{{ section.id }} .pdp__play { width: 420px; flex: none; background: #16323f; border-radius: 14px; padding: 22px; color: #cfe0e6; }
   .mp-pdp-{{ section.id }} .pdp__play h2 { font-size: 22px; font-weight: 700; color: #fff; margin: 0; }
@@ -170,6 +181,8 @@
   .mp-pdp-{{ section.id }} .pdp__inforow { display: flex; justify-content: space-between; gap: 16px; padding: 11px 18px; border-bottom: 1px solid #f1ece2; font-size: 13px; }
   .mp-pdp-{{ section.id }} .pdp__inforow .k { color: #9b948a; }
   .mp-pdp-{{ section.id }} .pdp__inforow .v { font-weight: 600; text-align: right; }
+  .mp-pdp-{{ section.id }} .pdp__inforow .v a { color: inherit; text-decoration: none; border-bottom: 1px solid #cdc6ba; }
+  .mp-pdp-{{ section.id }} .pdp__inforow .v a:hover { color: #c2410c; border-bottom-color: #c2410c; }
   .mp-pdp-{{ section.id }} .pdp__bars { padding: 15px 18px; }
   .mp-pdp-{{ section.id }} .pdp__brow { margin-bottom: 13px; }
   .mp-pdp-{{ section.id }} .pdp__brow .bl { display: flex; justify-content: space-between; font-size: 12.5px; color: #4a443c; margin-bottom: 5px; }
@@ -238,7 +251,7 @@
       </div>
 
       <div class="pdp__buy">
-        {%- if product.vendor != blank -%}<div class="pdp__vendor">{{ product.vendor }}</div>{%- endif -%}
+        {%- if product.vendor != blank -%}<div class="pdp__vendor"><a href="/collections/vendors?q={{ product.vendor | url_encode }}">{{ product.vendor }}</a></div>{%- endif -%}
         <h1 class="pdp__title">{{ product.title }}</h1>
 
         <div class="pdp__meta">
@@ -391,13 +404,13 @@
           {%- if m.designer.value != blank -%}
             <div class="pdp__spec"><span class="accent" style="background:#16323f"></span>
               <div style="display:flex;align-items:center;gap:10px"><span class="ico" style="background:#e6ecee">&#9997;</span><span class="k">DESIGNER</span></div>
-              <div class="v" style="font-size:16px">{{ m.designer.value }}</div>
+              <div class="v" style="font-size:16px">{{ designer_links }}</div>
             </div>
           {%- endif -%}
           {%- if m.year_published.value != blank -%}
             <div class="pdp__spec"><span class="accent" style="background:#9a3b2e"></span>
               <div style="display:flex;align-items:center;gap:10px"><span class="ico" style="background:#f3e3e0">&#128197;</span><span class="k">YEAR</span></div>
-              <div class="v">{{ m.year_published.value }}</div>{% if product.vendor != blank %}<div class="vsub">{{ product.vendor }}</div>{% endif %}
+              <div class="v">{{ m.year_published.value }}</div>{% if product.vendor != blank %}<div class="vsub"><a href="/collections/vendors?q={{ product.vendor | url_encode }}">{{ product.vendor }}</a></div>{% endif %}
             </div>
           {%- endif -%}
         </div>
@@ -468,9 +481,9 @@
 
       <div class="pdp__info">
         <h3>Game information</h3>
-        {%- if m.designer.value != blank -%}<div class="pdp__inforow"><span class="k">Designer</span><span class="v">{{ m.designer.value }}</span></div>{%- endif -%}
-        {%- if m.artist.value != blank -%}<div class="pdp__inforow"><span class="k">Artist</span><span class="v">{{ m.artist.value }}</span></div>{%- endif -%}
-        {%- if product.vendor != blank -%}<div class="pdp__inforow"><span class="k">Publisher</span><span class="v">{{ product.vendor }}</span></div>{%- endif -%}
+        {%- if m.designer.value != blank -%}<div class="pdp__inforow"><span class="k">Designer</span><span class="v">{{ designer_links }}</span></div>{%- endif -%}
+        {%- if m.artist.value != blank -%}<div class="pdp__inforow"><span class="k">Artist</span><span class="v">{{ artist_links }}</span></div>{%- endif -%}
+        {%- if product.vendor != blank -%}<div class="pdp__inforow"><span class="k">Publisher</span><span class="v"><a href="/collections/vendors?q={{ product.vendor | url_encode }}">{{ product.vendor }}</a></span></div>{%- endif -%}
         {%- if m.year_published.value != blank -%}<div class="pdp__inforow"><span class="k">Year</span><span class="v">{{ m.year_published.value }}</span></div>{%- endif -%}
         {%- if m.player_count.value != blank -%}<div class="pdp__inforow"><span class="k">Players</span><span class="v">{{ m.player_count.value }}</span></div>{%- endif -%}
         {%- if m.play_time.value != blank -%}<div class="pdp__inforow"><span class="k">Play time</span><span class="v">{{ m.play_time.value }}</span></div>{%- endif -%}
