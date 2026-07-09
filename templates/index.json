@@ -18,7 +18,7 @@
             "layout": "image",
             "image": "shopify://shop_images/Drillers_Pre-order_Banner.png",
             "image_fit": "natural",
-            "cta_url": "shopify://products/drillers-1",
+            "cta_url": "shopify://products/drillers",
             "kicker": "TOP-RANKED TABLETOP",
             "title": "The biggest names in tabletop, all in one place",
             "sub": "Games ranked by BoardGameGeek score, player count and play time.",
