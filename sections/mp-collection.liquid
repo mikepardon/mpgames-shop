@@ -22,6 +22,11 @@
   .mp-cl-{{ section.id }} .cl__badge { background: rgba(242,135,47,.18); color: #ffd2b0; font-size: 12px; font-weight: 600; padding: 4px 12px; border-radius: 20px; letter-spacing: .4px; }
   .mp-cl-{{ section.id }} .cl__htitle { font-size: 38px; font-weight: 700; color: #fff; margin-top: 12px; line-height: 1.04; }
   .mp-cl-{{ section.id }} .cl__hdesc { color: #cfe0e6; font-size: 14px; margin-top: 8px; max-width: 560px; }
+  .mp-cl-{{ section.id }} .cl__hdesc-text { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; line-clamp: 3; overflow: hidden; }
+  .mp-cl-{{ section.id }} .cl__hdesc.is-expanded .cl__hdesc-text { -webkit-line-clamp: unset; line-clamp: unset; overflow: visible; }
+  .mp-cl-{{ section.id }} .cl__hdesc-text p { margin: 0 0 8px; }
+  .mp-cl-{{ section.id }} .cl__hdesc-text > :last-child { margin-bottom: 0; }
+  .mp-cl-{{ section.id }} .cl__hdesc-toggle { display: inline-block; margin-top: 6px; padding: 0; background: none; border: 0; color: #ffd2b0; font: inherit; font-weight: 600; text-decoration: underline; cursor: pointer; }
   .mp-cl-{{ section.id }} .cl__htags { display: flex; gap: 8px; flex-wrap: wrap; max-width: 360px; justify-content: flex-end; }
   .mp-cl-{{ section.id }} .cl__htag { background: rgba(255,255,255,.12); color: #fff; font-size: 12.5px; font-weight: 600; padding: 7px 13px; border-radius: 20px; }
 
@@ -125,7 +130,7 @@
         {%- endif -%}
         <span class="cl__badge mp-cond">{{ collection.products_count }} GAMES</span>
         <h1 class="cl__htitle mp-cond" style="margin:0">{{ collection.title }}</h1>
-        {%- if collection.description != blank -%}<div class="cl__hdesc">{{ collection.description | strip_html | truncatewords: 40 }}</div>{%- endif -%}
+        {%- if collection.description != blank -%}<div class="cl__hdesc" data-mpg-desc><div class="cl__hdesc-text" data-mpg-desc-text>{{ collection.description }}</div><button type="button" class="cl__hdesc-toggle mp-cond" data-mpg-desc-toggle aria-expanded="false" hidden><span data-mpg-more>Read more</span><span data-mpg-less hidden>Read less</span></button></div>{%- endif -%}
       </div>
       {%- if hero_tags != blank and hero_tags.size > 0 -%}
         <div class="cl__htags">
@@ -311,15 +316,32 @@
       </div>
     {%- endpaginate -%}
 
-    {%- if collection.description != blank -%}
-      <div class="cl__about">
-        <h2 class="cl__abouth mp-cond">About {{ collection.title }}</h2>
-        <div class="cl__aboutbody rte">{{ collection.description }}</div>
-      </div>
-    {%- endif -%}
+    {%- comment -%} Full description now shown in the hero (clamped, with Read more). {%- endcomment -%}
 
   </div>
 </section>
+
+<script>
+  (function () {
+    var root = document.querySelector('.mp-cl-{{ section.id }} [data-mpg-desc]');
+    if (!root) return;
+    var text = root.querySelector('[data-mpg-desc-text]');
+    var toggle = root.querySelector('[data-mpg-desc-toggle]');
+    var more = root.querySelector('[data-mpg-more]');
+    var less = root.querySelector('[data-mpg-less]');
+    if (!text || !toggle) return;
+    function overflows() { return text.scrollHeight - text.clientHeight > 1; }
+    function sync() { toggle.hidden = !(root.classList.contains('is-expanded') || overflows()); }
+    toggle.addEventListener('click', function () {
+      var ex = root.classList.toggle('is-expanded');
+      toggle.setAttribute('aria-expanded', ex ? 'true' : 'false');
+      more.hidden = ex; less.hidden = !ex;
+    });
+    sync();
+    window.addEventListener('resize', sync);
+    if (document.fonts && document.fonts.ready) { document.fonts.ready.then(sync); }
+  })();
+</script>
 
 {% schema %}
 {
