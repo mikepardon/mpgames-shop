@@ -798,6 +798,23 @@
   })();
 </script>
 
+{%- comment -%} SEO: VideoObject for the how-to-play video, when available. {%- endcomment -%}
+{%- assign yt_id = product.metafields.custom.youtube_id.value -%}
+{%- if yt_id != blank -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "VideoObject",
+  "name": {{ product.title | append: ' — How to Play' | json }},
+  "description": {{ product.title | append: ': gameplay overview and how to play.' | json }},
+  "thumbnailUrl": "https://i.ytimg.com/vi/{{ yt_id }}/hqdefault.jpg",
+  "embedUrl": "https://www.youtube.com/embed/{{ yt_id }}",
+  "contentUrl": "https://www.youtube.com/watch?v={{ yt_id }}",
+  "uploadDate": "{{ product.published_at | date: '%Y-%m-%d' }}"
+}
+</script>
+{%- endif -%}
+
 {% schema %}
 {
   "name": "MP Product",
