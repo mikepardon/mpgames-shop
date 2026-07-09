@@ -228,7 +228,7 @@
               {%- comment -%} List publisher-* collections that have products (all-games collection does not exist). {%- endcomment -%}
               {%- for c in collections -%}{%- if c.handle contains 'publisher-' and c.all_products_count > 0 -%}<a class="mp-mega__link" href="{{ c.url }}">{{ c.title }}</a>{%- endif -%}{%- endfor -%}
             {%- elsif auto_kind == 'category' -%}
-              {%- for c in collections -%}{%- if c.handle contains 'cat-' and c.all_products_count > 0 -%}<a class="mp-mega__link" href="{{ c.url }}">{{ c.title }}</a>{%- endif -%}{%- endfor -%}
+              {%- for c in collections -%}{%- if c.handle contains 'category-' and c.all_products_count > 0 -%}<a class="mp-mega__link" href="{{ c.url }}">{{ c.title }}</a>{%- endif -%}{%- endfor -%}
             {%- endif -%}
           {%- endcapture -%}
           {%- if link.links.size > 0 -%}
