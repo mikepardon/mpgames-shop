@@ -457,7 +457,7 @@
         {%- if mechanics != blank and mechanics.size > 0 -%}
           <div class="pdp__descpanel" data-descpanel="mech" hidden>
             <div class="pdp__rte"><p>This game uses the following core mechanisms:</p>
-              <p>{% for mech in mechanics %}<span style="display:inline-block;background:#efe9dd;border-radius:20px;padding:5px 12px;margin:0 6px 8px 0;font-size:13px;font-weight:600;color:#4a443c">{{ mech }}</span>{% endfor %}</p>
+              <p>{% for mech in mechanics %}<a href="/collections/mechanic-{{ mech | handle }}" style="display:inline-block;background:#efe9dd;border-radius:20px;padding:5px 12px;margin:0 6px 8px 0;font-size:13px;font-weight:600;color:#4a443c;text-decoration:none">{{ mech }}</a>{% endfor %}</p>
             </div>
           </div>
         {%- endif -%}
