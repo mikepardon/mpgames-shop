@@ -251,7 +251,7 @@
       </div>
 
       <div class="pdp__buy">
-        {%- if product.vendor != blank -%}<div class="pdp__vendor"><a href="/collections/vendors?q={{ product.vendor | url_encode }}">{{ product.vendor }}</a></div>{%- endif -%}
+        {%- if product.vendor != blank -%}<div class="pdp__vendor"><a href="/collections/publisher-{{ product.vendor | handle }}">{{ product.vendor }}</a></div>{%- endif -%}
         <h1 class="pdp__title">{{ product.title }}</h1>
 
         <div class="pdp__meta">
@@ -410,7 +410,7 @@
           {%- if m.year_published.value != blank -%}
             <div class="pdp__spec"><span class="accent" style="background:#9a3b2e"></span>
               <div style="display:flex;align-items:center;gap:10px"><span class="ico" style="background:#f3e3e0">&#128197;</span><span class="k">YEAR</span></div>
-              <div class="v">{{ m.year_published.value }}</div>{% if product.vendor != blank %}<div class="vsub"><a href="/collections/vendors?q={{ product.vendor | url_encode }}">{{ product.vendor }}</a></div>{% endif %}
+              <div class="v">{{ m.year_published.value }}</div>{% if product.vendor != blank %}<div class="vsub"><a href="/collections/publisher-{{ product.vendor | handle }}">{{ product.vendor }}</a></div>{% endif %}
             </div>
           {%- endif -%}
         </div>
@@ -483,7 +483,7 @@
         <h3>Game information</h3>
         {%- if m.designer.value != blank -%}<div class="pdp__inforow"><span class="k">Designer</span><span class="v">{{ designer_links }}</span></div>{%- endif -%}
         {%- if m.artist.value != blank -%}<div class="pdp__inforow"><span class="k">Artist</span><span class="v">{{ artist_links }}</span></div>{%- endif -%}
-        {%- if product.vendor != blank -%}<div class="pdp__inforow"><span class="k">Publisher</span><span class="v"><a href="/collections/vendors?q={{ product.vendor | url_encode }}">{{ product.vendor }}</a></span></div>{%- endif -%}
+        {%- if product.vendor != blank -%}<div class="pdp__inforow"><span class="k">Publisher</span><span class="v"><a href="/collections/publisher-{{ product.vendor | handle }}">{{ product.vendor }}</a></span></div>{%- endif -%}
         {%- if m.year_published.value != blank -%}<div class="pdp__inforow"><span class="k">Year</span><span class="v">{{ m.year_published.value }}</span></div>{%- endif -%}
         {%- if m.player_count.value != blank -%}<div class="pdp__inforow"><span class="k">Players</span><span class="v">{{ m.player_count.value }}</span></div>{%- endif -%}
         {%- if m.play_time.value != blank -%}<div class="pdp__inforow"><span class="k">Play time</span><span class="v">{{ m.play_time.value }}</span></div>{%- endif -%}

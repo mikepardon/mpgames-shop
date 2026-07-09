@@ -230,7 +230,7 @@
                 {%- assign vkey = '|' | append: p.vendor | downcase | append: '|' -%}
                 {%- unless p.vendor == blank or seen_vendors contains vkey -%}
                   {%- assign seen_vendors = seen_vendors | append: p.vendor | downcase | append: '|' -%}
-                  <a class="mp-mega__link" href="/collections/vendors?q={{ p.vendor | url_encode }}">{{ p.vendor }}</a>
+                  <a class="mp-mega__link" href="/collections/publisher-{{ p.vendor | handle }}">{{ p.vendor }}</a>
                 {%- endunless -%}
               {%- endfor -%}
             {%- elsif auto_kind == 'category' -%}
