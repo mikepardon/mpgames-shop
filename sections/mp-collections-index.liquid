@@ -131,7 +131,7 @@
             {%- assign cidx = forloop.index0 | modulo: 6 -%}
             {%- assign pcolor = pub_palette[cidx] -%}
             <a class="ci__pub" href="/collections/publisher-{{ vendor | handle }}">
-              {%- if logo_handles contains vhandle -%}
+              {%- assign pub_handle = 'publisher-' | append: vhandle -%}{%- assign pub_col = collections[pub_handle] -%}{%- if pub_col.image != blank -%}<span class="ci__pubav ci__pubav--logo"><img src="{{ pub_col.image | image_url: width: 68 }}" alt="{{ vendor | escape }}" width="34" height="34" loading="lazy"></span>{%- elsif logo_handles contains vhandle -%}
                 <span class="ci__pubav ci__pubav--logo"><img src="{{ 'pub-' | append: vhandle | append: '.png' | asset_url }}" alt="{{ vendor | escape }}" width="34" height="34" loading="lazy"></span>
               {%- else -%}
                 <span class="ci__pubav mp-cond" style="background:{{ pcolor }}">{{ initials | upcase }}</span>
