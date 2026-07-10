@@ -1,0 +1,19 @@
+{%- comment -%}
+  Mega-menu featured product card.
+  Params:
+    feature  {product}  required — the product to show
+    eyebrow  {string}   optional — small uppercase label above the title
+{%- endcomment -%}
+{%- if feature != blank -%}
+  <div class="mp-mega__feature">
+    {%- if eyebrow != blank -%}<div class="mp-mega__feyebrow">{{ eyebrow }}</div>{%- endif -%}
+    <div class="mp-mega__fh">{{ feature.title }}</div>
+    <div class="mp-mega__fsub">{{ feature.vendor }}{% if feature.metafields.custom.player_count.value != blank %} · {{ feature.metafields.custom.player_count.value }} players{% endif %}</div>
+    <div class="mp-mega__fprice">{{ feature.price | money }}</div>
+    <a class="mp-mega__fimg" href="{{ feature.url }}">{% if feature.featured_image %}<img src="{{ feature.featured_image | image_url: width: 360 }}" alt="{{ feature.title | escape }}" width="360" height="360" loading="lazy">{% endif %}</a>
+    <form action="{{ routes.cart_add_url }}" method="post" enctype="multipart/form-data">
+      <input type="hidden" name="id" value="{{ feature.selected_or_first_available_variant.id }}">
+      <button type="submit" class="mp-mega__fadd"{% unless feature.available %} disabled{% endunless %}>Add to cart</button>
+    </form>
+  </div>
+{%- endif -%}

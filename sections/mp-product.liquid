@@ -664,6 +664,10 @@
       "description": {{ product.description | default: product.title | strip_html | truncatewords: 60 | truncate: 500 | json }},
       {% if product.vendor != blank %}"brand": { "@type": "Brand", "name": {{ product.vendor | json }} },{% endif %}
       {% if variant.sku != blank %}"sku": {{ variant.sku | json }},{% endif %}
+      {% if variant.barcode != blank %}"gtin": {{ variant.barcode | json }},{% endif %}
+      {% if variant.sku != blank %}"mpn": {{ variant.sku | json }},{% endif %}
+      {% if product.type != blank %}"category": {{ product.type | json }},{% endif %}
+      {% if weight != blank and weight > 0 %}"weight": { "@type": "QuantitativeValue", "value": {{ weight }}, "unitCode": "KGM" },{% endif %}
       {% if rcount != blank and rscore != blank %}"aggregateRating": { "@type": "AggregateRating", "ratingValue": "{{ rscore }}", "reviewCount": "{{ rcount }}", "bestRating": "5", "worstRating": "1" },{% endif %}
       {% if product.variants.size > 1 %}
       "offers": {

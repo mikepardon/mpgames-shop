@@ -98,6 +98,7 @@
     width: 270px; flex: none; margin-left: auto; background: #0f242e; border: 1px solid #25434f;
     border-radius: 12px; padding: 16px; text-align: center;
   }
+  .mp-hd-{{ section.id }} .mp-mega__feyebrow { color: #f2872f; font-size: 10.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 7px; }
   .mp-hd-{{ section.id }} .mp-mega__fh { color: #fff; font-weight: 700; font-size: 15px; line-height: 1.2; }
   .mp-hd-{{ section.id }} .mp-mega__fsub { color: #9fb4bd; font-size: 12px; margin-top: 3px; }
   .mp-hd-{{ section.id }} .mp-mega__fprice { color: #f2872f; font-weight: 700; font-size: 19px; margin-top: 8px; }
@@ -231,6 +232,24 @@
               {%- for c in collections -%}{%- if c.handle contains 'category-' and c.all_products_count > 0 -%}<a class="mp-mega__link" href="{{ c.url }}">{{ c.title }}</a>{%- endif -%}{%- endfor -%}
             {%- endif -%}
           {%- endcapture -%}
+          {%- comment -%} Vary the featured card per panel so the same product doesn't repeat across menus.
+             Designer/Artist/Publisher panels feature a real game from that family; others use the merchandised pick. {%- endcomment -%}
+          {%- assign panel_feature = featured -%}
+          {%- assign panel_eyebrow = "Editor's pick" -%}
+          {%- if auto_kind == 'designer' or auto_kind == 'artist' or auto_kind == 'vendor' -%}
+            {%- assign cprefix = auto_kind -%}
+            {%- if auto_kind == 'vendor' -%}{%- assign cprefix = 'publisher' -%}{%- endif -%}
+            {%- for c in collections -%}
+              {%- if c.handle contains cprefix and c.all_products_count > 0 -%}
+                {%- assign cand = c.products.first -%}
+                {%- if cand != blank -%}
+                  {%- assign panel_feature = cand -%}
+                  {%- if auto_kind == 'designer' -%}{%- assign panel_eyebrow = 'Featured designer' -%}{%- elsif auto_kind == 'artist' -%}{%- assign panel_eyebrow = 'Featured artist' -%}{%- else -%}{%- assign panel_eyebrow = 'Featured publisher' -%}{%- endif -%}
+                {%- endif -%}
+                {%- break -%}
+              {%- endif -%}
+            {%- endfor -%}
+          {%- endif -%}
           {%- if link.links.size > 0 -%}
             <div class="mp-nav__item">
               <a class="mp-nav__top" href="{{ link.url }}">{{ link.title }} <span class="mp-nav__caret">&#9662;</span></a>
@@ -247,18 +266,7 @@
                       {%- endif -%}
                     </div>
                   {%- endfor -%}
-                  {%- if featured != blank -%}
-                    <div class="mp-mega__feature">
-                      <div class="mp-mega__fh">{{ featured.title }}</div>
-                      <div class="mp-mega__fsub">{{ featured.vendor }}{% if featured.metafields.custom.player_count.value != blank %} · {{ featured.metafields.custom.player_count.value }} players{% endif %}</div>
-                      <div class="mp-mega__fprice">{{ featured.price | money }}</div>
-                      <a class="mp-mega__fimg" href="{{ featured.url }}">{% if featured.featured_image %}<img src="{{ featured.featured_image | image_url: width: 360 }}" alt="{{ featured.title | escape }}" width="360" height="360" loading="lazy">{% endif %}</a>
-                      <form action="{{ routes.cart_add_url }}" method="post" enctype="multipart/form-data">
-                        <input type="hidden" name="id" value="{{ featured.selected_or_first_available_variant.id }}">
-                        <button type="submit" class="mp-mega__fadd"{% unless featured.available %} disabled{% endunless %}>Add to cart</button>
-                      </form>
-                    </div>
-                  {%- endif -%}
+                  {%- render 'mp-mega-feature', feature: panel_feature, eyebrow: panel_eyebrow -%}
                 </div>
               </div>
             </div>
@@ -272,18 +280,7 @@
                     <div class="mp-mega__grid">{{ auto_links }}</div>
                     <a class="mp-mega__all" href="{{ link.url }}">Shop all &raquo;</a>
                   </div>
-                  {%- if featured != blank -%}
-                    <div class="mp-mega__feature">
-                      <div class="mp-mega__fh">{{ featured.title }}</div>
-                      <div class="mp-mega__fsub">{{ featured.vendor }}{% if featured.metafields.custom.player_count.value != blank %} · {{ featured.metafields.custom.player_count.value }} players{% endif %}</div>
-                      <div class="mp-mega__fprice">{{ featured.price | money }}</div>
-                      <a class="mp-mega__fimg" href="{{ featured.url }}">{% if featured.featured_image %}<img src="{{ featured.featured_image | image_url: width: 360 }}" alt="{{ featured.title | escape }}" width="360" height="360" loading="lazy">{% endif %}</a>
-                      <form action="{{ routes.cart_add_url }}" method="post" enctype="multipart/form-data">
-                        <input type="hidden" name="id" value="{{ featured.selected_or_first_available_variant.id }}">
-                        <button type="submit" class="mp-mega__fadd"{% unless featured.available %} disabled{% endunless %}>Add to cart</button>
-                      </form>
-                    </div>
-                  {%- endif -%}
+                  {%- render 'mp-mega-feature', feature: panel_feature, eyebrow: panel_eyebrow -%}
                 </div>
               </div>
             </div>
