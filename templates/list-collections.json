@@ -12,16 +12,16 @@
     "mp_collections_index": {
       "type": "mp-collections-index",
       "blocks": {
-        "c1": { "type": "category", "settings": { "collection": "cat-strategy", "icon": "♟", "accent": "#2c5466", "tint": "#e7eef1" } },
-        "c2": { "type": "category", "settings": { "collection": "cat-family", "icon": "♚", "accent": "#2f8f5b", "tint": "#e3f1e9" } },
-        "c3": { "type": "category", "settings": { "collection": "cat-card", "icon": "🃏", "accent": "#6a4f86", "tint": "#ede7f3" } },
-        "c4": { "type": "category", "settings": { "collection": "cat-engine", "icon": "⚙", "accent": "#c2772a", "tint": "#f7ecdb" } },
-        "c5": { "type": "category", "settings": { "collection": "cat-coop", "icon": "🤝", "accent": "#16323f", "tint": "#e6ecee" } },
-        "c6": { "type": "category", "settings": { "collection": "cat-worker", "icon": "👷", "accent": "#9a3b2e", "tint": "#f3e3e0" } },
+        "c1": { "type": "category", "settings": { "collection": "category-strategy", "icon": "♟", "accent": "#2c5466", "tint": "#e7eef1" } },
+        "c2": { "type": "category", "settings": { "collection": "category-family", "icon": "♚", "accent": "#2f8f5b", "tint": "#e3f1e9" } },
+        "c3": { "type": "category", "settings": { "collection": "category-card", "icon": "🃏", "accent": "#6a4f86", "tint": "#ede7f3" } },
+        "c4": { "type": "category", "settings": { "collection": "category-engine", "icon": "⚙", "accent": "#c2772a", "tint": "#f7ecdb" } },
+        "c5": { "type": "category", "settings": { "collection": "category-coop", "icon": "🤝", "accent": "#16323f", "tint": "#e6ecee" } },
+        "c6": { "type": "category", "settings": { "collection": "category-worker", "icon": "👷", "accent": "#9a3b2e", "tint": "#f3e3e0" } },
         "c7": { "type": "category", "settings": { "collection": "top-rated", "icon": "★", "accent": "#2f8f5b", "tint": "#e3f1e9" } },
         "c8": { "type": "category", "settings": { "collection": "expansions", "icon": "🧩", "accent": "#6a4f86", "tint": "#ede7f3" } },
         "f1": { "type": "featured", "settings": { "collection": "top-rated", "kicker": "HOBBYIST", "kicker_color": "#d7b8ef", "title": "Top rated on BGG", "gradient": "linear-gradient(120deg,#2b2233,#4a3a5c)" } },
-        "f2": { "type": "featured", "settings": { "url": "/collections/all-games?filter.v.price.lte=30", "kicker": "NEW TO THE HOBBY", "kicker_color": "#bfe9d2", "title": "Gateway games under £30", "gradient": "linear-gradient(120deg,#13513f,#2f8f5b)" } },
+        "f2": { "type": "featured", "settings": { "url": "/collections/gateway-under-30", "kicker": "NEW TO THE HOBBY", "kicker_color": "#bfe9d2", "title": "Gateway games under £30", "gradient": "linear-gradient(120deg,#13513f,#2f8f5b)" } },
         "f3": { "type": "featured", "settings": { "collection": "sale", "kicker": "CLEARANCE", "kicker_color": "#ffd2b0", "title": "Sale & clearance", "gradient": "linear-gradient(120deg,#16323f,#2c5466)" } }
       },
       "block_order": ["c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "f1", "f2", "f3"],

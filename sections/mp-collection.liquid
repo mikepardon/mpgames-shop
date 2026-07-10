@@ -17,6 +17,8 @@
     display: flex; justify-content: space-between; align-items: flex-end; gap: 20px;
     background-size: cover; background-position: center;
   }
+  .mp-cl-{{ section.id }} .cl__heroimg { position: absolute; top: 0; right: 0; z-index: 0; max-width: 55%; max-height: 100%; width: auto; height: auto; filter: grayscale(1); opacity: .3; pointer-events: none; }
+  .mp-cl-{{ section.id }} .cl__herotext { position: relative; z-index: 1; }
   .mp-cl-{{ section.id }} .cl__brand { background: #fff; border-radius: 12px; padding: 9px; width: 64px; height: 64px; display: flex; align-items: center; justify-content: center; margin-bottom: 14px; box-shadow: 0 2px 8px rgba(0,0,0,.18); }
   .mp-cl-{{ section.id }} .cl__brand img { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; display: block; }
   .mp-cl-{{ section.id }} .cl__badge { background: rgba(242,135,47,.18); color: #ffd2b0; font-size: 12px; font-weight: 600; padding: 4px 12px; border-radius: 20px; letter-spacing: .4px; }
@@ -65,8 +67,8 @@
   .mp-cl-{{ section.id }} .cl__flag { position: absolute; top: 10px; left: 10px; z-index: 2; background: #d6402e; color: #fff; font-size: 12px; font-weight: 700; padding: 3px 8px; border-radius: 5px; }
   .mp-cl-{{ section.id }} .cl__flag--pre { background: #f2872f; letter-spacing: .3px; }
   .mp-cl-{{ section.id }} .cl__wish { position: absolute; top: 10px; right: 10px; z-index: 2; background: #fff; border: 1px solid #e7e0d4; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; color: #8a8278; font-size: 13px; }
-  .mp-cl-{{ section.id }} .cl__media { height: 170px; display: flex; align-items: center; justify-content: center; background: repeating-linear-gradient(45deg,#efece6,#efece6 9px,#e6e2da 9px,#e6e2da 18px); }
-  .mp-cl-{{ section.id }} .cl__media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .mp-cl-{{ section.id }} .cl__media { height: 170px; display: flex; align-items: center; justify-content: center; background: transparent; padding: 10px; box-sizing: border-box; }
+  .mp-cl-{{ section.id }} .cl__media img { width: 100%; height: 100%; object-fit: contain; display: block; }
   .mp-cl-{{ section.id }} .cl__cbody { padding: 13px 14px 15px; display: flex; flex-direction: column; flex: 1; }
   .mp-cl-{{ section.id }} .cl__bgg { display: inline-flex; align-items: center; gap: 5px; background: #2b2233; border-radius: 5px; padding: 2px 7px; }
   .mp-cl-{{ section.id }} .cl__bgg b { font-size: 10px; font-weight: 700; color: #fff; letter-spacing: .5px; }
@@ -123,8 +125,9 @@
       <a href="{{ routes.root_url }}">Home</a><span class="sep">/</span><span style="color:#6b7a82">{{ collection.title }}</span>
     </div>
 
-    <div class="cl__hero"{% if collection.image %} style="background-image:linear-gradient(115deg,rgba(22,50,63,.92),rgba(44,84,102,.78)),url('{{ collection.image | image_url: width: 1600 }}')"{% endif %}>
-      <div>
+    <div class="cl__hero">
+      {%- if collection.image != blank -%}<img class="cl__heroimg" src="{{ collection.image | image_url: width: 1600 }}" alt="{{ collection.title | escape }}" loading="lazy">{%- endif -%}
+      <div class="cl__herotext">
         {%- if brand_logo != blank -%}
           <div class="cl__brand"><img src="{{ brand_logo | asset_url }}" alt="{{ collection.title | escape }}" width="64" height="64"></div>
         {%- endif -%}
@@ -341,6 +344,44 @@
     window.addEventListener('resize', sync);
     if (document.fonts && document.fonts.ready) { document.fonts.ready.then(sync); }
   })();
+</script>
+
+{%- comment -%} SEO: CollectionPage + ItemList + BreadcrumbList structured data. {%- endcomment -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "CollectionPage",
+      "name": {{ collection.title | json }},
+      "url": {{ canonical_url | json }},
+      {% if collection.description != blank %}"description": {{ collection.description | strip_html | truncatewords: 50 | json }},{% endif %}
+      "mainEntity": {
+        "@type": "ItemList",
+        "numberOfItems": {{ collection.products_count }},
+        "itemListElement": [
+          {%- assign pos = 0 -%}
+          {%- for product in collection.products limit: 30 -%}
+            {%- assign pos = pos | plus: 1 -%}
+            {
+              "@type": "ListItem",
+              "position": {{ pos }},
+              "name": {{ product.title | json }},
+              "url": {{ shop.url | append: product.url | json }}
+            }{%- unless forloop.last -%},{%- endunless -%}
+          {%- endfor -%}
+        ]
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": {{ shop.url | append: routes.root_url | json }} },
+        { "@type": "ListItem", "position": 2, "name": {{ collection.title | json }}, "item": {{ canonical_url | json }} }
+      ]
+    }
+  ]
+}
 </script>
 
 {% schema %}

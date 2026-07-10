@@ -18,7 +18,7 @@
             "layout": "image",
             "image": "shopify://shop_images/Drillers_Pre-order_Banner.png",
             "image_fit": "natural",
-            "cta_url": "shopify://products/drillers-1",
+            "cta_url": "shopify://products/drillers",
             "kicker": "TOP-RANKED TABLETOP",
             "title": "The biggest names in tabletop, all in one place",
             "sub": "Games ranked by BoardGameGeek score, player count and play time.",
@@ -85,7 +85,7 @@
           "type": "category",
           "settings": {
             "icon": "♟",
-            "collection": "cat-strategy",
+            "collection": "category-strategy",
             "name": "Strategy",
             "count": "",
             "url": ""
@@ -95,7 +95,7 @@
           "type": "category",
           "settings": {
             "icon": "♚",
-            "collection": "cat-family",
+            "collection": "category-family",
             "name": "Strategy",
             "count": "",
             "url": ""
@@ -105,7 +105,7 @@
           "type": "category",
           "settings": {
             "icon": "🃏",
-            "collection": "cat-card",
+            "collection": "category-card",
             "name": "Strategy",
             "count": "",
             "url": ""
@@ -115,7 +115,7 @@
           "type": "category",
           "settings": {
             "icon": "👷",
-            "collection": "cat-worker",
+            "collection": "category-worker",
             "name": "Strategy",
             "count": "",
             "url": ""
@@ -166,7 +166,7 @@
           "settings": {
             "layout": "text",
             "image_fit": "natural",
-            "url": "/collections/all-games?filter.v.price.lte=30",
+            "url": "/collections/gateway-under-30",
             "kicker": "NEW TO THE HOBBY?",
             "kicker_color": "#bfe9d2",
             "title": "Gateway games under £30",

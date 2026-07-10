@@ -465,7 +465,7 @@
         {%- if mechanics != blank and mechanics.size > 0 -%}
           <div class="pdp__descpanel" data-descpanel="mech" hidden>
             <div class="pdp__rte"><p>This game uses the following core mechanisms:</p>
-              <p>{% for mech in mechanics %}<span style="display:inline-block;background:#efe9dd;border-radius:20px;padding:5px 12px;margin:0 6px 8px 0;font-size:13px;font-weight:600;color:#4a443c">{{ mech }}</span>{% endfor %}</p>
+              <p>{% for mech in mechanics %}<a href="/collections/mechanic-{{ mech | handle }}" style="display:inline-block;background:#efe9dd;border-radius:20px;padding:5px 12px;margin:0 6px 8px 0;font-size:13px;font-weight:600;color:#4a443c;text-decoration:none">{{ mech }}</a>{% endfor %}</p>
             </div>
           </div>
         {%- endif -%}
@@ -485,6 +485,27 @@
             <div class="pdp__feat"><span class="ok">&#10003;</span> 100% official UK stock with price-match promise</div>
           </div>
         {%- endif -%}
+{%- assign faqs = product.metafields.custom.faqs.value -%}
+{%- if faqs != blank and faqs.size > 0 -%}
+  <div class="pdp__faq">
+    <div class="pdp__h" style="font-size:17px;margin:24px 0 12px">Frequently asked questions</div>
+    {%- for f in faqs -%}
+      <details class="pdp__faqitem">
+        <summary class="pdp__faqq">{{ f.q }}</summary>
+        <div class="pdp__faqa">{{ f.a }}</div>
+      </details>
+    {%- endfor -%}
+  </div>
+  <style>
+    .mp-pdp-{{ section.id }} .pdp__faqitem { border-top: 1px solid #e7ddcb; }
+    .mp-pdp-{{ section.id }} .pdp__faqitem:last-of-type { border-bottom: 1px solid #e7ddcb; }
+    .mp-pdp-{{ section.id }} .pdp__faqq { cursor: pointer; padding: 13px 4px; font-size: 14px; font-weight: 600; color: #16323f; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+    .mp-pdp-{{ section.id }} .pdp__faqq::-webkit-details-marker { display: none; }
+    .mp-pdp-{{ section.id }} .pdp__faqq::after { content: '+'; font-size: 18px; color: #f2872f; font-weight: 700; line-height: 1; }
+    .mp-pdp-{{ section.id }} .pdp__faqitem[open] .pdp__faqq::after { content: '\2212'; }
+    .mp-pdp-{{ section.id }} .pdp__faqa { padding: 0 4px 14px; font-size: 13.5px; line-height: 1.6; color: #4a443c; }
+  </style>
+{%- endif -%}
       </div>
 
       <div class="pdp__info">
@@ -812,6 +833,43 @@
     });
   })();
 </script>
+
+{%- comment -%} SEO: VideoObject for the how-to-play video, when available. {%- endcomment -%}
+{%- assign yt_id = product.metafields.custom.youtube_id.value -%}
+{%- if yt_id != blank -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "VideoObject",
+  "name": {{ product.title | append: ' — How to Play' | json }},
+  "description": {{ product.title | append: ': gameplay overview and how to play.' | json }},
+  "thumbnailUrl": "https://i.ytimg.com/vi/{{ yt_id }}/hqdefault.jpg",
+  "embedUrl": "https://www.youtube.com/embed/{{ yt_id }}",
+  "contentUrl": "https://www.youtube.com/watch?v={{ yt_id }}",
+  "uploadDate": "{{ product.published_at | date: '%Y-%m-%d' }}"
+}
+</script>
+{%- endif -%}
+
+{%- comment -%} SEO: FAQPage rich results from custom.faqs. {%- endcomment -%}
+{%- assign faqs = product.metafields.custom.faqs.value -%}
+{%- if faqs != blank and faqs.size > 0 -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {%- for f in faqs -%}
+    {
+      "@type": "Question",
+      "name": {{ f.q | json }},
+      "acceptedAnswer": { "@type": "Answer", "text": {{ f.a | json }} }
+    }{%- unless forloop.last -%},{%- endunless -%}
+    {%- endfor -%}
+  ]
+}
+</script>
+{%- endif -%}
 
 {% schema %}
 {

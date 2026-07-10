@@ -44,7 +44,7 @@
               {%- assign cidx = forloop.index0 | modulo: 6 -%}
               {%- assign pcolor = pub_palette[cidx] -%}
               <a class="mp-pub__cell" href="/collections/publisher-{{ vendor | handle }}">
-                {%- if logo_handles contains vhandle -%}
+                {%- assign pub_handle = 'publisher-' | append: vhandle -%}{%- assign pub_col = collections[pub_handle] -%}{%- if pub_col.image != blank -%}<span class="mp-pub__av mp-pub__av--logo"><img src="{{ pub_col.image | image_url: width: 64 }}" alt="{{ vendor | escape }}" width="32" height="32" loading="lazy"></span>{%- elsif logo_handles contains vhandle -%}
                   <span class="mp-pub__av mp-pub__av--logo"><img src="{{ 'pub-' | append: vhandle | append: '.png' | asset_url }}" alt="{{ vendor | escape }}" width="32" height="32" loading="lazy"></span>
                 {%- else -%}
                   <span class="mp-pub__av mp-cond" style="background:{{ pcolor }}">{{ initials | upcase }}</span>
