@@ -200,6 +200,39 @@
             {%- endfor -%}
           </div>
         {%- endif -%}
+
+        {%- comment -%} STL-vs-printed comparison sits under the gallery so it fills the left column beside the taller buy box {%- endcomment -%}
+        {%- if has_digital or has_physical -%}
+          <div class="pdp__h" style="font-size:19px;margin:26px 0 14px">Choose how you buy it</div>
+          <div class="pdp__yg">
+            {%- if has_digital -%}
+              <div class="pdp__ygcard"><span class="accent" style="background:#16755a"></span>
+                <span class="pdp__ygico" style="background:#e3f1e9">&#11015;</span>
+                <div class="pdp__ygttl">STL Digital Download</div>
+                <div class="pdp__ygsub">Print it yourself</div>
+                <ul class="pdp__yglist">
+                  <li><span class="ok">&#10003;</span> Ready-to-slice STL files, delivered instantly by email</li>
+                  <li><span class="ok">&#10003;</span> Print in any colour you like, as many times as you need for your own copies</li>
+                  <li><span class="ok">&#10003;</span> Supports-free where possible for easy home printing</li>
+                  <li><span class="ok">&#10003;</span> Best value — no shipping, no wait</li>
+                </ul>
+              </div>
+            {%- endif -%}
+            {%- if has_physical -%}
+              <div class="pdp__ygcard"><span class="accent" style="background:#f2872f"></span>
+                <span class="pdp__ygico" style="background:#fbeadb">&#128230;</span>
+                <div class="pdp__ygttl">3D Printed</div>
+                <div class="pdp__ygsub">We print &amp; ship it</div>
+                <ul class="pdp__yglist">
+                  <li><span class="ok">&#10003;</span> Professionally printed to order and shipped to your door</li>
+                  <li><span class="ok">&#10003;</span> Test-fitted to the game box before it leaves us</li>
+                  <li><span class="ok">&#10003;</span> No printer needed — arrives ready to drop in</li>
+                  <li><span class="ok">&#10003;</span> Sturdy PLA, packed flat and protected</li>
+                </ul>
+              </div>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
       </div>
 
       <div class="pdp__buy">
@@ -289,41 +322,9 @@
       </div>
     </div>
 
-    <!-- what you get + insert details -->
+    <!-- about + insert details -->
     <div class="pdp__cols">
       <div class="pdp__left">
-        {%- if has_digital or has_physical -%}
-          <div class="pdp__h">Choose how you buy it</div>
-          <div class="pdp__yg">
-            {%- if has_digital -%}
-              <div class="pdp__ygcard"><span class="accent" style="background:#16755a"></span>
-                <span class="pdp__ygico" style="background:#e3f1e9">&#11015;</span>
-                <div class="pdp__ygttl">STL Digital Download</div>
-                <div class="pdp__ygsub">Print it yourself</div>
-                <ul class="pdp__yglist">
-                  <li><span class="ok">&#10003;</span> Ready-to-slice STL files, delivered instantly by email</li>
-                  <li><span class="ok">&#10003;</span> Print in any colour/material you like, as many times as you need for your own copies</li>
-                  <li><span class="ok">&#10003;</span> Supports-free where possible for easy home printing</li>
-                  <li><span class="ok">&#10003;</span> Best value — no shipping, no wait</li>
-                </ul>
-              </div>
-            {%- endif -%}
-            {%- if has_physical -%}
-              <div class="pdp__ygcard"><span class="accent" style="background:#f2872f"></span>
-                <span class="pdp__ygico" style="background:#fbeadb">&#128230;</span>
-                <div class="pdp__ygttl">3D Printed</div>
-                <div class="pdp__ygsub">We print &amp; ship it</div>
-                <ul class="pdp__yglist">
-                  <li><span class="ok">&#10003;</span> Professionally printed to order and shipped to your door</li>
-                  <li><span class="ok">&#10003;</span> Test-fitted to the game box before it leaves us</li>
-                  <li><span class="ok">&#10003;</span> No printer needed — arrives ready to drop in</li>
-                  <li><span class="ok">&#10003;</span> Sturdy PLA{% if m.insert_material.value != blank %}/{{ m.insert_material.value }}{% endif %}, packed flat and protected</li>
-                </ul>
-              </div>
-            {%- endif -%}
-          </div>
-        {%- endif -%}
-
         {%- if product.description != blank -%}
           <div class="pdp__block">
             <div class="pdp__h" style="font-size:19px">About this insert</div>
