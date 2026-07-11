@@ -1,0 +1,18 @@
+{
+  "sections": {
+    "main": {
+      "type": "mp-product-insert",
+      "settings": {
+        "delivery_line": "Free UK delivery over £50",
+        "print_dispatch": "3–5 working days"
+      }
+    },
+    "app": {
+      "type": "apps",
+      "settings": {
+        "include_margins": true
+      }
+    }
+  },
+  "order": ["main", "app"]
+}

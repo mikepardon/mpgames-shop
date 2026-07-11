@@ -213,6 +213,9 @@
   .mp-pdp-{{ section.id }} .pdp__viewall { font-size: 12.5px; color: #f2872f; font-weight: 600; text-decoration: none; }
   .mp-pdp-{{ section.id }} .pdp__exp-banner { background: #fff3e8; border: 1px solid #f2c79a; border-radius: 10px; padding: 13px 16px; margin: 0 0 4px; display: flex; align-items: center; gap: 10px; font-size: 13.5px; color: #7a4a16; }
   .mp-pdp-{{ section.id }} .pdp__exp-banner a { color: #c2410c; font-weight: 700; }
+  .mp-pdp-{{ section.id }} .pdp__insert-banner { background: #eef5f2; border: 1px solid #b9d8cb; border-radius: 10px; padding: 13px 16px; margin: 0 0 4px; display: flex; align-items: center; gap: 10px; font-size: 13.5px; color: #1f5a44; }
+  .mp-pdp-{{ section.id }} .pdp__insert-banner a { color: #16755a; font-weight: 700; }
+  .mp-pdp-{{ section.id }} .pdp__digital { background: #eef5f2; border-color: #b9d8cb; }
 
   @media (max-width: 989px) {
     .mp-pdp-{{ section.id }} .pdp__top, .mp-pdp-{{ section.id }} .pdp__cols { flex-direction: column; }
@@ -276,7 +279,7 @@
           <span class="pdp__now" data-price>{{ product.price | money }}</span>
           <span class="pdp__saletag" data-saletag{% unless on_sale %} hidden{% endunless %}>Sale</span>
         </div>
-        <div class="pdp__tax">Taxes included · {{ section.settings.delivery_line }}</div>
+        <div class="pdp__tax">Taxes included<span data-ships-note{% if variant.requires_shipping == false %} hidden{% endif %}> · {{ section.settings.delivery_line }}</span></div>
 
         {%- unless product.has_only_default_variant -%}
           <div class="pdp__options" data-options>
@@ -331,11 +334,21 @@
           </div>
         {%- endif -%}
 
-        <div class="pdp__reassure">
+        {%- comment -%} STL/digital variants have requires_shipping = false — swap the physical reassurance for a download notice. Initial state reflects the selected variant; JS retoggles on option change. {%- endcomment -%}
+        {%- assign has_digital = false -%}
+        {%- for v in product.variants -%}{%- unless v.requires_shipping -%}{%- assign has_digital = true -%}{%- endunless -%}{%- endfor -%}
+        <div class="pdp__reassure" data-physical-notice{% if variant.requires_shipping == false %} hidden{% endif %}>
           <span>&#128666; <b>Free UK delivery</b> on orders over £{{ settings.free_shipping_threshold }} · next working day dispatch</span>
           <span>&#8634; <b>30-day returns</b> · unopened &amp; in original condition</span>
           <span>&#9989; <b>100% official UK stock</b> · price-match promise</span>
         </div>
+        {%- if has_digital -%}
+          <div class="pdp__reassure pdp__digital" data-digital-notice{% unless variant.requires_shipping == false %} hidden{% endunless %}>
+            <span>&#11015; <b>Instant digital download</b> · your STL files are delivered by email the moment your order is confirmed — nothing ships</span>
+            <span>&#128424; <b>Print it yourself</b> · ready-to-slice STL files for any FDM 3D printer</span>
+            <span>&#128274; <b>Personal-use licence</b> · print for your own copies; please don&rsquo;t resell the prints or files</span>
+          </div>
+        {%- endif -%}
 
         <div class="pdp__share">
           <span>&#8593; Share</span>
@@ -350,6 +363,20 @@
         <div class="pdp__exp-banner">&#129513; <span><strong>This is an expansion of <a href="{{ base_game.url }}">{{ base_game.title }}</a></strong> but it can be played standalone with the base game.</span></div>
       {%- else -%}
         <div class="pdp__exp-banner">&#129513; <span><strong>This is an expansion.</strong> Requires <a href="{{ base_game.url }}">{{ base_game.title }}</a> to play.</span></div>
+      {%- endif -%}
+    {%- endif -%}
+
+    {%- comment -%} Board Game Insert -> the game(s) this insert is designed for {%- endcomment -%}
+    {%- if product.type == 'Board Game Insert' -%}
+      {%- assign insert_games = m.insert_for_game.value -%}
+      {%- if insert_games != blank and insert_games.size > 0 -%}
+        <div class="pdp__insert-banner">&#128230; <span><strong>Storage insert for</strong> {% for g in insert_games %}{%- unless forloop.first -%}{%- if forloop.last -%} &amp; {%- else -%}, {%- endif -%}{%- endunless -%}<a href="{{ g.url }}">{{ g.title }}</a>{% endfor %}</span></div>
+      {%- endif -%}
+    {%- else -%}
+      {%- comment -%} Reverse link on a board game: 3D-printed inserts available for it (maintained by scripts/sync-inserts.mjs) {%- endcomment -%}
+      {%- assign game_inserts = m.available_inserts.value -%}
+      {%- if game_inserts != blank and game_inserts.size > 0 -%}
+        <div class="pdp__insert-banner pdp__insert-banner--rev">&#128230; <span><strong>3D-printed storage inserts available for this game</strong> &mdash; {% for ins in game_inserts %}{%- unless forloop.first -%}, {% endunless -%}<a href="{{ ins.url }}">{{ ins.title }}</a>{% endfor %}</span></div>
       {%- endif -%}
     {%- endif -%}
 
@@ -756,7 +783,7 @@
     // variant selection
     var variants = [
       {%- for v in product.variants -%}
-        { "id": {{ v.id }}, "options": {{ v.options | json }}, "available": {{ v.available }}, "price_str": {{ v.price | money | json }}, "compare_str": {% if v.compare_at_price > v.price %}{{ v.compare_at_price | money | json }}{% else %}null{% endif %}, "sku": {{ v.sku | json }}, "avail_qty": {% if v.inventory_management and v.inventory_quantity > 0 %}{{ v.inventory_quantity }}{% else %}0{% endif %} }{%- unless forloop.last -%},{%- endunless -%}
+        { "id": {{ v.id }}, "options": {{ v.options | json }}, "available": {{ v.available }}, "price_str": {{ v.price | money | json }}, "compare_str": {% if v.compare_at_price > v.price %}{{ v.compare_at_price | money | json }}{% else %}null{% endif %}, "sku": {{ v.sku | json }}, "avail_qty": {% if v.inventory_management and v.inventory_quantity > 0 %}{{ v.inventory_quantity }}{% else %}0{% endif %}, "requires_shipping": {{ v.requires_shipping }} }{%- unless forloop.last -%},{%- endunless -%}
       {%- endfor -%}
     ];
     var variantId = {{ variant.id | default: 'null' }};
@@ -769,6 +796,9 @@
     var skuEl = root.querySelector('[data-sku]');
     var addBtn = root.querySelector('.pdp__add');
     var buyBtn = root.querySelector('.pdp__buynow');
+    var physNotice = root.querySelector('[data-physical-notice]');
+    var digiNotice = root.querySelector('[data-digital-notice]');
+    var shipsNote = root.querySelector('[data-ships-note]');
     var isPreorder = {% if is_preorder %}true{% else %}false{% endif %};
 
     function currentSelections() {
@@ -803,6 +833,10 @@
       }
       if (addBtn) { addBtn.disabled = !v.available; addBtn.textContent = !v.available ? 'Sold out' : (isPreorder ? 'Pre-order now' : 'Add to basket'); }
       if (buyBtn) buyBtn.disabled = !v.available;
+      var digital = v.requires_shipping === false;
+      if (physNotice) physNotice.hidden = digital;
+      if (digiNotice) digiNotice.hidden = !digital;
+      if (shipsNote) shipsNote.hidden = digital;
       try {
         var url = new URL(window.location.href);
         url.searchParams.set('variant', v.id);
