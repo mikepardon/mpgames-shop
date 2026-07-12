@@ -217,6 +217,51 @@
   .mp-pdp-{{ section.id }} .pdp__insert-banner a { color: #16755a; font-weight: 700; }
   .mp-pdp-{{ section.id }} .pdp__digital { background: #eef5f2; border-color: #b9d8cb; }
 
+  /* buy-box add-on (storage insert) quick-add card */
+  .mp-pdp-{{ section.id }} .pdp__addon { margin-top: 14px; border: 1px solid #b9d8cb; background: #eef5f2; border-radius: 10px; padding: 12px 14px; }
+  .mp-pdp-{{ section.id }} .pdp__addon-h { font-size: 12px; font-weight: 700; color: #1f5a44; text-transform: uppercase; letter-spacing: .6px; display: flex; align-items: center; gap: 6px; margin-bottom: 10px; }
+  .mp-pdp-{{ section.id }} .pdp__addon-row { display: flex; align-items: center; gap: 12px; }
+  .mp-pdp-{{ section.id }} .pdp__addon-row + .pdp__addon-row { margin-top: 10px; padding-top: 10px; border-top: 1px solid #cfe3da; }
+  .mp-pdp-{{ section.id }} .pdp__addon-thumb { width: 52px; height: 52px; border-radius: 8px; background: #fff; flex: none; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+  .mp-pdp-{{ section.id }} .pdp__addon-thumb img { width: 100%; height: 100%; object-fit: contain; }
+  .mp-pdp-{{ section.id }} .pdp__addon-info { flex: 1; min-width: 0; }
+  .mp-pdp-{{ section.id }} .pdp__addon-name { font-size: 13px; font-weight: 600; color: #16323f; text-decoration: none; display: block; line-height: 1.2; }
+  .mp-pdp-{{ section.id }} .pdp__addon-name:hover { color: #16755a; }
+  .mp-pdp-{{ section.id }} .pdp__addon-price { font-size: 12.5px; color: #1f5a44; font-weight: 700; margin-top: 3px; }
+  .mp-pdp-{{ section.id }} .pdp__addon-btn { flex: none; background: #16755a; color: #fff; border: 0; border-radius: 7px; padding: 9px 15px; font-size: 12.5px; font-weight: 700; cursor: pointer; font-family: inherit; }
+  .mp-pdp-{{ section.id }} .pdp__addon-btn:hover { background: #125f49; }
+  .mp-pdp-{{ section.id }} .pdp__addon-btn.is-added { background: #2f8f5b; }
+  .mp-pdp-{{ section.id }} .pdp__addon-btn[disabled] { opacity: .65; cursor: default; }
+
+  /* post-add cross-sell modal */
+  .mp-pdp-{{ section.id }} .pdp__modal { position: fixed; inset: 0; z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 20px; }
+  .mp-pdp-{{ section.id }} .pdp__modal[hidden] { display: none; }
+  .mp-pdp-{{ section.id }} .pdp__modal-ov { position: absolute; inset: 0; background: rgba(16,32,40,.55); }
+  .mp-pdp-{{ section.id }} .pdp__modal-panel { position: relative; z-index: 1; background: #f4efe6; border-radius: 16px; max-width: 640px; width: 100%; max-height: 88vh; overflow: auto; box-shadow: 0 20px 60px rgba(0,0,0,.32); padding: 26px; }
+  .mp-pdp-{{ section.id }} .pdp__modal-close { position: absolute; top: 12px; right: 16px; background: none; border: 0; font-size: 26px; line-height: 1; color: #8a8278; cursor: pointer; }
+  .mp-pdp-{{ section.id }} .pdp__modal-badge { display: inline-flex; align-items: center; gap: 7px; background: #e3f1e9; color: #2f8f5b; font-size: 12.5px; font-weight: 700; padding: 5px 12px; border-radius: 20px; }
+  .mp-pdp-{{ section.id }} .pdp__modal-h { font-size: 25px; font-weight: 700; color: #16323f; margin: 13px 0 4px; }
+  .mp-pdp-{{ section.id }} .pdp__modal-sub { font-size: 13.5px; color: #6b7a82; margin-bottom: 18px; line-height: 1.5; }
+  .mp-pdp-{{ section.id }} .pdp__modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .mp-pdp-{{ section.id }} .pdp__modal-card { border: 1px solid #e2ddd1; background: #fff; border-radius: 12px; padding: 12px; display: flex; flex-direction: column; }
+  .mp-pdp-{{ section.id }} .pdp__modal-card .mc-media { height: 120px; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; }
+  .mp-pdp-{{ section.id }} .pdp__modal-card .mc-media img { max-width: 100%; max-height: 100%; object-fit: contain; }
+  .mp-pdp-{{ section.id }} .pdp__modal-tag { align-self: flex-start; font-size: 10px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; padding: 2px 7px; border-radius: 5px; margin-bottom: 8px; }
+  .mp-pdp-{{ section.id }} .pdp__modal-tag--exp { background: #fff3e8; color: #c2410c; }
+  .mp-pdp-{{ section.id }} .pdp__modal-tag--ins { background: #eef5f2; color: #16755a; }
+  .mp-pdp-{{ section.id }} .pdp__modal-name { font-size: 13.5px; font-weight: 600; color: #16323f; text-decoration: none; line-height: 1.25; }
+  .mp-pdp-{{ section.id }} .pdp__modal-name:hover { color: #c2410c; }
+  .mp-pdp-{{ section.id }} .pdp__modal-foot { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; padding-top: 10px; }
+  .mp-pdp-{{ section.id }} .pdp__modal-price { font-size: 16px; font-weight: 700; color: #16323f; }
+  .mp-pdp-{{ section.id }} .pdp__modal-add { background: #f2872f; color: #fff; border: 0; border-radius: 7px; padding: 8px 15px; font-size: 12.5px; font-weight: 700; cursor: pointer; font-family: inherit; }
+  .mp-pdp-{{ section.id }} .pdp__modal-add:hover { background: #e0761f; }
+  .mp-pdp-{{ section.id }} .pdp__modal-add.is-added { background: #2f8f5b; }
+  .mp-pdp-{{ section.id }} .pdp__modal-add[disabled] { opacity: .65; cursor: default; }
+  .mp-pdp-{{ section.id }} .pdp__modal-actions { display: flex; align-items: center; gap: 16px; margin-top: 22px; }
+  .mp-pdp-{{ section.id }} .pdp__modal-actions .go { flex: 1; background: #16323f; color: #fff; text-align: center; text-decoration: none; border-radius: 9px; padding: 13px; font-size: 14px; font-weight: 700; }
+  .mp-pdp-{{ section.id }} .pdp__modal-actions .dismiss { background: none; border: 0; color: #6b7a82; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; text-decoration: underline; white-space: nowrap; }
+  @media (max-width: 600px) { .mp-pdp-{{ section.id }} .pdp__modal-grid { grid-template-columns: 1fr; } }
+
   @media (max-width: 989px) {
     .mp-pdp-{{ section.id }} .pdp__top, .mp-pdp-{{ section.id }} .pdp__cols { flex-direction: column; }
     .mp-pdp-{{ section.id }} .pdp__gallery, .mp-pdp-{{ section.id }} .pdp__play, .mp-pdp-{{ section.id }} .pdp__info { width: 100%; }
@@ -326,6 +371,28 @@
         </div>
         <button type="button" class="pdp__buynow" data-add="checkout"{% unless product.available %} disabled{% endunless %}>{% if is_preorder %}Pre-order &amp; checkout{% else %}Buy it now{% endif %}</button>
 
+        {%- comment -%} 3D-printed storage inserts made for this game — quick-add straight to basket {%- endcomment -%}
+        {%- assign game_inserts = m.available_inserts.value -%}
+        {%- if product.type != 'Board Game Insert' and game_inserts != blank and game_inserts.size > 0 -%}
+          <div class="pdp__addon">
+            <div class="pdp__addon-h">&#128230; Storage insert{% if game_inserts.size > 1 %}s{% endif %} for this game</div>
+            {%- for ins in game_inserts limit: 2 -%}
+              {%- comment -%} On a physical game page, prefer the printed (shippable) variant; fall back to whatever's available (e.g. STL-only). {%- endcomment -%}
+              {%- assign ins_v = blank -%}
+              {%- for v in ins.variants -%}{%- if ins_v == blank and v.available and v.requires_shipping -%}{%- assign ins_v = v -%}{%- endif -%}{%- endfor -%}
+              {%- unless ins_v -%}{%- assign ins_v = ins.selected_or_first_available_variant -%}{%- endunless -%}
+              <div class="pdp__addon-row">
+                <a href="{{ ins.url }}" class="pdp__addon-thumb">{% if ins.featured_image %}<img src="{{ ins.featured_image | image_url: width: 120 }}" alt="{{ ins.title | escape }}" width="120" height="120" loading="lazy">{% endif %}</a>
+                <div class="pdp__addon-info">
+                  <a href="{{ ins.url }}" class="pdp__addon-name">{{ ins.title }}</a>
+                  <div class="pdp__addon-price">{{ ins_v.price | money }}{% if ins.variants.size > 1 %} · {{ ins_v.title }}{% endif %}</div>
+                </div>
+                {%- if ins_v -%}<button type="button" class="pdp__addon-btn" data-quick-add="{{ ins_v.id }}"{% unless ins.available %} disabled{% endunless %}>Add</button>{%- endif -%}
+              </div>
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+
         {%- if section.blocks.size > 0 -%}
           <div class="pdp__appblocks">
             {%- for block in section.blocks -%}
@@ -366,17 +433,11 @@
       {%- endif -%}
     {%- endif -%}
 
-    {%- comment -%} Board Game Insert -> the game(s) this insert is designed for {%- endcomment -%}
+    {%- comment -%} Board Game Insert (fallback template only) -> the game(s) this insert is designed for. The reverse "inserts available" link now lives as a quick-add card in the buy box + the post-add modal. {%- endcomment -%}
     {%- if product.type == 'Board Game Insert' -%}
       {%- assign insert_games = m.insert_for_game.value -%}
       {%- if insert_games != blank and insert_games.size > 0 -%}
         <div class="pdp__insert-banner">&#128230; <span><strong>Storage insert for</strong> {% for g in insert_games %}{%- unless forloop.first -%}{%- if forloop.last -%} &amp; {%- else -%}, {%- endif -%}{%- endunless -%}<a href="{{ g.url }}">{{ g.title }}</a>{% endfor %}</span></div>
-      {%- endif -%}
-    {%- else -%}
-      {%- comment -%} Reverse link on a board game: 3D-printed inserts available for it (maintained by scripts/sync-inserts.mjs) {%- endcomment -%}
-      {%- assign game_inserts = m.available_inserts.value -%}
-      {%- if game_inserts != blank and game_inserts.size > 0 -%}
-        <div class="pdp__insert-banner pdp__insert-banner--rev">&#128230; <span><strong>3D-printed storage inserts available for this game</strong> &mdash; {% for ins in game_inserts %}{%- unless forloop.first -%}, {% endunless -%}<a href="{{ ins.url }}">{{ ins.title }}</a>{% endfor %}</span></div>
       {%- endif -%}
     {%- endif -%}
 
@@ -675,6 +736,59 @@
     {%- endif -%}
 
   </div>
+
+  {%- comment -%} Post-add cross-sell modal: expansions + storage inserts for this game. Only rendered when at least one exists (otherwise Add to basket just goes to the cart). {%- endcomment -%}
+  {%- assign xp = product.metafields.custom.expansions.value -%}
+  {%- assign avins = product.metafields.custom.available_inserts.value -%}
+  {%- assign upsell_count = 0 -%}
+  {%- if product.type != 'Board Game Insert' -%}
+    {%- if xp != blank -%}{%- assign upsell_count = upsell_count | plus: xp.size -%}{%- endif -%}
+    {%- if avins != blank -%}{%- assign upsell_count = upsell_count | plus: avins.size -%}{%- endif -%}
+  {%- endif -%}
+  {%- if upsell_count > 0 -%}
+    <div class="pdp__modal" data-upsell-modal hidden role="dialog" aria-modal="true" aria-label="Added to basket">
+      <div class="pdp__modal-ov" data-modal-close></div>
+      <div class="pdp__modal-panel">
+        <button type="button" class="pdp__modal-close" data-modal-close aria-label="Close">&times;</button>
+        <span class="pdp__modal-badge">&#10003; Added to your basket</span>
+        <div class="pdp__modal-h">Complete your game</div>
+        <div class="pdp__modal-sub"><strong>{{ product.title }}</strong> is in your basket. Would you like to add{% if xp != blank and xp.size > 0 %} an expansion{% endif %}{% if xp != blank and xp.size > 0 and avins != blank and avins.size > 0 %} or{% endif %}{% if avins != blank and avins.size > 0 %} a 3D-printed storage insert{% endif %}?</div>
+        <div class="pdp__modal-grid">
+          {%- if xp != blank -%}{%- for rec in xp limit: 4 -%}
+            {%- assign rv = rec.selected_or_first_available_variant -%}
+            <div class="pdp__modal-card">
+              <span class="pdp__modal-tag pdp__modal-tag--exp">Expansion</span>
+              <a href="{{ rec.url }}" class="mc-media">{% if rec.featured_image %}<img src="{{ rec.featured_image | image_url: width: 300 }}" alt="{{ rec.title | escape }}" width="300" height="300" loading="lazy">{% endif %}</a>
+              <a href="{{ rec.url }}" class="pdp__modal-name">{{ rec.title }}</a>
+              <div class="pdp__modal-foot">
+                <span class="pdp__modal-price">{% if rec.price_varies %}from {% endif %}{{ rec.price_min | money }}</span>
+                {%- if rv -%}<button type="button" class="pdp__modal-add" data-quick-add="{{ rv.id }}"{% unless rec.available %} disabled{% endunless %}>Add</button>{%- endif -%}
+              </div>
+            </div>
+          {%- endfor -%}{%- endif -%}
+          {%- comment -%} storage inserts {%- endcomment -%}
+          {%- if avins != blank -%}{%- for rec in avins limit: 4 -%}
+            {%- assign rv = blank -%}
+            {%- for v in rec.variants -%}{%- if rv == blank and v.available and v.requires_shipping -%}{%- assign rv = v -%}{%- endif -%}{%- endfor -%}
+            {%- unless rv -%}{%- assign rv = rec.selected_or_first_available_variant -%}{%- endunless -%}
+            <div class="pdp__modal-card">
+              <span class="pdp__modal-tag pdp__modal-tag--ins">Storage insert</span>
+              <a href="{{ rec.url }}" class="mc-media">{% if rec.featured_image %}<img src="{{ rec.featured_image | image_url: width: 300 }}" alt="{{ rec.title | escape }}" width="300" height="300" loading="lazy">{% endif %}</a>
+              <a href="{{ rec.url }}" class="pdp__modal-name">{{ rec.title }}</a>
+              <div class="pdp__modal-foot">
+                <span class="pdp__modal-price">{{ rv.price | money }}{% if rec.variants.size > 1 %} · {{ rv.title }}{% endif %}</span>
+                {%- if rv -%}<button type="button" class="pdp__modal-add" data-quick-add="{{ rv.id }}"{% unless rec.available %} disabled{% endunless %}>Add</button>{%- endif -%}
+              </div>
+            </div>
+          {%- endfor -%}{%- endif -%}
+        </div>
+        <div class="pdp__modal-actions">
+          <a class="go" href="{{ routes.cart_url }}">Go to basket &#8594;</a>
+          <button type="button" class="dismiss" data-modal-close>No thanks, keep browsing</button>
+        </div>
+      </div>
+    </div>
+  {%- endif -%}
 </div>
 
 {%- comment -%} Structured data for search engines (Product + Breadcrumb) {%- endcomment -%}
@@ -854,19 +968,49 @@
       });
     });
 
-    // add to cart / buy now
+    // shared cart add
+    function cartAdd(id, quantity) {
+      return fetch('{{ routes.cart_add_url }}', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ items: [{ id: id, quantity: quantity || 1 }] })
+      }).then(function (r) { return r.json(); });
+    }
+
+    // cross-sell modal (rendered only when there are expansions/inserts)
+    var upsellModal = root.querySelector('[data-upsell-modal]');
+    function openModal() { if (upsellModal) { upsellModal.hidden = false; document.body.style.overflow = 'hidden'; } }
+    function closeModal() { if (upsellModal) { upsellModal.hidden = true; document.body.style.overflow = ''; } }
+    if (upsellModal) {
+      upsellModal.querySelectorAll('[data-modal-close]').forEach(function (el) { el.addEventListener('click', closeModal); });
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !upsellModal.hidden) closeModal(); });
+    }
+
+    // add to cart / buy now (main product)
     root.querySelectorAll('[data-add]').forEach(function (btn) {
       btn.addEventListener('click', function () {
         if (!variantId) return;
-        var dest = btn.getAttribute('data-add') === 'checkout' ? '/checkout' : '{{ routes.cart_url }}';
+        var checkout = btn.getAttribute('data-add') === 'checkout';
         btn.disabled = true;
-        fetch('{{ routes.cart_add_url }}', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-          body: JSON.stringify({ items: [{ id: variantId, quantity: parseInt(qty.value, 10) || 1 }] })
-        }).then(function (r) { return r.json(); }).then(function () {
-          window.location.href = dest;
+        cartAdd(variantId, parseInt(qty.value, 10) || 1).then(function () {
+          btn.disabled = false;
+          if (checkout) { window.location.href = '/checkout'; return; }
+          if (upsellModal) { openModal(); }
+          else { window.location.href = '{{ routes.cart_url }}'; }
         }).catch(function () { btn.disabled = false; });
+      });
+    });
+
+    // quick-add buttons: buy-box insert card + modal upsell cards
+    root.querySelectorAll('[data-quick-add]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var id = b.getAttribute('data-quick-add');
+        if (!id || b.classList.contains('is-added')) return;
+        var label = b.textContent;
+        b.disabled = true; b.textContent = 'Adding…';
+        cartAdd(id, 1).then(function () {
+          b.textContent = 'Added ✓'; b.classList.add('is-added'); b.disabled = false;
+        }).catch(function () { b.disabled = false; b.textContent = label; });
       });
     });
   })();
