@@ -512,30 +512,34 @@
         </div>
       </div>
 
+      {%- comment -%} How-to-play box only when there's a YouTube video; otherwise show just the external links (if any), or nothing at all {%- endcomment -%}
+      {%- assign has_howto = false -%}
+      {%- if m.youtube_id != blank -%}{%- assign has_howto = true -%}{%- endif -%}
+      {%- assign has_gamelinks = false -%}
+      {%- if m.bgg_url != blank or m.bga_url != blank -%}{%- assign has_gamelinks = true -%}{%- endif -%}
+      {%- if has_howto or has_gamelinks -%}
       <div class="pdp__play">
-        <h2>How to play</h2>
-
-        <div class="pdp__panel" data-panel="how">
-          {%- if m.youtube_id != blank -%}
+        {%- if has_howto -%}
+          <h2>How to play</h2>
+          <div class="pdp__panel" data-panel="how">
             <div class="pdp__embed">
               <iframe src="https://www.youtube-nocookie.com/embed/{{ m.youtube_id }}" title="{{ product.title | escape }} — how to play" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
             </div>
             <div class="pdp__vidttl">{{ product.title }} — How to Play</div>
             <div style="font-size:12px;color:#9fb4bd;margin-top:2px">Video tutorial · {% if m.video_url != blank %}<a href="{{ m.video_url }}" target="_blank" rel="noopener" style="color:#f2872f;text-decoration:none">more videos</a>{% else %}playthroughs &amp; reviews{% endif %}</div>
-          {%- else -%}
-            <a class="pdp__vid" href="{{ m.how_to_play_url | default: m.video_url }}" target="_blank" rel="noopener">
-              <div class="pdp__vidbox"><span class="bgpat"></span><span class="pdp__playbtn">&#9654;</span></div>
-              <div class="pdp__vidttl">{{ product.title }} — How to Play</div>
-              <div style="font-size:12px;color:#9fb4bd;margin-top:2px">Video tutorials &amp; playthroughs</div>
-            </a>
-          {%- endif -%}
-        </div>
+          </div>
+        {%- else -%}
+          <h2>Useful links</h2>
+        {%- endif -%}
 
-        <div class="pdp__ext">
+        {%- if has_gamelinks -%}
+        <div class="pdp__ext"{% unless has_howto %} style="border-top:0;margin-top:16px;padding-top:0"{% endunless %}>
           {%- if m.bgg_url != blank -%}<a href="{{ m.bgg_url }}" target="_blank" rel="noopener"><span style="font-size:15px">&#9733;</span><span>View on BGG</span></a>{%- endif -%}
           {%- if m.bga_url != blank -%}<a href="{{ m.bga_url }}" target="_blank" rel="noopener"><span style="font-size:15px">&#9824;</span><span>Play on BGA</span></a>{%- endif -%}
         </div>
+        {%- endif -%}
       </div>
+      {%- endif -%}
     </div>
 
     <!-- description + game information -->
@@ -968,13 +972,47 @@
       });
     });
 
-    // shared cart add
+    // shared cart add + live header refresh
+    var moneyFormat = {{ shop.money_format | json }};
+    function formatMoney(cents, format) {
+      function fmt(number, precision, thousands, decimal) {
+        precision = precision == null ? 2 : precision;
+        thousands = thousands || ','; decimal = decimal || '.';
+        if (isNaN(number) || number == null) return '0';
+        number = (number / 100).toFixed(precision);
+        var parts = number.split('.');
+        var whole = parts[0].replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1' + thousands);
+        return whole + (parts[1] ? decimal + parts[1] : '');
+      }
+      var m = (format || '').match(/\{\{\s*(\w+)\s*\}\}/);
+      if (!m) return format;
+      var value;
+      switch (m[1]) {
+        case 'amount_no_decimals': value = fmt(cents, 0); break;
+        case 'amount_with_comma_separator': value = fmt(cents, 2, '.', ','); break;
+        case 'amount_no_decimals_with_comma_separator': value = fmt(cents, 0, '.', ','); break;
+        case 'amount_with_apostrophe_separator': value = fmt(cents, 2, "'", '.'); break;
+        default: value = fmt(cents, 2);
+      }
+      return format.replace(/\{\{\s*\w+\s*\}\}/, value);
+    }
+    function refreshCartUI() {
+      return fetch('{{ routes.cart_url }}.js', { headers: { 'Accept': 'application/json' } })
+        .then(function (r) { return r.json(); })
+        .then(function (cart) {
+          document.querySelectorAll('[data-cart-summary]').forEach(function (el) {
+            el.innerHTML = cart.item_count + ' · ' + formatMoney(cart.total_price, moneyFormat);
+          });
+        }).catch(function () {});
+    }
     function cartAdd(id, quantity) {
       return fetch('{{ routes.cart_add_url }}', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         body: JSON.stringify({ items: [{ id: id, quantity: quantity || 1 }] })
-      }).then(function (r) { return r.json(); });
+      }).then(function (r) { return r.json(); }).then(function (res) {
+        return refreshCartUI().then(function () { return res; });
+      });
     }
 
     // cross-sell modal (rendered only when there are expansions/inserts)
