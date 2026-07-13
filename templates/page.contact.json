@@ -12,7 +12,7 @@
     "mp_contact": {
       "type": "mp-contact",
       "blocks": {
-        "ch1": { "type": "channel", "settings": { "icon": "✉️", "tint": "#fbeadb", "title": "Email us", "value": "hello@mpgames.io", "note": "Replies within 1 working day", "href": "mailto:hello@mpgames.io" } },
+        "ch1": { "type": "channel", "settings": { "icon": "✉️", "tint": "#fbeadb", "title": "Email us", "value": "hello [at] mpgames [dot] io", "note": "Replies within 1 working day" } },
         "ch2": { "type": "channel", "settings": { "icon": "📍", "tint": "#e7eef1", "title": "Based in", "value": "Stockport, UK", "note": "MPGames Ltd · Company No. 17064769" } },
         "h1": { "type": "hour", "settings": { "day": "Monday – Friday", "time": "9:00am – 5:00pm" } },
         "h2": { "type": "hour", "settings": { "day": "Saturday", "time": "10:00am – 2:00pm" } },
