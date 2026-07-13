@@ -363,16 +363,20 @@
           </div>
         {%- endif -%}
 
-        <div class="pdp__qlabel">Quantity</div>
-        <div class="pdp__qty">
-          <button type="button" data-q="-1" aria-label="Decrease quantity">&minus;</button>
-          <input type="number" id="pdp-qty-{{ section.id }}" value="1" min="1" inputmode="numeric">
-          <button type="button" data-q="1" aria-label="Increase quantity">+</button>
-        </div>
-
         {%- comment -%} Out of stock (and not a pre-order) -> swap buy buttons for a Klaviyo back-in-stock trigger. {%- endcomment -%}
         {%- assign show_notify = false -%}
         {%- unless is_preorder or product.available -%}{%- assign show_notify = true -%}{%- endunless -%}
+
+        {%- comment -%} Out of stock -> hide quantity; nothing to add to the basket. {%- endcomment -%}
+        <div data-qty-wrap{% if show_notify %} hidden{% endif %}>
+          <div class="pdp__qlabel">Quantity</div>
+          <div class="pdp__qty">
+            <button type="button" data-q="-1" aria-label="Decrease quantity">&minus;</button>
+            <input type="number" id="pdp-qty-{{ section.id }}" value="1" min="1" inputmode="numeric">
+            <button type="button" data-q="1" aria-label="Increase quantity">+</button>
+          </div>
+        </div>
+
         <div class="pdp__actions"{% if show_notify %} hidden{% endif %} data-buy-actions>
           <button type="button" class="pdp__add" data-add="cart"{% unless product.available %} disabled{% endunless %}>{% if is_preorder %}Pre-order now{% else %}Add to basket{% endif %}</button>
         </div>
@@ -924,6 +928,7 @@
     var addBtn = root.querySelector('.pdp__add');
     var buyBtn = root.querySelector('.pdp__buynow');
     var buyActions = root.querySelector('[data-buy-actions]');
+    var qtyWrap = root.querySelector('[data-qty-wrap]');
     var notifyEl = root.querySelector('[data-notify]');
     var notifyNote = root.querySelector('[data-notify-note]');
     var physNotice = root.querySelector('[data-physical-notice]');
@@ -946,6 +951,7 @@
     function toggleNotify(oos) {
       var showNotify = oos && !isPreorder;
       if (buyActions) buyActions.hidden = showNotify;
+      if (qtyWrap) qtyWrap.hidden = showNotify;
       if (buyBtn) buyBtn.hidden = showNotify;
       if (notifyEl) notifyEl.hidden = !showNotify;
       if (notifyNote) notifyNote.hidden = !showNotify;
