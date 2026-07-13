@@ -119,6 +119,10 @@
   .mp-pdp-{{ section.id }} .pdp__wish { width: 54px; border: 1px solid #cdc6ba; background: #fff; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #6b7a82; font-size: 17px; cursor: pointer; }
   .mp-pdp-{{ section.id }} .pdp__buynow { display: block; width: 100%; margin-top: 11px; background: #f2872f; color: #fff; border: 0; border-radius: 8px; padding: 15px; font-size: 16px; font-weight: 700; cursor: pointer; font-family: inherit; }
   .mp-pdp-{{ section.id }} .pdp__add[disabled], .mp-pdp-{{ section.id }} .pdp__buynow[disabled] { opacity: .5; cursor: not-allowed; }
+  .mp-pdp-{{ section.id }} .pdp__notify { display: block; width: 100%; margin-top: 16px; box-sizing: border-box; text-align: center; background: #16323f; color: #fff; border: 0; border-radius: 8px; padding: 15px; font-size: 16px; font-weight: 700; text-decoration: none; cursor: pointer; font-family: inherit; }
+  .mp-pdp-{{ section.id }} .pdp__notify:hover { background: #23485a; }
+  .mp-pdp-{{ section.id }} .pdp__actions[hidden], .mp-pdp-{{ section.id }} .pdp__buynow[hidden], .mp-pdp-{{ section.id }} .pdp__notify[hidden] { display: none; }
+  .mp-pdp-{{ section.id }} .pdp__notify-note { margin-top: 8px; font-size: 13px; color: #6b7a82; text-align: center; }
   .mp-pdp-{{ section.id }} .pdp__appblocks { margin-top: 12px; }
   .mp-pdp-{{ section.id }} .pdp__preorder { margin-top: 14px; border: 1px solid #f2c79a; background: #fff5ec; border-radius: 10px; padding: 12px 14px; }
   .mp-pdp-{{ section.id }} .pdp__preorder-h { font-weight: 700; color: #b4560f; font-size: 14px; display: flex; align-items: center; gap: 7px; }
@@ -366,10 +370,15 @@
           <button type="button" data-q="1" aria-label="Increase quantity">+</button>
         </div>
 
-        <div class="pdp__actions">
+        {%- comment -%} Out of stock (and not a pre-order) -> swap buy buttons for a Klaviyo back-in-stock trigger. {%- endcomment -%}
+        {%- assign show_notify = false -%}
+        {%- unless is_preorder or product.available -%}{%- assign show_notify = true -%}{%- endunless -%}
+        <div class="pdp__actions"{% if show_notify %} hidden{% endif %} data-buy-actions>
           <button type="button" class="pdp__add" data-add="cart"{% unless product.available %} disabled{% endunless %}>{% if is_preorder %}Pre-order now{% else %}Add to basket{% endif %}</button>
         </div>
-        <button type="button" class="pdp__buynow" data-add="checkout"{% unless product.available %} disabled{% endunless %}>{% if is_preorder %}Pre-order &amp; checkout{% else %}Buy it now{% endif %}</button>
+        <button type="button" class="pdp__buynow" data-add="checkout"{% if show_notify %} hidden{% endif %}{% unless product.available %} disabled{% endunless %}>{% if is_preorder %}Pre-order &amp; checkout{% else %}Buy it now{% endif %}</button>
+        <a class="klaviyo-bis-trigger pdp__notify" href="#" data-notify{% unless show_notify %} hidden{% endunless %}>Notify me when available</a>
+        <div class="pdp__notify-note" data-notify-note{% unless show_notify %} hidden{% endunless %}>We&rsquo;ll email you the moment it&rsquo;s back in stock.</div>
 
         {%- comment -%} 3D-printed storage inserts made for this game — quick-add straight to basket {%- endcomment -%}
         {%- assign game_inserts = m.available_inserts.value -%}
@@ -914,6 +923,9 @@
     var skuEl = root.querySelector('[data-sku]');
     var addBtn = root.querySelector('.pdp__add');
     var buyBtn = root.querySelector('.pdp__buynow');
+    var buyActions = root.querySelector('[data-buy-actions]');
+    var notifyEl = root.querySelector('[data-notify]');
+    var notifyNote = root.querySelector('[data-notify-note]');
     var physNotice = root.querySelector('[data-physical-notice]');
     var digiNotice = root.querySelector('[data-digital-notice]');
     var shipsNote = root.querySelector('[data-ships-note]');
@@ -930,11 +942,20 @@
         return v.options.length === sel.length && v.options.every(function (o, i) { return o === sel[i]; });
       })[0];
     }
+    // Swap the buy buttons for the Klaviyo back-in-stock trigger when a variant is out of stock.
+    function toggleNotify(oos) {
+      var showNotify = oos && !isPreorder;
+      if (buyActions) buyActions.hidden = showNotify;
+      if (buyBtn) buyBtn.hidden = showNotify;
+      if (notifyEl) notifyEl.hidden = !showNotify;
+      if (notifyNote) notifyNote.hidden = !showNotify;
+    }
     function updateForVariant(v) {
       if (!v) {
         variantId = null;
         if (addBtn) { addBtn.disabled = true; addBtn.textContent = 'Unavailable'; }
         if (buyBtn) buyBtn.disabled = true;
+        toggleNotify(false);
         return;
       }
       variantId = v.id;
@@ -951,6 +972,7 @@
       }
       if (addBtn) { addBtn.disabled = !v.available; addBtn.textContent = !v.available ? 'Sold out' : (isPreorder ? 'Pre-order now' : 'Add to basket'); }
       if (buyBtn) buyBtn.disabled = !v.available;
+      toggleNotify(!v.available);
       var digital = v.requires_shipping === false;
       if (physNotice) physNotice.hidden = digital;
       if (digiNotice) digiNotice.hidden = !digital;
