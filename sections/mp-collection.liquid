@@ -5,7 +5,7 @@
 {%- endcomment -%}
 
 {%- style -%}
-  .mp-cl-{{ section.id }} { background: #f4efe6; font-family: 'Barlow', ui-sans-serif, system-ui, sans-serif; color: #16323f; }
+  .mp-cl-{{ section.id }} { background: #f4efe6; font-family: 'Barlow', ui-sans-serif, system-ui, sans-serif; color: #16323f; overflow-x: clip; }
   .mp-cl-{{ section.id }} .cl__wrap { max-width: 1240px; margin: 0 auto; padding: 0 28px; }
   .mp-cl-{{ section.id }} .cl__crumb { padding: 15px 0 0; font-size: 12px; color: #9b948a; }
   .mp-cl-{{ section.id }} .cl__crumb a { color: inherit; text-decoration: none; }
@@ -44,6 +44,7 @@
 
   .mp-cl-{{ section.id }} .cl__body { display: flex; gap: 24px; padding: 6px 0 30px; align-items: flex-start; }
   .mp-cl-{{ section.id }} .cl__side { width: 236px; flex: none; }
+  .mp-cl-{{ section.id }} .cl__ftoggle { display: none; }
   .mp-cl-{{ section.id }} .cl__panel { background: #fff; border: 1px solid #e7ddcb; border-radius: 13px; overflow: hidden; box-shadow: 0 1px 2px rgba(20,40,50,.04); }
   .mp-cl-{{ section.id }} .cl__phead { display: flex; justify-content: space-between; align-items: center; padding: 15px 17px; background: #16323f; }
   .mp-cl-{{ section.id }} .cl__phead span:first-child { font-size: 15px; font-weight: 700; color: #fff; }
@@ -96,6 +97,18 @@
     .mp-cl-{{ section.id }} .cl__grid { grid-template-columns: repeat(2,1fr); }
     .mp-cl-{{ section.id }} .cl__hero { flex-direction: column; align-items: flex-start; }
     .mp-cl-{{ section.id }} .cl__htags { justify-content: flex-start; max-width: none; }
+    /* Collapse the filter panel behind a toggle on mobile */
+    .mp-cl-{{ section.id }} .cl__ftoggle {
+      display: flex; align-items: center; justify-content: space-between; gap: 10px;
+      width: 100%; box-sizing: border-box; background: #16323f; color: #fff; border: 0;
+      border-radius: 10px; padding: 13px 16px; font: 700 15px/1 'Barlow Semi Condensed', sans-serif;
+      cursor: pointer; margin-bottom: 12px;
+    }
+    .mp-cl-{{ section.id }} .cl__ftoggle .cl__ftcount { background: #f2872f; color: #fff; font-size: 12px; border-radius: 12px; padding: 2px 8px; margin-left: auto; }
+    .mp-cl-{{ section.id }} .cl__ftoggle .cl__ftchev { transition: transform .2s; }
+    .mp-cl-{{ section.id }} .cl__side.is-open .cl__ftoggle .cl__ftchev { transform: rotate(180deg); }
+    .mp-cl-{{ section.id }} .cl__side .cl__panel { display: none; }
+    .mp-cl-{{ section.id }} .cl__side.is-open .cl__panel { display: block; }
   }
   .mp-cl-{{ section.id }} .cl__about { max-width: 880px; margin: 20px auto 0; padding: 34px 28px 8px; border-top: 1px solid #e7ddcb; }
   .mp-cl-{{ section.id }} .cl__abouth { font-size: 22px; font-weight: 700; color: #16323f; margin: 0 0 12px; }
@@ -176,7 +189,17 @@
 
       <div class="cl__body">
         <!-- filters -->
-        <aside class="cl__side">
+        <aside class="cl__side" data-filter-side>
+          {%- assign active_count = 0 -%}
+          {%- for f in collection.filters -%}
+            {%- assign active_count = active_count | plus: f.active_values.size -%}
+            {%- if f.type == 'price_range' and f.min_value.value or f.max_value.value -%}{%- assign active_count = active_count | plus: 1 -%}{%- endif -%}
+          {%- endfor -%}
+          <button type="button" class="cl__ftoggle mp-cond" data-filter-toggle aria-expanded="false">
+            <span>Filter</span>
+            {%- if active_count > 0 -%}<span class="cl__ftcount">{{ active_count }}</span>{%- endif -%}
+            <span class="cl__ftchev" aria-hidden="true">&#9662;</span>
+          </button>
           <div class="cl__panel">
             <div class="cl__phead">
               <span class="mp-cond">Filter</span>
@@ -343,6 +366,19 @@
     sync();
     window.addEventListener('resize', sync);
     if (document.fonts && document.fonts.ready) { document.fonts.ready.then(sync); }
+  })();
+
+  (function () {
+    // Mobile filter collapse: the panel is hidden by CSS on ≤989px until opened.
+    var root = document.querySelector('.mp-cl-{{ section.id }}');
+    if (!root) return;
+    var side = root.querySelector('[data-filter-side]');
+    var toggle = root.querySelector('[data-filter-toggle]');
+    if (!side || !toggle) return;
+    toggle.addEventListener('click', function () {
+      var open = side.classList.toggle('is-open');
+      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
   })();
 </script>
 

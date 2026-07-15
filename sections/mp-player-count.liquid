@@ -11,13 +11,17 @@
     background: #fbf9f4; text-decoration: none;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
   }
-  .mp-pc-{{ section.id }} .mp-pc__pips { color: #f2872f; font-size: 15px; letter-spacing: 2px; line-height: 1; margin-bottom: 8px; min-height: 16px; white-space: nowrap; }
+  .mp-pc-{{ section.id }} .mp-pc__pips { color: #f2872f; font-size: 15px; letter-spacing: 2px; line-height: 1; margin-bottom: 8px; min-height: 16px; white-space: nowrap; max-width: 100%; overflow: hidden; }
   .mp-pc-{{ section.id }} .mp-pc__n { font-size: 22px; font-weight: 700; color: #16323f; }
   .mp-pc-{{ section.id }} .mp-pc__label { font-size: 11.5px; color: #8a8278; margin-top: 2px; }
   @media (max-width: 749px) {
     .mp-pc-{{ section.id }} .mp-pc__grid { grid-template-columns: repeat(3,1fr); }
     .mp-pc-{{ section.id }} .mp-pc__pad { padding: 18px 16px 6px; }
     .mp-pc-{{ section.id }} .mp-pc__pips { letter-spacing: 1px; font-size: 13px; }
+    .mp-pc-{{ section.id }} .mp-pc__tile { padding: 14px 6px; }
+  }
+  @media (max-width: 430px) {
+    .mp-pc-{{ section.id }} .mp-pc__grid { grid-template-columns: repeat(2,1fr); }
   }
 {%- endstyle -%}
 

@@ -7,7 +7,7 @@
 {%- endcomment -%}
 
 {%- style -%}
-  .mp-se-{{ section.id }} { background: #f4efe6; font-family: 'Barlow', ui-sans-serif, system-ui, sans-serif; color: #16323f; }
+  .mp-se-{{ section.id }} { background: #f4efe6; font-family: 'Barlow', ui-sans-serif, system-ui, sans-serif; color: #16323f; overflow-x: clip; }
   .mp-se-{{ section.id }} .se__wrap { max-width: 1240px; margin: 0 auto; padding: 0 28px; }
 
   .mp-se-{{ section.id }} .se__form { padding: 22px 0 0; }
@@ -30,6 +30,7 @@
 
   .mp-se-{{ section.id }} .se__body { display: flex; gap: 24px; padding: 22px 0 30px; align-items: flex-start; }
   .mp-se-{{ section.id }} .se__side { width: 230px; flex: none; }
+  .mp-se-{{ section.id }} .se__ftoggle { display: none; }
   .mp-se-{{ section.id }} .se__panel { background: #fff; border: 1px solid #e7ddcb; border-radius: 13px; overflow: hidden; box-shadow: 0 1px 2px rgba(20,40,50,.04); }
   .mp-se-{{ section.id }} .se__phead { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; background: #16323f; }
   .mp-se-{{ section.id }} .se__phead span:first-child { font-size: 15px; font-weight: 700; color: #fff; }
@@ -85,6 +86,18 @@
     .mp-se-{{ section.id }} .se__body { flex-direction: column; }
     .mp-se-{{ section.id }} .se__side { width: 100%; }
     .mp-se-{{ section.id }} .se__grid { grid-template-columns: repeat(2,1fr); }
+    /* Collapse the filter panel behind a toggle on mobile */
+    .mp-se-{{ section.id }} .se__ftoggle {
+      display: flex; align-items: center; justify-content: space-between; gap: 10px;
+      width: 100%; box-sizing: border-box; background: #16323f; color: #fff; border: 0;
+      border-radius: 10px; padding: 13px 16px; font: 700 15px/1 'Barlow Semi Condensed', sans-serif;
+      cursor: pointer; margin-bottom: 12px;
+    }
+    .mp-se-{{ section.id }} .se__ftoggle .se__ftcount { background: #f2872f; color: #fff; font-size: 12px; border-radius: 12px; padding: 2px 8px; }
+    .mp-se-{{ section.id }} .se__ftoggle .se__ftchev { transition: transform .2s; }
+    .mp-se-{{ section.id }} .se__side.is-open .se__ftoggle .se__ftchev { transform: rotate(180deg); }
+    .mp-se-{{ section.id }} .se__side .se__panel { display: none; }
+    .mp-se-{{ section.id }} .se__side.is-open .se__panel { display: block; }
   }
   @media (max-width: 749px) {
     .mp-se-{{ section.id }} .se__wrap { padding: 0 16px; }
@@ -124,7 +137,17 @@
         <div class="se__body">
 
           {%- comment -%} filter sidebar {%- endcomment -%}
-          <aside class="se__side">
+          <aside class="se__side" data-filter-side>
+            {%- assign active_count = 0 -%}
+            {%- for f in search.filters -%}
+              {%- assign active_count = active_count | plus: f.active_values.size -%}
+              {%- if f.type == 'price_range' and f.min_value.value or f.max_value.value -%}{%- assign active_count = active_count | plus: 1 -%}{%- endif -%}
+            {%- endfor -%}
+            <button type="button" class="se__ftoggle mp-cond" data-filter-toggle aria-expanded="false">
+              <span>Refine results</span>
+              {%- if active_count > 0 -%}<span class="se__ftcount">{{ active_count }}</span>{%- endif -%}
+              <span class="se__ftchev" aria-hidden="true">&#9662;</span>
+            </button>
             <div class="se__panel">
               <div class="se__phead">
                 <span class="mp-cond">Refine results</span>
@@ -304,6 +327,21 @@
 
   </div>
 </section>
+
+<script>
+  (function () {
+    // Mobile filter collapse: the panel is hidden by CSS on ≤989px until opened.
+    var root = document.querySelector('.mp-se-{{ section.id }}');
+    if (!root) return;
+    var side = root.querySelector('[data-filter-side]');
+    var toggle = root.querySelector('[data-filter-toggle]');
+    if (!side || !toggle) return;
+    toggle.addEventListener('click', function () {
+      var open = side.classList.toggle('is-open');
+      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+  })();
+</script>
 
 {% schema %}
 {

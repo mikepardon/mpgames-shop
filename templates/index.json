@@ -317,8 +317,8 @@
         "collection": "all-games",
         "count": 12,
         "logo_handles": "stonemaier-games,roxley-games,z-man-games,cephalofair-games,stronghold-games,capstone-games,greater-than-games,plan-b-games,catan-studio,days-of-wonder,flatout-games,starling-games,repos-production,space-cowboys,leder-games,dire-wolf,czech-games-edition,kosmos,cocktail-games,delicious-games,burnt-island-games",
-        "link_label": "All brands",
-        "link_url": "/collections/all-games"
+        "link_label": "All publishers",
+        "link_url": "/pages/publishers"
       }
     },
     "mp_designers": {
@@ -386,7 +386,7 @@
       "settings": {
         "title": "Shop by designer",
         "link_label": "All designers",
-        "link_url": "/collections"
+        "link_url": "/pages/designers"
       }
     },
     "mp_editorial": {

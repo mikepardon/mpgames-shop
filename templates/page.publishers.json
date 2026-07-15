@@ -1,0 +1,13 @@
+{
+  "sections": {
+    "main": {
+      "type": "mp-creator-index",
+      "settings": {
+        "kind": "publisher",
+        "source": "all-games",
+        "show_counts": true
+      }
+    }
+  },
+  "order": ["main"]
+}

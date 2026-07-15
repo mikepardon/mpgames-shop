@@ -102,7 +102,8 @@
       {%- if paginate.current_page == 1 and featured -%}
         {%- assign fwords = featured.content | strip_html | split: ' ' | size -%}
         {%- assign fread = fwords | divided_by: 200 | plus: 1 -%}
-        {%- assign fparts = featured.author | split: ' ' -%}
+        {%- assign fauthor = section.settings.author_name | default: featured.author -%}
+        {%- assign fparts = fauthor | split: ' ' -%}
         <a class="bl__feat" href="{{ featured.url }}">
           <div class="bl__featimg"{% if featured.image %} style="background-image:url('{{ featured.image | image_url: width: 1200 }}')"{% endif %}>
             <span class="bl__featlabel mp-cond">FEATURED</span>
@@ -113,7 +114,7 @@
             <div class="bl__featex">{{ featured.excerpt_or_content | strip_html | truncatewords: 32 }}</div>
             <div class="bl__by">
               <span class="bl__av">{{ fparts.first | slice: 0 }}{{ fparts.last | slice: 0 }}</span>
-              <div class="bl__byline"><b>{{ featured.author }}</b><div>{{ fread }} min read · {{ featured.published_at | date: '%-d %b %Y' }}</div></div>
+              <div class="bl__byline"><b>{{ fauthor }}</b><div>{{ fread }} min read · {{ featured.published_at | date: '%-d %b %Y' }}</div></div>
               <span class="bl__read mp-cond">Read article &#8594;</span>
             </div>
           </div>
@@ -130,7 +131,8 @@
                 {%- liquid
                   assign awords = article.content | strip_html | split: ' ' | size
                   assign aread = awords | divided_by: 200 | plus: 1
-                  assign aparts = article.author | split: ' '
+                  assign aauthor = section.settings.author_name | default: article.author
+                  assign aparts = aauthor | split: ' '
                 -%}
                 <a class="bl__card" href="{{ article.url }}">
                   <div class="bl__cimg"{% if article.image %} style="background-image:url('{{ article.image | image_url: width: 600 }}')"{% endif %}>
@@ -141,7 +143,7 @@
                     <div class="bl__cex">{{ article.excerpt_or_content | strip_html | truncatewords: 20 }}</div>
                     <div class="bl__cmeta">
                       <span class="bl__cav">{{ aparts.first | slice: 0 }}{{ aparts.last | slice: 0 }}</span>
-                      {{ article.author }} · {{ aread }} min · {{ article.published_at | date: '%-d %b' }}
+                      {{ aauthor }} · {{ aread }} min · {{ article.published_at | date: '%-d %b' }}
                     </div>
                   </div>
                 </a>
@@ -207,6 +209,7 @@
   "name": "MP Blog",
   "settings": [
     { "type": "range", "id": "posts_per_page", "min": 6, "max": 15, "step": 3, "label": "Posts per page", "default": 9 },
+    { "type": "text", "id": "author_name", "label": "Author name", "info": "Overrides bylines across the blog. Leave blank to use each article's own author.", "default": "Michael Pardon" },
     { "type": "text", "id": "kicker", "label": "Kicker", "default": "THE MPGAMES BLOG" },
     { "type": "text", "id": "heading", "label": "Heading", "default": "Guides, reviews & tabletop talk" },
     { "type": "textarea", "id": "subtitle", "label": "Subtitle", "default": "Buying guides, deep-dive reviews and game-night inspiration from the MPGames team and the wider hobby." },

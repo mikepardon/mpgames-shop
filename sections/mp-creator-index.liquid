@@ -1,0 +1,246 @@
+{%- comment -%}
+  MPGames creator index — a searchable, alphabetical A–Z index of every designer,
+  artist, publisher or mechanic in the catalogue. One section, four modes (set
+  "Index type"). Names are read live from product data so the page stays in sync:
+    - designer / artist : from custom.designer / custom.artist metafields
+    - mechanic          : from the custom.mechanics list metafield
+    - publisher         : from product Vendor
+  Each entry links to its existing collection ( /collections/<prefix>-<handle> ),
+  matching the PDP link convention documented in docs/creator-collections.md.
+{%- endcomment -%}
+
+{%- liquid
+  assign kind = section.settings.kind
+
+  # Per-mode config: URL prefix + singular/plural labels.
+  case kind
+    when 'artist'
+      assign prefix = 'artist'
+      assign field = 'artist'
+      assign one = 'artist'
+      assign many = 'artists'
+    when 'publisher'
+      assign prefix = 'publisher'
+      assign one = 'publisher'
+      assign many = 'publishers'
+    when 'mechanic'
+      assign prefix = 'mechanic'
+      assign field = 'mechanics'
+      assign one = 'mechanic'
+      assign many = 'mechanics'
+    else
+      assign kind = 'designer'
+      assign prefix = 'designer'
+      assign field = 'designer'
+      assign one = 'designer'
+      assign many = 'designers'
+  endcase
+
+  assign source = section.settings.source
+  if source == blank
+    assign source = collections['all-games']
+  endif
+  assign products = source.products
+
+  # Collect names into a delimited string, then de-dupe + sort case-insensitively.
+  assign names_raw = ''
+  for p in products
+    if kind == 'publisher'
+      if p.vendor != blank
+        assign names_raw = names_raw | append: p.vendor | append: '~~'
+      endif
+    elsif kind == 'mechanic'
+      assign mechs = p.metafields.custom.mechanics.value
+      for mm in mechs
+        assign mm2 = mm | strip
+        if mm2 != blank
+          assign names_raw = names_raw | append: mm2 | append: '~~'
+        endif
+      endfor
+    else
+      assign raw = p.metafields.custom[field].value
+      if raw != blank
+        assign parts = raw | replace: ';', ',' | split: ','
+        for nm in parts
+          assign nm2 = nm | strip
+          if nm2 != blank
+            assign names_raw = names_raw | append: nm2 | append: '~~'
+          endif
+        endfor
+      endif
+    endif
+  endfor
+  assign names = names_raw | split: '~~' | uniq | sort_natural
+
+  assign heading = section.settings.heading
+  if heading == blank
+    assign heading = 'All ' | append: many
+  endif
+
+  # Which first-letters are present (for the A–Z jump bar). Non-letters bucket to '#'.
+  assign alpha = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+  assign letters_present = ''
+  for name in names
+    assign L = name | slice: 0 | upcase
+    unless alpha contains L
+      assign L = '#'
+    endunless
+    unless letters_present contains L
+      assign letters_present = letters_present | append: L
+    endunless
+  endfor
+  assign az_list = letters_present | split: ''
+-%}
+
+{%- style -%}
+  .mp-cx-{{ section.id }} { background: #f4efe6; font-family: 'Barlow', ui-sans-serif, system-ui, sans-serif; color: #16323f; overflow-x: clip; padding-bottom: 48px; }
+  .mp-cx-{{ section.id }} .cx__wrap { max-width: 1100px; margin: 0 auto; padding: 0 28px; }
+  .mp-cx-{{ section.id }} .cx__crumb { padding: 15px 0 0; font-size: 12px; color: #9b948a; }
+  .mp-cx-{{ section.id }} .cx__crumb a { color: inherit; text-decoration: none; }
+  .mp-cx-{{ section.id }} .cx__crumb .sep { color: #cfc9be; margin: 0 5px; }
+  .mp-cx-{{ section.id }} .cx__mast { padding: 22px 0 6px; }
+  .mp-cx-{{ section.id }} .cx__h1 { font-size: 36px; font-weight: 700; }
+  .mp-cx-{{ section.id }} .cx__sub { font-size: 14.5px; color: #8a8278; margin-top: 6px; max-width: 640px; }
+
+  .mp-cx-{{ section.id }} .cx__search { position: relative; margin: 18px 0 6px; max-width: 460px; }
+  .mp-cx-{{ section.id }} .cx__search input { width: 100%; box-sizing: border-box; background: #fff; border: 2px solid #e2ddd1; border-radius: 9px; padding: 12px 14px 12px 40px; font-size: 14px; color: #16323f; font-family: inherit; outline: none; }
+  .mp-cx-{{ section.id }} .cx__search input:focus { border-color: #f2872f; }
+  .mp-cx-{{ section.id }} .cx__search .cx__mag { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #b6afa4; font-size: 15px; }
+
+  .mp-cx-{{ section.id }} .cx__az { display: flex; flex-wrap: wrap; gap: 5px; margin: 14px 0 4px; position: sticky; top: 0; background: #f4efe6; padding: 8px 0; z-index: 3; }
+  .mp-cx-{{ section.id }} .cx__az a { font-size: 12.5px; font-weight: 700; color: #16323f; text-decoration: none; border: 1px solid #e2ddd1; background: #fff; border-radius: 6px; padding: 5px 9px; line-height: 1; }
+  .mp-cx-{{ section.id }} .cx__az a:hover { border-color: #f2872f; color: #c2410c; }
+
+  .mp-cx-{{ section.id }} .cx__grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
+  .mp-cx-{{ section.id }} .cx__letter { grid-column: 1 / -1; font-size: 15px; font-weight: 700; color: #f2872f; letter-spacing: .5px; margin: 14px 0 0; padding-bottom: 6px; border-bottom: 1px solid #e7ddcb; scroll-margin-top: 58px; }
+  .mp-cx-{{ section.id }} .cx__item { display: flex; align-items: center; gap: 11px; border: 1px solid #e7e0d4; border-radius: 10px; background: #fff; padding: 11px 14px; text-decoration: none; }
+  .mp-cx-{{ section.id }} .cx__item:hover { border-color: #cdc6ba; box-shadow: 0 1px 3px rgba(20,40,50,.06); }
+  .mp-cx-{{ section.id }} .cx__av { width: 34px; height: 34px; flex: none; border-radius: 50%; background: #16323f; color: #f2872f; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; font-family: 'Barlow Semi Condensed', sans-serif; }
+  .mp-cx-{{ section.id }} .cx__name { font-size: 14px; font-weight: 600; color: #16323f; line-height: 1.2; min-width: 0; }
+  .mp-cx-{{ section.id }} .cx__count { margin-left: auto; font-size: 11.5px; color: #9b948a; flex: none; }
+  .mp-cx-{{ section.id }} .cx__empty { display: none; background: #fff; border: 1px solid #e7ddcb; border-radius: 12px; padding: 34px; text-align: center; color: #6b7a82; margin-top: 14px; }
+
+  @media (max-width: 899px) { .mp-cx-{{ section.id }} .cx__grid { grid-template-columns: repeat(2,1fr); } }
+  @media (max-width: 749px) { .mp-cx-{{ section.id }} .cx__wrap { padding: 0 16px; } .mp-cx-{{ section.id }} .cx__h1 { font-size: 28px; } }
+  @media (max-width: 520px) { .mp-cx-{{ section.id }} .cx__grid { grid-template-columns: 1fr; } }
+{%- endstyle -%}
+
+<section class="mp-cx-{{ section.id }}" data-creator-index>
+  <div class="cx__wrap">
+    <div class="cx__crumb"><a href="{{ routes.root_url }}">Home</a><span class="sep">/</span><span style="color:#6b7a82">{{ heading }}</span></div>
+
+    <div class="cx__mast">
+      <h1 class="cx__h1 mp-cond">{{ heading }}</h1>
+      <div class="cx__sub">{% if section.settings.subtitle != blank %}{{ section.settings.subtitle }}{% else %}Browse every {{ one }} in our catalogue, A–Z. Tap a name to see all their games.{% endif %}</div>
+    </div>
+
+    {%- if names.size > 0 -%}
+      <div class="cx__search">
+        <span class="cx__mag" aria-hidden="true">&#128269;</span>
+        <input type="search" data-cx-search placeholder="Search {{ many }}…" aria-label="Search {{ many }}" autocomplete="off">
+      </div>
+
+      <nav class="cx__az" data-cx-az aria-label="Jump to letter">
+        {%- for L in az_list -%}
+          <a href="#{{ prefix }}-l-{{ L | replace: '#', 'sym' }}-{{ section.id }}">{{ L }}</a>
+        {%- endfor -%}
+      </nav>
+
+      <div class="cx__grid">
+        {%- assign current_letter = '' -%}
+        {%- for name in names -%}
+          {%- assign L = name | slice: 0 | upcase -%}
+          {%- unless alpha contains L -%}{%- assign L = '#' -%}{%- endunless -%}
+          {%- if L != current_letter -%}
+            <div class="cx__letter" id="{{ prefix }}-l-{{ L | replace: '#', 'sym' }}-{{ section.id }}" data-cx-letter>{{ L }}</div>
+            {%- assign current_letter = L -%}
+          {%- endif -%}
+          {%- assign nhandle = name | handle -%}
+          {%- assign words = name | split: ' ' -%}
+          {%- assign initials = words[0] | slice: 0 -%}
+          {%- if words.size > 1 -%}{%- assign last_initial = words.last | slice: 0 -%}{%- assign initials = initials | append: last_initial -%}{%- endif -%}
+          {%- assign col = collections[prefix | append: '-' | append: nhandle] -%}
+          <a class="cx__item" data-cx-item data-name="{{ name | downcase | escape }}" href="/collections/{{ prefix }}-{{ nhandle }}">
+            <span class="cx__av">{{ initials | upcase }}</span>
+            <span class="cx__name">{{ name }}</span>
+            {%- if section.settings.show_counts and col.all_products_count > 0 -%}<span class="cx__count">{{ col.all_products_count }}</span>{%- endif -%}
+          </a>
+        {%- endfor -%}
+      </div>
+
+      <div class="cx__empty" data-cx-empty>No {{ many }} match &ldquo;<span data-cx-empty-q></span>&rdquo;.</div>
+    {%- else -%}
+      <div class="cx__empty" style="display:block">
+        {%- if request.design_mode -%}
+          No {{ many }} found yet. This index reads {% if kind == 'publisher' %}product vendors{% else %}the <code>custom.{{ field }}</code> metafield{% endif %} from the source collection ({{ source.title | default: 'all-games' }}).
+        {%- else -%}
+          Nothing to show here yet — check back soon.
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+<script>
+  (function () {
+    var root = document.querySelector('.mp-cx-{{ section.id }}');
+    if (!root) return;
+    var search = root.querySelector('[data-cx-search]');
+    var items = Array.prototype.slice.call(root.querySelectorAll('[data-cx-item]'));
+    var letters = Array.prototype.slice.call(root.querySelectorAll('[data-cx-letter]'));
+    var empty = root.querySelector('[data-cx-empty]');
+    var emptyQ = root.querySelector('[data-cx-empty-q]');
+    if (!search) return;
+
+    function apply() {
+      var q = search.value.trim().toLowerCase();
+      var shown = 0;
+      items.forEach(function (it) {
+        var match = !q || it.getAttribute('data-name').indexOf(q) >= 0;
+        it.style.display = match ? '' : 'none';
+        if (match) shown++;
+      });
+      // Hide a letter heading when none of the items under it (up to the next
+      // heading) are visible.
+      letters.forEach(function (h) {
+        var any = false;
+        var el = h.nextElementSibling;
+        while (el && !el.hasAttribute('data-cx-letter')) {
+          if (el.hasAttribute('data-cx-item') && el.style.display !== 'none') { any = true; break; }
+          el = el.nextElementSibling;
+        }
+        h.style.display = any ? '' : 'none';
+      });
+      if (empty) {
+        empty.style.display = (shown === 0 && q) ? 'block' : 'none';
+        if (emptyQ) emptyQ.textContent = search.value;
+      }
+    }
+    search.addEventListener('input', apply);
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "MP Creator Index",
+  "settings": [
+    {
+      "type": "select", "id": "kind", "label": "Index type", "default": "designer",
+      "options": [
+        { "value": "designer", "label": "Designers" },
+        { "value": "artist", "label": "Artists" },
+        { "value": "publisher", "label": "Publishers" },
+        { "value": "mechanic", "label": "Mechanics" }
+      ]
+    },
+    { "type": "collection", "id": "source", "label": "Source collection", "info": "Names are read from these products. Defaults to the all-games collection." },
+    { "type": "text", "id": "heading", "label": "Heading", "info": "Defaults to “All designers” etc." },
+    { "type": "textarea", "id": "subtitle", "label": "Subtitle" },
+    { "type": "checkbox", "id": "show_counts", "label": "Show game counts", "default": true }
+  ],
+  "enabled_on": { "templates": ["page"] },
+  "presets": [
+    { "name": "MP Creator Index" }
+  ]
+}
+{% endschema %}

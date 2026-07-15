@@ -6,7 +6,10 @@
 {%- liquid
   assign words = article.content | strip_html | split: ' ' | size
   assign read = words | divided_by: 200 | plus: 1
-  assign parts = article.author | split: ' '
+  # Byline: prefer a configured display name (default "Michael Pardon") over the raw
+  # Shopify author field, which shows the API app name for posts created via the API.
+  assign author = section.settings.author_name | default: article.author
+  assign parts = author | split: ' '
   assign guide = article.metafields.custom.guide_products.value
 
   # Build a table of contents from <h2> headings and inject anchor ids.
@@ -130,7 +133,7 @@
       <div class="ar__bio">
         <span class="ar__biav">{{ parts.first | slice: 0 }}{{ parts.last | slice: 0 }}</span>
         <div>
-          <div class="ar__bin mp-cond">{{ article.author }}</div>
+          <div class="ar__bin mp-cond">{{ author }}</div>
           <div class="ar__bir">{{ section.settings.author_role }}</div>
           <div class="ar__bib">{{ section.settings.author_bio }}</div>
         </div>
@@ -189,7 +192,7 @@
             </div>
             <div class="ar__kbody">
               <div class="ar__kt mp-cond">{{ r.title }}</div>
-              <div class="ar__km">{{ r.author }} · {{ rread }} min · {{ r.published_at | date: '%-d %b' }}</div>
+              <div class="ar__km">{{ section.settings.author_name | default: r.author }} · {{ rread }} min · {{ r.published_at | date: '%-d %b' }}</div>
             </div>
           </a>
         {%- endfor -%}
@@ -215,6 +218,7 @@
 {
   "name": "MP Article",
   "settings": [
+    { "type": "text", "id": "author_name", "label": "Author name", "info": "Overrides the byline. Leave blank to use the article's own author.", "default": "Michael Pardon" },
     { "type": "text", "id": "author_role", "label": "Author role", "default": "MPGames Editorial" },
     { "type": "textarea", "id": "author_bio", "label": "Author bio", "default": "The MPGames editorial team reviews and ranks tabletop games — and is always one more game night away from a new favourite." }
   ],

@@ -1,11 +1,11 @@
 {%- comment -%} MPGames About — imported from Claude Design "MPGames About". {%- endcomment -%}
 {%- style -%}
   .mp-ab-{{ section.id }} { font-family: 'Barlow', ui-sans-serif, system-ui, sans-serif; color: #16323f; padding-bottom: 52px; }
-  .mp-ab-{{ section.id }} .ab__hero { background: linear-gradient(115deg,#16323f 0%,#1d4252 60%,#2c5466 100%); padding: 48px 28px 52px; text-align: center; background-size: cover; background-position: center; }
+  .mp-ab-{{ section.id }} .ab__hero { background: linear-gradient(115deg,#16323f 0%,#1d4252 60%,#2c5466 100%); margin: 18px 24px 0; border-radius: 16px; padding: 48px 28px 52px; text-align: center; background-size: cover; background-position: center; }
   .mp-ab-{{ section.id }} .ab__kick { display: inline-block; background: rgba(242,135,47,.18); color: #ffd2b0; font-size: 12px; font-weight: 600; padding: 5px 14px; border-radius: 20px; letter-spacing: .5px; }
   .mp-ab-{{ section.id }} .ab__htitle { font-size: 44px; font-weight: 700; color: #fff; margin: 16px auto 0; line-height: 1.05; max-width: 680px; }
   .mp-ab-{{ section.id }} .ab__hsub { color: #cfe0e6; font-size: 16px; margin: 14px auto 0; max-width: 600px; line-height: 1.6; }
-  .mp-ab-{{ section.id }} .ab__stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 1px; background: #e7ddcb; }
+  .mp-ab-{{ section.id }} .ab__stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 1px; background: #e7ddcb; margin: 14px 24px 0; border-radius: 14px; overflow: hidden; }
   .mp-ab-{{ section.id }} .ab__stat { background: #fbf9f4; padding: 24px; text-align: center; }
   .mp-ab-{{ section.id }} .ab__statn { font-size: 30px; font-weight: 700; }
   .mp-ab-{{ section.id }} .ab__statl { font-size: 12.5px; color: #8a8278; margin-top: 3px; }
@@ -21,11 +21,12 @@
   .mp-ab-{{ section.id }} .ab__val { border: 1px solid #e7ddcb; border-radius: 13px; background: #fff; padding: 22px; box-shadow: 0 1px 2px rgba(20,40,50,.04); }
   .mp-ab-{{ section.id }} .ab__valt { font-size: 17px; font-weight: 700; margin-top: 11px; }
   .mp-ab-{{ section.id }} .ab__vald { font-size: 13.5px; color: #6b6b62; line-height: 1.6; margin-top: 6px; }
-  .mp-ab-{{ section.id }} .ab__cta { margin: 34px 28px 0; border-radius: 14px; background: #2b2233; padding: 32px 40px; display: flex; align-items: center; justify-content: space-between; gap: 30px; max-width: 1224px; }
+  .mp-ab-{{ section.id }} .ab__cta { margin: 34px auto 0; width: min(1224px, 100% - 48px); border-radius: 14px; background: #2b2233; padding: 32px 40px; display: flex; align-items: center; justify-content: space-between; gap: 30px; box-sizing: border-box; }
   .mp-ab-{{ section.id }} .ab__ctat { color: #fff; font-size: 24px; font-weight: 700; }
   .mp-ab-{{ section.id }} .ab__ctas { color: #c5b9d4; font-size: 13.5px; margin-top: 6px; }
   .mp-ab-{{ section.id }} .ab__ctab { background: #f2872f; color: #fff; font-weight: 700; font-size: 15px; padding: 13px 26px; border-radius: 9px; text-decoration: none; white-space: nowrap; }
   @media (max-width: 989px) { .mp-ab-{{ section.id }} .ab__stats { grid-template-columns: repeat(2,1fr); } .mp-ab-{{ section.id }} .ab__story { flex-direction: column; } .mp-ab-{{ section.id }} .ab__simg { width: 100%; } .mp-ab-{{ section.id }} .ab__valgrid { grid-template-columns: 1fr; } .mp-ab-{{ section.id }} .ab__cta { flex-direction: column; align-items: flex-start; } }
+  @media (max-width: 749px) { .mp-ab-{{ section.id }} .ab__hero { margin: 14px 16px 0; padding: 36px 20px 40px; } .mp-ab-{{ section.id }} .ab__stats { margin: 12px 16px 0; } .mp-ab-{{ section.id }} .ab__htitle { font-size: 32px; } .mp-ab-{{ section.id }} .ab__cta { width: min(1224px, 100% - 32px); } }
 {%- endstyle -%}
 
 <div class="mp-ab-{{ section.id }}">
@@ -63,7 +64,7 @@
     </div>
   {%- endif -%}
 
-  <div class="ab__cta" style="margin-left:auto;margin-right:auto">
+  <div class="ab__cta">
     <div><div class="ab__ctat mp-cond">{{ section.settings.cta_title }}</div><div class="ab__ctas">{{ section.settings.cta_text }}</div></div>
     <a class="ab__ctab mp-cond" href="{{ section.settings.cta_url | default: '/collections/all-games' }}">{{ section.settings.cta_label }} &#8594;</a>
   </div>

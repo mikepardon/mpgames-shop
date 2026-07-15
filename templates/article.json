@@ -12,6 +12,7 @@
     "mp_article": {
       "type": "mp-article",
       "settings": {
+        "author_name": "Michael Pardon",
         "author_role": "Founder, MPGames · forever DM",
         "author_bio": "Michael's a lifelong lover of games who's been DM'ing for years and has built a few online games of his own. When he's not behind the screen, he's hunting for the next great game night."
       }

@@ -13,8 +13,11 @@
   .mp-cond { font-family: 'Barlow Semi Condensed', ui-sans-serif, sans-serif; }
 
   /* shared layout helpers used by every MP* homepage section */
-  .mp-cream { background: #e9e4da; font-family: 'Barlow', ui-sans-serif, system-ui, sans-serif; }
-  .mp-col { width: 100%; background: #fff; }
+  .mp-cream { background: #e9e4da; font-family: 'Barlow', ui-sans-serif, system-ui, sans-serif; max-width: 100%; }
+  /* overflow-x: clip stops any full-width rail/grid (e.g. the Top-rated track)
+     from pushing the whole page wider than the viewport and causing side-scroll,
+     while leaving each rail's own internal horizontal scrolling intact. */
+  .mp-col { width: 100%; max-width: 100%; background: #fff; overflow-x: clip; }
 
   .mp-hd-{{ section.id }} { font-family: 'Barlow', ui-sans-serif, system-ui, sans-serif; }
 
