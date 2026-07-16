@@ -165,6 +165,16 @@
               assign on_sale = true
               assign discount = product.compare_at_price | minus: product.price | times: 100.0 | divided_by: product.compare_at_price | round
             endif
+            # RRP from custom.mrsp (number_decimal) — struck through when above the price
+            # and there isn't already a compare-at sale doing the same job.
+            assign mrsp_val = product.metafields.custom.mrsp.value
+            assign show_rrp = false
+            if mrsp_val != blank and on_sale == false
+              assign mrsp_cents = mrsp_val | times: 100 | round
+              if mrsp_cents > product.price
+                assign show_rrp = true
+              endif
+            endif
             assign is_pre = product.metafields.custom.is_preorder.value
             assign badge = ''
             if product.tags contains 'PRE-ORDER'
@@ -208,7 +218,8 @@
 
               <div class="mp-card__foot">
                 <div>
-                  {%- if style == 'bestseller' and on_sale -%}<span class="mp-card__rrp">{{ product.compare_at_price | money }}</span>{%- endif -%}
+                  {%- if style == 'bestseller' and on_sale -%}<span class="mp-card__rrp">{{ product.compare_at_price | money }}</span>
+                  {%- elsif show_rrp -%}<span class="mp-card__rrp">RRP {{ mrsp_cents | money }}</span>{%- endif -%}
                   <div class="mp-card__price mp-cond">{{ product.price | money }}</div>
                 </div>
                 <form action="{{ routes.cart_add_url }}" method="post" enctype="multipart/form-data" class="mp-card__addform">

@@ -12,6 +12,11 @@
 {%- style -%}
   .mp-cond { font-family: 'Barlow Semi Condensed', ui-sans-serif, sans-serif; }
 
+  /* Global side-scroll guard: nothing may push the page wider than the viewport.
+     `clip` (not `hidden`) so it never creates a scroll container that would break
+     position: sticky. Internal rails keep their own overflow-x: auto scrolling. */
+  html, body { overflow-x: clip; max-width: 100%; }
+
   /* shared layout helpers used by every MP* homepage section */
   .mp-cream { background: #e9e4da; font-family: 'Barlow', ui-sans-serif, system-ui, sans-serif; max-width: 100%; }
   /* overflow-x: clip stops any full-width rail/grid (e.g. the Top-rated track)
@@ -222,17 +227,35 @@
           {%- assign lt = link.title | downcase -%}
           {%- assign auto_kind = '' -%}
           {%- if lt contains 'designer' -%}{%- assign auto_kind = 'designer' -%}{%- elsif lt contains 'artist' -%}{%- assign auto_kind = 'artist' -%}{%- elsif lt contains 'publisher' or lt contains 'vendor' or lt contains 'brand' -%}{%- assign auto_kind = 'vendor' -%}{%- elsif lt contains 'shop' -%}{%- assign auto_kind = 'category' -%}{%- endif -%}
+          {%- comment -%} Prefix + label to strip + "Shop all" target page per panel. {%- endcomment -%}
+          {%- assign auto_prefix = '' -%}
+          {%- assign auto_strip = '' -%}
+          {%- assign auto_page = link.url -%}
+          {%- if auto_kind == 'designer' -%}{%- assign auto_prefix = 'designer-' -%}{%- assign auto_strip = 'Designer:' -%}{%- assign auto_page = '/pages/designers' -%}
+          {%- elsif auto_kind == 'artist' -%}{%- assign auto_prefix = 'artist-' -%}{%- assign auto_strip = 'Artist:' -%}{%- assign auto_page = '/pages/artists' -%}
+          {%- elsif auto_kind == 'vendor' -%}{%- assign auto_prefix = 'publisher-' -%}{%- assign auto_strip = 'Publisher:' -%}{%- assign auto_page = '/pages/publishers' -%}
+          {%- elsif auto_kind == 'category' -%}{%- assign auto_prefix = 'category-' -%}{%- endif -%}
           {%- capture auto_links -%}
-            {%- if auto_kind == 'designer' -%}
-              {%- comment -%} Real designers only: any designer-* collection that currently has products. {%- endcomment -%}
-              {%- for c in collections -%}{%- if c.handle contains 'designer-' and c.all_products_count > 0 -%}<a class="mp-mega__link" href="{{ c.url }}">{{ c.title | remove: 'Designer:' | strip }}</a>{%- endif -%}{%- endfor -%}
-            {%- elsif auto_kind == 'artist' -%}
-              {%- for c in collections -%}{%- if c.handle contains 'artist-' and c.all_products_count > 0 -%}<a class="mp-mega__link" href="{{ c.url }}">{{ c.title | remove: 'Artist:' | strip }}</a>{%- endif -%}{%- endfor -%}
-            {%- elsif auto_kind == 'vendor' -%}
-              {%- comment -%} List publisher-* collections that have products (all-games collection does not exist). {%- endcomment -%}
-              {%- for c in collections -%}{%- if c.handle contains 'publisher-' and c.all_products_count > 0 -%}<a class="mp-mega__link" href="{{ c.url }}">{{ c.title }}</a>{%- endif -%}{%- endfor -%}
-            {%- elsif auto_kind == 'category' -%}
-              {%- for c in collections -%}{%- if c.handle contains 'category-' and c.all_products_count > 0 -%}<a class="mp-mega__link" href="{{ c.url }}">{{ c.title }}</a>{%- endif -%}{%- endfor -%}
+            {%- if auto_prefix != blank -%}
+              {%- comment -%} Real collections only, ordered by game count (desc), capped at 21 for the creator panels. {%- endcomment -%}
+              {%- assign nav_rows = '' -%}
+              {%- for c in collections -%}
+                {%- if c.handle contains auto_prefix and c.all_products_count > 0 -%}
+                  {%- assign nav_pad = '00' | append: c.all_products_count | slice: -3, 3 -%}
+                  {%- assign nav_nm = c.title -%}
+                  {%- if auto_strip != blank -%}{%- assign nav_nm = nav_nm | remove_first: auto_strip | strip -%}{%- endif -%}
+                  {%- assign nav_rows = nav_rows | append: nav_pad | append: '§' | append: nav_nm | append: '§' | append: c.url | append: '¶' -%}
+                {%- endif -%}
+              {%- endfor -%}
+              {%- assign nav_list = nav_rows | split: '¶' | sort | reverse -%}
+              {%- assign nav_shown = 0 -%}
+              {%- for row in nav_list -%}
+                {%- if row == blank -%}{%- continue -%}{%- endif -%}
+                {%- if auto_kind != 'category' and nav_shown >= 21 -%}{%- break -%}{%- endif -%}
+                {%- assign np = row | split: '§' -%}
+                <a class="mp-mega__link" href="{{ np[2] }}">{{ np[1] }}</a>
+                {%- assign nav_shown = nav_shown | plus: 1 -%}
+              {%- endfor -%}
             {%- endif -%}
           {%- endcapture -%}
           {%- comment -%} Vary the featured card per panel so the same product doesn't repeat across menus.
@@ -281,7 +304,7 @@
                   <div class="mp-mega__col">
                     <div class="mp-mega__h">{% if auto_kind == 'designer' %}Shop by designer{% elsif auto_kind == 'artist' %}Shop by artist{% elsif auto_kind == 'vendor' %}Shop by publisher{% else %}Shop by category{% endif %}</div>
                     <div class="mp-mega__grid">{{ auto_links }}</div>
-                    <a class="mp-mega__all" href="{{ link.url }}">Shop all &raquo;</a>
+                    <a class="mp-mega__all" href="{{ auto_page }}">Shop all &raquo;</a>
                   </div>
                   {%- render 'mp-mega-feature', feature: panel_feature, eyebrow: panel_eyebrow -%}
                 </div>

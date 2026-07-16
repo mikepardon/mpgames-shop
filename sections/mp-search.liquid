@@ -249,6 +249,14 @@
                         assign csale = true
                         assign cdisc = product.compare_at_price | minus: product.price | times: 100.0 | divided_by: product.compare_at_price | round
                       endif
+                      assign cmrsp = product.metafields.custom.mrsp.value
+                      assign cshow_rrp = false
+                      if cmrsp != blank and csale == false
+                        assign cmrsp_cents = cmrsp | times: 100 | round
+                        if cmrsp_cents > product.price
+                          assign cshow_rrp = true
+                        endif
+                      endif
                       assign players = product.metafields.custom.player_count.value
                       assign playtime = product.metafields.custom.play_time.value
                     -%}
@@ -272,7 +280,8 @@
                         {%- endif -%}
                         <div class="se__foot">
                           <div>
-                            {%- if csale -%}<span class="se__rrp">{{ product.compare_at_price | money }}</span>{%- endif -%}
+                            {%- if csale -%}<span class="se__rrp">{{ product.compare_at_price | money }}</span>
+                            {%- elsif cshow_rrp -%}<span class="se__rrp">RRP {{ cmrsp_cents | money }}</span>{%- endif -%}
                             <div class="se__pr mp-cond">{{ product.price | money }}</div>
                           </div>
                           <form action="{{ routes.cart_add_url }}" method="post" enctype="multipart/form-data">

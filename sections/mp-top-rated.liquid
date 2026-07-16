@@ -32,6 +32,8 @@
   .mp-top-{{ section.id }} .mp-top__bgg b { font-size: 10px; font-weight: 700; color: #fff; }
   .mp-top-{{ section.id }} .mp-top__foot { display: flex; align-items: center; justify-content: space-between; margin-top: 9px; }
   .mp-top-{{ section.id }} .mp-top__price { font-size: 16px; font-weight: 700; color: #16323f; }
+  .mp-top-{{ section.id }} .mp-top__pricewrap { display: inline-flex; align-items: baseline; gap: 6px; }
+  .mp-top-{{ section.id }} .mp-top__rrp { font-size: 11px; color: #9b948a; text-decoration: line-through; }
   .mp-top-{{ section.id }} .mp-top__add { background: #f2872f; color: #fff; border-radius: 6px; padding: 6px 11px; font-size: 12px; font-weight: 600; text-decoration: none; border: 0; cursor: pointer; }
   .mp-top-{{ section.id }} .mp-top__add[disabled] { opacity: .45; cursor: not-allowed; }
   .mp-top-{{ section.id }} .mp-top__addform { margin: 0; }
@@ -86,6 +88,14 @@
               assign bgg_color = '#9ccf63'
             endif
             assign is_pre = product.metafields.custom.is_preorder.value
+            assign mrsp_val = product.metafields.custom.mrsp.value
+            assign show_rrp = false
+            if mrsp_val != blank and product.compare_at_price <= product.price
+              assign mrsp_cents = mrsp_val | times: 100 | round
+              if mrsp_cents > product.price
+                assign show_rrp = true
+              endif
+            endif
           -%}
           <div class="mp-top__card">
             <div class="mp-top__rank mp-cond">#{{ shown }}</div>
@@ -97,7 +107,7 @@
                 <div class="mp-top__bgg"><b class="mp-cond">BGG</b><span style="font-size:11.5px;font-weight:700;color:{{ bgg_color }}">{{ bgg_mf.value }}</span></div>
               {%- endif -%}
               <div class="mp-top__foot">
-                <span class="mp-top__price mp-cond">{{ product.price | money }}</span>
+                <span class="mp-top__pricewrap">{%- if show_rrp -%}<span class="mp-top__rrp">RRP {{ mrsp_cents | money }}</span>{%- endif -%}<span class="mp-top__price mp-cond">{{ product.price | money }}</span></span>
                 <form action="{{ routes.cart_add_url }}" method="post" enctype="multipart/form-data" class="mp-top__addform">
                   <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
                   <button type="submit" class="mp-top__add mp-cond"{% unless product.available %} disabled{% endunless %}>{% if is_pre %}Pre-order{% else %}Add{% endif %}</button>

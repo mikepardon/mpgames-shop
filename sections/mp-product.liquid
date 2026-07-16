@@ -302,15 +302,9 @@
   @media (max-width: 749px) {
     .mp-pdp-{{ section.id }} .pdp__wrap { padding: 0 16px; }
     .mp-pdp-{{ section.id }} .pdp__title { font-size: 32px; }
+    /* Game at a glance: keep the spec cards two-up on mobile (rating cells wrap 2-up on their own) */
     .mp-pdp-{{ section.id }} .pdp__specs { grid-template-columns: 1fr 1fr; }
-    /* Game at a glance: stack the rating cells so wrapped cells don't leave stray right-borders */
-    .mp-pdp-{{ section.id }} .pdp__ratings { flex-direction: column; }
-    .mp-pdp-{{ section.id }} .pdp__rcell { min-width: 0; border-right: 0; border-bottom: 1px solid #efe7d8; }
-    .mp-pdp-{{ section.id }} .pdp__ratings .pdp__rcell:last-child { border-bottom: 0; }
     .mp-pdp-{{ section.id }} .pdp__h { font-size: 21px; }
-  }
-  @media (max-width: 430px) {
-    .mp-pdp-{{ section.id }} .pdp__specs { grid-template-columns: 1fr; }
   }
 {%- endstyle -%}
 

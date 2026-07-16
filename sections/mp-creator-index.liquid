@@ -12,65 +12,45 @@
 {%- liquid
   assign kind = section.settings.kind
 
-  # Per-mode config: URL prefix + singular/plural labels.
+  # Per-mode config: collection-handle prefix, title label to strip, and labels.
   case kind
     when 'artist'
       assign prefix = 'artist'
-      assign field = 'artist'
+      assign label_prefix = 'Artist:'
       assign one = 'artist'
       assign many = 'artists'
     when 'publisher'
       assign prefix = 'publisher'
+      assign label_prefix = 'Publisher:'
       assign one = 'publisher'
       assign many = 'publishers'
     when 'mechanic'
       assign prefix = 'mechanic'
-      assign field = 'mechanics'
+      assign label_prefix = 'Mechanic:'
       assign one = 'mechanic'
       assign many = 'mechanics'
     else
       assign kind = 'designer'
       assign prefix = 'designer'
-      assign field = 'designer'
+      assign label_prefix = 'Designer:'
       assign one = 'designer'
       assign many = 'designers'
   endcase
 
-  assign source = section.settings.source
-  if source == blank
-    assign source = collections['all-games']
-  endif
-  assign products = source.products
-
-  # Collect names into a delimited string, then de-dupe + sort case-insensitively.
-  assign names_raw = ''
-  for p in products
-    if kind == 'publisher'
-      if p.vendor != blank
-        assign names_raw = names_raw | append: p.vendor | append: '~~'
-      endif
-    elsif kind == 'mechanic'
-      assign mechs = p.metafields.custom.mechanics.value
-      for mm in mechs
-        assign mm2 = mm | strip
-        if mm2 != blank
-          assign names_raw = names_raw | append: mm2 | append: '~~'
-        endif
-      endfor
-    else
-      assign raw = p.metafields.custom[field].value
-      if raw != blank
-        assign parts = raw | replace: ';', ',' | split: ','
-        for nm in parts
-          assign nm2 = nm | strip
-          if nm2 != blank
-            assign names_raw = names_raw | append: nm2 | append: '~~'
-          endif
-        endfor
-      endif
+  # Build the directory from the real <prefix>-* collections that currently have
+  # products (kept in sync by scripts/sync-creator-collections.mjs). Reading the
+  # collections directly is reliable and gives us the game count per creator.
+  # Rows are "sortkey§name§count§url"; sorted case-insensitively for the A–Z index.
+  assign pfx = prefix | append: '-'
+  assign rows = ''
+  for c in collections
+    if c.handle contains pfx and c.all_products_count > 0
+      assign nm = c.title | remove_first: label_prefix | strip
+      assign keyed = nm | downcase
+      assign rows = rows | append: keyed | append: '§' | append: nm | append: '§' | append: c.all_products_count | append: '§' | append: c.url | append: '¶'
     endif
   endfor
-  assign names = names_raw | split: '~~' | uniq | sort_natural
+  assign row_list = rows | split: '¶' | sort
 
   assign heading = section.settings.heading
   if heading == blank
@@ -80,8 +60,8 @@
   # Which first-letters are present (for the A–Z jump bar). Non-letters bucket to '#'.
   assign alpha = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
   assign letters_present = ''
-  for name in names
-    assign L = name | slice: 0 | upcase
+  for row in row_list
+    assign L = row | slice: 0 | upcase
     unless alpha contains L
       assign L = '#'
     endunless
@@ -134,7 +114,7 @@
       <div class="cx__sub">{% if section.settings.subtitle != blank %}{{ section.settings.subtitle }}{% else %}Browse every {{ one }} in our catalogue, A–Z. Tap a name to see all their games.{% endif %}</div>
     </div>
 
-    {%- if names.size > 0 -%}
+    {%- if row_list.size > 0 -%}
       <div class="cx__search">
         <span class="cx__mag" aria-hidden="true">&#128269;</span>
         <input type="search" data-cx-search placeholder="Search {{ many }}…" aria-label="Search {{ many }}" autocomplete="off">
@@ -148,22 +128,25 @@
 
       <div class="cx__grid">
         {%- assign current_letter = '' -%}
-        {%- for name in names -%}
+        {%- for row in row_list -%}
+          {%- if row == blank -%}{%- continue -%}{%- endif -%}
+          {%- assign parts = row | split: '§' -%}
+          {%- assign name = parts[1] -%}
+          {%- assign count = parts[2] -%}
+          {%- assign url = parts[3] -%}
           {%- assign L = name | slice: 0 | upcase -%}
           {%- unless alpha contains L -%}{%- assign L = '#' -%}{%- endunless -%}
           {%- if L != current_letter -%}
             <div class="cx__letter" id="{{ prefix }}-l-{{ L | replace: '#', 'sym' }}-{{ section.id }}" data-cx-letter>{{ L }}</div>
             {%- assign current_letter = L -%}
           {%- endif -%}
-          {%- assign nhandle = name | handle -%}
           {%- assign words = name | split: ' ' -%}
           {%- assign initials = words[0] | slice: 0 -%}
           {%- if words.size > 1 -%}{%- assign last_initial = words.last | slice: 0 -%}{%- assign initials = initials | append: last_initial -%}{%- endif -%}
-          {%- assign col = collections[prefix | append: '-' | append: nhandle] -%}
-          <a class="cx__item" data-cx-item data-name="{{ name | downcase | escape }}" href="/collections/{{ prefix }}-{{ nhandle }}">
+          <a class="cx__item" data-cx-item data-name="{{ name | downcase | escape }}" href="{{ url }}">
             <span class="cx__av">{{ initials | upcase }}</span>
             <span class="cx__name">{{ name }}</span>
-            {%- if section.settings.show_counts and col.all_products_count > 0 -%}<span class="cx__count">{{ col.all_products_count }}</span>{%- endif -%}
+            {%- if section.settings.show_counts -%}<span class="cx__count">{{ count }} game{% unless count == '1' %}s{% endunless %}</span>{%- endif -%}
           </a>
         {%- endfor -%}
       </div>
@@ -172,7 +155,7 @@
     {%- else -%}
       <div class="cx__empty" style="display:block">
         {%- if request.design_mode -%}
-          No {{ many }} found yet. This index reads {% if kind == 'publisher' %}product vendors{% else %}the <code>custom.{{ field }}</code> metafield{% endif %} from the source collection ({{ source.title | default: 'all-games' }}).
+          No {{ many }} found yet. This index lists every <code>{{ prefix }}-*</code> collection that has products — run <code>scripts/sync-creator-collections.mjs</code> to create them.
         {%- else -%}
           Nothing to show here yet — check back soon.
         {%- endif -%}
@@ -233,7 +216,6 @@
         { "value": "mechanic", "label": "Mechanics" }
       ]
     },
-    { "type": "collection", "id": "source", "label": "Source collection", "info": "Names are read from these products. Defaults to the all-games collection." },
     { "type": "text", "id": "heading", "label": "Heading", "info": "Defaults to “All designers” etc." },
     { "type": "textarea", "id": "subtitle", "label": "Subtitle" },
     { "type": "checkbox", "id": "show_counts", "label": "Show game counts", "default": true }
