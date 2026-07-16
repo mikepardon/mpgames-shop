@@ -1,0 +1,92 @@
+{%- comment -%}
+  MPGames product-rail card. Rendered with the product object already in hand so
+  it never depends on all_products[handle] (which has a per-page lookup cap that
+  breaks rails rendered late on the page — blank/duplicate cards).
+
+  Params:
+    product        - the product object (required)
+    style          - 'bestseller' | 'release'
+    release_action - button label for the 'release' style (default 'Add')
+{%- endcomment -%}
+{%- liquid
+  assign bgg_mf = product.metafields.custom.bgg_rating
+  assign bgg = bgg_mf.value | times: 1.0
+  assign bgg_color = '#e0b441'
+  if bgg >= 8.0
+    assign bgg_color = '#5fbf7e'
+  elsif bgg >= 7.0
+    assign bgg_color = '#9ccf63'
+  endif
+  assign players = product.metafields.custom.player_count.value
+  assign playtime = product.metafields.custom.play_time.value
+  assign on_sale = false
+  if product.compare_at_price > product.price
+    assign on_sale = true
+    assign discount = product.compare_at_price | minus: product.price | times: 100.0 | divided_by: product.compare_at_price | round
+  endif
+  # RRP from custom.mrsp (number_decimal) — struck through when above the price
+  # and there isn't already a compare-at sale doing the same job.
+  assign mrsp_val = product.metafields.custom.mrsp.value
+  assign show_rrp = false
+  if mrsp_val != blank and on_sale == false
+    assign mrsp_cents = mrsp_val | times: 100 | round
+    if mrsp_cents > product.price
+      assign show_rrp = true
+    endif
+  endif
+  assign is_pre = product.metafields.custom.is_preorder.value
+  assign badge = ''
+  if product.tags contains 'PRE-ORDER'
+    assign badge = 'PRE-ORDER'
+  elsif product.tags contains 'NEW'
+    assign badge = 'NEW'
+  endif
+-%}
+<div class="mp-card">
+  {%- if is_pre -%}
+    <span class="mp-card__flag mp-card__flag--pre mp-cond">PRE-ORDER</span>
+  {%- elsif style == 'bestseller' and on_sale -%}
+    <span class="mp-card__flag mp-card__flag--sale mp-cond">-{{ discount }}%</span>
+  {%- elsif style == 'release' and badge != blank -%}
+    <span class="mp-card__flag mp-card__flag--badge mp-cond">{{ badge }}</span>
+  {%- endif -%}
+
+  <a href="{{ product.url }}" class="mp-card__media{% unless product.featured_image %} mp-card__media--ph{% endunless %}"{% if product.featured_image %} style="background-image:url('{{ product.featured_image | image_url: width: 440 }}')"{% endif %} aria-label="{{ product.title | escape }}">{% unless product.featured_image %}box art{% endunless %}</a>
+
+  <div class="mp-card__body">
+    {%- if product.type == 'Board Game Expansion' -%}<span style="display:inline-block;width:fit-content;background:#ede7f3;color:#6a4f86;font-size:9.5px;font-weight:700;letter-spacing:.4px;padding:2px 6px;border-radius:5px;text-transform:uppercase;margin-bottom:6px">Expansion</span>{%- endif -%}
+    {%- if style == 'bestseller' and bgg_mf != blank -%}
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
+        <span class="mp-card__bgg"><b class="mp-cond">BGG</b><span style="font-size:11px;font-weight:700;color:{{ bgg_color }}">{{ bgg_mf.value }}</span></span>
+        {%- if product.metafields.custom.bgg_rank != blank -%}<span class="mp-card__rank">rank #{{ product.metafields.custom.bgg_rank.value }}</span>{%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <a class="mp-card__name" href="{{ product.url }}" style="text-decoration:none;color:inherit">{{ product.title }}</a>
+
+    {%- if style == 'release' and product.vendor != blank -%}
+      <div class="mp-card__pub">{{ product.vendor }}</div>
+    {%- endif -%}
+
+    {%- if players != blank or playtime != blank -%}
+      <div class="mp-card__meta">
+        {%- if players != blank -%}<span>&#9823; {{ players }}</span>{%- endif -%}
+        {%- if playtime != blank -%}<span>&#9201; {{ playtime }}</span>{%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <div class="mp-card__foot">
+      <div>
+        {%- if style == 'bestseller' and on_sale -%}<span class="mp-card__rrp">{{ product.compare_at_price | money }}</span>
+        {%- elsif show_rrp -%}<span class="mp-card__rrp">RRP {{ mrsp_cents | money }}</span>{%- endif -%}
+        <div class="mp-card__price mp-cond">{{ product.price | money }}</div>
+      </div>
+      <form action="{{ routes.cart_add_url }}" method="post" enctype="multipart/form-data" class="mp-card__addform">
+        <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+        <button type="submit" class="mp-card__add{% if style == 'release' %} mp-card__add--ghost{% endif %} mp-cond"{% unless product.available %} disabled{% endunless %}>
+          {%- if is_pre -%}Pre-order{%- elsif style == 'release' -%}{{ release_action | default: 'Add' }}{%- else -%}Add{%- endif -%}
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
