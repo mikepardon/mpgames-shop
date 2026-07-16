@@ -231,10 +231,11 @@
           {%- assign auto_prefix = '' -%}
           {%- assign auto_strip = '' -%}
           {%- assign auto_page = link.url -%}
-          {%- if auto_kind == 'designer' -%}{%- assign auto_prefix = 'designer-' -%}{%- assign auto_strip = 'Designer:' -%}{%- assign auto_page = '/pages/designers' -%}
-          {%- elsif auto_kind == 'artist' -%}{%- assign auto_prefix = 'artist-' -%}{%- assign auto_strip = 'Artist:' -%}{%- assign auto_page = '/pages/artists' -%}
-          {%- elsif auto_kind == 'vendor' -%}{%- assign auto_prefix = 'publisher-' -%}{%- assign auto_strip = 'Publisher:' -%}{%- assign auto_page = '/pages/publishers' -%}
-          {%- elsif auto_kind == 'category' -%}{%- assign auto_prefix = 'category-' -%}{%- endif -%}
+          {%- assign auto_all_label = 'all' -%}
+          {%- if auto_kind == 'designer' -%}{%- assign auto_prefix = 'designer-' -%}{%- assign auto_strip = 'Designer:' -%}{%- assign auto_page = '/pages/designers' -%}{%- assign auto_all_label = 'designers' -%}
+          {%- elsif auto_kind == 'artist' -%}{%- assign auto_prefix = 'artist-' -%}{%- assign auto_strip = 'Artist:' -%}{%- assign auto_page = '/pages/artists' -%}{%- assign auto_all_label = 'artists' -%}
+          {%- elsif auto_kind == 'vendor' -%}{%- assign auto_prefix = 'publisher-' -%}{%- assign auto_strip = 'Publisher:' -%}{%- assign auto_page = '/pages/publishers' -%}{%- assign auto_all_label = 'publishers' -%}
+          {%- elsif auto_kind == 'category' -%}{%- assign auto_prefix = 'category-' -%}{%- assign auto_all_label = 'categories' -%}{%- endif -%}
           {%- capture auto_links -%}
             {%- if auto_prefix != blank -%}
               {%- comment -%} Real collections only, ordered by game count (desc), capped at 21 for the creator panels. {%- endcomment -%}
@@ -304,7 +305,7 @@
                   <div class="mp-mega__col">
                     <div class="mp-mega__h">{% if auto_kind == 'designer' %}Shop by designer{% elsif auto_kind == 'artist' %}Shop by artist{% elsif auto_kind == 'vendor' %}Shop by publisher{% else %}Shop by category{% endif %}</div>
                     <div class="mp-mega__grid">{{ auto_links }}</div>
-                    <a class="mp-mega__all" href="{{ auto_page }}">Shop all &raquo;</a>
+                    <a class="mp-mega__all" href="{{ auto_page }}">View all {{ auto_all_label }} &raquo;</a>
                   </div>
                   {%- render 'mp-mega-feature', feature: panel_feature, eyebrow: panel_eyebrow -%}
                 </div>
