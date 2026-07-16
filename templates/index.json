@@ -12,6 +12,20 @@
     "mp_hero": {
       "type": "mp-hero-carousel",
       "blocks": {
+        "slide_K9iJqL": {
+          "type": "slide",
+          "settings": {
+            "layout": "image",
+            "image": "shopify://shop_images/Wacky_Racing_Banner_2a.png",
+            "image_fit": "natural",
+            "cta_url": "shopify://collections/racer",
+            "kicker": "TOP-RANKED TABLETOP",
+            "title": "The biggest names in tabletop, all in one place",
+            "sub": "Games ranked by BoardGameGeek score, player count and play time.",
+            "cta_label": "Shop the collection",
+            "bg": "linear-gradient(120deg,#16323f,#2c5466)"
+          }
+        },
         "s1": {
           "type": "slide",
           "settings": {
@@ -28,6 +42,7 @@
         }
       },
       "block_order": [
+        "slide_K9iJqL",
         "s1"
       ],
       "settings": {
