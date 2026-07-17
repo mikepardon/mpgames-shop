@@ -38,7 +38,9 @@ async function api(method, endpoint, body) {
   return text ? JSON.parse(text) : {};
 }
 
-const FILES = [
+// Files to push: any non-flag CLI args, else the default creator-index feature set.
+const argFiles = process.argv.slice(2).filter((a) => !a.startsWith('--'));
+const FILES = argFiles.length ? argFiles : [
   'sections/mp-creator-index.liquid',
   'sections/mp-header.liquid',
   'templates/page.designers.json',

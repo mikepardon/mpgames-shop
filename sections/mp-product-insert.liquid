@@ -363,7 +363,8 @@
 
     <!-- reviews (Judge.me) -->
     <div class="pdp__reviews" id="reviews">
-      <div class="jdgm-widget jdgm-review-widget" data-id="{{ product.id }}">{{ product.metafields.judgeme.widget }}</div>
+      <div style="clear:both"></div>
+      <div id="judgeme_product_reviews" class="jdgm-widget jdgm-review-widget" data-product-title="{{ product.title | escape }}" data-id="{{ product.id }}"></div>
     </div>
 
     <!-- the games this insert is for -->

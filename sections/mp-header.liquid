@@ -101,6 +101,7 @@
   .mp-hd-{{ section.id }} .mp-mega__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 26px; }
   .mp-hd-{{ section.id }} .mp-mega__link { display: block; color: #9fb4bd; text-decoration: none; font-size: 13.5px; padding: 6px 0; }
   .mp-hd-{{ section.id }} .mp-mega__link:hover { color: #f2872f; }
+  .mp-hd-{{ section.id }} .mp-mega__cnt { color: #6b7f8a; font-size: 12px; }
   .mp-hd-{{ section.id }} .mp-mega__all { display: inline-block; margin-top: 9px; color: #f2872f; font-weight: 600; font-size: 12.5px; text-decoration: none; }
   .mp-hd-{{ section.id }} .mp-mega__feature {
     width: 270px; flex: none; margin-left: auto; background: #0f242e; border: 1px solid #25434f;
@@ -226,7 +227,7 @@
         {%- for link in mp_menu.links -%}
           {%- assign lt = link.title | downcase -%}
           {%- assign auto_kind = '' -%}
-          {%- if lt contains 'designer' -%}{%- assign auto_kind = 'designer' -%}{%- elsif lt contains 'artist' -%}{%- assign auto_kind = 'artist' -%}{%- elsif lt contains 'publisher' or lt contains 'vendor' or lt contains 'brand' -%}{%- assign auto_kind = 'vendor' -%}{%- elsif lt contains 'shop' -%}{%- assign auto_kind = 'category' -%}{%- endif -%}
+          {%- if lt contains 'designer' -%}{%- assign auto_kind = 'designer' -%}{%- elsif lt contains 'artist' -%}{%- assign auto_kind = 'artist' -%}{%- elsif lt contains 'publisher' or lt contains 'vendor' or lt contains 'brand' -%}{%- assign auto_kind = 'vendor' -%}{%- elsif lt contains 'mechanic' -%}{%- assign auto_kind = 'mechanic' -%}{%- elsif lt contains 'shop' -%}{%- assign auto_kind = 'category' -%}{%- endif -%}
           {%- comment -%} Prefix + label to strip + "Shop all" target page per panel. {%- endcomment -%}
           {%- assign auto_prefix = '' -%}
           {%- assign auto_strip = '' -%}
@@ -235,6 +236,7 @@
           {%- if auto_kind == 'designer' -%}{%- assign auto_prefix = 'designer-' -%}{%- assign auto_strip = 'Designer:' -%}{%- assign auto_page = '/pages/designers' -%}{%- assign auto_all_label = 'designers' -%}
           {%- elsif auto_kind == 'artist' -%}{%- assign auto_prefix = 'artist-' -%}{%- assign auto_strip = 'Artist:' -%}{%- assign auto_page = '/pages/artists' -%}{%- assign auto_all_label = 'artists' -%}
           {%- elsif auto_kind == 'vendor' -%}{%- assign auto_prefix = 'publisher-' -%}{%- assign auto_strip = 'Publisher:' -%}{%- assign auto_page = '/pages/publishers' -%}{%- assign auto_all_label = 'publishers' -%}
+          {%- elsif auto_kind == 'mechanic' -%}{%- assign auto_prefix = 'mechanic-' -%}{%- assign auto_strip = 'Mechanic:' -%}{%- assign auto_page = '/pages/mechanics' -%}{%- assign auto_all_label = 'mechanics' -%}
           {%- elsif auto_kind == 'category' -%}{%- assign auto_prefix = 'category-' -%}{%- assign auto_all_label = 'categories' -%}{%- endif -%}
           {%- capture auto_links -%}
             {%- if auto_prefix != blank -%}
@@ -245,7 +247,7 @@
                   {%- assign nav_pad = '00' | append: c.all_products_count | slice: -3, 3 -%}
                   {%- assign nav_nm = c.title -%}
                   {%- if auto_strip != blank -%}{%- assign nav_nm = nav_nm | remove_first: auto_strip | strip -%}{%- endif -%}
-                  {%- assign nav_rows = nav_rows | append: nav_pad | append: '§' | append: nav_nm | append: '§' | append: c.url | append: '¶' -%}
+                  {%- assign nav_rows = nav_rows | append: nav_pad | append: '§' | append: nav_nm | append: '§' | append: c.url | append: '§' | append: c.all_products_count | append: '¶' -%}
                 {%- endif -%}
               {%- endfor -%}
               {%- assign nav_list = nav_rows | split: '¶' | sort | reverse -%}
@@ -254,7 +256,7 @@
                 {%- if row == blank -%}{%- continue -%}{%- endif -%}
                 {%- if auto_kind != 'category' and nav_shown >= 21 -%}{%- break -%}{%- endif -%}
                 {%- assign np = row | split: '§' -%}
-                <a class="mp-mega__link" href="{{ np[2] }}">{{ np[1] }}</a>
+                <a class="mp-mega__link" href="{{ np[2] }}">{{ np[1] }} <span class="mp-mega__cnt">({{ np[3] }})</span></a>
                 {%- assign nav_shown = nav_shown | plus: 1 -%}
               {%- endfor -%}
             {%- endif -%}
@@ -263,15 +265,14 @@
              Designer/Artist/Publisher panels feature a real game from that family; others use the merchandised pick. {%- endcomment -%}
           {%- assign panel_feature = featured -%}
           {%- assign panel_eyebrow = "Editor's pick" -%}
-          {%- if auto_kind == 'designer' or auto_kind == 'artist' or auto_kind == 'vendor' -%}
-            {%- assign cprefix = auto_kind -%}
-            {%- if auto_kind == 'vendor' -%}{%- assign cprefix = 'publisher' -%}{%- endif -%}
+          {%- if auto_kind == 'designer' or auto_kind == 'artist' or auto_kind == 'vendor' or auto_kind == 'mechanic' -%}
+            {%- assign cprefix = auto_prefix -%}
             {%- for c in collections -%}
               {%- if c.handle contains cprefix and c.all_products_count > 0 -%}
                 {%- assign cand = c.products.first -%}
                 {%- if cand != blank -%}
                   {%- assign panel_feature = cand -%}
-                  {%- if auto_kind == 'designer' -%}{%- assign panel_eyebrow = 'Featured designer' -%}{%- elsif auto_kind == 'artist' -%}{%- assign panel_eyebrow = 'Featured artist' -%}{%- else -%}{%- assign panel_eyebrow = 'Featured publisher' -%}{%- endif -%}
+                  {%- if auto_kind == 'designer' -%}{%- assign panel_eyebrow = 'Featured designer' -%}{%- elsif auto_kind == 'artist' -%}{%- assign panel_eyebrow = 'Featured artist' -%}{%- elsif auto_kind == 'mechanic' -%}{%- assign panel_eyebrow = 'Featured game' -%}{%- else -%}{%- assign panel_eyebrow = 'Featured publisher' -%}{%- endif -%}
                 {%- endif -%}
                 {%- break -%}
               {%- endif -%}
