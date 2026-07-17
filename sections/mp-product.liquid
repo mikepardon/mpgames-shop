@@ -438,13 +438,7 @@
           </div>
         {%- endif -%}
 
-        {%- if section.blocks.size > 0 -%}
-          <div class="pdp__appblocks">
-            {%- for block in section.blocks -%}
-              {%- if block.type == '@app' -%}{% render block %}{%- endif -%}
-            {%- endfor -%}
-          </div>
-        {%- endif -%}
+        {%- comment -%} App blocks (e.g. Judge.me Review Widget) render in the #reviews section below, not here. {%- endcomment -%}
 
         {%- comment -%} STL/digital variants have requires_shipping = false — swap the physical reassurance for a download notice. Initial state reflects the selected variant; JS retoggles on option change. {%- endcomment -%}
         {%- assign has_digital = false -%}
@@ -680,8 +674,16 @@
 
     <!-- customer reviews (Judge.me) -->
     <div class="pdp__reviews" id="reviews">
-      <div style="clear:both"></div>
-      <div id="judgeme_product_reviews" class="jdgm-widget jdgm-review-widget" data-product-title="{{ product.title | escape }}" data-id="{{ product.id }}"></div>
+      {%- if section.blocks.size > 0 -%}
+        {%- comment -%} Judge.me Review Widget (v3) added as an @app block via Theme editor › Apps. {%- endcomment -%}
+        {%- for block in section.blocks -%}
+          {%- if block.type == '@app' -%}{% render block %}{%- endif -%}
+        {%- endfor -%}
+      {%- else -%}
+        {%- comment -%} Fallback: legacy manual widget. Note: empty on Judge.me Widget v3 — add the Review Widget app block to populate. {%- endcomment -%}
+        <div style="clear:both"></div>
+        <div id="judgeme_product_reviews" class="jdgm-widget jdgm-review-widget" data-product-title="{{ product.title | escape }}" data-id="{{ product.id }}"></div>
+      {%- endif -%}
     </div>
 
     <!-- expansions for this game -->
