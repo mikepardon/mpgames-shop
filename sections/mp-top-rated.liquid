@@ -53,8 +53,8 @@
           <div class="mp-top__title mp-cond">{{ section.settings.title }}</div>
           {%- if section.settings.subtitle != blank -%}<div class="mp-top__sub">{{ section.settings.subtitle }}</div>{%- endif -%}
         </div>
-        {%- if section.settings.link_label != blank -%}
-          <a class="mp-top__all" href="{{ section.settings.link_url | default: '#' }}">{{ section.settings.link_label }} &#8594;</a>
+        {%- if section.settings.link_label != blank and section.settings.link_url != blank -%}
+          <a class="mp-top__all" href="{{ section.settings.link_url }}">{{ section.settings.link_label }} &#8594;</a>
         {%- endif -%}
       </div>
       <div class="mp-top__track">

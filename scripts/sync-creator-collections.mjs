@@ -45,11 +45,18 @@ const API = `https://${store}/admin/api/2024-10`;
 const H = { 'X-Shopify-Access-Token': token, 'Content-Type': 'application/json' };
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-/** Mirror Shopify's Liquid `| handle` filter (lowercase, strip accents, hyphenate). */
+/**
+ * Handleize like Liquid's `| handle`, plus ASCII transliteration for letters
+ * that don't NFKD-decompose (ł, ø, ß, …) which `| handle` would silently drop
+ * (Rafał -> rafal, not rafa-). MUST stay in lockstep with the PDP-side
+ * snippets/tidy-handle.liquid, or links and collection handles drift and 404.
+ */
+const TRANSLITERATE = { 'ł': 'l', 'ø': 'o', 'đ': 'd', 'ð': 'd', 'þ': 'th', 'ß': 'ss', 'æ': 'ae', 'œ': 'oe' };
 function handleize(s) {
   return s
     .normalize('NFKD').replace(/[̀-ͯ]/g, '') // drop diacritics: Ondřej -> Ondrej
     .toLowerCase()
+    .replace(/[łøđðþßæœ]/g, (ch) => TRANSLITERATE[ch])
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '');
 }

@@ -26,9 +26,9 @@
 -%}
 {%- comment -%} Designer/artist fields may hold several names (comma- or semicolon-separated); link each person to its own collection {%- endcomment -%}
 {%- assign designer_names = m.designer.value | replace: ';', ',' | split: ',' -%}
-{%- capture designer_links -%}{%- for n in designer_names -%}{%- assign nm = n | strip -%}{%- if forloop.first == false -%}, {% endif -%}<a href="/collections/designer-{{ nm | handle }}">{{ nm }}</a>{%- endfor -%}{%- endcapture -%}
+{%- capture designer_links -%}{%- for n in designer_names -%}{%- assign nm = n | strip -%}{%- if forloop.first == false -%}, {% endif -%}<a href="/collections/designer-{% render 'tidy-handle', name: nm %}">{{ nm }}</a>{%- endfor -%}{%- endcapture -%}
 {%- assign artist_names = m.artist.value | replace: ';', ',' | split: ',' -%}
-{%- capture artist_links -%}{%- for n in artist_names -%}{%- assign nm = n | strip -%}{%- if forloop.first == false -%}, {% endif -%}<a href="/collections/artist-{{ nm | handle }}">{{ nm }}</a>{%- endfor -%}{%- endcapture -%}
+{%- capture artist_links -%}{%- for n in artist_names -%}{%- assign nm = n | strip -%}{%- if forloop.first == false -%}, {% endif -%}<a href="/collections/artist-{% render 'tidy-handle', name: nm %}">{{ nm }}</a>{%- endfor -%}{%- endcapture -%}
 {%- liquid
 
   assign on_sale = false
@@ -341,7 +341,7 @@
       </div>
 
       <div class="pdp__buy">
-        {%- if product.vendor != blank -%}<div class="pdp__vendor"><a href="/collections/publisher-{{ product.vendor | handle }}">{{ product.vendor }}</a></div>{%- endif -%}
+        {%- if product.vendor != blank -%}<div class="pdp__vendor"><a href="/collections/publisher-{% render 'tidy-handle', name: product.vendor %}">{{ product.vendor }}</a></div>{%- endif -%}
         <h1 class="pdp__title">{{ product.title }}</h1>
 
         <div class="pdp__meta">
@@ -545,7 +545,7 @@
           {%- if m.year_published.value != blank -%}
             <div class="pdp__spec"><span class="accent" style="background:#9a3b2e"></span>
               <div style="display:flex;align-items:center;gap:10px"><span class="ico" style="background:#f3e3e0">&#128197;</span><span class="k">YEAR</span></div>
-              <div class="v">{{ m.year_published.value }}</div>{% if product.vendor != blank %}<div class="vsub"><a href="/collections/publisher-{{ product.vendor | handle }}">{{ product.vendor }}</a></div>{% endif %}
+              <div class="v">{{ m.year_published.value }}</div>{% if product.vendor != blank %}<div class="vsub"><a href="/collections/publisher-{% render 'tidy-handle', name: product.vendor %}">{{ product.vendor }}</a></div>{% endif %}
             </div>
           {%- endif -%}
         </div>
@@ -596,7 +596,7 @@
         {%- if mechanics != blank and mechanics.size > 0 -%}
           <div class="pdp__descpanel" data-descpanel="mech" hidden>
             <div class="pdp__rte"><p>This game uses the following core mechanisms:</p>
-              <p>{% for mech in mechanics %}<a href="/collections/mechanic-{{ mech | handle }}" style="display:inline-block;background:#efe9dd;border-radius:20px;padding:5px 12px;margin:0 6px 8px 0;font-size:13px;font-weight:600;color:#4a443c;text-decoration:none">{{ mech }}</a>{% endfor %}</p>
+              <p>{% for mech in mechanics %}<a href="/collections/mechanic-{% render 'tidy-handle', name: mech %}" style="display:inline-block;background:#efe9dd;border-radius:20px;padding:5px 12px;margin:0 6px 8px 0;font-size:13px;font-weight:600;color:#4a443c;text-decoration:none">{{ mech }}</a>{% endfor %}</p>
             </div>
           </div>
         {%- endif -%}
@@ -643,7 +643,7 @@
         <h3>Game information</h3>
         {%- if m.designer.value != blank -%}<div class="pdp__inforow"><span class="k">Designer</span><span class="v">{{ designer_links }}</span></div>{%- endif -%}
         {%- if m.artist.value != blank -%}<div class="pdp__inforow"><span class="k">Artist</span><span class="v">{{ artist_links }}</span></div>{%- endif -%}
-        {%- if product.vendor != blank -%}<div class="pdp__inforow"><span class="k">Publisher</span><span class="v"><a href="/collections/publisher-{{ product.vendor | handle }}">{{ product.vendor }}</a></span></div>{%- endif -%}
+        {%- if product.vendor != blank -%}<div class="pdp__inforow"><span class="k">Publisher</span><span class="v"><a href="/collections/publisher-{% render 'tidy-handle', name: product.vendor %}">{{ product.vendor }}</a></span></div>{%- endif -%}
         {%- if m.year_published.value != blank -%}<div class="pdp__inforow"><span class="k">Year</span><span class="v">{{ m.year_published.value }}</span></div>{%- endif -%}
         {%- if m.player_count.value != blank -%}<div class="pdp__inforow"><span class="k">Players</span><span class="v">{{ m.player_count.value }}</span></div>{%- endif -%}
         {%- if m.play_time.value != blank -%}<div class="pdp__inforow"><span class="k">Play time</span><span class="v">{{ m.play_time.value }}</span></div>{%- endif -%}
@@ -843,46 +843,32 @@
   {%- endif -%}
 </div>
 
-{%- comment -%} Structured data for search engines (Product + Breadcrumb) {%- endcomment -%}
+{%- comment -%}
+  Structured data (Breadcrumb + FAQ). Product schema intentionally omitted — Shopify
+  auto-injects a full Product node (brand, gtin, offers, aggregateRating from the
+  reviews.* metafields) via content_for_header; a second copy makes Google merge them
+  and flag "duplicate field 'brand'" / "review has multiple aggregate ratings".
+{%- endcomment -%}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@graph": [
+    {%- comment -%}
+      @id matches the id Shopify puts on its auto-injected Product node, so Google
+      merges this augmentation into it. BGG is a third-party community score — it
+      belongs in additionalProperty, never in aggregateRating (which must be
+      first-party reviews).
+    {%- endcomment -%}
+    {% if bgg != blank %}
     {
       "@type": "Product",
-      "name": {{ product.title | json }},
-      "url": {{ canonical_url | json }},
-      {%- assign schema_img = product.featured_image | default: product.media.first.preview_image -%}
-      {% if schema_img %}"image": {{ schema_img | image_url: width: 1200 | prepend: "https:" | json }},{% endif %}
-      "description": {{ product.description | default: product.title | strip_html | truncatewords: 60 | truncate: 500 | json }},
-      {% if product.vendor != blank %}"brand": { "@type": "Brand", "name": {{ product.vendor | json }} },{% endif %}
-      {% if variant.sku != blank %}"sku": {{ variant.sku | json }},{% endif %}
-      {% if variant.barcode != blank %}"gtin": {{ variant.barcode | json }},{% endif %}
-      {% if variant.sku != blank %}"mpn": {{ variant.sku | json }},{% endif %}
-      {% if product.type != blank %}"category": {{ product.type | json }},{% endif %}
-      {% if weight != blank and weight > 0 %}"weight": { "@type": "QuantitativeValue", "value": {{ weight }}, "unitCode": "KGM" },{% endif %}
-      {% if rcount != blank and rscore != blank %}"aggregateRating": { "@type": "AggregateRating", "ratingValue": "{{ rscore }}", "reviewCount": "{{ rcount }}", "bestRating": "5", "worstRating": "1" },{% endif %}
-      {% if product.variants.size > 1 %}
-      "offers": {
-        "@type": "AggregateOffer",
-        "priceCurrency": {{ cart.currency.iso_code | json }},
-        "lowPrice": {{ product.price_min | divided_by: 100.0 }},
-        "highPrice": {{ product.price_max | divided_by: 100.0 }},
-        "offerCount": {{ product.variants.size }},
-        "availability": "https://schema.org/{% if product.available %}InStock{% else %}OutOfStock{% endif %}",
-        "url": {{ canonical_url | json }}
-      }
-      {% else %}
-      "offers": {
-        "@type": "Offer",
-        "priceCurrency": {{ cart.currency.iso_code | json }},
-        "price": {{ variant.price | divided_by: 100.0 }},
-        "availability": "https://schema.org/{% if product.available %}InStock{% else %}OutOfStock{% endif %}",
-        "itemCondition": "https://schema.org/NewCondition",
-        "url": {{ canonical_url | json }}
-      }
-      {% endif %}
+      "@id": {{ shop.url | append: product.url | json }},
+      "additionalProperty": [
+        { "@type": "PropertyValue", "name": "BoardGameGeek rating", "value": {{ bggdisp | json }}, "minValue": 0, "maxValue": 10 }{% if m.bgg_rank.value != blank %},
+        { "@type": "PropertyValue", "name": "BoardGameGeek rank", "value": {{ m.bgg_rank.value | json }} }{% endif %}
+      ]
     },
+    {% endif %}
     {
       "@type": "BreadcrumbList",
       "itemListElement": [
@@ -1134,30 +1120,12 @@
   "thumbnailUrl": "https://i.ytimg.com/vi/{{ yt_id }}/hqdefault.jpg",
   "embedUrl": "https://www.youtube.com/embed/{{ yt_id }}",
   "contentUrl": "https://www.youtube.com/watch?v={{ yt_id }}",
-  "uploadDate": "{{ product.published_at | date: '%Y-%m-%d' }}"
+  "uploadDate": "{{ product.published_at | date: '%Y-%m-%dT%H:%M:%S%:z' }}"
 }
 </script>
 {%- endif -%}
 
-{%- comment -%} SEO: FAQPage rich results from custom.faqs. {%- endcomment -%}
-{%- assign faqs = product.metafields.custom.faqs.value -%}
-{%- if faqs != blank and faqs.size > 0 -%}
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {%- for f in faqs -%}
-    {
-      "@type": "Question",
-      "name": {{ f.q | json }},
-      "acceptedAnswer": { "@type": "Answer", "text": {{ f.a | json }} }
-    }{%- unless forloop.last -%},{%- endunless -%}
-    {%- endfor -%}
-  ]
-}
-</script>
-{%- endif -%}
+{%- comment -%} FAQPage structured data lives in the @graph script above — do not add a second copy here. {%- endcomment -%}
 
 {% schema %}
 {

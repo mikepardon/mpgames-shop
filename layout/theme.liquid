@@ -64,7 +64,12 @@
           when 'product'
             assign meta_desc = product.description
           when 'page'
-            assign meta_desc = page.content | default: page.title
+            # Section-built pages have no body content — a bare title ("FAQs") is a
+            # useless description, so pad the fallback with store context.
+            assign meta_desc = page.content
+            if meta_desc == blank
+              assign meta_desc = page.title | append: ' — MPGames, the UK board game shop with fast next-day dispatch and 30-day returns.'
+            endif
           when 'article'
             assign meta_desc = article.excerpt_or_content
           when 'blog'
@@ -81,7 +86,16 @@
       <meta name="description" content="{{ meta_desc | escape }}">
     {%- endif -%}
 
-    {% render 'meta-tags', meta_desc: meta_desc %}
+    {%- comment -%}
+      Thin faceted collections (designer/artist/publisher/mechanic/player-count
+      etc. holding 1–2 games) are index bloat: noindex until they grow to 3+
+      products, but keep following links so crawl equity still flows.
+    {%- endcomment -%}
+    {%- if request.page_type == 'collection' and collection.all_products_count < 3 -%}
+      <meta name="robots" content="noindex, follow">
+    {%- endif -%}
+
+    {% render 'meta-tags', meta_desc: meta_desc, seo_title: seo_title %}
 
     {%- if request.page_type == 'index' -%}
       <script type="application/ld+json">

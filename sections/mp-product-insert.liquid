@@ -394,44 +394,15 @@
   </div>
 </div>
 
-{%- comment -%} Structured data (Product + Breadcrumb + FAQ). No board-game/BGG fields. {%- endcomment -%}
+{%- comment -%}
+  Structured data (Breadcrumb + FAQ). Product schema intentionally omitted — Shopify
+  auto-injects a full Product node via content_for_header; a second copy makes Google
+  merge them and flag duplicate brand / multiple aggregate ratings.
+{%- endcomment -%}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@graph": [
-    {
-      "@type": "Product",
-      "name": {{ product.title | json }},
-      "url": {{ canonical_url | json }},
-      {%- assign schema_img = product.featured_image | default: product.media.first.preview_image -%}
-      {% if schema_img %}"image": {{ schema_img | image_url: width: 1200 | prepend: "https:" | json }},{% endif %}
-      "description": {{ product.description | default: product.title | strip_html | truncatewords: 60 | truncate: 500 | json }},
-      {% if product.vendor != blank %}"brand": { "@type": "Brand", "name": {{ product.vendor | json }} },{% endif %}
-      {% if variant.sku != blank %}"sku": {{ variant.sku | json }},{% endif %}
-      {% if variant.sku != blank %}"mpn": {{ variant.sku | json }},{% endif %}
-      {% if product.type != blank %}"category": {{ product.type | json }},{% endif %}
-      {% if rcount != blank and rscore != blank %}"aggregateRating": { "@type": "AggregateRating", "ratingValue": "{{ rscore }}", "reviewCount": "{{ rcount }}", "bestRating": "5", "worstRating": "1" },{% endif %}
-      {% if product.variants.size > 1 %}
-      "offers": {
-        "@type": "AggregateOffer",
-        "priceCurrency": {{ cart.currency.iso_code | json }},
-        "lowPrice": {{ product.price_min | divided_by: 100.0 }},
-        "highPrice": {{ product.price_max | divided_by: 100.0 }},
-        "offerCount": {{ product.variants.size }},
-        "availability": "https://schema.org/{% if product.available %}InStock{% else %}OutOfStock{% endif %}",
-        "url": {{ canonical_url | json }}
-      }
-      {% else %}
-      "offers": {
-        "@type": "Offer",
-        "priceCurrency": {{ cart.currency.iso_code | json }},
-        "price": {{ variant.price | divided_by: 100.0 }},
-        "availability": "https://schema.org/{% if product.available %}InStock{% else %}OutOfStock{% endif %}",
-        "itemCondition": "https://schema.org/NewCondition",
-        "url": {{ canonical_url | json }}
-      }
-      {% endif %}
-    },
     {
       "@type": "BreadcrumbList",
       "itemListElement": [

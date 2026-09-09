@@ -1,0 +1,11 @@
+{%- comment -%}
+  Handleize with ASCII transliteration for letters Liquid's | handle silently
+  drops because they don't NFKD-decompose (Rafał -> rafal, not rafa-).
+  Usage: {% render 'tidy-handle', name: some_name %}  — emits just the handle.
+  MUST stay in lockstep with handleize() in scripts/sync-creator-collections.mjs,
+  or PDP links and collection handles drift apart and 404.
+{%- endcomment -%}
+{%- liquid
+  assign tidy = name | replace: 'ł', 'l' | replace: 'Ł', 'L' | replace: 'ø', 'o' | replace: 'Ø', 'O' | replace: 'đ', 'd' | replace: 'Đ', 'D' | replace: 'ð', 'd' | replace: 'Ð', 'D' | replace: 'þ', 'th' | replace: 'Þ', 'Th' | replace: 'ß', 'ss' | replace: 'æ', 'ae' | replace: 'Æ', 'Ae' | replace: 'œ', 'oe' | replace: 'Œ', 'Oe'
+  echo tidy | handleize
+-%}
