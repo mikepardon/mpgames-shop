@@ -1,9 +1,11 @@
 {%- comment -%}
   MPGames product page — BOARD GAME INSERT variant.
-  A dedicated PDP for 3D-printed storage inserts sold as STL files and/or printed.
-  Shares the site's visual language with mp-product.liquid but drops the board-game
-  furniture (designer/artist, how-to-play, BGG, complexity) and focuses on:
-  compatibility (which games), STL-vs-printed "what you get", print specs, delivery.
+  A dedicated PDP for 3D-printed storage inserts sold printed and, optionally, as
+  STL files. Shares the site's visual language with mp-product.liquid but drops the
+  board-game furniture (designer/artist, how-to-play, BGG, complexity) and focuses on:
+  compatibility (which games), print specs, delivery. All STL elements (download
+  card, digital notice, file-format row) render only when the product carries the
+  "stl-file" tag — untagged inserts present as plain physical products.
   Every data-driven element hides gracefully when its metafield is empty.
 {%- endcomment -%}
 
@@ -28,6 +30,14 @@
     assign rcount = jm.number_of_reviews
   endif
 
+  # STL framing (download card, digital notice, file-format row) only applies to
+  # inserts sold as printable files — flagged by the "stl-file" product tag.
+  # Untagged inserts are plain physical products, whatever their variants say.
+  assign is_stl = false
+  if product.tags contains 'stl-file'
+    assign is_stl = true
+  endif
+
   # Does any variant ship? (drives the "Format" framing + digital delivery notice.)
   assign has_digital = false
   assign has_physical = false
@@ -38,6 +48,9 @@
       assign has_physical = true
     endunless
   endfor
+  unless is_stl
+    assign has_digital = false
+  endunless
 
   # Is there anything to show in the print-specs panel?
   assign has_specs = false
@@ -201,8 +214,8 @@
           </div>
         {%- endif -%}
 
-        {%- comment -%} STL-vs-printed comparison sits under the gallery so it fills the left column beside the taller buy box {%- endcomment -%}
-        {%- if has_digital or has_physical -%}
+        {%- comment -%} STL-vs-printed comparison sits under the gallery so it fills the left column beside the taller buy box. Only rendered for stl-file products — a physical-only insert has no format choice to explain. {%- endcomment -%}
+        {%- if has_digital -%}
           <div class="pdp__h" style="font-size:19px;margin:26px 0 14px">Choose how you buy it</div>
           <div class="pdp__yg">
             {%- if has_digital -%}
