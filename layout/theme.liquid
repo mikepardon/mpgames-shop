@@ -130,6 +130,34 @@
       </script>
     {%- endif -%}
 
+    {%- comment -%} WebPage + Breadcrumb for standard pages (About, etc.). Emitted here rather than per-section so every page template gets it uniformly. {%- endcomment -%}
+    {%- if request.page_type == 'page' -%}
+      <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebPage",
+            "@id": {{ canonical_url | json }},
+            "url": {{ canonical_url | json }},
+            "name": {{ page.title | json }},
+            {%- if meta_desc != blank %}
+            "description": {{ meta_desc | json }},
+            {%- endif %}
+            "isPartOf": { "@type": "WebSite", "name": {{ shop.name | json }}, "url": {{ shop.url | append: routes.root_url | json }} }
+          },
+          {
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              { "@type": "ListItem", "position": 1, "name": "Home", "item": {{ shop.url | append: routes.root_url | json }} },
+              { "@type": "ListItem", "position": 2, "name": {{ page.title | json }}, "item": {{ canonical_url | json }} }
+            ]
+          }
+        ]
+      }
+      </script>
+    {%- endif -%}
+
     <script type="module">
       import * as StandardEvents from 'https://cdn.shopify.com/storefront/standard-events.js';
 
