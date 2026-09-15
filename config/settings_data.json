@@ -142,11 +142,6 @@
     },
     "content_for_index": [],
     "blocks": {
-      "14060646107696862457": {
-        "type": "shopify://apps/judge-me-reviews/blocks/judgeme_core/61ccd3b1-a9f2-4160-9fe9-4fec8413e5d8",
-        "disabled": false,
-        "settings": {}
-      },
       "11104565113590962351": {
         "type": "shopify://apps/tinyseo/blocks/article-json-ld-embed/0605268f-f7c4-4e95-b560-e43df7d59ae4",
         "disabled": false,
@@ -199,8 +194,6 @@
           "background_color": "#FFFFFF",
           "font_color": "#000000",
           "button_color": "#000000",
-          "secondary_color": "#FFFFFF",
-          "ternary_color": "#6A6A6A",
           "button_icon": "chat_bubble",
           "button_text": "chat_with_us",
           "button_horizontal_position": "bottom_right",
@@ -228,6 +221,11 @@
       },
       "16237003337219470499": {
         "type": "shopify://apps/appstle-loyalty/blocks/appstle-loyalty/1886c0f8-77b6-4a85-af11-b43cc17ae1c1",
+        "disabled": false,
+        "settings": {}
+      },
+      "14060646107696862457": {
+        "type": "shopify://apps/judge-me-reviews/blocks/judgeme_core/61ccd3b1-a9f2-4160-9fe9-4fec8413e5d8",
         "disabled": false,
         "settings": {}
       }
