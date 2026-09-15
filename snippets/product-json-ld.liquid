@@ -1,0 +1,114 @@
+{%- comment -%}
+  Native, self-contained Product structured data. Emits everything Google needs for a
+  product rich result / Merchant free listing directly from Shopify + Judge.me data,
+  so the theme no longer depends on a third-party SEO app (TinyIMG/tinySEO) to inject it.
+
+  Renders a full Product node: name, image(s), description, brand, category, an Offer per
+  variant (price, currency, availability, itemCondition, priceValidUntil, gtin, sku,
+  seller), aggregateRating (real Judge.me data only — never fabricated), BGG scores as
+  additionalProperty, and optionally a MerchantReturnPolicy.
+
+  Field order matters: every OPTIONAL block is comma-terminated and "offers" (always
+  present — every product has at least the default variant) is emitted LAST with no
+  trailing comma, which keeps the JSON valid whatever combination of optionals renders.
+
+  Parameters:
+    product        (required) the product to describe
+    returns_days   (optional) return window in days — omit to skip hasMerchantReturnPolicy
+                   (e.g. digital-only products where a mail-return policy is inaccurate)
+    returns_country(optional) ISO country for the return policy (default GB)
+    returns_fees_url (optional) schema.org ReturnFeesEnumeration URL (default customer-pays)
+{%- endcomment -%}
+{%- liquid
+  assign p = product
+  assign m = p.metafields.custom
+  assign cur = cart.currency.iso_code | default: shop.currency
+
+  # aggregateRating: prefer real Judge.me data, fall back to manual metafields. Never fabricate.
+  assign rscore = m.review_score.value
+  assign rcount = m.review_count.value
+  assign jm = p.metafields.judgeme.review_widget_data.value
+  if jm != blank and jm.number_of_reviews > 0
+    assign rscore = jm.average_rating
+    assign rcount = jm.number_of_reviews
+  endif
+
+  assign is_preorder = m.is_preorder.value
+
+  assign bgg = m.bgg_rating.value
+  assign bggn = bgg | times: 1.0
+  assign bggdisp = bggn | round: 1
+
+  # Rolling price validity ~1 year out (Google warns when priceValidUntil is missing/past).
+  assign price_valid_until = 'now' | date: '%s' | plus: 31536000 | date: '%Y-%m-%d'
+
+  assign base_url = shop.url | append: p.url
+-%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "@id": {{ base_url | json }},
+  "name": {{ p.title | json }},
+  "url": {{ base_url | json }},
+  {%- if p.description != blank %}
+  "description": {{ p.description | strip_html | truncate: 512 | json }},
+  {%- endif %}
+  {%- if p.images.size > 0 %}
+  "image": [{% for img in p.images limit: 5 %}{{ img | image_url: width: 1600 | prepend: 'https:' | json }}{% unless forloop.last %},{% endunless %}{% endfor %}],
+  {%- elsif p.featured_media %}
+  "image": {{ p.featured_media | image_url: width: 1600 | prepend: 'https:' | json }},
+  {%- endif %}
+  {%- if p.vendor != blank %}
+  "brand": { "@type": "Brand", "name": {{ p.vendor | json }} },
+  {%- endif %}
+  {%- if p.type != blank %}
+  "category": {{ p.type | json }},
+  {%- endif %}
+  {%- assign first_variant = p.selected_or_first_available_variant | default: p.variants.first -%}
+  {%- if first_variant.sku != blank %}
+  "sku": {{ first_variant.sku | json }},
+  {%- endif %}
+  {%- if rcount != blank and rcount > 0 %}
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": {{ rscore | json }},
+    "reviewCount": {{ rcount | json }},
+    "bestRating": "5",
+    "worstRating": "1"
+  },
+  {%- endif %}
+  {%- if bgg != blank %}
+  "additionalProperty": [
+    { "@type": "PropertyValue", "name": "BoardGameGeek rating", "value": {{ bggdisp | json }}, "minValue": 0, "maxValue": 10 }{% if m.bgg_rank.value != blank %},
+    { "@type": "PropertyValue", "name": "BoardGameGeek rank", "value": {{ m.bgg_rank.value | json }} }{% endif %}
+  ],
+  {%- endif %}
+  {%- if returns_days != blank %}
+  "hasMerchantReturnPolicy": {
+    "@type": "MerchantReturnPolicy",
+    "applicableCountry": {{ returns_country | default: 'GB' | json }},
+    "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
+    "merchantReturnDays": {{ returns_days }},
+    "returnMethod": "https://schema.org/ReturnByMail",
+    "returnFees": {{ returns_fees_url | default: 'https://schema.org/ReturnFeesCustomerResponsibility' | json }}
+  },
+  {%- endif %}
+  "offers": [
+    {%- for v in p.variants -%}
+    {
+      "@type": "Offer",
+      "url": {{ base_url | append: '?variant=' | append: v.id | json }},
+      "priceCurrency": {{ cur | json }},
+      "price": "{{ v.price | divided_by: 100.0 }}",
+      "priceValidUntil": {{ price_valid_until | json }},
+      "availability": "{% if is_preorder %}https://schema.org/PreOrder{% elsif v.available %}https://schema.org/InStock{% else %}https://schema.org/OutOfStock{% endif %}",
+      "itemCondition": "https://schema.org/NewCondition"{% if v.sku != blank %},
+      "sku": {{ v.sku | json }}{% endif %}{% if v.barcode != blank %},
+      "gtin": {{ v.barcode | json }}{% endif %},
+      "seller": { "@type": "Organization", "name": {{ shop.name | json }} }
+    }{%- unless forloop.last -%},{%- endunless -%}
+    {%- endfor -%}
+  ]
+}
+</script>

@@ -29,6 +29,8 @@
 {%- capture designer_links -%}{%- for n in designer_names -%}{%- assign nm = n | strip -%}{%- if forloop.first == false -%}, {% endif -%}<a href="/collections/designer-{% render 'tidy-handle', name: nm %}">{{ nm }}</a>{%- endfor -%}{%- endcapture -%}
 {%- assign artist_names = m.artist.value | replace: ';', ',' | split: ',' -%}
 {%- capture artist_links -%}{%- for n in artist_names -%}{%- assign nm = n | strip -%}{%- if forloop.first == false -%}, {% endif -%}<a href="/collections/artist-{% render 'tidy-handle', name: nm %}">{{ nm }}</a>{%- endfor -%}{%- endcapture -%}
+{%- comment -%} Descriptive alt-text fallback for gallery images that have no per-image alt set in admin (imported catalogs rarely do). Uses the product's own alt when present. {%- endcomment -%}
+{%- capture alt_base -%}{{ product.title }}{% if product.vendor != blank %} by {{ product.vendor }}{% endif %} board game{%- endcapture -%}
 {%- liquid
 
   assign on_sale = false
@@ -74,6 +76,12 @@
   if jm != blank and jm.number_of_reviews > 0
     assign rscore = jm.average_rating
     assign rcount = jm.number_of_reviews
+  endif
+
+  # Return policy shipping-fee responsibility, emitted in the Product structured data below.
+  assign return_fees_url = 'https://schema.org/ReturnFeesCustomerResponsibility'
+  if section.settings.returns_fees == 'free'
+    assign return_fees_url = 'https://schema.org/FreeReturn'
   endif
 -%}
 
@@ -324,7 +332,7 @@
         <div class="pdp__main">
           {%- if on_sale -%}<span class="pdp__flag">SALE · -{{ disc }}%</span>{%- endif -%}
           {%- if product.featured_media -%}
-            <img id="pdp-main-{{ section.id }}" src="{{ product.featured_media | image_url: width: 1100 }}" alt="{{ product.featured_media.alt | escape | default: product.title }}" width="1100" height="1100">
+            <img id="pdp-main-{{ section.id }}" src="{{ product.featured_media | image_url: width: 1100 }}" alt="{% if product.featured_media.alt != blank %}{{ product.featured_media.alt | escape }}{% else %}{{ alt_base | escape }}{% endif %}" width="1100" height="1100">
           {%- else -%}
             <span style="font:13px ui-monospace,monospace;color:#a39c92">{{ product.title }}</span>
           {%- endif -%}
@@ -333,7 +341,7 @@
           <div class="pdp__thumbs">
             {%- for media in product.media limit: 8 -%}
               <button type="button" class="pdp__thumb{% if forloop.first %} is-active{% endif %}" data-src="{{ media | image_url: width: 1100 }}" aria-label="View image {{ forloop.index }}">
-                <img src="{{ media | image_url: width: 180 }}" alt="{{ media.alt | default: product.title | escape }}" width="180" height="180" loading="lazy">
+                <img src="{{ media | image_url: width: 180 }}" alt="{% if media.alt != blank %}{{ media.alt | escape }}{% else %}{{ alt_base | escape }} — image {{ forloop.index }}{% endif %}" width="180" height="180" loading="lazy">
               </button>
             {%- endfor -%}
           </div>
@@ -844,31 +852,21 @@
 </div>
 
 {%- comment -%}
-  Structured data (Breadcrumb + FAQ). Product schema intentionally omitted — Shopify
-  auto-injects a full Product node (brand, gtin, offers, aggregateRating from the
-  reviews.* metafields) via content_for_header; a second copy makes Google merge them
-  and flag "duplicate field 'brand'" / "review has multiple aggregate ratings".
+  Structured data. The theme owns ALL product schema natively (no dependency on any
+  SEO app): the full Product/Offer node — including brand, gtin, offers, BGG scores,
+  aggregateRating and the return policy — is emitted by the product-json-ld snippet.
+  Breadcrumb + FAQ stay here in their own @graph. Do NOT re-enable TinyIMG's
+  product/breadcrumb JSON-LD embeds — they would duplicate what these blocks produce.
 {%- endcomment -%}
+{% render 'product-json-ld',
+    product: product,
+    returns_country: section.settings.returns_country,
+    returns_days: section.settings.returns_window_days,
+    returns_fees_url: return_fees_url %}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@graph": [
-    {%- comment -%}
-      @id matches the id Shopify puts on its auto-injected Product node, so Google
-      merges this augmentation into it. BGG is a third-party community score — it
-      belongs in additionalProperty, never in aggregateRating (which must be
-      first-party reviews).
-    {%- endcomment -%}
-    {% if bgg != blank %}
-    {
-      "@type": "Product",
-      "@id": {{ shop.url | append: product.url | json }},
-      "additionalProperty": [
-        { "@type": "PropertyValue", "name": "BoardGameGeek rating", "value": {{ bggdisp | json }}, "minValue": 0, "maxValue": 10 }{% if m.bgg_rank.value != blank %},
-        { "@type": "PropertyValue", "name": "BoardGameGeek rank", "value": {{ m.bgg_rank.value | json }} }{% endif %}
-      ]
-    },
-    {% endif %}
     {
       "@type": "BreadcrumbList",
       "itemListElement": [
@@ -1135,6 +1133,11 @@
     { "type": "text", "id": "delivery_line", "label": "Delivery line", "default": "Free UK delivery over £50" },
     { "type": "checkbox", "id": "show_features", "label": "Show 'Why you'll love it'", "default": true },
     { "type": "paragraph", "content": "Reviews, awards, BGA link & rating bars are read from product metafields (custom.review_score, custom.awards, etc.)." },
+    { "type": "header", "content": "Returns (structured data)" },
+    { "type": "paragraph", "content": "Emitted as MerchantReturnPolicy in the product's JSON-LD for Google Shopping / rich results. Set these to match your published returns policy." },
+    { "type": "text", "id": "returns_country", "label": "Returns country (ISO code)", "default": "GB" },
+    { "type": "number", "id": "returns_window_days", "label": "Return window (days)", "default": 30 },
+    { "type": "select", "id": "returns_fees", "label": "Return shipping fees", "options": [ { "value": "customer", "label": "Customer pays return shipping" }, { "value": "free", "label": "Free returns" } ], "default": "customer" },
     { "type": "header", "content": "Customers also bought" },
     { "type": "text", "id": "also_heading", "label": "Heading", "default": "Customers also bought" },
     { "type": "collection", "id": "related_collection", "label": "Related collection", "info": "Defaults to one of the product's own collections if left empty." }

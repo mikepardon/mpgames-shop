@@ -114,7 +114,20 @@
         }
       }
       </script>
-      {%- comment -%} WebSite/SearchAction schema intentionally omitted — Shopify injects it via content_for_header; a second copy would duplicate it. {%- endcomment -%}
+      {%- comment -%} WebSite + SearchAction (sitelinks search box). Verified 2026-09-15 that Shopify does NOT inject this via content_for_header, so the theme owns it. {%- endcomment -%}
+      <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": {{ shop.name | json }},
+        "url": {{ shop.url | append: routes.root_url | json }},
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": { "@type": "EntryPoint", "urlTemplate": "{{ shop.url }}/search?q={search_term_string}" },
+          "query-input": "required name=search_term_string"
+        }
+      }
+      </script>
     {%- endif -%}
 
     <script type="module">
@@ -494,6 +507,5 @@
     {%- if settings.cart_type == 'drawer' -%}
       <script src="{{ 'cart-drawer.js' | asset_url }}" defer="defer"></script>
     {%- endif -%}
-  <script src="{{ 'tiny-img-link-preloader.js' | asset_url }}" defer></script>
 </body>
 </html>

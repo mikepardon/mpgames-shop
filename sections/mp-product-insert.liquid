@@ -61,6 +61,9 @@
   assign inserts_url = '/collections/board-game-inserts'
 -%}
 
+{%- comment -%} Descriptive alt-text fallback for gallery images with no per-image alt set in admin. Uses the product's own alt when present. {%- endcomment -%}
+{%- capture alt_base -%}{{ product.title }}{% if product.vendor != blank %} by {{ product.vendor }}{% endif %} — 3D-printed board game insert{%- endcapture -%}
+
 {%- style -%}
   .mp-pdpi-{{ section.id }} { background: #f4efe6; font-family: 'Barlow', ui-sans-serif, system-ui, sans-serif; color: #16323f; }
   .mp-pdpi-{{ section.id }} .pdp__wrap { max-width: 1200px; margin: 0 auto; padding: 0 28px; }
@@ -199,7 +202,7 @@
         <div class="pdp__main">
           {%- if on_sale -%}<span class="pdp__flag">SALE · -{{ disc }}%</span>{%- endif -%}
           {%- if product.featured_media -%}
-            <img id="pdp-main-{{ section.id }}" src="{{ product.featured_media | image_url: width: 1100 }}" alt="{{ product.featured_media.alt | escape | default: product.title }}" width="1100" height="1100">
+            <img id="pdp-main-{{ section.id }}" src="{{ product.featured_media | image_url: width: 1100 }}" alt="{% if product.featured_media.alt != blank %}{{ product.featured_media.alt | escape }}{% else %}{{ alt_base | escape }}{% endif %}" width="1100" height="1100">
           {%- else -%}
             <span class="pdp__ph">{{ product.title }}</span>
           {%- endif -%}
@@ -208,7 +211,7 @@
           <div class="pdp__thumbs">
             {%- for media in product.media limit: 8 -%}
               <button type="button" class="pdp__thumb{% if forloop.first %} is-active{% endif %}" data-src="{{ media | image_url: width: 1100 }}" aria-label="View image {{ forloop.index }}">
-                <img src="{{ media | image_url: width: 180 }}" alt="{{ media.alt | default: product.title | escape }}" width="180" height="180" loading="lazy">
+                <img src="{{ media | image_url: width: 180 }}" alt="{% if media.alt != blank %}{{ media.alt | escape }}{% else %}{{ alt_base | escape }} — image {{ forloop.index }}{% endif %}" width="180" height="180" loading="lazy">
               </button>
             {%- endfor -%}
           </div>
@@ -408,10 +411,12 @@
 </div>
 
 {%- comment -%}
-  Structured data (Breadcrumb + FAQ). Product schema intentionally omitted — Shopify
-  auto-injects a full Product node via content_for_header; a second copy makes Google
-  merge them and flag duplicate brand / multiple aggregate ratings.
+  Structured data. The theme owns product schema natively via the product-json-ld
+  snippet (Product/Offer, brand, gtin, aggregateRating). No return policy is passed:
+  inserts sold as digital STL files aren't returnable like physical goods, so asserting
+  a mail-return window would be inaccurate. Breadcrumb + FAQ stay in their own @graph.
 {%- endcomment -%}
+{% render 'product-json-ld', product: product %}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
