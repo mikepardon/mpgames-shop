@@ -1,6 +1,6 @@
 {%- comment -%}
   MPGames newsletter sign-up band. Imported from Claude Design.
-  Uses Shopify's customer newsletter form.
+  Relays sign-ups to our own /apps/notify app proxy (type: newsletter).
 {%- endcomment -%}
 
 {%- style -%}
@@ -25,6 +25,9 @@
     border-radius: 8px; white-space: nowrap; border: 0; cursor: pointer; font-family: inherit;
   }
   .mp-nl-{{ section.id }} .mp-nl__ok { color: #bfe9d2; font-size: 13px; margin-top: 8px; }
+  .mp-nl-{{ section.id }} .mp-nl__err { color: #ffd2c7; font-size: 13px; margin-top: 8px; }
+  .mp-nl-{{ section.id }} [data-nl-fields][hidden], .mp-nl-{{ section.id }} [data-nl-consent][hidden], .mp-nl-{{ section.id }} .mp-nl__ok[hidden], .mp-nl-{{ section.id }} .mp-nl__err[hidden] { display: none; }
+  .mp-nl-{{ section.id }} .mp-nl__form button[disabled] { opacity: .6; cursor: default; }
   @media (max-width: 749px) { .mp-nl-{{ section.id }} .mp-nl__wrap { padding: 22px 16px 32px; } .mp-nl-{{ section.id }} .mp-nl__card { padding: 24px 22px; } .mp-nl-{{ section.id }} .mp-nl__form input { min-width: 0; flex: 1; } }
 {%- endstyle -%}
 
@@ -36,25 +39,75 @@
           <div class="mp-nl__title mp-cond">{{ section.settings.title }}</div>
           <div class="mp-nl__sub">{{ section.settings.subtitle }}</div>
         </div>
-        {%- form 'customer', class: 'mp-nl__form' -%}
-          <input type="hidden" name="contact[tags]" value="newsletter">
-          {%- if form.posted_successfully? -%}
-            <p class="mp-nl__ok">{{ section.settings.success_text }}</p>
-          {%- else -%}
-            <div class="mp-nl__row">
-              <input type="email" name="contact[email]" placeholder="{{ section.settings.placeholder }}" aria-label="Email" required>
-              <button type="submit">{{ section.settings.button_label }}</button>
-            </div>
-            <label class="mp-nl__consent">
-              <input type="checkbox" name="contact[accepts_marketing]" value="true" required>
-              <span>{{ section.settings.consent_text }}{%- if shop.privacy_policy != blank %} <a href="{{ shop.privacy_policy.url }}">{{ shop.privacy_policy.title }}</a>{%- endif -%}.</span>
-            </label>
-          {%- endif -%}
-        {%- endform -%}
+        {%- comment -%} Relays the sign-up to our own /apps/notify app proxy (type: newsletter) rather than Shopify's customer form. {%- endcomment -%}
+        <form class="mp-nl__form" data-nl-form novalidate>
+          <div class="mp-nl__row" data-nl-fields>
+            <input type="email" name="email" placeholder="{{ section.settings.placeholder }}" aria-label="Email" required>
+            <button type="submit">{{ section.settings.button_label }}</button>
+          </div>
+          <label class="mp-nl__consent" data-nl-consent>
+            <input type="checkbox" name="consent" value="true" required>
+            <span>{{ section.settings.consent_text }}{%- if shop.privacy_policy != blank %} <a href="{{ shop.privacy_policy.url }}">{{ shop.privacy_policy.title }}</a>{%- endif -%}.</span>
+          </label>
+          <p class="mp-nl__err" data-nl-err hidden></p>
+          <p class="mp-nl__ok" data-nl-ok hidden>{{ section.settings.success_text }}</p>
+        </form>
       </div>
     </div>
   </div>
 </div>
+
+<script>
+  (function () {
+    var root = document.querySelector('.mp-nl-{{ section.id }}');
+    if (!root) return;
+    var form = root.querySelector('[data-nl-form]');
+    if (!form) return;
+
+    var emailInput = form.querySelector('input[type="email"]');
+    var consent = form.querySelector('input[name="consent"]');
+    var fields = form.querySelector('[data-nl-fields]');
+    var consentRow = form.querySelector('[data-nl-consent]');
+    var okEl = form.querySelector('[data-nl-ok]');
+    var errEl = form.querySelector('[data-nl-err]');
+    var submitBtn = form.querySelector('button[type="submit"]');
+    var customerName = {{ customer.name | json }};
+
+    function showError(message) {
+      if (!errEl) return;
+      errEl.textContent = message;
+      errEl.hidden = false;
+    }
+
+    form.addEventListener('submit', function (event) {
+      event.preventDefault();
+      if (errEl) errEl.hidden = true;
+
+      var email = ((emailInput && emailInput.value) || '').trim();
+      if (!email) { showError('Please enter your email address.'); return; }
+      if (consent && !consent.checked) { showError('Please tick the box to confirm you’re happy to hear from us.'); return; }
+
+      var originalLabel = submitBtn ? submitBtn.textContent : '';
+      if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Signing up…'; }
+
+      fetch('/apps/notify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ type: 'newsletter', email: email, name: customerName })
+      }).then(function (response) {
+        if (!response.ok) { throw new Error('newsletter relay returned ' + response.status); }
+        return response.json().catch(function () { return {}; });
+      }).then(function () {
+        if (fields) fields.hidden = true;
+        if (consentRow) consentRow.hidden = true;
+        if (okEl) okEl.hidden = false;
+      }).catch(function () {
+        if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = originalLabel; }
+        showError('Sorry, something went wrong. Please try again.');
+      });
+    });
+  })();
+</script>
 
 {% schema %}
 {
