@@ -1,0 +1,232 @@
+{%- comment -%}
+  MPGames newsletter pop-up. Replaces the Klaviyo onsite pop-up.
+  Rendered once globally from layout/theme.liquid; relays sign-ups to our own
+  /apps/notify app proxy (type: newsletter). Show timing + frequency are
+  throttled client-side via localStorage/sessionStorage so it isn't a nuisance.
+{%- endcomment -%}
+
+{%- unless section.settings.enabled -%}{%- comment -%} pop-up disabled in the theme editor {%- endcomment -%}
+{%- else -%}
+
+{%- style -%}
+  .mp-nlpop-{{ section.id }} { position: fixed; inset: 0; z-index: 10000; display: flex; align-items: center; justify-content: center; padding: 20px; font-family: 'Barlow', ui-sans-serif, system-ui, sans-serif; }
+  .mp-nlpop-{{ section.id }}[hidden] { display: none; }
+  .mp-nlpop-{{ section.id }} .nlpop__ov { position: absolute; inset: 0; background: rgba(16,32,40,.58); opacity: 0; transition: opacity .22s ease; }
+  .mp-nlpop-{{ section.id }}.is-open .nlpop__ov { opacity: 1; }
+  .mp-nlpop-{{ section.id }} .nlpop__panel {
+    position: relative; z-index: 1; display: flex; width: 100%; max-width: 760px; max-height: 90vh; overflow: hidden;
+    background: #f4efe6; border-radius: 16px; box-shadow: 0 24px 70px rgba(0,0,0,.4);
+    transform: translateY(14px) scale(.98); opacity: 0; transition: transform .24s ease, opacity .24s ease;
+  }
+  .mp-nlpop-{{ section.id }}.is-open .nlpop__panel { transform: none; opacity: 1; }
+  .mp-nlpop-{{ section.id }} .nlpop__media { width: 44%; flex: none; background: #2b2233; }
+  .mp-nlpop-{{ section.id }} .nlpop__media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .mp-nlpop-{{ section.id }} .nlpop__body { flex: 1; min-width: 0; padding: 34px 34px 30px; overflow-y: auto; }
+  .mp-nlpop-{{ section.id }} .nlpop__close { position: absolute; top: 12px; right: 14px; z-index: 2; background: none; border: 0; font-size: 26px; line-height: 1; color: #8a8278; cursor: pointer; padding: 4px; }
+  .mp-nlpop-{{ section.id }} .nlpop__close:hover { color: #16323f; }
+  .mp-nlpop-{{ section.id }} .nlpop__kicker { font-size: 12px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: #f2872f; }
+  .mp-nlpop-{{ section.id }} .nlpop__title { font-size: 30px; font-weight: 700; line-height: 1.08; color: #16323f; margin: 8px 0 0; }
+  .mp-nlpop-{{ section.id }} .nlpop__sub { font-size: 14px; line-height: 1.55; color: #4a443c; margin: 12px 0 0; }
+  .mp-nlpop-{{ section.id }} .nlpop__form { margin-top: 20px; display: flex; flex-direction: column; gap: 12px; }
+  .mp-nlpop-{{ section.id }} .nlpop__form input[type="email"] { width: 100%; box-sizing: border-box; background: #fff; border: 1px solid #cdc6ba; border-radius: 9px; padding: 14px 16px; font-size: 14px; color: #16323f; font-family: inherit; outline: 0; }
+  .mp-nlpop-{{ section.id }} .nlpop__form input[type="email"]:focus { border-color: #16323f; }
+  .mp-nlpop-{{ section.id }} .nlpop__form button { width: 100%; background: #f2872f; color: #fff; font-weight: 700; font-size: 15px; padding: 14px; border: 0; border-radius: 9px; cursor: pointer; font-family: inherit; }
+  .mp-nlpop-{{ section.id }} .nlpop__form button:hover { background: #e0761f; }
+  .mp-nlpop-{{ section.id }} .nlpop__form button[disabled] { opacity: .6; cursor: default; }
+  .mp-nlpop-{{ section.id }} .nlpop__consent { display: flex; gap: 8px; align-items: flex-start; font-size: 11.5px; line-height: 1.45; color: #6b5a48; cursor: pointer; }
+  .mp-nlpop-{{ section.id }} .nlpop__consent input { width: 15px; height: 15px; margin: 1px 0 0; flex: none; accent-color: #f2872f; }
+  .mp-nlpop-{{ section.id }} .nlpop__consent a { color: #c2410c; }
+  .mp-nlpop-{{ section.id }} .nlpop__err { color: #d6402e; font-size: 13px; }
+  .mp-nlpop-{{ section.id }} .nlpop__ok { font-size: 15px; line-height: 1.55; color: #2f8f5b; font-weight: 600; margin-top: 18px; }
+  .mp-nlpop-{{ section.id }} .nlpop__dismiss { margin-top: 14px; background: none; border: 0; color: #8a8278; font-size: 12.5px; font-weight: 600; text-decoration: underline; cursor: pointer; font-family: inherit; padding: 0; }
+  .mp-nlpop-{{ section.id }} [hidden] { display: none !important; }
+  @media (max-width: 640px) {
+    .mp-nlpop-{{ section.id }} .nlpop__media { display: none; }
+    .mp-nlpop-{{ section.id }} .nlpop__body { padding: 40px 22px 26px; }
+    .mp-nlpop-{{ section.id }} .nlpop__title { font-size: 25px; }
+  }
+{%- endstyle -%}
+
+<div class="mp-nlpop-{{ section.id }}" data-nlpop hidden role="dialog" aria-modal="true" aria-labelledby="nlpop-title-{{ section.id }}">
+  <div class="nlpop__ov" data-nlpop-close></div>
+  <div class="nlpop__panel">
+    <button type="button" class="nlpop__close" data-nlpop-close aria-label="Close">&times;</button>
+    {%- if section.settings.image != blank -%}
+      <div class="nlpop__media">
+        <img src="{{ section.settings.image | image_url: width: 700 }}" alt="" width="700" height="800" loading="lazy">
+      </div>
+    {%- endif -%}
+    <div class="nlpop__body">
+      {%- if section.settings.kicker != blank -%}<div class="nlpop__kicker">{{ section.settings.kicker }}</div>{%- endif -%}
+      <h2 class="nlpop__title" id="nlpop-title-{{ section.id }}">{{ section.settings.title }}</h2>
+      {%- if section.settings.subtitle != blank -%}<p class="nlpop__sub">{{ section.settings.subtitle }}</p>{%- endif -%}
+
+      <form class="nlpop__form" data-nlpop-form novalidate>
+        <div data-nlpop-fields>
+          <input type="email" name="email" placeholder="{{ section.settings.placeholder }}" aria-label="Email" required style="margin-bottom:12px">
+          <button type="submit">{{ section.settings.button_label }}</button>
+          {%- if section.settings.consent_text != blank -%}
+            <label class="nlpop__consent" data-nlpop-consent style="margin-top:12px">
+              <input type="checkbox" name="consent" value="true" required>
+              <span>{{ section.settings.consent_text }}{%- if shop.privacy_policy != blank %} <a href="{{ shop.privacy_policy.url }}">{{ shop.privacy_policy.title }}</a>{%- endif -%}.</span>
+            </label>
+          {%- endif -%}
+          <p class="nlpop__err" data-nlpop-err hidden style="margin-top:10px"></p>
+        </div>
+        <p class="nlpop__ok" data-nlpop-ok hidden>{{ section.settings.success_text }}</p>
+      </form>
+
+      <button type="button" class="nlpop__dismiss" data-nlpop-close>{{ section.settings.dismiss_label }}</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function () {
+    var root = document.querySelector('.mp-nlpop-{{ section.id }}');
+    if (!root) return;
+
+    var STORAGE_KEY = 'mp_nl_popup';
+    var frequencyDays = {{ section.settings.frequency_days | default: 30 }};
+    var delayMs = {{ section.settings.delay_seconds | default: 6 }} * 1000;
+    var exitIntent = {% if section.settings.exit_intent %}true{% else %}false{% endif %};
+    var hideForCustomers = {% if section.settings.hide_for_customers %}true{% else %}false{% endif %};
+    var isCustomer = {% if customer %}true{% else %}false{% endif %};
+    var customerName = {{ customer.name | json }};
+
+    function readState() {
+      try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch (e) { return {}; }
+    }
+    function writeState(patch) {
+      try {
+        var next = readState();
+        for (var k in patch) { next[k] = patch[k]; }
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      } catch (e) {}
+    }
+    function suppressed() {
+      if (hideForCustomers && isCustomer) return true;
+      var state = readState();
+      if (state.subscribed) return true;
+      if (state.dismissedAt && (Date.now() - state.dismissedAt) < frequencyDays * 86400000) return true;
+      try { if (sessionStorage.getItem(STORAGE_KEY + '_seen')) return true; } catch (e) {}
+      return false;
+    }
+
+    var form = root.querySelector('[data-nlpop-form]');
+    var emailInput = root.querySelector('input[type="email"]');
+    var consent = root.querySelector('input[name="consent"]');
+    var fields = root.querySelector('[data-nlpop-fields]');
+    var okEl = root.querySelector('[data-nlpop-ok]');
+    var errEl = root.querySelector('[data-nlpop-err]');
+    var submitBtn = form ? form.querySelector('button[type="submit"]') : null;
+    var lastFocus = null;
+    var opened = false;
+
+    function open() {
+      if (opened) return;
+      opened = true;
+      lastFocus = document.activeElement;
+      root.hidden = false;
+      // next frame so the transition runs
+      requestAnimationFrame(function () { root.classList.add('is-open'); });
+      try { sessionStorage.setItem(STORAGE_KEY + '_seen', '1'); } catch (e) {}
+      if (emailInput) { try { emailInput.focus(); } catch (e) {} }
+      document.addEventListener('keydown', onKeydown);
+    }
+    function close() {
+      root.classList.remove('is-open');
+      document.removeEventListener('keydown', onKeydown);
+      window.setTimeout(function () { root.hidden = true; }, 240);
+      if (lastFocus && lastFocus.focus) { try { lastFocus.focus(); } catch (e) {} }
+    }
+    function dismiss() {
+      writeState({ dismissedAt: Date.now() });
+      close();
+    }
+    function onKeydown(event) { if (event.key === 'Escape') dismiss(); }
+
+    root.querySelectorAll('[data-nlpop-close]').forEach(function (el) {
+      el.addEventListener('click', dismiss);
+    });
+
+    function showError(message) {
+      if (!errEl) return;
+      errEl.textContent = message;
+      errEl.hidden = false;
+    }
+
+    if (form) {
+      form.addEventListener('submit', function (event) {
+        event.preventDefault();
+        if (errEl) errEl.hidden = true;
+
+        var email = ((emailInput && emailInput.value) || '').trim();
+        if (!email) { showError('Please enter your email address.'); return; }
+        if (consent && !consent.checked) { showError('Please tick the box to confirm you’re happy to hear from us.'); return; }
+
+        var originalLabel = submitBtn ? submitBtn.textContent : '';
+        if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Signing up…'; }
+
+        fetch('/apps/notify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify({ type: 'newsletter', email: email, name: customerName })
+        }).then(function (response) {
+          if (!response.ok) { throw new Error('newsletter relay returned ' + response.status); }
+          return response.json().catch(function () { return {}; });
+        }).then(function () {
+          writeState({ subscribed: true });
+          if (fields) fields.hidden = true;
+          if (okEl) okEl.hidden = false;
+          window.setTimeout(close, 2600);
+        }).catch(function () {
+          if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = originalLabel; }
+          showError('Sorry, something went wrong. Please try again.');
+        });
+      });
+    }
+
+    if (suppressed()) return;
+
+    // Editor preview: show immediately so the merchant can style it.
+    if (window.Shopify && window.Shopify.designMode) { open(); return; }
+
+    var timer = window.setTimeout(open, delayMs);
+    if (exitIntent) {
+      document.addEventListener('mouseout', function onLeave(event) {
+        if (event.clientY > 0 || event.relatedTarget) return;
+        window.clearTimeout(timer);
+        document.removeEventListener('mouseout', onLeave);
+        open();
+      });
+    }
+  })();
+</script>
+
+{%- endunless -%}
+
+{% schema %}
+{
+  "name": "MP Newsletter pop-up",
+  "settings": [
+    { "type": "checkbox", "id": "enabled", "label": "Enable pop-up", "default": true },
+    { "type": "paragraph", "content": "Relays sign-ups to the /apps/notify proxy (type: newsletter). Shown once, then throttled per visitor by the settings below." },
+    { "type": "image_picker", "id": "image", "label": "Side image", "info": "Optional. Hidden on mobile." },
+    { "type": "text", "id": "kicker", "label": "Kicker", "default": "The MPGames club" },
+    { "type": "text", "id": "title", "label": "Title", "default": "Want first dibs on restocks & deals?" },
+    { "type": "textarea", "id": "subtitle", "label": "Subtitle", "default": "Join the club for early access to restocks, new releases and member-only offers." },
+    { "type": "text", "id": "placeholder", "label": "Email placeholder", "default": "Enter your email address" },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "Sign me up" },
+    { "type": "text", "id": "dismiss_label", "label": "Dismiss link", "default": "No thanks" },
+    { "type": "text", "id": "success_text", "label": "Success text", "default": "You’re in — thanks for joining the MPGames club!" },
+    { "type": "text", "id": "consent_text", "label": "Consent text", "info": "Leave blank to drop the consent checkbox.", "default": "Yes, email me restocks, new releases and offers. I can unsubscribe anytime — see our " },
+    { "type": "header", "content": "Behaviour" },
+    { "type": "range", "id": "delay_seconds", "min": 0, "max": 30, "step": 1, "unit": "s", "label": "Delay before showing", "default": 6 },
+    { "type": "checkbox", "id": "exit_intent", "label": "Also trigger on exit intent (desktop)", "default": true },
+    { "type": "range", "id": "frequency_days", "min": 1, "max": 90, "step": 1, "unit": "d", "label": "Don’t show again for (after dismiss)", "default": 30 },
+    { "type": "checkbox", "id": "hide_for_customers", "label": "Hide from logged-in customers", "default": false }
+  ],
+  "presets": [ { "name": "MP Newsletter pop-up" } ]
+}
+{% endschema %}

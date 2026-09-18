@@ -59,6 +59,10 @@
   .mp-bl-{{ section.id }} .bl__news p { color: #c5b9d4; font-size: 12.5px; margin: 6px 0 0; line-height: 1.5; }
   .mp-bl-{{ section.id }} .bl__news input { width: 100%; box-sizing: border-box; background: #fff; border: 0; border-radius: 8px; padding: 11px 14px; font-size: 13px; margin-top: 14px; font-family: inherit; }
   .mp-bl-{{ section.id }} .bl__news button { width: 100%; background: #f2872f; color: #fff; font-weight: 700; font-size: 14px; padding: 11px; border: 0; border-radius: 8px; margin-top: 9px; cursor: pointer; font-family: inherit; }
+  .mp-bl-{{ section.id }} .bl__news button[disabled] { opacity: .6; cursor: default; }
+  .mp-bl-{{ section.id }} .bl__news-ok { color: #bfe9d2; font-size: 12.5px; margin-top: 10px; }
+  .mp-bl-{{ section.id }} .bl__news-err { color: #ffd2c7; font-size: 12.5px; margin-top: 10px; }
+  .mp-bl-{{ section.id }} .bl__news [data-nl-fields][hidden], .mp-bl-{{ section.id }} .bl__news-ok[hidden], .mp-bl-{{ section.id }} .bl__news-err[hidden] { display: none; }
 
   @media (max-width: 989px) {
     .mp-bl-{{ section.id }} .bl__body { flex-direction: column; }
@@ -191,11 +195,15 @@
           <div class="bl__news">
             <h3 class="mp-cond">{{ section.settings.news_title }}</h3>
             <p>{{ section.settings.news_text }}</p>
-            {%- form 'customer' -%}
-              <input type="hidden" name="contact[tags]" value="newsletter">
-              <input type="email" name="contact[email]" placeholder="Your email address" required>
-              <button type="submit" class="mp-cond">Subscribe</button>
-            {%- endform -%}
+            {%- comment -%} Relays to our own /apps/notify app proxy (type: newsletter), matching the main newsletter band. {%- endcomment -%}
+            <form class="bl__news-form" data-nl-form novalidate>
+              <div data-nl-fields>
+                <input type="email" name="email" placeholder="Your email address" aria-label="Email" required>
+                <button type="submit" class="mp-cond">Subscribe</button>
+              </div>
+              <p class="bl__news-ok" data-nl-ok hidden>{{ section.settings.news_success }}</p>
+              <p class="bl__news-err" data-nl-err hidden></p>
+            </form>
           </div>
         </aside>
       </div>
@@ -203,6 +211,54 @@
 
   </div>
 </section>
+
+<script>
+  (function () {
+    var root = document.querySelector('.mp-bl-{{ section.id }}');
+    if (!root) return;
+    var form = root.querySelector('[data-nl-form]');
+    if (!form) return;
+
+    var emailInput = form.querySelector('input[type="email"]');
+    var fields = form.querySelector('[data-nl-fields]');
+    var okEl = form.querySelector('[data-nl-ok]');
+    var errEl = form.querySelector('[data-nl-err]');
+    var submitBtn = form.querySelector('button[type="submit"]');
+    var customerName = {{ customer.name | json }};
+
+    function showError(message) {
+      if (!errEl) return;
+      errEl.textContent = message;
+      errEl.hidden = false;
+    }
+
+    form.addEventListener('submit', function (event) {
+      event.preventDefault();
+      if (errEl) errEl.hidden = true;
+
+      var email = ((emailInput && emailInput.value) || '').trim();
+      if (!email) { showError('Please enter your email address.'); return; }
+
+      var originalLabel = submitBtn ? submitBtn.textContent : '';
+      if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Subscribing…'; }
+
+      fetch('/apps/notify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ type: 'newsletter', email: email, name: customerName })
+      }).then(function (response) {
+        if (!response.ok) { throw new Error('newsletter relay returned ' + response.status); }
+        return response.json().catch(function () { return {}; });
+      }).then(function () {
+        if (fields) fields.hidden = true;
+        if (okEl) okEl.hidden = false;
+      }).catch(function () {
+        if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = originalLabel; }
+        showError('Sorry, something went wrong. Please try again.');
+      });
+    });
+  })();
+</script>
 
 {% schema %}
 {
@@ -214,7 +270,8 @@
     { "type": "text", "id": "heading", "label": "Heading", "default": "Guides, reviews & tabletop talk" },
     { "type": "textarea", "id": "subtitle", "label": "Subtitle", "default": "Buying guides, deep-dive reviews and game-night inspiration from the MPGames team and the wider hobby." },
     { "type": "text", "id": "news_title", "label": "Newsletter title", "default": "Get the weekly roundup" },
-    { "type": "textarea", "id": "news_text", "label": "Newsletter text", "default": "New articles, restock alerts and member deals — straight to your inbox." }
+    { "type": "textarea", "id": "news_text", "label": "Newsletter text", "default": "New articles, restock alerts and member deals — straight to your inbox." },
+    { "type": "text", "id": "news_success", "label": "Newsletter success text", "default": "Thanks — you’re subscribed!" }
   ],
   "enabled_on": { "templates": ["blog"] },
   "presets": [
