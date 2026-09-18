@@ -423,6 +423,9 @@
             "show_sample_reviews": true,
             "reviews_selection": "all",
             "products": [],
+            "filter_pinned": false,
+            "filter_featured": false,
+            "filter_custom_tags": "",
             "star_rating": "all",
             "max_reviews": 20,
             "quote_marks_size": "small",
@@ -435,7 +438,7 @@
             "max_width": 1100,
             "corner_styling": "soft",
             "quote_marks_style": "serif",
-            "card_color": "#F9F9F9",
+            "card_color": "#f9f9f9",
             "stars_and_quote_marks_color": "#108474",
             "text_color": "#000000",
             "arrows_color": "#000000",
@@ -466,6 +469,41 @@
         "success_text": "Thanks for subscribing!",
         "consent_text": "Yes, email me restocks, new releases and offers. I can unsubscribe anytime — see our"
       }
+    },
+    "1789728103c1354ab4": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_a3fa85b_DDpikJ": {
+          "type": "ai_gen_block_a3fa85b",
+          "settings": {
+            "heading": "Notify me when available",
+            "logged_in_message": "Get an email when this product is back in stock.",
+            "logged_out_message": "Sign in or create an account to receive a back-in-stock notification.",
+            "button_label": "Notify me",
+            "sign_in_label": "Sign in",
+            "create_account_label": "Create an account",
+            "sending_message": "Sending your request…",
+            "success_message": "Thanks. We’ll email you when it’s back in stock.",
+            "success_button_label": "Request submitted",
+            "error_message": "We couldn’t submit your request. Please try again.",
+            "endpoint": "https://partners.mpgames.io/webhooks/shopify/stock-notifications",
+            "desktop_width_percent": 100,
+            "background_color": "#F3F3F3",
+            "text_color": "#121212",
+            "border_color": "#B7B7B7",
+            "button_color": "#121212",
+            "button_text_color": "#FFFFFF",
+            "link_color": "#121212",
+            "border_radius": 0,
+            "button_radius": 0
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_a3fa85b_DDpikJ"
+      ],
+      "settings": {}
     }
   },
   "order": [
@@ -482,6 +520,7 @@
     "mp_designers",
     "mp_editorial",
     "1784328042325af5f3",
-    "mp_newsletter"
+    "mp_newsletter",
+    "1789728103c1354ab4"
   ]
 }
