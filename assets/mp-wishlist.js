@@ -77,7 +77,7 @@
   }
   function groupsFor(id) {
     var set = membership[key(id)];
-    return set ? Array.prototype.slice.call(set) : [];
+    return set ? Array.from(set) : [];
   }
   function ensureGroupName(name) {
     if (groupNames.indexOf(name) === -1) { groupNames.push(name); }
