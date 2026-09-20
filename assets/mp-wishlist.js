@@ -427,7 +427,7 @@
       (g.items || []).forEach(function (it) {
         var id = key(it.product_id != null ? it.product_id : it.id);
         var h = it.handle || resolveHandle(id);
-        if (h && !seen[id] && !inCart[id]) { seen[id] = true; items.push({ id: id, handle: h }); }
+        if (h && !seen[id] && !inCart[id]) { seen[id] = true; items.push({ id: id, handle: h, groups: groupsFor(id) }); }
       });
     });
     if (!items.length) { return; }
@@ -437,22 +437,23 @@
     items.slice(0, 6).forEach(function (x) {
       fetch("/products/" + x.handle + ".js", { headers: { "Accept": "application/json" } })
         .then(function (r) { return r.ok ? r.json() : undefined; })
-        .then(function (p) { if (p) { host.appendChild(cartRow(p)); } })
+        .then(function (p) { if (p) { host.appendChild(cartRow(p, x.groups)); } })
         .catch(function () {});
     });
   }
-  function cartRow(p) {
+  function cartRow(p, groups) {
     var row = document.createElement("div");
     row.className = "mpw-cart-list__row";
     var img = p.featured_image ? '<img src="' + p.featured_image + '&width=96" alt="' + escapeHtml(p.title) + '" loading="lazy">' : "";
     var action = p.available
       ? '<button type="button" class="mpw-cart-list__add" data-add>Add</button>'
       : '<span class="mpw-item__soldout" style="flex:none">Out of stock</span>';
+    var meta = (groups && groups.length) ? "In " + groups.map(escapeHtml).join(", ") : "From your wishlist";
     row.innerHTML =
       '<a href="' + p.url + '" class="mpw-cart-list__thumb">' + img + '</a>' +
       '<div class="mpw-cart-list__info">' +
         '<a href="' + p.url + '" class="mpw-cart-list__name">' + escapeHtml(p.title) + '</a>' +
-        '<div class="mpw-cart-list__meta">From your wishlist</div>' +
+        '<div class="mpw-cart-list__meta">' + meta + '</div>' +
       '</div>' +
       '<div class="mpw-cart-list__price">' + money(p.price) + '</div>' +
       action;
