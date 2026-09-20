@@ -5,15 +5,12 @@
 {%- endcomment -%}
 <div class="mpw-page">
   <div class="mpw-page__wrap">
-    <h1 class="mpw-page__title">{{ section.settings.heading | default: 'My Wishlist' }}</h1>
-    {%- if section.settings.intro != blank -%}<p class="mpw-page__intro">{{ section.settings.intro }}</p>{%- endif -%}
-    {%- if customer -%}
-      <div data-mpw-page>
-        <p class="mpw-page__loading">Loading your wishlist&hellip;</p>
-      </div>
-    {%- else -%}
-      <p class="mpw-page__guest">Please <a href="{{ routes.account_login_url }}?return_url={{ request.path | url_encode }}">log in</a> or <a href="{{ routes.account_register_url }}?return_url={{ request.path | url_encode }}">create an account</a> to view and save your wishlists.</p>
-    {%- endif -%}
+    {%- comment -%} Content (own wishlist, guest prompt, or a shared ?shared=token view) is hydrated by mp-wishlist.js. {%- endcomment -%}
+    <h1 class="mpw-page__title" data-mpw-title>{{ section.settings.heading | default: 'My Wishlist' }}</h1>
+    <p class="mpw-page__intro" data-mpw-intro>{{ section.settings.intro }}</p>
+    <div data-mpw-page>
+      <p class="mpw-page__loading">Loading&hellip;</p>
+    </div>
   </div>
 </div>
 

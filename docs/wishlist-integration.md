@@ -1,5 +1,13 @@
 # Wishlist — storefront ↔ back-office contract
 
+> **Storefront status (implemented in `assets/mp-wishlist.js`):** add/remove with
+> `handle`, GET read (hearts + picker), list management (rename / delete / move,
+> keyed by `group_uuid`), sharing (share / unshare + copy link) and the read-only
+> `?shared=<token>` recipient view, plus cart snapshots (`type: cart_snapshot`)
+> on load + page-hide. Management/sharing depend on the GET returning `uuid` and
+> `share_token` per group.
+
+
 The storefront (this theme) is wired up for wishlists. This documents what the
 theme sends/expects so the back office (`partners.mpgames.io`) can match it.
 
