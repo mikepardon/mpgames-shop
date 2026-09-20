@@ -438,6 +438,8 @@
           {%- endif -%}
         </div>
 
+        {% render 'mp-wishlist-button', product: product, class: 'mp-wish--line', label: 'Save to wishlist' %}
+
         {%- comment -%} 3D-printed storage inserts made for this game — quick-add straight to basket {%- endcomment -%}
         {%- assign game_inserts = m.available_inserts.value -%}
         {%- if product.type != 'Board Game Insert' and game_inserts != blank and game_inserts.size > 0 -%}
@@ -724,6 +726,7 @@
             -%}
             <div class="pdp__card">
               {%- if rsale -%}<span class="cflag">-{{ rdisc }}%</span>{%- endif -%}
+              {% render 'mp-wishlist-button', product: rec, class: 'mp-wish--float' %}
               <a href="{{ rec.url }}" class="cmedia">{% if rec.featured_image %}<img src="{{ rec.featured_image | image_url: width: 360 }}" alt="{{ rec.title | escape }}" width="360" height="360" loading="lazy">{% endif %}</a>
               <div class="cbody">
                 <a class="cname" href="{{ rec.url }}">{{ rec.title }}</a>
@@ -780,6 +783,7 @@
             -%}
             <div class="pdp__card">
               {%- if rsale -%}<span class="cflag">-{{ rdisc }}%</span>{%- endif -%}
+              {% render 'mp-wishlist-button', product: rec, class: 'mp-wish--float' %}
               <a href="{{ rec.url }}" class="cmedia">{% if rec.featured_image %}<img src="{{ rec.featured_image | image_url: width: 360 }}" alt="{{ rec.title | escape }}" width="360" height="360" loading="lazy">{% endif %}</a>
               <div class="cbody">
                 {%- if rbgg != blank -%}
