@@ -384,15 +384,24 @@
       if (titleEl) { titleEl.textContent = data.name || "Shared wishlist"; }
       var introEl = document.querySelector("[data-mpw-intro]");
       if (introEl) { introEl.textContent = data.owner_name ? ("A wishlist shared by " + data.owner_name) : "A shared wishlist"; }
-      var items = (data.items || []).filter(function (it) { return it.handle; });
-      if (!items.length) { host.innerHTML = '<p class="mpw-page__empty">This list is empty.</p>'; return; }
-      host.innerHTML = '<div class="mpw-grid" data-grid></div>';
-      var grid = host.querySelector("[data-grid]");
-      items.forEach(function (it) {
-        fetch("/products/" + it.handle + ".js", { headers: { "Accept": "application/json" } })
-          .then(function (r) { return r.ok ? r.json() : undefined; })
-          .then(function (p) { if (p) { grid.appendChild(sharedCard(p)); } })
-          .catch(function () {});
+      var raw = (data.items || []).map(function (it) {
+        var id = key(it.product_id != null ? it.product_id : it.id);
+        // stash any handle the payload does give us, so the catalogue fallback has less to do
+        if (it.handle) { cacheHandle(id, it.handle, it.title); }
+        return { id: id, handle: it.handle };
+      });
+      if (!raw.length) { host.innerHTML = '<p class="mpw-page__empty">This list is empty.</p>'; return; }
+      ensureHandles(raw.map(function (x) { return x.id; })).then(function () {
+        var items = raw.map(function (x) { return { handle: x.handle || resolveHandle(x.id) }; }).filter(function (x) { return x.handle; });
+        if (!items.length) { host.innerHTML = '<p class="mpw-page__empty">These items aren’t available to preview right now.</p>'; return; }
+        host.innerHTML = '<div class="mpw-grid" data-grid></div>';
+        var grid = host.querySelector("[data-grid]");
+        items.forEach(function (x) {
+          fetch("/products/" + x.handle + ".js", { headers: { "Accept": "application/json" } })
+            .then(function (r) { return r.ok ? r.json() : undefined; })
+            .then(function (p) { if (p) { grid.appendChild(sharedCard(p)); } })
+            .catch(function () {});
+        });
       });
     });
   }
