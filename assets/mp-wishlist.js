@@ -168,6 +168,29 @@
     });
   }
 
+  /* ---------------- list management + sharing api ---------------- */
+  function apiPost(payload) {
+    return fetch(ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Accept": "application/json" },
+      credentials: "same-origin",
+      body: JSON.stringify(payload)
+    }).then(function (r) { return r.json().catch(function () { return { ok: r.ok }; }); });
+  }
+  function renameGroup(uuid, newName) { return apiPost({ action: "rename_group", group_uuid: uuid, new_name: newName }); }
+  function deleteGroupApi(uuid) { return apiPost({ action: "delete_group", group_uuid: uuid }); }
+  function moveItem(productId, fromUuid, toName) { return apiPost({ action: "move_item", product_id: productId, from_group: fromUuid, to_group: toName }); }
+  function shareGroup(uuid) { return apiPost({ action: "share", group_uuid: uuid }); }
+  function unshareGroup(uuid) { return apiPost({ action: "unshare", group_uuid: uuid }); }
+  function fetchShared(token) {
+    return fetch(ENDPOINT + "?action=shared&token=" + encodeURIComponent(token), { headers: { "Accept": "application/json" }, credentials: "same-origin" })
+      .then(function (r) { return r.json().catch(function () { return { ok: false }; }); });
+  }
+  function shareUrl(token) { return window.location.origin + "/pages/wishlist?shared=" + encodeURIComponent(token); }
+  function reloadAndRepaint() {
+    return loadState().then(function () { applyHearts(); if (document.querySelector("[data-mpw-page]")) { renderPage(); } });
+  }
+
   /* ---------------- picker modal ---------------- */
   var pickerEl, pickerCtx;
   function buildPicker() {
@@ -331,7 +354,9 @@
   function renderPage() {
     var host = document.querySelector("[data-mpw-page]");
     if (!host) { return; }
-    if (!cfg.loggedIn) { return; } // server already rendered the guest prompt
+    var sharedToken = new URLSearchParams(window.location.search).get("shared");
+    if (sharedToken) { renderSharedList(host, sharedToken); return; }
+    if (!cfg.loggedIn) { host.innerHTML = guestPromptHtml(); return; }
     if (!rawGroups.length) {
       host.innerHTML = '<p class="mpw-page__empty">Your wishlist is empty. Tap the heart on any product to save it here.</p>';
       return;
@@ -340,35 +365,38 @@
     rawGroups.forEach(function (g) { (g.items || []).forEach(function (it) { allIds.push(key(it.product_id != null ? it.product_id : it.id)); }); });
     ensureHandles(allIds).then(function () { paintPage(host); });
   }
-  function paintPage(host) {
-    host.innerHTML = "";
-    rawGroups.forEach(function (group) {
-      var items = (group.items || []).map(function (it) {
-        var id = key(it.product_id != null ? it.product_id : it.id);
-        return { id: id, handle: it.handle || resolveHandle(id) };
-      }).filter(function (x) { return x.handle; });
-      var block = document.createElement("div");
-      block.className = "mpw-group-block";
-      block.innerHTML =
-        '<div class="mpw-group-block__head">' +
-          '<div class="mpw-group-block__title">' + escapeHtml(group.name) + '</div>' +
-          '<div class="mpw-group-block__count">' + (group.items || []).length + ' item' + ((group.items || []).length === 1 ? '' : 's') + '</div>' +
-        '</div><div class="mpw-grid" data-grid></div>';
-      host.appendChild(block);
-      var grid = block.querySelector("[data-grid]");
-      if (!items.length) {
-        grid.innerHTML = '<p class="mpw-page__empty">Items in this list aren’t available to preview.</p>';
+  function guestPromptHtml() {
+    var back = encodeURIComponent(window.location.pathname);
+    var login = (cfg.loginUrl || "/account/login") + "?return_url=" + back;
+    var reg = (cfg.registerUrl || "/account/register") + "?return_url=" + back;
+    return '<p class="mpw-page__guest">Please <a href="' + login + '">log in</a> or <a href="' + reg + '">create an account</a> to view and save your wishlists.</p>';
+  }
+
+  /* ---------------- shared (read-only) list ---------------- */
+  function renderSharedList(host, token) {
+    host.innerHTML = '<p class="mpw-page__loading">Loading shared list&hellip;</p>';
+    fetchShared(token).then(function (data) {
+      if (!data || data.ok === false) {
+        host.innerHTML = '<p class="mpw-page__empty">This shared list isn’t available — the link may have been turned off.</p>';
         return;
       }
-      items.forEach(function (x) {
-        fetch("/products/" + x.handle + ".js", { headers: { "Accept": "application/json" } })
+      var titleEl = document.querySelector("[data-mpw-title]");
+      if (titleEl) { titleEl.textContent = data.name || "Shared wishlist"; }
+      var introEl = document.querySelector("[data-mpw-intro]");
+      if (introEl) { introEl.textContent = data.owner_name ? ("A wishlist shared by " + data.owner_name) : "A shared wishlist"; }
+      var items = (data.items || []).filter(function (it) { return it.handle; });
+      if (!items.length) { host.innerHTML = '<p class="mpw-page__empty">This list is empty.</p>'; return; }
+      host.innerHTML = '<div class="mpw-grid" data-grid></div>';
+      var grid = host.querySelector("[data-grid]");
+      items.forEach(function (it) {
+        fetch("/products/" + it.handle + ".js", { headers: { "Accept": "application/json" } })
           .then(function (r) { return r.ok ? r.json() : undefined; })
-          .then(function (p) { if (p) { grid.appendChild(pageCard(p, group.name)); } })
+          .then(function (p) { if (p) { grid.appendChild(sharedCard(p)); } })
           .catch(function () {});
       });
     });
   }
-  function pageCard(p, groupName) {
+  function sharedCard(p) {
     var el = document.createElement("div");
     el.className = "mpw-item";
     var img = p.featured_image ? '<img src="' + p.featured_image + '&width=360" alt="' + escapeHtml(p.title) + '" loading="lazy">' : "";
@@ -380,8 +408,145 @@
       '<div class="mpw-item__body">' +
         '<a href="' + p.url + '" class="mpw-item__name">' + escapeHtml(p.title) + '</a>' +
         '<div class="mpw-item__price">' + money(p.price) + '</div>' +
+        '<div class="mpw-item__foot">' + foot + '</div>' +
+      '</div>';
+    var addBtn = el.querySelector("[data-add]");
+    if (addBtn) {
+      addBtn.addEventListener("click", function () {
+        addBtn.disabled = true; addBtn.textContent = "Adding…";
+        cartAdd(p.variants && p.variants[0] && p.variants[0].id).then(function () {
+          addBtn.textContent = "Added ✓"; addBtn.classList.add("is-added");
+        }).catch(function () { addBtn.disabled = false; addBtn.textContent = "Add to basket"; });
+      });
+    }
+    return el;
+  }
+  function paintPage(host) {
+    host.innerHTML = "";
+    rawGroups.forEach(function (group) {
+      var count = (group.items || []).length;
+      var items = (group.items || []).map(function (it) {
+        var id = key(it.product_id != null ? it.product_id : it.id);
+        return { id: id, handle: it.handle || resolveHandle(id) };
+      }).filter(function (x) { return x.handle; });
+
+      var block = document.createElement("div");
+      block.className = "mpw-group-block";
+      block.innerHTML =
+        '<div class="mpw-group-block__head">' +
+          '<div class="mpw-group-block__title" data-title>' + escapeHtml(group.name) + '</div>' +
+          '<div class="mpw-group-block__actions">' +
+            '<span class="mpw-group-block__count">' + count + ' item' + (count === 1 ? '' : 's') + '</span>' +
+            '<button type="button" class="mpw-link" data-share>' + (group.share_token ? 'Sharing' : 'Share') + '</button>' +
+            '<button type="button" class="mpw-link" data-rename>Rename</button>' +
+            '<button type="button" class="mpw-link mpw-link--danger" data-delete>Delete</button>' +
+          '</div>' +
+        '</div>' +
+        '<div class="mpw-share" data-sharebar' + (group.share_token ? '' : ' hidden') + '></div>' +
+        '<div class="mpw-grid" data-grid></div>';
+      host.appendChild(block);
+      wireGroupControls(block, group);
+      if (group.share_token) { renderShareBar(block.querySelector("[data-sharebar]"), group); }
+
+      var grid = block.querySelector("[data-grid]");
+      if (!items.length) {
+        grid.innerHTML = '<p class="mpw-page__empty">Items in this list aren’t available to preview.</p>';
+        return;
+      }
+      items.forEach(function (x) {
+        fetch("/products/" + x.handle + ".js", { headers: { "Accept": "application/json" } })
+          .then(function (r) { return r.ok ? r.json() : undefined; })
+          .then(function (p) { if (p) { grid.appendChild(pageCard(p, group)); } })
+          .catch(function () {});
+      });
+    });
+  }
+  function wireGroupControls(block, group) {
+    var titleEl = block.querySelector("[data-title]");
+    block.querySelector("[data-rename]").addEventListener("click", function () { startRename(titleEl, group); });
+    block.querySelector("[data-delete]").addEventListener("click", function () {
+      if (!window.confirm('Delete the "' + group.name + '" list? Its saved items will be removed from it.')) { return; }
+      deleteGroupApi(group.uuid).then(function (res) {
+        if (res && res.ok !== false) { reloadAndRepaint(); }
+        else { window.alert((res && res.message) || "Couldn’t delete that list."); }
+      });
+    });
+    var shareBtn = block.querySelector("[data-share]");
+    var bar = block.querySelector("[data-sharebar]");
+    shareBtn.addEventListener("click", function () {
+      if (group.share_token) { bar.hidden = !bar.hidden; return; }
+      shareBtn.disabled = true;
+      shareGroup(group.uuid).then(function (res) {
+        shareBtn.disabled = false;
+        if (res && res.share_token) { group.share_token = res.share_token; shareBtn.textContent = "Sharing"; bar.hidden = false; renderShareBar(bar, group); }
+        else { window.alert((res && res.message) || "Couldn’t share that list."); }
+      });
+    });
+  }
+  function startRename(titleEl, group) {
+    var current = group.name;
+    titleEl.innerHTML = '<input type="text" class="mpw-rename-input" maxlength="60" value="' + escapeHtml(current) + '"> ' +
+      '<button type="button" class="mpw-link" data-save>Save</button> <button type="button" class="mpw-link" data-cancel>Cancel</button>';
+    var input = titleEl.querySelector("input");
+    input.focus(); input.select();
+    function cancel() { titleEl.textContent = group.name; }
+    function save() {
+      var val = (input.value || "").trim();
+      if (!val || val === current) { cancel(); return; }
+      renameGroup(group.uuid, val).then(function (res) {
+        if (res && res.ok !== false) { reloadAndRepaint(); }
+        else { window.alert((res && res.message) || "Couldn’t rename that list."); cancel(); }
+      });
+    }
+    titleEl.querySelector("[data-save]").addEventListener("click", save);
+    titleEl.querySelector("[data-cancel]").addEventListener("click", cancel);
+    input.addEventListener("keydown", function (e) { if (e.key === "Enter") { save(); } if (e.key === "Escape") { cancel(); } });
+  }
+  function renderShareBar(bar, group) {
+    if (!bar || !group.share_token) { return; }
+    var url = shareUrl(group.share_token);
+    bar.innerHTML =
+      '<span class="mpw-share__label">Anyone with this link can view “' + escapeHtml(group.name) + '”</span>' +
+      '<div class="mpw-share__row">' +
+        '<input type="text" class="mpw-share__url" readonly value="' + escapeHtml(url) + '">' +
+        '<button type="button" class="mpw-link" data-copy>Copy link</button>' +
+        '<button type="button" class="mpw-link mpw-link--danger" data-unshare>Stop sharing</button>' +
+      '</div>';
+    var copyBtn = bar.querySelector("[data-copy]");
+    copyBtn.addEventListener("click", function () {
+      var input = bar.querySelector(".mpw-share__url");
+      input.select();
+      function done() { copyBtn.textContent = "Copied ✓"; window.setTimeout(function () { copyBtn.textContent = "Copy link"; }, 1800); }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).then(done, function () { try { document.execCommand("copy"); done(); } catch (e) {} });
+      } else { try { document.execCommand("copy"); done(); } catch (e) {} }
+    });
+    bar.querySelector("[data-unshare]").addEventListener("click", function () {
+      unshareGroup(group.uuid).then(function (res) {
+        if (res && res.ok !== false) { reloadAndRepaint(); }
+        else { window.alert((res && res.message) || "Couldn’t stop sharing."); }
+      });
+    });
+  }
+  function pageCard(p, group) {
+    var el = document.createElement("div");
+    el.className = "mpw-item";
+    var img = p.featured_image ? '<img src="' + p.featured_image + '&width=360" alt="' + escapeHtml(p.title) + '" loading="lazy">' : "";
+    var foot = p.available
+      ? '<button type="button" class="mpw-item__add" data-add>Add to basket</button>'
+      : '<span class="mpw-item__soldout">Out of stock</span>';
+    var others = groupNames.filter(function (n) { return n !== group.name; });
+    var moveOpts = '<option value="" disabled selected>Move…</option>' +
+      others.map(function (n) { return '<option value="' + escapeHtml(n) + '">To “' + escapeHtml(n) + '”</option>'; }).join("") +
+      '<option value="__new__">＋ New list…</option>';
+    el.innerHTML =
+      '<a href="' + p.url + '" class="mpw-item__media">' + img + '</a>' +
+      '<div class="mpw-item__body">' +
+        '<a href="' + p.url + '" class="mpw-item__name">' + escapeHtml(p.title) + '</a>' +
+        '<div class="mpw-item__price">' + money(p.price) + '</div>' +
         '<div class="mpw-item__foot">' + foot +
-          '<button type="button" class="mpw-item__remove" data-remove title="Remove from ' + escapeHtml(groupName) + '">Remove</button>' +
+          '<select class="mpw-item__move" data-move aria-label="Move to another list">' + moveOpts + '</select>' +
+          '<button type="button" class="mpw-item__remove" data-remove title="Remove from ' + escapeHtml(group.name) + '">Remove</button>' +
         '</div>' +
       '</div>';
     var addBtn = el.querySelector("[data-add]");
@@ -393,8 +558,21 @@
         }).catch(function () { addBtn.disabled = false; addBtn.textContent = "Add to basket"; });
       });
     }
+    el.querySelector("[data-move]").addEventListener("click", function (e) { e.stopPropagation(); });
+    el.querySelector("[data-move]").addEventListener("change", function () {
+      var sel = this;
+      var val = sel.value;
+      sel.value = "";
+      if (!val) { return; }
+      var toName = val;
+      if (val === "__new__") { toName = (window.prompt("New list name:") || "").trim(); if (!toName) { return; } }
+      moveItem(p.id, group.uuid, toName).then(function (res) {
+        if (res && res.ok !== false) { reloadAndRepaint(); }
+        else { window.alert((res && res.message) || "Couldn’t move that item."); }
+      });
+    });
     el.querySelector("[data-remove]").addEventListener("click", function () {
-      remove(p.id, groupName).then(function () { el.remove(); });
+      remove(p.id, group.name).then(function () { reloadAndRepaint(); });
     });
     return el;
   }
@@ -469,6 +647,46 @@
     return row;
   }
 
+  /* ---------------- cart snapshot (early abandonment) ---------------- */
+  var cachedCart = null;
+  function sendSnapshot(cart, preferBeacon) {
+    if (!cart || !cart.item_count) { return; }
+    var sig = cart.token + ":" + cart.item_count + ":" + cart.total_price;
+    try { if (sessionStorage.getItem("mp_cart_sig") === sig) { return; } } catch (e) {}
+    var payload = {
+      type: "cart_snapshot",
+      cart_token: cart.token,
+      total_price: cart.total_price,
+      currency: cart.currency,
+      items: (cart.items || []).map(function (i) { return { product_id: i.product_id, title: i.product_title || i.title, quantity: i.quantity }; })
+    };
+    var json = JSON.stringify(payload);
+    var sent = false;
+    if (preferBeacon && navigator.sendBeacon) {
+      sent = navigator.sendBeacon("/apps/notify", new Blob([json], { type: "application/json" }));
+    }
+    if (!sent) {
+      fetch("/apps/notify", { method: "POST", headers: { "Content-Type": "application/json" }, credentials: "same-origin", body: json, keepalive: true }).catch(function () {});
+    }
+    try { sessionStorage.setItem("mp_cart_sig", sig); } catch (e) {}
+  }
+  function refreshCartSnapshot(preferBeacon) {
+    if (!cfg.loggedIn) { return; }
+    if (preferBeacon && cachedCart) { sendSnapshot(cachedCart, true); return; }
+    fetch("/cart.js", { headers: { "Accept": "application/json" }, credentials: "same-origin" })
+      .then(function (r) { return r.ok ? r.json() : undefined; })
+      .then(function (cart) { if (cart) { cachedCart = cart; sendSnapshot(cart, preferBeacon); } })
+      .catch(function () {});
+  }
+  function initCartSnapshot() {
+    if (!cfg.loggedIn) { return; }
+    // The mp cart/add flows reload the page, so a load-time snapshot captures the
+    // latest basket; page-hide beacons a final snapshot in case they leave.
+    window.setTimeout(function () { refreshCartSnapshot(false); }, 2500);
+    window.addEventListener("pagehide", function () { refreshCartSnapshot(true); });
+    document.addEventListener("visibilitychange", function () { if (document.visibilityState === "hidden") { refreshCartSnapshot(true); } });
+  }
+
   /* ---------------- wire up ---------------- */
   document.addEventListener("click", function (e) {
     var btn = e.target.closest("[data-wishlist-btn]");
@@ -503,6 +721,7 @@
   };
 
   function init() {
+    initCartSnapshot();
     loadState().then(function () {
       applyHearts();
       renderPage();

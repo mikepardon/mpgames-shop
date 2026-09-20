@@ -7,6 +7,7 @@
     enabled: true,
     loggedIn: {% if customer %}true{% else %}false{% endif %},
     loginUrl: {{ routes.account_login_url | json }},
+    registerUrl: {{ routes.account_register_url | json }},
     endpoint: '/apps/notify/proxy-wishlist',
     moneyFormat: {{ shop.money_format | json }}
   };
