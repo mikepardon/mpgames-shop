@@ -42,6 +42,30 @@
   }
   function resolveHandle(id) { return handles[key(id)] || (readHandleCache()[key(id)] || {}).handle; }
 
+  // Last-resort id->handle resolver: pull the full catalogue from Shopify's public
+  // /products.json (paged) and cache each handle. Covers saved products the shopper
+  // hasn't browsed and that the read endpoint returns without a handle.
+  var catalogLoaded = false;
+  function loadCatalog() {
+    if (catalogLoaded) { return Promise.resolve(); }
+    var page = 1;
+    function nextPage() {
+      return fetch("/products.json?limit=250&page=" + page, { headers: { "Accept": "application/json" } })
+        .then(function (r) { return r.ok ? r.json() : { products: [] }; })
+        .then(function (d) {
+          var list = (d && d.products) || [];
+          list.forEach(function (p) { cacheHandle(p.id, p.handle, p.title); });
+          if (list.length >= 250 && page < 10) { page++; return nextPage(); }
+        });
+    }
+    return nextPage().then(function () { catalogLoaded = true; }).catch(function () { catalogLoaded = true; });
+  }
+  // Resolve handles for a set of ids, loading the catalogue only if some are still missing.
+  function ensureHandles(ids) {
+    var missing = ids.some(function (id) { return !resolveHandle(id); });
+    return missing ? loadCatalog() : Promise.resolve();
+  }
+
   function gotoLogin() {
     var url = cfg.loginUrl || "/account/login";
     window.location.href = url + (url.indexOf("?") === -1 ? "?" : "&") + "return_url=" + encodeURIComponent(currentPath());
@@ -312,6 +336,11 @@
       host.innerHTML = '<p class="mpw-page__empty">Your wishlist is empty. Tap the heart on any product to save it here.</p>';
       return;
     }
+    var allIds = [];
+    rawGroups.forEach(function (g) { (g.items || []).forEach(function (it) { allIds.push(key(it.product_id != null ? it.product_id : it.id)); }); });
+    ensureHandles(allIds).then(function () { paintPage(host); });
+  }
+  function paintPage(host) {
     host.innerHTML = "";
     rawGroups.forEach(function (group) {
       var items = (group.items || []).map(function (it) {
@@ -383,6 +412,11 @@
   function renderCartTable() {
     var host = document.querySelector("[data-mpw-cart-list]");
     if (!host || !cfg.loggedIn) { return; }
+    var allIds = [];
+    rawGroups.forEach(function (g) { (g.items || []).forEach(function (it) { allIds.push(key(it.product_id != null ? it.product_id : it.id)); }); });
+    ensureHandles(allIds).then(function () { paintCartTable(host); });
+  }
+  function paintCartTable(host) {
     // product ids already in the cart, so we don't offer to re-add them
     var inCart = {};
     (host.getAttribute("data-cart-product-ids") || "").split(",").forEach(function (x) { if (x) { inCart[x.trim()] = true; } });
