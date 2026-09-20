@@ -26,6 +26,22 @@
   function key(id) { return String(id); }
   function currentPath() { return window.location.pathname + window.location.search; }
 
+  // Local id -> {handle,title} cache, populated from every heart the shopper sees and
+  // every add. Lets the wishlist page + cart table render even when the read endpoint
+  // returns items without a handle (it's still the reliable cross-device source).
+  var HANDLE_CACHE_KEY = "mp_wishlist_handles";
+  function readHandleCache() { try { return JSON.parse(localStorage.getItem(HANDLE_CACHE_KEY)) || {}; } catch (e) { return {}; } }
+  function cacheHandle(id, handle, title) {
+    if (!id || !handle) { return; }
+    try {
+      var c = readHandleCache();
+      var k = key(id);
+      c[k] = { handle: handle, title: title || (c[k] && c[k].title) || "" };
+      localStorage.setItem(HANDLE_CACHE_KEY, JSON.stringify(c));
+    } catch (e) {}
+  }
+  function resolveHandle(id) { return handles[key(id)] || (readHandleCache()[key(id)] || {}).handle; }
+
   function gotoLogin() {
     var url = cfg.loginUrl || "/account/login";
     window.location.href = url + (url.indexOf("?") === -1 ? "?" : "&") + "return_url=" + encodeURIComponent(currentPath());
@@ -45,10 +61,12 @@
 
   function applyHearts() {
     document.querySelectorAll("[data-wishlist-btn]").forEach(function (btn) {
-      var on = isWished(btn.getAttribute("data-product-id"));
+      var id = btn.getAttribute("data-product-id");
+      cacheHandle(id, btn.getAttribute("data-product-handle"), btn.getAttribute("data-product-title"));
+      var on = isWished(id);
       btn.classList.toggle("is-wished", on);
       btn.setAttribute("aria-pressed", on ? "true" : "false");
-      btn.setAttribute("title", on ? "Edit wishlists" : "Add to wishlist");
+      btn.setAttribute("title", on ? "Remove from wishlist" : "Add to wishlist");
       var label = btn.querySelector("[data-wishlist-label]");
       if (label) { label.textContent = on ? "In your wishlist" : "Save to wishlist"; }
     });
@@ -108,7 +126,7 @@
         var id = key(productId);
         if (!membership[id]) { membership[id] = new Set(); }
         membership[id].add(group || DEFAULT_GROUP);
-        if (extra && extra.handle) { handles[id] = extra.handle; }
+        if (extra && extra.handle) { handles[id] = extra.handle; cacheHandle(productId, extra.handle, extra.title); }
         ensureGroupName(group || DEFAULT_GROUP);
         applyHearts();
       }
@@ -296,7 +314,10 @@
     }
     host.innerHTML = "";
     rawGroups.forEach(function (group) {
-      var items = (group.items || []).filter(function (it) { return it.handle; });
+      var items = (group.items || []).map(function (it) {
+        var id = key(it.product_id != null ? it.product_id : it.id);
+        return { id: id, handle: it.handle || resolveHandle(id) };
+      }).filter(function (x) { return x.handle; });
       var block = document.createElement("div");
       block.className = "mpw-group-block";
       block.innerHTML =
@@ -310,8 +331,8 @@
         grid.innerHTML = '<p class="mpw-page__empty">Items in this list aren’t available to preview.</p>';
         return;
       }
-      items.forEach(function (it) {
-        fetch("/products/" + it.handle + ".js", { headers: { "Accept": "application/json" } })
+      items.forEach(function (x) {
+        fetch("/products/" + x.handle + ".js", { headers: { "Accept": "application/json" } })
           .then(function (r) { return r.ok ? r.json() : undefined; })
           .then(function (p) { if (p) { grid.appendChild(pageCard(p, group.name)); } })
           .catch(function () {});
@@ -371,15 +392,16 @@
     rawGroups.forEach(function (g) {
       (g.items || []).forEach(function (it) {
         var id = key(it.product_id != null ? it.product_id : it.id);
-        if (it.handle && !seen[id] && !inCart[id]) { seen[id] = true; items.push(it); }
+        var h = it.handle || resolveHandle(id);
+        if (h && !seen[id] && !inCart[id]) { seen[id] = true; items.push({ id: id, handle: h }); }
       });
     });
     if (!items.length) { return; }
     var section = host.closest("[data-mpw-cart-section]");
     if (section) { section.hidden = false; }
 
-    items.slice(0, 6).forEach(function (it) {
-      fetch("/products/" + it.handle + ".js", { headers: { "Accept": "application/json" } })
+    items.slice(0, 6).forEach(function (x) {
+      fetch("/products/" + x.handle + ".js", { headers: { "Accept": "application/json" } })
         .then(function (r) { return r.ok ? r.json() : undefined; })
         .then(function (p) { if (p) { host.appendChild(cartRow(p)); } })
         .catch(function () {});
@@ -418,7 +440,21 @@
     if (!btn) { return; }
     e.preventDefault();
     e.stopPropagation();
-    openPicker(btn.getAttribute("data-product-id"), btn.getAttribute("data-product-handle"), btn.getAttribute("data-product-title"));
+    var id = btn.getAttribute("data-product-id");
+    var handle = btn.getAttribute("data-product-handle");
+    var title = btn.getAttribute("data-product-title");
+    if (!cfg.loggedIn) { gotoLogin(); return; }
+    if (isWished(id)) {
+      // Already saved -> un-heart it (remove from every list it's in).
+      var current = groupsFor(id);
+      if (!current.length) { openPicker(id, handle, title); return; }
+      btn.classList.add("is-busy");
+      Promise.all(current.map(function (g) { return remove(id, g); })).then(function () {
+        btn.classList.remove("is-busy");
+      }).catch(function () { btn.classList.remove("is-busy"); });
+      return;
+    }
+    openPicker(id, handle, title);
   });
 
   window.MPWishlist = {
