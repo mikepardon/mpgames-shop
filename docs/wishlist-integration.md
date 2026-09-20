@@ -37,11 +37,13 @@ The theme treats existing responses (`{ ok:true, action:"added"|"removed" }`,
 
 ---
 
-## 2. Read — list the customer's wishlist (NEEDS BUILDING)
+## 2. Read — list the customer's wishlist (LIVE — confirm payload)
 
-This is the "small addition" your doc offered. The theme needs it for three
-things: filling the heart icons on page load, populating the "which list?"
-picker, and rendering the **My Wishlist** page and the cart add-back table.
+The GET route is live: an unauthenticated request returns
+`422 {"ok":false,"message":"You must be signed in to use wishlists."}` (route
+exists, no customer attached), same as POST. The theme needs the **authenticated**
+response to match the shape below so it can fill heart icons on load, populate the
+"which list?" picker, and render the **My Wishlist** page and cart add-back table.
 
 ```
 GET /apps/notify/proxy-wishlist
