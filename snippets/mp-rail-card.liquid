@@ -51,6 +51,8 @@
     <span class="mp-card__flag mp-card__flag--badge mp-cond">{{ badge }}</span>
   {%- endif -%}
 
+  {% render 'mp-wishlist-button', product: product, class: 'mp-wish--float' %}
+
   <a href="{{ product.url }}" class="mp-card__media{% unless product.featured_image %} mp-card__media--ph{% endunless %}"{% if product.featured_image %} style="background-image:url('{{ product.featured_image | image_url: width: 440 }}')"{% endif %} aria-label="{{ product.title | escape }}">{% unless product.featured_image %}box art{% endunless %}</a>
 
   <div class="mp-card__body">

@@ -1,0 +1,15 @@
+{%- comment -%}
+  Wishlist global config + assets. Rendered once from layout/theme.liquid.
+  Exposes window.mpWishlist for assets/mp-wishlist.js.
+{%- endcomment -%}
+<script>
+  window.mpWishlist = {
+    enabled: true,
+    loggedIn: {% if customer %}true{% else %}false{% endif %},
+    loginUrl: {{ routes.account_login_url | json }},
+    endpoint: '/apps/notify/proxy-wishlist',
+    moneyFormat: {{ shop.money_format | json }}
+  };
+</script>
+{{ 'mp-wishlist.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'mp-wishlist.js' | asset_url }}" defer="defer"></script>

@@ -334,6 +334,8 @@
           {%- endif -%}
         </div>
 
+        {% render 'mp-wishlist-button', product: product, class: 'mp-wish--line', label: 'Save to wishlist' %}
+
         {%- comment -%} App blocks (e.g. Judge.me Review Widget) render in the #reviews section below, not here. {%- endcomment -%}
 
         {%- comment -%} Physical reassurance vs digital-download notice, toggled by the selected variant's requires_shipping {%- endcomment -%}

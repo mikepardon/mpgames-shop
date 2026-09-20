@@ -206,6 +206,12 @@
             <span class="mp-hd__white">Sign in &#9662;</span>
           {%- endif -%}
         </a>
+        {%- if customer -%}
+          <a href="/pages/wishlist" class="mp-hd__stack mp-hd__wish" aria-label="My wishlist">
+            <span class="mp-hd__muted">Saved</span>
+            <span class="mp-hd__white">My Wishlist <span class="mp-wish-nav__count" data-wishlist-count hidden></span></span>
+          </a>
+        {%- endif -%}
         <a href="{{ routes.cart_url }}" class="mp-hd__basket">
           <span>&#128722;</span>
           <span class="mp-hd__stack">

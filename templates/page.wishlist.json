@@ -1,0 +1,14 @@
+{
+  "sections": {
+    "main": {
+      "type": "mp-wishlist"
+    },
+    "app": {
+      "type": "apps",
+      "settings": {
+        "include_margins": true
+      }
+    }
+  },
+  "order": ["main", "app"]
+}

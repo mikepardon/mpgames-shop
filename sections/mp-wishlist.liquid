@@ -1,0 +1,30 @@
+{%- comment -%}
+  MPGames "My Wishlist" page. Assign this section to a page (e.g. /pages/wishlist).
+  Content is hydrated client-side by assets/mp-wishlist.js from the wishlist read
+  endpoint (/apps/notify/proxy-wishlist). Logged-out visitors get a sign-in prompt.
+{%- endcomment -%}
+<div class="mpw-page">
+  <div class="mpw-page__wrap">
+    <h1 class="mpw-page__title">{{ section.settings.heading | default: 'My Wishlist' }}</h1>
+    {%- if section.settings.intro != blank -%}<p class="mpw-page__intro">{{ section.settings.intro }}</p>{%- endif -%}
+    {%- if customer -%}
+      <div data-mpw-page>
+        <p class="mpw-page__loading">Loading your wishlist&hellip;</p>
+      </div>
+    {%- else -%}
+      <p class="mpw-page__guest">Please <a href="{{ routes.account_login_url }}?return_url={{ request.path | url_encode }}">log in</a> or <a href="{{ routes.account_register_url }}?return_url={{ request.path | url_encode }}">create an account</a> to view and save your wishlists.</p>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "MP Wishlist",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "My Wishlist" },
+    { "type": "textarea", "id": "intro", "label": "Intro text", "default": "Everything you’ve saved, grouped into your lists. Add items straight to your basket, or tidy up your lists." }
+  ],
+  "enabled_on": { "templates": ["page"] },
+  "presets": [ { "name": "MP Wishlist" } ]
+}
+{% endschema %}
