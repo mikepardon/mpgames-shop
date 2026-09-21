@@ -81,7 +81,7 @@
     </script>
 
     <div class="mp-ft__bottom">
-      <span>{{ section.settings.legal }}</span>
+      <span>{{ section.settings.legal }}{% if section.settings.vat_number != blank %} · VAT No. {{ section.settings.vat_number }}{% endif %}</span>
       {%- assign pay_types = shop.enabled_payment_types -%}
       {%- if pay_types.size == 0 and section.settings.payment_fallback != blank -%}
         {%- assign pay_types = section.settings.payment_fallback | split: ',' -%}
@@ -103,6 +103,7 @@
   "settings": [
     { "type": "textarea", "id": "blurb", "label": "Brand blurb", "default": "The UK's board game specialist — every title ranked by the data that matters." },
     { "type": "text", "id": "legal", "label": "Legal line", "default": "© 2026 MPGames Ltd · Company No. 17064769 · Based in Stockport, UK" },
+    { "type": "text", "id": "vat_number", "label": "VAT number", "default": "GB523 6033 22" },
     { "type": "text", "id": "payment_fallback", "label": "Payment icons (fallback)", "info": "Shown only until live payment providers are enabled in Settings → Payments. Comma-separated Shopify payment type keys.", "default": "visa, master, american_express, discover, diners_club, maestro, apple_pay, google_pay, paypal, shopify_pay, unionpay" }
   ],
   "blocks": [
