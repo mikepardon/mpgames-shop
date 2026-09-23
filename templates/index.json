@@ -171,7 +171,7 @@
             "url": "/collections/top-rated",
             "kicker": "HOBBYIST CORNER",
             "kicker_color": "#d7b8ef",
-            "title": "Top 100 ranked on BoardGameGeek",
+            "title": "The highest-rated games on BoardGameGeek",
             "cta_label": "Explore the ranking",
             "bg": "linear-gradient(115deg,#2b2233,#4a3a5c)"
           }
@@ -199,7 +199,7 @@
     "mp_bestsellers": {
       "type": "mp-product-rail",
       "settings": {
-        "source": "stock",
+        "source": "collection",
         "collection": "best-sellers",
         "products_to_show": 8,
         "title": "Best sellers this month",
