@@ -289,6 +289,7 @@
                 <div class="cl__card">
                   {%- if cpre -%}<span class="cl__flag cl__flag--pre mp-cond">PRE-ORDER</span>
                   {%- elsif csale -%}<span class="cl__flag mp-cond">-{{ cdisc }}%</span>{%- endif -%}
+                  {% render 'mp-wishlist-button', product: product, class: 'mp-wish--float' %}
                   <a href="{{ product.url }}" class="cl__media">{% if product.featured_image %}<img src="{{ product.featured_image | image_url: width: 420 }}" alt="{{ product.title | escape }}" width="420" height="420" loading="lazy">{% endif %}</a>
                   <div class="cl__cbody">
                     {%- if product.type == 'Board Game Expansion' -%}<span style="display:inline-block;width:fit-content;background:#ede7f3;color:#6a4f86;font-size:9.5px;font-weight:700;letter-spacing:.4px;padding:2px 7px;border-radius:5px;text-transform:uppercase;margin-bottom:7px">Expansion</span>{%- endif -%}

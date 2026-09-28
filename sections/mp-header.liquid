@@ -173,6 +173,106 @@
     .mp-hd-{{ section.id }} .mp-hd__logo .mp-hd__logo-full { display: none; }
     .mp-hd-{{ section.id }} .mp-hd__logo .mp-hd__logo-mark { display: block; }
   }
+
+  /* ── Cart drawer – MP Games overrides ─────────────────────────── */
+  cart-drawer {
+    font-family: 'Barlow', ui-sans-serif, system-ui, sans-serif;
+  }
+
+  .cart-drawer .drawer__inner {
+    width: 44rem;
+    border-color: rgba(22, 50, 63, 0.18);
+    border-left: 3px solid #f2872f;
+  }
+
+  .cart-drawer .drawer__header {
+    background: #16323f;
+    margin-left: -1.5rem;
+    margin-right: -1.5rem;
+    padding: 1.3rem 4rem 1.3rem 2rem;
+    border-bottom: none;
+  }
+
+  .cart-drawer .drawer__heading {
+    color: #ffffff;
+    font-family: 'Barlow Semi Condensed', ui-sans-serif, sans-serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    margin-bottom: 0;
+  }
+
+  .cart-drawer .drawer__close {
+    color: #9fb4bd;
+    right: 0.8rem;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .cart-drawer .drawer__close:hover,
+  .cart-drawer .drawer__close:focus-visible {
+    color: #f2872f;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .cart-drawer .cart__checkout-button {
+    background: #f2872f;
+    border: 0;
+    border-radius: 8px;
+    color: #ffffff;
+    font-family: 'Barlow', ui-sans-serif, system-ui, sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+
+  .cart-drawer .cart__checkout-button:hover:not([disabled]) {
+    background: #e07928;
+    box-shadow: none;
+  }
+
+  .cart-drawer .cart-drawer__empty-content .button {
+    background: #f2872f;
+    border: 0;
+    border-radius: 8px;
+    color: #ffffff;
+    font-family: 'Barlow', ui-sans-serif, system-ui, sans-serif;
+    font-weight: 700;
+  }
+
+  .cart-drawer .totals__total {
+    font-family: 'Barlow', ui-sans-serif, system-ui, sans-serif;
+    font-weight: 500;
+    color: #16323f;
+  }
+
+  .cart-drawer .totals__total-value {
+    font-family: 'Barlow Semi Condensed', ui-sans-serif, sans-serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #16323f;
+  }
+
+  .cart-drawer .cart-item__name {
+    color: #16323f;
+    font-weight: 600;
+  }
+
+  .cart-drawer .cart-items th {
+    color: #6b7a82;
+  }
+
+  .cart-drawer .cart-remove-button button:hover {
+    color: #f2872f;
+  }
+
+  .cart-drawer .tax-note {
+    color: #6b7a82;
+  }
+
+  .cart-drawer .quantity__button {
+    color: #16323f;
+  }
 {%- endstyle -%}
 
 <div class="mp-hd-{{ section.id }}">
@@ -206,7 +306,15 @@
             <span class="mp-hd__white">Sign in &#9662;</span>
           {%- endif -%}
         </a>
-        <a href="{{ routes.cart_url }}" class="mp-hd__basket">
+        {%- if customer -%}
+          <a href="/pages/wishlist" class="mp-hd__stack mp-hd__wish" aria-label="My wishlist">
+            <span class="mp-hd__muted">Saved</span>
+            <span class="mp-hd__white">My Wishlist <span class="mp-wish-nav__count" data-wishlist-count hidden></span></span>
+          </a>
+        {%- endif -%}
+        {%- comment -%} Hidden element that CartDrawer uses for section-rendering updates. {%- endcomment -%}
+        <span id="cart-icon-bubble" aria-hidden="true" style="position:absolute;visibility:hidden;pointer-events:none;"></span>
+        <a href="{{ routes.cart_url }}" class="mp-hd__basket" data-mp-cart-btn>
           <span>&#128722;</span>
           <span class="mp-hd__stack">
             <span class="mp-hd__muted">Basket</span>
@@ -329,6 +437,8 @@
   <div class="mp-nav__backdrop" data-mnav-backdrop></div>
 </div>
 
+{%- render 'cart-drawer' -%}
+
 <script>
   (function () {
     var root = document.querySelector('.mp-hd-{{ section.id }}');
@@ -346,6 +456,39 @@
     });
     mq.addEventListener('change', function (e) { if (!e.matches) close(); });
   })();
+
+  // Wire basket button to open the cart drawer
+  (function () {
+    var btn = document.querySelector('[data-mp-cart-btn]');
+    if (!btn) return;
+    btn.addEventListener('click', function (e) {
+      var drawer = document.querySelector('cart-drawer');
+      if (!drawer) return;
+      e.preventDefault();
+      drawer.open(btn);
+    });
+  })();
+
+  // Keep the header basket count in sync after cart mutations
+  document.addEventListener('DOMContentLoaded', function () {
+    if (typeof subscribe !== 'function' || typeof PUB_SUB_EVENTS !== 'object') return;
+    subscribe(PUB_SUB_EVENTS.cartUpdate, function (data) {
+      var summary = document.querySelector('[data-cart-summary]');
+      if (!summary || !data || !data.cartData) return;
+      var count = data.cartData.item_count;
+      var total = data.cartData.total_price;
+      var currency = data.cartData.currency || 'GBP';
+      var locale = document.documentElement.lang || 'en-GB';
+      try {
+        var formatted = new Intl.NumberFormat(locale, {
+          style: 'currency',
+          currency: currency,
+          minimumFractionDigits: 2
+        }).format(total / 100);
+        summary.textContent = count + ' · ' + formatted;
+      } catch (_) {}
+    });
+  }, { once: true });
 </script>
 
 {% schema %}

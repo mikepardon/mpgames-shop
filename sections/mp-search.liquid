@@ -262,6 +262,7 @@
                     -%}
                     <div class="se__card">
                       {%- if csale -%}<span class="se__flag mp-cond">-{{ cdisc }}%</span>{%- endif -%}
+                      {% render 'mp-wishlist-button', product: product, class: 'mp-wish--float' %}
                       <a href="{{ product.url }}" class="se__media">{% if product.featured_image %}<img src="{{ product.featured_image | image_url: width: 420 }}" alt="{{ product.title | escape }}" width="420" height="420" loading="lazy">{% else %}<span style="font:11px ui-monospace,monospace;color:#a39c92">box art</span>{% endif %}</a>
                       <div class="se__cbody">
                         {%- if cb != blank -%}

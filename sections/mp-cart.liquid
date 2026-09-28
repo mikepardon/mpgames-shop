@@ -190,7 +190,7 @@
                 assign bc = '#7aa83c'
               endif
             -%}
-            <div class="ct__line" data-key="{{ item.key }}">
+            <div class="ct__line" data-key="{{ item.key }}" data-product-id="{{ item.product.id }}" data-product-handle="{{ item.product.handle }}" data-product-title="{{ item.product.title | escape }}">
               <div class="ct__prod">
                 <a href="{{ item.url }}">{% if item.image %}<img class="ct__img" src="{{ item.image | image_url: width: 160 }}" alt="{{ item.title | escape }}" width="74" height="74">{% else %}<span class="ct__img"></span>{% endif %}</a>
                 <div style="min-width:0">
@@ -259,6 +259,15 @@
               </div>
             </div>
           {%- endif -%}
+
+          {%- comment -%} Quick add-back from the customer's wishlist. Hydrated by mp-wishlist.js; hidden until it finds items not already in the basket. {%- endcomment -%}
+          {%- if customer -%}
+            <div class="ct__nudge" data-mpw-cart-section hidden>
+              <div class="ct__nh mp-cond">From your wishlist</div>
+              <div class="ct__ns">Saved for later &mdash; add them straight to this order.</div>
+              <div class="mpw-cart-list" data-mpw-cart-list data-cart-product-ids="{{ cart.items | map: 'product_id' | join: ',' }}"></div>
+            </div>
+          {%- endif -%}
         </div>
 
         <!-- summary -->
@@ -308,9 +317,23 @@
     root.querySelectorAll('[data-change]').forEach(function (btn) {
       btn.addEventListener('click', function () {
         var line = btn.closest('[data-key]');
-        btn.disabled = true;
-        post('/cart/change.js', { id: line.getAttribute('data-key'), quantity: parseInt(btn.getAttribute('data-change'), 10) })
-          .then(function () { window.location.reload(); });
+        var qty = parseInt(btn.getAttribute('data-change'), 10);
+        function applyChange() {
+          btn.disabled = true;
+          post('/cart/change.js', { id: line.getAttribute('data-key'), quantity: qty })
+            .then(function () { window.location.reload(); });
+        }
+        // Removing the item (X, or stepping quantity down to 0) -> offer to save it to a wishlist first.
+        if (qty === 0 && window.MPWishlist && typeof window.MPWishlist.openCartPrompt === 'function') {
+          window.MPWishlist.openCartPrompt({
+            productId: line.getAttribute('data-product-id'),
+            handle: line.getAttribute('data-product-handle'),
+            title: line.getAttribute('data-product-title'),
+            onRemove: applyChange
+          });
+          return;
+        }
+        applyChange();
       });
     });
     root.querySelectorAll('[data-add]').forEach(function (btn) {
