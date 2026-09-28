@@ -284,14 +284,14 @@
       }
     },
     "cart": {
-      "title": "Your cart",
+      "title": "Your basket",
       "caption": "Cart items",
       "remove_title": "Remove {{ title }}",
       "estimated_total": "Estimated total",
       "new_estimated_total": "New estimated total",
       "note": "Order special instructions",
       "checkout": "Check out",
-      "empty": "Your cart is empty",
+      "empty": "Your basket is empty",
       "product_disclosure": "Product disclosure",
       "product_disclosures": "Product disclosures",
       "cart_error": "There was an error while updating your cart. Please try again.",
