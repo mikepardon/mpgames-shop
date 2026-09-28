@@ -13,9 +13,33 @@
 <script src="{{ 'quantity-popover.js' | asset_url }}" defer="defer"></script>
 
 <style>
-  .drawer {
-    visibility: hidden;
-  }
+  .drawer { visibility: hidden; }
+  .cart-drawer .cart-items thead { display: none; }
+  /* View basket link */
+  .mp-drawer-view-cart { display: block; text-align: center; padding: 0.65rem 1rem; margin: 0 0 0.4rem; color: #16323f; font-size: 0.88rem; text-decoration: underline; font-family: inherit; }
+  .mp-drawer-view-cart:hover { color: #f2872f; }
+  /* Wishlist sidebar */
+  .mp-drawer-wishlist { border-top: 1px solid rgba(22,50,63,0.12); padding: 0.9rem 1.5rem 0.4rem; }
+  .mp-drawer-wishlist__hd { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #9fb4bd; margin-bottom: 0.5rem; }
+  .mp-wl-row { display: flex; align-items: center; gap: 0.6rem; padding: 0.35rem 0; }
+  .mp-wl-row + .mp-wl-row { border-top: 1px solid rgba(22,50,63,0.07); }
+  .mp-wl-row__thumb { flex: none; }
+  .mp-wl-row__img { width: 42px; height: 42px; object-fit: cover; border-radius: 4px; display: block; }
+  .mp-wl-row__info { flex: 1; min-width: 0; }
+  .mp-wl-row__name { font-size: 0.82rem; color: #16323f; font-weight: 600; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-decoration: none; }
+  .mp-wl-row__name:hover { color: #f2872f; }
+  .mp-wl-row__price { font-size: 0.77rem; color: #9fb4bd; margin-top: 0.1rem; }
+  .mp-wl-row__add { background: #f2872f; color: #fff; border: none; border-radius: 6px; padding: 0.28rem 0.65rem; font-size: 0.77rem; font-weight: 700; cursor: pointer; flex: none; font-family: inherit; }
+  .mp-wl-row__add:hover:not(:disabled) { background: #e07928; }
+  .mp-wl-row__add:disabled { opacity: 0.6; cursor: not-allowed; }
+  .mp-wl-row__sold { font-size: 0.74rem; color: #9fb4bd; flex: none; }
+  /* Remove prompt */
+  .mp-remove-prompt { background: rgba(242,135,47,0.07); border: 1px solid rgba(242,135,47,0.25); border-radius: 7px; padding: 0.55rem 0.8rem; margin: 0.25rem 0; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; font-size: 0.78rem; color: #16323f; }
+  .mp-remove-prompt__text { flex: 1; }
+  .mp-remove-prompt__yes { background: #16323f; color: #fff; border: none; border-radius: 5px; padding: 0.23rem 0.6rem; font-size: 0.74rem; font-weight: 700; cursor: pointer; font-family: inherit; }
+  .mp-remove-prompt__yes:hover { background: #1e4557; }
+  .mp-remove-prompt__no { background: transparent; color: #9fb4bd; border: 1px solid #d0d9dc; border-radius: 5px; padding: 0.23rem 0.6rem; font-size: 0.74rem; cursor: pointer; font-family: inherit; }
+  .mp-remove-prompt__no:hover { color: #16323f; border-color: #16323f; }
 </style>
 
 <cart-drawer class="drawer{% if cart == empty %} is-empty{% endif %}">
@@ -92,7 +116,7 @@
             {%- if cart != empty -%}
               <div class="drawer__cart-items-wrapper">
                 <table class="cart-items" role="table">
-                  <thead role="rowgroup">
+                  <thead role="rowgroup" style="display:none" aria-hidden="true">
                     <tr role="row">
                       <th id="CartDrawer-ColumnProductImage" role="columnheader">
                         <span class="visually-hidden">{{ 'sections.cart.headings.image' | t }}</span>
@@ -246,24 +270,24 @@
                         <td class="cart-item__totals right" role="cell" headers="CartDrawer-ColumnTotal">
                           {%- render 'loading-spinner' -%}
                           <div class="cart-item__price-wrapper">
-                            {%- if item.original_line_price != item.final_line_price -%}
+                            {%- if item.original_price != item.final_price -%}
                               <div class="cart-item__discounted-prices">
                                 <span class="visually-hidden">
                                   {{ 'products.product.price.regular_price' | t }}
                                 </span>
                                 <s class="cart-item__old-price price price--end">
-                                  {{ item.original_line_price | money }}
+                                  {{ item.original_price | money }}
                                 </s>
                                 <span class="visually-hidden">
                                   {{ 'products.product.price.sale_price' | t }}
                                 </span>
                                 <span class="price price--end">
-                                  {{ item.final_line_price | money }}
+                                  {{ item.final_price | money }}
                                 </span>
                               </div>
                             {%- else -%}
                               <span class="price price--end">
-                                {{ item.original_line_price | money }}
+                                {{ item.original_price | money }}
                               </span>
                             {%- endif -%}
 
@@ -361,6 +385,9 @@
                               <cart-remove-button
                                 id="CartDrawer-Remove-{{ item.index | plus: 1 }}"
                                 data-index="{{ item.index | plus: 1 }}"
+                                data-product-id="{{ item.product_id }}"
+                                data-product-handle="{{ item.product.handle | escape }}"
+                                data-product-title="{{ item.product.title | escape }}"
                               >
                                 <button
                                   type="button"
@@ -488,6 +515,14 @@
           <div id="CartDrawer-CartErrors" role="alert"></div>
         </form>
       </cart-drawer-items>
+      {%- if cart != empty -%}
+        {%- assign mp_cart_pids = cart.items | map: 'product_id' | join: ',' -%}
+        <div class="mp-drawer-wishlist" data-mp-cart-pids="{{ mp_cart_pids }}" hidden>
+          <div class="mp-drawer-wishlist__hd">From your wishlist</div>
+          <div class="mp-drawer-wishlist__list"></div>
+        </div>
+      {%- endif -%}
+
       <div class="drawer__footer">
         {%- if settings.show_cart_note -%}
           <details id="Details-CartDrawer">
@@ -576,6 +611,9 @@
         <!-- CTAs -->
 
         <div class="cart__ctas" {{ block.shopify_attributes }}>
+          {%- if cart != empty -%}
+            <a href="{{ routes.cart_url }}" class="mp-drawer-view-cart">View full basket</a>
+          {%- endif -%}
           <button
             type="submit"
             id="CartDrawer-Checkout"
@@ -593,3 +631,169 @@
     </div>
   </div>
 </cart-drawer>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ── helpers ── */
+  function esc(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+  function fmtPrice(pence) {
+    try { return new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(pence / 100); }
+    catch (_) { return '£' + (pence / 100).toFixed(2); }
+  }
+  function lcHandle(id) {
+    try { var c = JSON.parse(localStorage.getItem('mp_wishlist_handles')); return c && c[id] && c[id].handle; }
+    catch (_) { return null; }
+  }
+
+  /* ── Remove-button intercept: prompt to save to wishlist ── */
+  var _busy = new WeakSet();
+
+  document.addEventListener('click', function (e) {
+    var removeEl = e.target.closest('cart-remove-button');
+    if (!removeEl || !removeEl.closest('cart-drawer') || _busy.has(removeEl)) { return; }
+
+    e.stopImmediatePropagation();
+    e.preventDefault();
+
+    var cfg = window.mpWishlist;
+    if (!cfg || !cfg.loggedIn || !window.MPWishlist) {
+      _doRemove(removeEl);
+      return;
+    }
+
+    var productId = removeEl.dataset.productId;
+    var handle    = removeEl.dataset.productHandle;
+    var title     = removeEl.dataset.productTitle;
+
+    var prompt = document.createElement('div');
+    prompt.className = 'mp-remove-prompt';
+    prompt.innerHTML =
+      '<span class="mp-remove-prompt__text">Save to wishlist first?</span>' +
+      '<button type="button" class="mp-remove-prompt__yes">Save &amp; remove</button>' +
+      '<button type="button" class="mp-remove-prompt__no">Just remove</button>';
+    removeEl.parentNode.insertBefore(prompt, removeEl.nextSibling);
+
+    prompt.querySelector('.mp-remove-prompt__yes').addEventListener('click', function () {
+      window.MPWishlist.add(productId, 'Wishlist', { handle: handle, title: title });
+      _doRemove(removeEl);
+      _rm(prompt);
+    });
+    prompt.querySelector('.mp-remove-prompt__no').addEventListener('click', function () {
+      _doRemove(removeEl);
+      _rm(prompt);
+    });
+  }, true);
+
+  function _doRemove(el) {
+    _busy.add(el);
+    var items = el.closest('cart-drawer-items');
+    if (items && typeof items.updateQuantity === 'function') {
+      items.updateQuantity(el.dataset.index, 0);
+    }
+    setTimeout(function () { _busy.delete(el); }, 3000);
+  }
+  function _rm(el) { if (el && el.parentNode) { el.parentNode.removeChild(el); } }
+
+  /* ── Wishlist sidebar ── */
+  var _wlCache = null;
+
+  function _renderWishlist() {
+    var section = document.querySelector('.mp-drawer-wishlist');
+    if (!section) { return; }
+    var cfg = window.mpWishlist;
+    if (!cfg || !cfg.loggedIn) { return; }
+
+    var cartPids = (section.dataset.mpCartPids || '').split(',').filter(Boolean);
+    var list = section.querySelector('.mp-drawer-wishlist__list');
+    if (!list) { return; }
+    list.innerHTML = '';
+    section.hidden = true;
+
+    function _paint(data) {
+      var seen = {}, items = [];
+      (data.groups || []).forEach(function (g) {
+        (g.items || []).forEach(function (it) {
+          var id = String(it.product_id || it.id);
+          var h  = it.handle || lcHandle(id);
+          if (h && !seen[id] && cartPids.indexOf(id) === -1) {
+            seen[id] = true;
+            items.push({ id: id, handle: h });
+          }
+        });
+      });
+      if (!items.length) { return; }
+      section.hidden = false;
+      items.slice(0, 4).forEach(function (x) {
+        fetch('/products/' + x.handle + '.js', { headers: { Accept: 'application/json' } })
+          .then(function (r) { return r.ok ? r.json() : null; })
+          .then(function (p) { if (p) { list.appendChild(_wlRow(p)); } })
+          .catch(function () {});
+      });
+    }
+
+    if (_wlCache) { _paint(_wlCache); return; }
+
+    fetch(cfg.endpoint, { headers: { Accept: 'application/json' }, credentials: 'same-origin' })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (d) { if (d && d.ok !== false) { _wlCache = d; _paint(d); } })
+      .catch(function () {});
+  }
+
+  function _wlRow(product) {
+    var variantId = product.variants && product.variants[0] && product.variants[0].id;
+    var img = product.featured_image
+      ? '<img src="' + esc(product.featured_image) + '&width=84" alt="" loading="lazy" class="mp-wl-row__img">'
+      : '';
+    var btn = product.available && variantId
+      ? '<button type="button" class="mp-wl-row__add" data-v="' + variantId + '">Add</button>'
+      : '<span class="mp-wl-row__sold">Sold out</span>';
+    var row = document.createElement('div');
+    row.className = 'mp-wl-row';
+    row.innerHTML =
+      '<a href="' + esc(product.url) + '" class="mp-wl-row__thumb" tabindex="-1">' + img + '</a>' +
+      '<div class="mp-wl-row__info">' +
+        '<a href="' + esc(product.url) + '" class="mp-wl-row__name">' + esc(product.title) + '</a>' +
+        '<div class="mp-wl-row__price">' + fmtPrice(product.price) + '</div>' +
+      '</div>' +
+      btn;
+
+    var addBtn = row.querySelector('.mp-wl-row__add');
+    if (addBtn) {
+      addBtn.addEventListener('click', function () {
+        addBtn.disabled = true;
+        addBtn.textContent = 'Adding…';
+        fetch('/cart/add.js', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          credentials: 'same-origin',
+          body: JSON.stringify({ items: [{ id: parseInt(addBtn.dataset.v, 10), quantity: 1 }] })
+        })
+          .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
+          .then(function () { window.location.reload(); })
+          .catch(function () { addBtn.disabled = false; addBtn.textContent = 'Add'; });
+      });
+    }
+    return row;
+  }
+
+  /* Re-render wishlist section whenever the drawer inner content is replaced */
+  function _watchDrawer() {
+    var cartDrawerEl = document.querySelector('#CartDrawer');
+    if (!cartDrawerEl) { return; }
+    new MutationObserver(function () {
+      setTimeout(_renderWishlist, 60);
+    }).observe(cartDrawerEl, { childList: true });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function () { _renderWishlist(); _watchDrawer(); });
+  } else {
+    _renderWishlist();
+    _watchDrawer();
+  }
+})();
+</script>
