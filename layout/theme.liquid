@@ -532,9 +532,7 @@
       <script src="{{ 'predictive-search.js' | asset_url }}" defer="defer"></script>
     {%- endif -%}
 
-    {%- if settings.cart_type == 'drawer' -%}
-      <script src="{{ 'cart-drawer.js' | asset_url }}" defer="defer"></script>
-    {%- endif -%}
+    {%- comment -%}cart-drawer.js is loaded from snippets/cart-drawer.liquid after cart.js to preserve the CartItems → CartDrawerItems dependency order{%- endcomment -%}
 
     {% section 'mp-newsletter-popup' %}
     {% render 'mp-wishlist-globals' %}
