@@ -18,6 +18,16 @@
   /* Right-price padding */
   .cart-drawer .cart-item__totals { padding-right: 1.6rem; }
   .cart-drawer .cart-drawer__footer { padding-right: 1.2rem; }
+  /* Bold price in cart items */
+  .cart-drawer .cart-item__totals .price { font-weight: 700; }
+  /* Quantity cell: × at top, stepper below, right-aligned */
+  .cart-drawer .cart-item__quantity { vertical-align: top; padding-top: 0.8rem; }
+  .cart-drawer .cart-item__quantity-wrapper { flex-direction: column; align-items: flex-end; gap: 0.45rem; }
+  /* Smaller quantity stepper */
+  .cart-drawer .cart-quantity { width: 9rem; }
+  /* × remove button */
+  .mp-cart-remove-x { background: none; border: none; color: #9fb4bd; font-size: 1rem; line-height: 1; cursor: pointer; padding: 0 0.1rem; font-family: inherit; }
+  .mp-cart-remove-x:hover { color: #16323f; }
   /* Wishlist 4-col compact cards */
   .mp-drawer-wishlist { box-shadow: 0 -6px 16px rgba(0,0,0,0.09); padding: 0.9rem 1.5rem 0.6rem; }
   .mp-drawer-wishlist__hd { font-size: 0.85rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #2d4f5c; margin-bottom: 0.65rem; }
@@ -304,6 +314,20 @@
                         >
                           <quantity-popover>
                             <div class="cart-item__quantity-wrapper quantity-popover-wrapper">
+                              <cart-remove-button
+                                id="CartDrawer-Remove-{{ item.index | plus: 1 }}"
+                                data-index="{{ item.index | plus: 1 }}"
+                                data-product-id="{{ item.product_id }}"
+                                data-product-handle="{{ item.product.handle | escape }}"
+                                data-product-title="{{ item.product.title | escape }}"
+                              >
+                                <button
+                                  type="button"
+                                  class="mp-cart-remove-x cart-remove-button{% if item.instructions and item.instructions.can_remove == false %} hidden{% endif %}"
+                                  aria-label="{{ 'sections.cart.remove_title' | t: title: item.title | escape }}"
+                                  data-variant-id="{{ item.variant.id }}"
+                                >&times;</button>
+                              </cart-remove-button>
                               <div class="quantity-popover-container{% if has_qty_rules or has_vol_pricing %} quantity-popover-container--hover{% endif %}">
                                 <quantity-input class="quantity cart-quantity">
                                   <button
@@ -369,27 +393,6 @@
                                   </button>
                                 </quantity-input>
                               </div>
-                              <cart-remove-button
-                                id="CartDrawer-Remove-{{ item.index | plus: 1 }}"
-                                data-index="{{ item.index | plus: 1 }}"
-                                data-product-id="{{ item.product_id }}"
-                                data-product-handle="{{ item.product.handle | escape }}"
-                                data-product-title="{{ item.product.title | escape }}"
-                              >
-                                <button
-                                  type="button"
-                                  class="button button--tertiary cart-remove-button"
-                                  aria-label="{{ 'sections.cart.remove_title' | t: title: item.title | escape }}"
-                                  data-variant-id="{{ item.variant.id }}"
-                                  {% if item.instructions and item.instructions.can_remove == false %}
-                                    class="hidden"
-                                  {% endif %}
-                                >
-                                  <span class="svg-wrapper">
-                                    {{- 'icon-remove.svg' | inline_asset_content -}}
-                                  </span>
-                                </button>
-                              </cart-remove-button>
                             </div>
                             {%- if has_qty_rules or has_vol_pricing -%}
                               <button
@@ -736,7 +739,7 @@
         _wlItems = products.filter(Boolean);
         if (!_wlItems.length) { return; }
         section.hidden = false;
-        _paintGrid(grid, nav);
+        _paintGrid();
       });
     }
 
@@ -751,24 +754,22 @@
       .catch(function(){});
   }
 
-  function _paintGrid(grid, nav) {
+  function _paintGrid() {
+    var wlSection = document.querySelector('.mp-drawer-wishlist');
+    if (!wlSection) { return; }
+    var grid = wlSection.querySelector('.mp-drawer-wishlist__grid');
+    var nav  = wlSection.querySelector('.mp-drawer-wishlist__nav');
+    if (!grid) { return; }
     grid.innerHTML = '';
     var start = _wlPage * 4;
     _wlItems.slice(start, start+4).forEach(function(p){ grid.appendChild(_wlCard(p)); });
-
     if (!nav) { return; }
     if (_wlItems.length > 4) {
       nav.hidden = false;
       var prevBtn = nav.querySelector('[data-mp-wl-prev]');
       var nextBtn = nav.querySelector('[data-mp-wl-next]');
-      var newPrev = prevBtn.cloneNode(true);
-      var newNext = nextBtn.cloneNode(true);
-      prevBtn.parentNode.replaceChild(newPrev, prevBtn);
-      nextBtn.parentNode.replaceChild(newNext, nextBtn);
-      newPrev.disabled = _wlPage === 0;
-      newNext.disabled = (_wlPage+1)*4 >= _wlItems.length;
-      newPrev.addEventListener('click', function(){ if(_wlPage>0){ _wlPage--; _paintGrid(grid,nav); } });
-      newNext.addEventListener('click', function(){ if((_wlPage+1)*4<_wlItems.length){ _wlPage++; _paintGrid(grid,nav); } });
+      if (prevBtn) { prevBtn.disabled = (_wlPage === 0); }
+      if (nextBtn) { nextBtn.disabled = ((_wlPage+1)*4 >= _wlItems.length); }
     } else {
       nav.hidden = true;
     }
@@ -807,6 +808,16 @@
     }
     return card;
   }
+
+  document.addEventListener('click', function(e) {
+    var nextEl = e.target.closest('[data-mp-wl-next]');
+    var prevEl = e.target.closest('[data-mp-wl-prev]');
+    if (nextEl && !nextEl.disabled) {
+      if ((_wlPage+1)*4 < _wlItems.length) { _wlPage++; _paintGrid(); }
+    } else if (prevEl && !prevEl.disabled) {
+      if (_wlPage > 0) { _wlPage--; _paintGrid(); }
+    }
+  });
 
   function _watchDrawer() {
     var el = document.querySelector('#CartDrawer');
