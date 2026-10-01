@@ -470,7 +470,7 @@
           <span>&#8634; <b>30-day returns</b> · unopened &amp; in original condition</span>
           <span>&#9989; <b>100% official UK stock</b> · price-match promise</span>
         </div>
-        {%- if has_digital -%}
+        {%- if has_digital and product.type == 'Board Game Insert' -%}
           <div class="pdp__reassure pdp__digital" data-digital-notice{% unless variant.requires_shipping == false %} hidden{% endunless %}>
             <span>&#11015; <b>Instant digital download</b> · your STL files are delivered by email the moment your order is confirmed — nothing ships</span>
             <span>&#128424; <b>Print it yourself</b> · ready-to-slice STL files for any FDM 3D printer</span>
