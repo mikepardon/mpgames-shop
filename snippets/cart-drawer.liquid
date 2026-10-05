@@ -57,7 +57,7 @@
   /* Remove modal */
   .mp-remove-modal { position: fixed; inset: 0; z-index: 9999; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.45); }
   .mp-remove-modal[hidden] { display: none; }
-  .mp-remove-modal__box { background: #fff; border-radius: 12px; padding: 1.6rem; max-width: 22rem; width: 90%; box-shadow: 0 8px 40px rgba(0,0,0,0.22); }
+  .mp-remove-modal__box { background: #fff; border-radius: 12px; padding: 2rem 2.2rem; max-width: 32rem; width: 90%; box-shadow: 0 8px 40px rgba(0,0,0,0.22); }
   .mp-remove-modal__q { font-size: 1rem; font-weight: 600; color: #16323f; margin: 0 0 1.2rem; line-height: 1.4; }
   .mp-remove-modal__actions { display: flex; flex-direction: column; gap: 0.55rem; }
   .mp-remove-modal__save { background: #16323f; color: #fff; border: none; border-radius: 8px; padding: 0.75rem 1rem; font-size: 0.9rem; font-weight: 700; cursor: pointer; font-family: inherit; }
@@ -647,10 +647,10 @@
 
   function _doRemove(el) {
     _busy.add(el);
-    var cartItems = el.closest('cart-drawer-items');
-    if (cartItems && typeof cartItems.updateQuantity === 'function') {
-      cartItems.updateQuantity(el.dataset.index, 0);
-    }
+    // Click the inner button now that it's in _busy — our capture listener
+    // lets it pass through to the theme's CartRemoveButton handler naturally.
+    var innerBtn = el.querySelector('button');
+    if (innerBtn) { innerBtn.click(); }
     setTimeout(function () { _busy.delete(el); }, 3000);
   }
 
