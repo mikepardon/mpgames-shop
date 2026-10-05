@@ -428,13 +428,19 @@
         <button type="button" class="pdp__buynow" data-add="checkout"{% if show_notify %} hidden{% endif %}{% unless product.available %} disabled{% endunless %}>{% if is_preorder %}Pre-order &amp; checkout{% else %}Buy it now{% endif %}</button>
         {%- comment -%} Out of stock (and not a pre-order): native back-in-stock relay to the /apps/notify app proxy. Logged-in shoppers register in one tap; logged-out shoppers are sent to log in or register first. {%- endcomment -%}
         <div class="pdp__notify-wrap" data-notify-wrap{% unless show_notify %} hidden{% endunless %}>
+          <div style="display:flex;gap:11px">
+            {%- if customer -%}
+              <button type="button" class="pdp__notify" style="flex:1;width:auto;margin-top:0" data-notify>Notify me when available</button>
+            {%- else -%}
+              <a class="pdp__notify" style="flex:1;width:auto;margin-top:0" href="{{ routes.account_login_url }}?return_url={{ request.path | url_encode }}">Log in to be notified</a>
+            {%- endif -%}
+            {%- render 'mp-wishlist-button', product: product, class: 'pdp__wish' -%}
+          </div>
           {%- if customer -%}
-            <button type="button" class="pdp__notify" data-notify>Notify me when available</button>
             <div class="pdp__notify-note" data-notify-note>We&rsquo;ll email {{ customer.email }} the moment it&rsquo;s back in stock.</div>
             <div class="pdp__notify-note" data-notify-ok hidden>&#10003; You&rsquo;re on the list &mdash; we&rsquo;ll email you when it&rsquo;s back in stock.</div>
             <div class="pdp__notify-note pdp__notify-err" data-notify-err hidden>Sorry, we couldn&rsquo;t sign you up just then. Please try again.</div>
           {%- else -%}
-            <a class="pdp__notify" href="{{ routes.account_login_url }}?return_url={{ request.path | url_encode }}">Log in to be notified</a>
             <div class="pdp__notify-note">Log in or <a href="{{ routes.account_register_url }}?return_url={{ request.path | url_encode }}">create an account</a> and we&rsquo;ll email you the moment it&rsquo;s back in stock.</div>
           {%- endif -%}
         </div>
