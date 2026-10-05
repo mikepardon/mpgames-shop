@@ -647,18 +647,49 @@
 
   function _doRemove(el) {
     _busy.add(el);
-    var innerBtn = el.querySelector('[data-variant-id]');
-    var variantId = innerBtn && innerBtn.getAttribute('data-variant-id');
-    if (!variantId) { return; }
-    // Use the cart API directly — bypasses the theme's sections re-render
-    // (which errors when called from outside the cart page) and reloads cleanly.
+    var lineIndex = parseInt(el.getAttribute('data-index'), 10);
+    if (!lineIndex) { return; }
+    var cartItemEl = el.closest('.mp-cart-item');
+
     fetch('/cart/change.js', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
       credentials: 'same-origin',
-      body: JSON.stringify({ id: parseInt(variantId, 10), quantity: 0 })
-    }).then(function () { window.location.reload(); })
-      .catch(function () { window.location.reload(); });
+      body: JSON.stringify({ line: lineIndex, quantity: 0 })
+    })
+    .then(function (r) { return r.ok ? r.json() : Promise.reject(r); })
+    .then(function (cart) {
+      // Animate the item out
+      if (cartItemEl) {
+        cartItemEl.style.transition = 'opacity 0.2s, max-height 0.3s 0.05s, padding 0.3s 0.05s';
+        cartItemEl.style.overflow = 'hidden';
+        cartItemEl.style.maxHeight = cartItemEl.offsetHeight + 'px';
+        requestAnimationFrame(function () {
+          cartItemEl.style.opacity = '0';
+          cartItemEl.style.maxHeight = '0';
+          cartItemEl.style.paddingTop = '0';
+          cartItemEl.style.paddingBottom = '0';
+        });
+        setTimeout(function () { cartItemEl.remove(); }, 350);
+      }
+      // Update header cart summary
+      document.querySelectorAll('[data-cart-summary]').forEach(function (s) {
+        s.innerHTML = cart.item_count + ' · ' + fmtPrice(cart.total_price);
+      });
+      // Update totals in the drawer footer
+      var totalEl = document.querySelector('.totals__total-value');
+      if (totalEl) { totalEl.textContent = fmtPrice(cart.total_price); }
+      // Re-index remaining remove buttons so subsequent removes use the correct line
+      setTimeout(function () {
+        document.querySelectorAll('cart-remove-button[data-index]').forEach(function (btn, i) {
+          btn.setAttribute('data-index', i + 1);
+        });
+        _busy.delete(el);
+      }, 360);
+      // Cart now empty — reload to show the empty drawer state
+      if (cart.item_count === 0) { setTimeout(function () { window.location.reload(); }, 420); }
+    })
+    .catch(function () { window.location.reload(); });
   }
 
   /* ── Wishlist 2-col cards with pagination ── */
