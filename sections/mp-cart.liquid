@@ -109,12 +109,20 @@
 
   .mp-ct-{{ section.id }} .ct__gw-add { display: inline-flex; align-items: center; gap: 6px; margin-top: 8px; background: none; border: 1px solid #e7ddcb; border-radius: 7px; padding: 5px 11px; font-size: 12px; font-weight: 600; color: #6b7a82; cursor: pointer; font-family: inherit; transition: border-color .15s, color .15s; }
   .mp-ct-{{ section.id }} .ct__gw-add:hover { border-color: #f2872f; color: #f2872f; }
-  .mp-ct-{{ section.id }} .ct__gw-badge { display: inline-flex; align-items: center; gap: 6px; margin-top: 8px; font-size: 12px; font-weight: 600; color: #2f8f5b; }
-  .mp-ct-{{ section.id }} .ct__gw-panel { grid-column: 1 / -1; padding: 14px 0 4px; }
-  .mp-ct-{{ section.id }} .ct__gw-panel-inner { border: 1px solid #e7ddcb; border-radius: 11px; background: #fffdf9; padding: 14px 16px; }
-  .mp-ct-{{ section.id }} .ct__gw-actions { display: flex; gap: 10px; margin-top: 12px; }
-  .mp-ct-{{ section.id }} .ct__gw-confirm { background: #f2872f; color: #fff; border: 0; border-radius: 8px; padding: 10px 18px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit; }
-  .mp-ct-{{ section.id }} .ct__gw-cancel { background: none; border: 1px solid #d8d4cc; border-radius: 8px; padding: 10px 14px; font-size: 13px; color: #6b7a82; cursor: pointer; font-family: inherit; }
+  .mp-ct-{{ section.id }} .ct__gw-badge { display: inline-flex; align-items: center; gap: 6px; margin-top: 8px; font-size: 12px; font-weight: 600; color: #2f8f5b; background: none; border: 0; padding: 0; cursor: pointer; font-family: inherit; }
+  .mp-ct-{{ section.id }} .ct__gw-badge:hover { text-decoration: underline; }
+  .mp-ct-{{ section.id }} .ct__gw-modal { position: fixed; inset: 0; z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 16px; }
+  .mp-ct-{{ section.id }} .ct__gw-modal-ov { position: absolute; inset: 0; background: rgba(0,0,0,.45); }
+  .mp-ct-{{ section.id }} .ct__gw-modal-panel { position: relative; background: #fff; border-radius: 16px; padding: 28px 24px 24px; max-width: 520px; width: 100%; max-height: 90vh; overflow-y: auto; }
+  .mp-ct-{{ section.id }} .ct__gw-modal-close { position: absolute; top: 14px; right: 16px; background: none; border: 0; font-size: 22px; cursor: pointer; color: #6b7a82; line-height: 1; padding: 4px; }
+  .mp-ct-{{ section.id }} .ct__gw-modal-badge { display: inline-flex; align-items: center; gap: 6px; background: #fff3e8; color: #b4560f; border-radius: 20px; padding: 4px 12px; font-size: 12px; font-weight: 700; margin-bottom: 14px; }
+  .mp-ct-{{ section.id }} .ct__gw-modal-h { font-size: 20px; font-weight: 700; color: #16323f; margin-bottom: 4px; }
+  .mp-ct-{{ section.id }} .ct__gw-modal-sub { font-size: 13px; color: #6b7a82; margin-bottom: 16px; }
+  .mp-ct-{{ section.id }} .ct__gw-modal-qty-row { margin-bottom: 16px; font-size: 13px; color: #16323f; }
+  .mp-ct-{{ section.id }} .ct__gw-modal-qty-row input[type=number] { width: 52px; text-align: center; border: 1px solid #d8d4cc; border-radius: 6px; padding: 4px 6px; font-size: 13px; font-family: inherit; margin: 0 4px; }
+  .mp-ct-{{ section.id }} .ct__gw-modal-actions { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
+  .mp-ct-{{ section.id }} .ct__gw-modal-confirm { background: #f2872f; color: #fff; border: 0; border-radius: 8px; padding: 12px 22px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit; flex: 1; }
+  .mp-ct-{{ section.id }} .ct__gw-modal-cancel { background: none; border: 1px solid #d8d4cc; border-radius: 8px; padding: 12px 16px; font-size: 14px; color: #6b7a82; cursor: pointer; font-family: inherit; }
   .mp-ct-{{ section.id }} .ct__gw-item { display: flex; align-items: center; gap: 8px; padding: 10px 4px; border-bottom: 1px solid #efe7d8; font-size: 13px; color: #6b7a82; }
   .mp-ct-{{ section.id }} .ct__gw-item-icon { font-size: 16px; }
   .mp-ct-{{ section.id }} .ct__gw-item-info { flex: 1; min-width: 0; }
@@ -231,6 +239,11 @@
               if wrapped_titles contains gw_check_key
                 assign item_is_wrapped = true
               endif
+              for prop in item.properties
+                if prop.first == '_gw'
+                  assign item_is_wrapped = true
+                endif
+              endfor
             -%}
             {%- if is_gift_wrap_item -%}
               {%- comment -%} Gift wrap line items are rendered as compact sub-rows, not full cart lines. {%- endcomment -%}
@@ -242,7 +255,7 @@
                 {%- if prop.first == 'Wrap style' -%}{%- assign gw_style = prop.last -%}{%- endif -%}
                 {%- if prop.first == 'Gift message' -%}{%- assign gw_message = prop.last -%}{%- endif -%}
               {%- endfor -%}
-              <div class="ct__gw-item" data-key="{{ item.key }}">
+              <div class="ct__gw-item" data-key="{{ item.key }}" data-gw-for="{{ gw_for | escape }}" data-gw-style="{{ gw_style | escape }}" data-gw-message="{{ gw_message | escape }}">
                 <span class="ct__gw-item-icon">&#127873;</span>
                 <div class="ct__gw-item-info">
                   <span class="ct__gw-item-style">{{ gw_style | default: 'Gift Wrap' }}</span>
@@ -278,9 +291,9 @@
                   {%- endif -%}
                   {%- if gw_variant_id_ct != blank -%}
                     {%- if item_is_wrapped -%}
-                      <div class="ct__gw-badge">&#127873; Gift wrap added</div>
+                      <button type="button" class="ct__gw-badge" data-gw-edit data-item-title="{{ item.product.title | escape }}">&#127873; Gift wrap added &mdash; edit</button>
                     {%- else -%}
-                      <button type="button" class="ct__gw-add" data-gw-open aria-expanded="false">&#127873; Add gift wrap &mdash; &pound;3.99</button>
+                      <button type="button" class="ct__gw-add" data-gw-open data-item-variant-id="{{ item.variant.id }}" data-item-title="{{ item.product.title | escape }}" data-item-qty="{{ item.quantity }}" data-item-key="{{ item.key }}" aria-expanded="false">&#127873; Add gift wrap &mdash; &pound;3.99</button>
                     {%- endif -%}
                   {%- endif -%}
                 </div>
@@ -297,20 +310,29 @@
                 {%- if item.quantity > 1 -%}<div class="ct__ea">{{ item.final_price | money }} ea</div>{%- endif -%}
               </div>
               <button type="button" class="ct__rm" data-change="0" aria-label="Remove">&times;</button>
-              {%- unless item_is_wrapped -%}
-              <div class="ct__gw-panel" data-gw-panel hidden style="grid-column:1/-1">
-                <div class="ct__gw-panel-inner" data-gw-variant-id="{{ gw_variant_id_ct }}" data-item-title="{{ item.product.title | escape }}">
-                  {%- render 'gift-wrap-picker', picker_id: item.key -%}
-                  <div class="ct__gw-actions">
-                    <button type="button" class="ct__gw-confirm mp-cond" data-gw-confirm>Add gift wrap &mdash; &pound;3.99</button>
-                    <button type="button" class="ct__gw-cancel" data-gw-cancel>Cancel</button>
-                  </div>
-                </div>
-              </div>
-              {%- endunless -%}
             </div>
             {%- endif -%}
           {%- endfor -%}
+
+          {%- if gw_variant_id_ct != blank -%}
+          <div class="ct__gw-modal" data-gw-modal hidden role="dialog" aria-modal="true" aria-label="Gift wrap options">
+            <div class="ct__gw-modal-ov" data-gw-modal-close></div>
+            <div class="ct__gw-modal-panel">
+              <button type="button" class="ct__gw-modal-close" data-gw-modal-close aria-label="Close">&times;</button>
+              <span class="ct__gw-modal-badge">&#127873; Gift wrapping &mdash; &pound;3.99</span>
+              <div class="ct__gw-modal-h" data-gw-modal-title>Choose your wrapping style</div>
+              <div class="ct__gw-modal-sub">For: <strong data-gw-modal-for></strong></div>
+              <div class="ct__gw-modal-qty-row" data-gw-modal-qty-row hidden>
+                Gift wrap <input type="number" min="1" value="1" data-gw-modal-qty-input> of <span data-gw-modal-qty-max></span> copies
+              </div>
+              {%- render 'gift-wrap-picker', picker_id: 'ct-modal' -%}
+              <div class="ct__gw-modal-actions">
+                <button type="button" class="ct__gw-modal-confirm" data-gw-modal-confirm>Add gift wrap &mdash; &pound;3.99</button>
+                <button type="button" class="ct__gw-modal-cancel" data-gw-modal-close>Cancel</button>
+              </div>
+            </div>
+          </div>
+          {%- endif -%}
 
           <a href="/collections/all-games" class="ct__continue mp-cond">&#8592; Continue shopping</a>
 
@@ -516,60 +538,151 @@
           });
       });
     }
-    // gift wrap per-item: open/close picker, confirm add
+    // gift wrap modal (add + edit)
+    var gwModal = root.querySelector('[data-gw-modal]');
+    var gwModalTitle = gwModal && gwModal.querySelector('[data-gw-modal-title]');
+    var gwModalFor = gwModal && gwModal.querySelector('[data-gw-modal-for]');
+    var gwModalQtyRow = gwModal && gwModal.querySelector('[data-gw-modal-qty-row]');
+    var gwModalQtyInput = gwModal && gwModal.querySelector('[data-gw-modal-qty-input]');
+    var gwModalQtyMax = gwModal && gwModal.querySelector('[data-gw-modal-qty-max]');
+    var gwModalConfirm = gwModal && gwModal.querySelector('[data-gw-modal-confirm]');
+    var gwModalMode = 'add';
+    var gwModalCtx = {};
+    var gwVariantIdCt = {{ gw_variant_id_ct }};
+
+    function openGwModal() { if (gwModal) { gwModal.hidden = false; document.body.style.overflow = 'hidden'; } }
+    function closeGwModal() {
+      if (!gwModal) return;
+      gwModal.hidden = true;
+      document.body.style.overflow = '';
+      if (gwModalConfirm) { gwModalConfirm.disabled = false; }
+    }
+
+    if (gwModal) {
+      gwModal.querySelectorAll('[data-gw-modal-close]').forEach(function (el) { el.addEventListener('click', closeGwModal); });
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !gwModal.hidden) closeGwModal(); });
+    }
+
+    // "Add gift wrap" opens modal in add mode
     root.querySelectorAll('[data-gw-open]').forEach(function (btn) {
-      var line = btn.closest('.ct__line');
-      if (!line) return;
-      var panel = line.querySelector('[data-gw-panel]');
-      var cancelBtn = line.querySelector('[data-gw-cancel]');
-      var confirmBtn = line.querySelector('[data-gw-confirm]');
-      if (!panel) return;
       btn.addEventListener('click', function () {
-        panel.hidden = false;
-        btn.setAttribute('aria-expanded', 'true');
-        btn.hidden = true;
-      });
-      if (cancelBtn) {
-        cancelBtn.addEventListener('click', function () {
-          panel.hidden = true;
-          btn.hidden = false;
-          btn.setAttribute('aria-expanded', 'false');
-        });
-      }
-      if (confirmBtn) {
-        confirmBtn.addEventListener('click', function () {
-          var inner = panel.querySelector('[data-gw-variant-id]');
-          if (!inner) return;
-          var gwVariantId = parseInt(inner.getAttribute('data-gw-variant-id'), 10);
-          var itemTitle = inner.getAttribute('data-item-title') || '';
-          var styleInput = inner.querySelector('[data-gw-style]:checked');
-          var msgEl = inner.querySelector('[data-gw-msg]');
-          var gwProps = {
-            'For': itemTitle,
-            'Wrap style': styleInput ? styleInput.value : 'Classic'
-          };
-          if (msgEl && msgEl.value.trim()) {
-            gwProps['Gift message'] = msgEl.value.trim();
+        if (!gwModal) return;
+        var variantId = btn.getAttribute('data-item-variant-id');
+        var itemTitle = btn.getAttribute('data-item-title') || '';
+        var itemQty = parseInt(btn.getAttribute('data-item-qty') || '1', 10);
+        var itemKey = btn.getAttribute('data-item-key') || '';
+        gwModalMode = 'add';
+        gwModalCtx = { variantId: variantId, itemTitle: itemTitle, itemQty: itemQty, itemKey: itemKey };
+        if (gwModalTitle) gwModalTitle.textContent = 'Choose your wrapping style';
+        if (gwModalFor) gwModalFor.textContent = itemTitle;
+        if (gwModalConfirm) gwModalConfirm.textContent = 'Add gift wrap — £3.99';
+        if (gwModalQtyRow) {
+          gwModalQtyRow.hidden = itemQty <= 1;
+          if (itemQty > 1) {
+            if (gwModalQtyInput) { gwModalQtyInput.value = 1; gwModalQtyInput.setAttribute('max', itemQty); }
+            if (gwModalQtyMax) gwModalQtyMax.textContent = itemQty;
           }
-          confirmBtn.disabled = true;
-          confirmBtn.textContent = 'Adding…';
-          fetch('/cart/add.js', {
+        }
+        var firstStyle = gwModal.querySelector('[data-gw-style]');
+        if (firstStyle) firstStyle.checked = true;
+        var msgEl = gwModal.querySelector('[data-gw-msg]');
+        if (msgEl) msgEl.value = '';
+        openGwModal();
+      });
+    });
+
+    // "Gift wrap added — edit" opens modal in edit mode
+    root.querySelectorAll('[data-gw-edit]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        if (!gwModal) return;
+        var itemTitle = btn.getAttribute('data-item-title') || '';
+        var gwItem = root.querySelector('.ct__gw-item[data-gw-for="' + itemTitle.replace(/"/g, '\\"') + '"]');
+        if (!gwItem) return;
+        var gwKey = gwItem.getAttribute('data-key') || '';
+        var currentStyle = gwItem.getAttribute('data-gw-style') || 'Classic';
+        var currentMessage = gwItem.getAttribute('data-gw-message') || '';
+        gwModalMode = 'edit';
+        gwModalCtx = { gwKey: gwKey, itemTitle: itemTitle };
+        if (gwModalTitle) gwModalTitle.textContent = 'Edit your gift wrap';
+        if (gwModalFor) gwModalFor.textContent = itemTitle;
+        if (gwModalConfirm) gwModalConfirm.textContent = 'Save changes';
+        if (gwModalQtyRow) gwModalQtyRow.hidden = true;
+        gwModal.querySelectorAll('[data-gw-style]').forEach(function (input) { input.checked = (input.value === currentStyle); });
+        var msgEl = gwModal.querySelector('[data-gw-msg]');
+        if (msgEl) msgEl.value = currentMessage;
+        openGwModal();
+      });
+    });
+
+    // Confirm
+    if (gwModalConfirm) {
+      gwModalConfirm.addEventListener('click', function () {
+        var styleInput = gwModal.querySelector('[data-gw-style]:checked');
+        var msgEl = gwModal.querySelector('[data-gw-msg]');
+        var style = styleInput ? styleInput.value : 'Classic';
+        var message = msgEl ? msgEl.value.trim() : '';
+        gwModalConfirm.disabled = true;
+
+        if (gwModalMode === 'edit') {
+          gwModalConfirm.textContent = 'Saving…';
+          var gwProps = { 'For': gwModalCtx.itemTitle, 'Wrap style': style };
+          if (message) gwProps['Gift message'] = message;
+          fetch('/cart/change.js', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: gwModalCtx.gwKey, quantity: 1, properties: gwProps })
+          }).then(function (r) {
+            if (!r.ok) { return r.json().then(function (j) { throw new Error(j.description || j.message || r.status); }); }
+            window.location.reload();
+          }).catch(function (err) {
+            gwModalConfirm.disabled = false;
+            gwModalConfirm.textContent = 'Save changes';
+            console.error('Gift wrap update failed:', err);
+          });
+          return;
+        }
+
+        // add mode
+        gwModalConfirm.textContent = 'Adding…';
+        var wrapQty = (gwModalQtyInput && gwModalQtyRow && !gwModalQtyRow.hidden) ? (parseInt(gwModalQtyInput.value, 10) || 1) : 1;
+        var itemQty = gwModalCtx.itemQty || 1;
+        var gwProps = { 'For': gwModalCtx.itemTitle, 'Wrap style': style };
+        if (message) gwProps['Gift message'] = message;
+
+        function addWrap(extraProductItems) {
+          var cartItems = (extraProductItems || []).concat([{ id: gwVariantIdCt, quantity: wrapQty, properties: gwProps }]);
+          return fetch('/cart/add.js', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-            body: JSON.stringify({ items: [{ id: gwVariantId, quantity: 1, properties: gwProps }] })
-          })
-            .then(function (r) {
-              if (!r.ok) { return r.json().then(function (j) { throw new Error(j.description || j.message || r.status); }); }
-              window.location.reload();
-            })
-            .catch(function (err) {
-              confirmBtn.disabled = false;
-              confirmBtn.textContent = 'Add gift wrap — £3.99';
-              console.error('Gift wrap add failed:', err);
-            });
-        });
-      }
-    });
+            body: JSON.stringify({ items: cartItems })
+          }).then(function (r) {
+            if (!r.ok) { return r.json().then(function (j) { throw new Error(j.description || j.message || JSON.stringify(j.errors) || r.status); }); }
+            return r.json();
+          });
+        }
+
+        function onSuccess() { window.location.reload(); }
+        function onError(err) {
+          gwModalConfirm.disabled = false;
+          gwModalConfirm.textContent = 'Add gift wrap — £3.99';
+          console.error('Gift wrap add failed:', err);
+        }
+
+        if (wrapQty < itemQty) {
+          // Split: reduce original by wrapQty, add wrapQty of the product (marked) + gift wrap
+          fetch('/cart/change.js', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: gwModalCtx.itemKey, quantity: itemQty - wrapQty })
+          }).then(function (r) {
+            if (!r.ok) { return r.json().then(function (j) { throw new Error(j.description || j.message || r.status); }); }
+            return r.json();
+          }).then(function () {
+            return addWrap([{ id: parseInt(gwModalCtx.variantId, 10), quantity: wrapQty, properties: { '_gw': '1' } }]);
+          }).then(onSuccess).catch(onError);
+        } else {
+          addWrap([]).then(onSuccess).catch(onError);
+        }
   })();
 </script>
 
