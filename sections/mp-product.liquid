@@ -462,8 +462,7 @@
         {%- comment -%} Gift wrap add-on — shown for all purchasable products except gift cards and the wrap product itself. {%- endcomment -%}
         {%- unless gift_card_page -%}
         {%- if product.handle != 'gift-wrap' and product.available -%}
-        {%- assign gw_product = all_products['gift-wrap'] -%}
-        {%- if gw_product.id != blank -%}
+        {%- assign gw_variant_id = 60058272924032 -%}
         <div class="pdp__gw" data-pdp-gw>
           <label class="pdp__gw-toggle">
             <input type="checkbox" class="pdp__gw-check" data-gw-check>
@@ -472,9 +471,8 @@
           <div class="pdp__gw-panel" data-gw-panel hidden>
             {%- render 'gift-wrap-picker', picker_id: section.id -%}
           </div>
-          <input type="hidden" data-gw-variant-id value="{{ gw_product.variants.first.id }}">
+          <input type="hidden" data-gw-variant-id value="{{ gw_variant_id }}">
         </div>
-        {%- endif -%}
         {%- endif -%}
         {%- endunless -%}
 

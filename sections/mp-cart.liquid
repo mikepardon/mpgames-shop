@@ -205,8 +205,7 @@
 
           {%- comment -%} Build a lookup of product titles that already have a gift wrap item in the cart. {%- endcomment -%}
           {%- liquid
-            assign gw_product_ct = all_products['gift-wrap']
-            assign gw_variant_id_ct = gw_product_ct.variants.first.id
+            assign gw_variant_id_ct = 60058272924032
             assign wrapped_titles = ''
             for item in cart.items
               if item.product.handle == 'gift-wrap'
@@ -381,7 +380,7 @@
                 <p class="ct__lyerr" data-ly-err hidden></p>
               </div>
               <div class="ct__lyzero" data-ly-zero hidden>
-                <p class="ct__lymin">Earn 1 point for every &pound;1 you spend &mdash; redeem 100 points for &pound;1 off. Points are valid for 12 months from each order. <a href="/pages/loyalty-points" style="color:#f2872f;font-weight:600;text-decoration:none">Learn more</a></p>
+                <p class="ct__lymin">Earn 2 points for every &pound;1 you spend &mdash; redeem 100 points for &pound;1 off. Points are valid for 12 months from each order. <a href="/pages/loyalty-points" style="color:#f2872f;font-weight:600;text-decoration:none">Learn more</a></p>
               </div>
             </div>
             {%- endif -%}
