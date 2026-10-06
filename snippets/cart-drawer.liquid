@@ -54,11 +54,26 @@
   .mp-drawer-wl-nav-btn { background: #16323f; color: #fff; border: none; border-radius: 6px; width: 1.8rem; height: 1.8rem; font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; font-family: inherit; }
   .mp-drawer-wl-nav-btn:hover:not(:disabled) { background: #1e4557; }
   .mp-drawer-wl-nav-btn:disabled { opacity: 0.3; cursor: default; }
+  /* Base game upsell */
+  .mp-cart-basegame-upsell { padding: 0.8rem 1rem; border-top: 1px solid #edf1f3; }
+  .mp-cart-basegame-upsell__hd { font-size: 0.82rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: #2d4f5c; margin: 0 0 0.6rem; }
+  .mp-cart-basegame { display: flex; align-items: center; gap: 0.75rem; padding: 0.6rem 0.75rem; background: #f7f3ec; border: 1px solid #e7ddcb; border-radius: 8px; margin-bottom: 0.5rem; }
+  .mp-cart-basegame:last-child { margin-bottom: 0; }
+  .mp-cart-basegame__img { width: 52px; height: 52px; object-fit: cover; border-radius: 4px; display: block; flex-shrink: 0; }
+  .mp-cart-basegame__body { flex: 1; min-width: 0; }
+  .mp-cart-basegame__label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #f2872f; margin: 0 0 2px; }
+  .mp-cart-basegame__title { font-size: 13px; font-weight: 600; color: #16323f; text-decoration: none; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .mp-cart-basegame__title:hover { color: #f2872f; }
+  .mp-cart-basegame__price { font-size: 12px; color: #4a6570; margin: 2px 0 0; }
+  .mp-cart-basegame__btn { background: #16323f; color: #fff; border: none; border-radius: 6px; padding: 0.4rem 0.75rem; font-size: 0.82rem; font-weight: 700; cursor: pointer; font-family: inherit; white-space: nowrap; flex-shrink: 0; }
+  .mp-cart-basegame__btn:hover:not(:disabled) { background: #1e4557; }
+  .mp-cart-basegame__btn:disabled { opacity: 0.6; cursor: not-allowed; }
+  .mp-cart-basegame__sold { font-size: 0.82rem; color: #9fb4bd; white-space: nowrap; flex-shrink: 0; }
   /* Remove modal */
   .mp-remove-modal { position: fixed; inset: 0; z-index: 9999; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.45); }
   .mp-remove-modal[hidden] { display: none; }
-  .mp-remove-modal__box { background: #fff; border-radius: 12px; padding: 1.6rem; max-width: 22rem; width: 90%; box-shadow: 0 8px 40px rgba(0,0,0,0.22); }
-  .mp-remove-modal__q { font-size: 1rem; font-weight: 600; color: #16323f; margin: 0 0 1.2rem; line-height: 1.4; }
+  .mp-remove-modal__box { background: #fff; border-radius: 14px; padding: 2.4rem 2.6rem; max-width: 42rem; width: calc(100% - 3rem); box-shadow: 0 8px 40px rgba(0,0,0,0.22); }
+  .mp-remove-modal__q { font-size: 1.15rem; font-weight: 600; color: #16323f; margin: 0 0 1.6rem; line-height: 1.45; }
   .mp-remove-modal__actions { display: flex; flex-direction: column; gap: 0.55rem; }
   .mp-remove-modal__save { background: #16323f; color: #fff; border: none; border-radius: 8px; padding: 0.75rem 1rem; font-size: 0.9rem; font-weight: 700; cursor: pointer; font-family: inherit; }
   .mp-remove-modal__save:hover { background: #1e4557; }
@@ -182,7 +197,7 @@
                         <a href="{{ item.url }}" class="mp-cart-item__name">
                           {{- item.product.title | escape -}}
                         </a>
-                        {%- assign cart_disclosure_modal_id = 'CartDisclosureModal-drawer-' | append: item.key | replace: ':', '-' -%}
+                      {%- assign cart_disclosure_modal_id = 'CartDisclosureModal-drawer-' | append: item.key | replace: ':', '-' -%}
                         {%- render 'cart-disclosure-indicator',
                           product: item.product,
                           modal_id: cart_disclosure_modal_id
@@ -471,6 +486,52 @@
         </form>
       </cart-drawer-items>
       {%- if cart != empty -%}
+        {%- comment -%} Base game upsell: if an expansion / insert / accessory is in the cart, surface its base game if not already added. {%- endcomment -%}
+        {%- capture mp_basegame_upsell -%}
+          {%- assign cart_product_ids = cart.items | map: 'product_id' -%}
+          {%- assign shown_basegame_ids = '' -%}
+          {%- for item in cart.items -%}
+            {%- if item.product.type == 'Board Game Expansion' or item.product.type == 'Board Game Insert' or item.product.type == 'Board Game Accessory' -%}
+              {%- assign insert_for_games = item.product.metafields.custom.insert_for_game.value -%}
+              {%- if insert_for_games != blank -%}
+                {%- for base_game in insert_for_games -%}
+                  {%- assign base_id_str = base_game.id | append: '' -%}
+                  {%- unless cart_product_ids contains base_game.id or shown_basegame_ids contains base_id_str -%}
+                    {%- assign shown_basegame_ids = shown_basegame_ids | append: base_id_str | append: ',' -%}
+                    {%- assign base_variant = base_game.first_available_variant -%}
+                    <div class="mp-cart-basegame">
+                      {%- if base_game.featured_image -%}
+                        <a href="{{ base_game.url }}" tabindex="-1" aria-hidden="true">
+                          <img class="mp-cart-basegame__img" src="{{ base_game.featured_image | image_url: width: 80 }}" alt="{{ base_game.title | escape }}" loading="lazy">
+                        </a>
+                      {%- endif -%}
+                      <div class="mp-cart-basegame__body">
+                        <p class="mp-cart-basegame__label">Base game</p>
+                        <a class="mp-cart-basegame__title" href="{{ base_game.url }}">{{ base_game.title }}</a>
+                        <p class="mp-cart-basegame__price">{{ base_game.price | money }}</p>
+                      </div>
+                      {%- if base_game.available and base_variant != blank -%}
+                        <form class="mp-cart-basegame__form" action="/cart/add" method="post">
+                          <input type="hidden" name="id" value="{{ base_variant.id }}">
+                          <input type="hidden" name="quantity" value="1">
+                          <button type="submit" class="mp-cart-basegame__btn">Add</button>
+                        </form>
+                      {%- else -%}
+                        <span class="mp-cart-basegame__sold">Sold out</span>
+                      {%- endif -%}
+                    </div>
+                  {%- endunless -%}
+                {%- endfor -%}
+              {%- endif -%}
+            {%- endif -%}
+          {%- endfor -%}
+        {%- endcapture -%}
+        {%- if mp_basegame_upsell != blank -%}
+          <div class="mp-cart-basegame-upsell">
+            <p class="mp-cart-basegame-upsell__hd">Don't forget the base game</p>
+            {{ mp_basegame_upsell }}
+          </div>
+        {%- endif -%}
         {%- assign mp_cart_pids = cart.items | map: 'product_id' | join: ',' -%}
         <div class="mp-drawer-wishlist" data-mp-cart-pids="{{ mp_cart_pids }}" hidden>
           <div class="mp-drawer-wishlist__hd">From your wishlist</div>
@@ -647,11 +708,49 @@
 
   function _doRemove(el) {
     _busy.add(el);
-    var cartItems = el.closest('cart-drawer-items');
-    if (cartItems && typeof cartItems.updateQuantity === 'function') {
-      cartItems.updateQuantity(el.dataset.index, 0);
-    }
-    setTimeout(function () { _busy.delete(el); }, 3000);
+    var lineIndex = parseInt(el.getAttribute('data-index'), 10);
+    if (!lineIndex) { return; }
+    var cartItemEl = el.closest('.mp-cart-item');
+
+    fetch('/cart/change.js', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      credentials: 'same-origin',
+      body: JSON.stringify({ line: lineIndex, quantity: 0 })
+    })
+    .then(function (r) { return r.ok ? r.json() : Promise.reject(r); })
+    .then(function (cart) {
+      // Animate the item out
+      if (cartItemEl) {
+        cartItemEl.style.transition = 'opacity 0.2s, max-height 0.3s 0.05s, padding 0.3s 0.05s';
+        cartItemEl.style.overflow = 'hidden';
+        cartItemEl.style.maxHeight = cartItemEl.offsetHeight + 'px';
+        requestAnimationFrame(function () {
+          cartItemEl.style.opacity = '0';
+          cartItemEl.style.maxHeight = '0';
+          cartItemEl.style.paddingTop = '0';
+          cartItemEl.style.paddingBottom = '0';
+        });
+        setTimeout(function () { cartItemEl.remove(); }, 350);
+      }
+      // Update header cart summary
+      document.querySelectorAll('[data-cart-summary]').forEach(function (s) {
+        s.innerHTML = cart.item_count + ' · ' + fmtPrice(cart.total_price);
+      });
+      // Update totals in the drawer footer
+      var totalEl = document.querySelector('.totals__total-value');
+      if (totalEl) { totalEl.textContent = fmtPrice(cart.total_price); }
+      // Re-index remaining remove buttons so subsequent removes use the correct line
+      setTimeout(function () {
+        document.querySelectorAll('cart-remove-button[data-index]').forEach(function (btn, i) {
+          btn.setAttribute('data-index', i + 1);
+        });
+        _busy.delete(el);
+      }, 360);
+      // Cart now empty — reload to show the empty drawer state
+      if (cart.item_count === 0) { setTimeout(function () { window.location.reload(); }, 420); }
+    })
+    .catch(function () { window.location.reload(); });
   }
 
   /* ── Wishlist 2-col cards with pagination ── */
@@ -796,5 +895,26 @@
     _renderWishlist();
     _watchDrawer();
   }
+
+  /* ── Base game upsell add-to-cart ── */
+  document.addEventListener('submit', function (e) {
+    var form = e.target.closest('.mp-cart-basegame__form');
+    if (!form) { return; }
+    e.preventDefault();
+    var btn = form.querySelector('.mp-cart-basegame__btn');
+    var variantInput = form.querySelector('[name="id"]');
+    if (!btn || !variantInput) { return; }
+    btn.disabled = true;
+    btn.textContent = '…';
+    fetch('/cart/add.js', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      credentials: 'same-origin',
+      body: JSON.stringify({ items: [{ id: parseInt(variantInput.value, 10), quantity: 1 }] })
+    })
+      .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
+      .then(function () { window.location.reload(); })
+      .catch(function () { btn.disabled = false; btn.textContent = 'Add'; });
+  });
 })();
 </script>

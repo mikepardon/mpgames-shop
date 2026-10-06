@@ -423,17 +423,24 @@
 
         <div class="pdp__actions"{% if show_notify %} hidden{% endif %} data-buy-actions>
           <button type="button" class="pdp__add" data-add="cart"{% unless product.available %} disabled{% endunless %}>{% if is_preorder %}Pre-order now{% else %}Add to basket{% endif %}</button>
+          {%- render 'mp-wishlist-button', product: product, class: 'pdp__wish' -%}
         </div>
         <button type="button" class="pdp__buynow" data-add="checkout"{% if show_notify %} hidden{% endif %}{% unless product.available %} disabled{% endunless %}>{% if is_preorder %}Pre-order &amp; checkout{% else %}Buy it now{% endif %}</button>
         {%- comment -%} Out of stock (and not a pre-order): native back-in-stock relay to the /apps/notify app proxy. Logged-in shoppers register in one tap; logged-out shoppers are sent to log in or register first. {%- endcomment -%}
         <div class="pdp__notify-wrap" data-notify-wrap{% unless show_notify %} hidden{% endunless %}>
+          <div style="display:flex;gap:11px">
+            {%- if customer -%}
+              <button type="button" class="pdp__notify" style="flex:1;width:auto;margin-top:0" data-notify>Notify me when available</button>
+            {%- else -%}
+              <a class="pdp__notify" style="flex:1;width:auto;margin-top:0" href="{{ routes.account_login_url }}?return_url={{ request.path | url_encode }}">Log in to be notified</a>
+            {%- endif -%}
+            {%- render 'mp-wishlist-button', product: product, class: 'pdp__wish' -%}
+          </div>
           {%- if customer -%}
-            <button type="button" class="pdp__notify" data-notify>Notify me when available</button>
             <div class="pdp__notify-note" data-notify-note>We&rsquo;ll email {{ customer.email }} the moment it&rsquo;s back in stock.</div>
             <div class="pdp__notify-note" data-notify-ok hidden>&#10003; You&rsquo;re on the list &mdash; we&rsquo;ll email you when it&rsquo;s back in stock.</div>
             <div class="pdp__notify-note pdp__notify-err" data-notify-err hidden>Sorry, we couldn&rsquo;t sign you up just then. Please try again.</div>
           {%- else -%}
-            <a class="pdp__notify" href="{{ routes.account_login_url }}?return_url={{ request.path | url_encode }}">Log in to be notified</a>
             <div class="pdp__notify-note">Log in or <a href="{{ routes.account_register_url }}?return_url={{ request.path | url_encode }}">create an account</a> and we&rsquo;ll email you the moment it&rsquo;s back in stock.</div>
           {%- endif -%}
         </div>
@@ -573,31 +580,52 @@
         </div>
       </div>
 
-      {%- comment -%} How-to-play box only when there's a YouTube video; otherwise show just the external links (if any), or nothing at all {%- endcomment -%}
+      {%- comment -%} How-to-play box: extract YouTube ID from how_to_play_url. Handles both ?v=ID and youtu.be/ID forms. {%- endcomment -%}
       {%- assign has_howto = false -%}
-      {%- if m.youtube_id != blank -%}{%- assign has_howto = true -%}{%- endif -%}
+      {%- assign htp_yt_id = '' -%}
+      {%- if m.how_to_play_url != blank -%}
+        {%- assign has_howto = true -%}
+        {%- assign htp_yt_id = m.how_to_play_url | url_decode | split: 'v=' | last | split: '&' | first -%}
+        {%- if htp_yt_id contains '/' or htp_yt_id contains '.' -%}
+          {%- assign htp_yt_id = m.how_to_play_url | url_decode | split: 'youtu.be/' | last | split: '?' | first -%}
+        {%- endif -%}
+      {%- endif -%}
       {%- assign has_gamelinks = false -%}
       {%- if m.bgg_url != blank or m.bga_url != blank -%}{%- assign has_gamelinks = true -%}{%- endif -%}
       {%- if has_howto or has_gamelinks -%}
       <div class="pdp__play">
         {%- if has_howto -%}
-          <h2>How to play</h2>
+          {%- if has_gamelinks -%}
+            <div class="pdp__tabs">
+              <button type="button" class="pdp__tab is-active" data-tab="how">How to play</button>
+              <button type="button" class="pdp__tab" data-tab="links">Useful links</button>
+            </div>
+          {%- else -%}
+            <h2>How to play</h2>
+          {%- endif -%}
           <div class="pdp__panel" data-panel="how">
             <div class="pdp__embed">
-              <iframe src="https://www.youtube-nocookie.com/embed/{{ m.youtube_id }}" title="{{ product.title | escape }} — how to play" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+              <iframe src="https://www.youtube-nocookie.com/embed/{{ htp_yt_id }}" title="{{ product.title | escape }} — how to play" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
             </div>
             <div class="pdp__vidttl">{{ product.title }} — How to Play</div>
             <div style="font-size:12px;color:#9fb4bd;margin-top:2px">Video tutorial · {% if m.video_url != blank %}<a href="{{ m.video_url }}" target="_blank" rel="noopener" style="color:#f2872f;text-decoration:none">more videos</a>{% else %}playthroughs &amp; reviews{% endif %}</div>
           </div>
+          {%- if has_gamelinks -%}
+          <div class="pdp__panel" data-panel="links" hidden>
+            <div class="pdp__ext" style="border-top:0;margin-top:0;padding-top:0">
+              {%- if m.bgg_url != blank -%}<a href="{{ m.bgg_url }}" target="_blank" rel="noopener"><span style="font-size:15px">&#9733;</span><span>View on BGG</span></a>{%- endif -%}
+              {%- if m.bga_url != blank -%}<a href="{{ m.bga_url }}" target="_blank" rel="noopener"><span style="font-size:15px">&#9824;</span><span>Play on BGA</span></a>{%- endif -%}
+            </div>
+          </div>
+          {%- endif -%}
         {%- else -%}
           <h2>Useful links</h2>
-        {%- endif -%}
-
-        {%- if has_gamelinks -%}
-        <div class="pdp__ext"{% unless has_howto %} style="border-top:0;margin-top:16px;padding-top:0"{% endunless %}>
-          {%- if m.bgg_url != blank -%}<a href="{{ m.bgg_url }}" target="_blank" rel="noopener"><span style="font-size:15px">&#9733;</span><span>View on BGG</span></a>{%- endif -%}
-          {%- if m.bga_url != blank -%}<a href="{{ m.bga_url }}" target="_blank" rel="noopener"><span style="font-size:15px">&#9824;</span><span>Play on BGA</span></a>{%- endif -%}
-        </div>
+          {%- if has_gamelinks -%}
+          <div class="pdp__ext" style="border-top:0;margin-top:16px;padding-top:0">
+            {%- if m.bgg_url != blank -%}<a href="{{ m.bgg_url }}" target="_blank" rel="noopener"><span style="font-size:15px">&#9733;</span><span>View on BGG</span></a>{%- endif -%}
+            {%- if m.bga_url != blank -%}<a href="{{ m.bga_url }}" target="_blank" rel="noopener"><span style="font-size:15px">&#9824;</span><span>Play on BGA</span></a>{%- endif -%}
+          </div>
+          {%- endif -%}
         {%- endif -%}
       </div>
       {%- endif -%}
@@ -1167,18 +1195,17 @@
   })();
 </script>
 
-{%- comment -%} SEO: VideoObject for the how-to-play video, when available. {%- endcomment -%}
-{%- assign yt_id = product.metafields.custom.youtube_id.value -%}
-{%- if yt_id != blank -%}
+{%- comment -%} SEO: VideoObject for the how-to-play video, when available. Uses htp_yt_id resolved above (from youtube_id or how_to_play_url). {%- endcomment -%}
+{%- if htp_yt_id != blank -%}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "VideoObject",
   "name": {{ product.title | append: ' — How to Play' | json }},
   "description": {{ product.title | append: ': gameplay overview and how to play.' | json }},
-  "thumbnailUrl": "https://i.ytimg.com/vi/{{ yt_id }}/hqdefault.jpg",
-  "embedUrl": "https://www.youtube.com/embed/{{ yt_id }}",
-  "contentUrl": "https://www.youtube.com/watch?v={{ yt_id }}",
+  "thumbnailUrl": "https://i.ytimg.com/vi/{{ htp_yt_id }}/hqdefault.jpg",
+  "embedUrl": "https://www.youtube.com/embed/{{ htp_yt_id }}",
+  "contentUrl": "https://www.youtube.com/watch?v={{ htp_yt_id }}",
   "uploadDate": "{{ product.published_at | date: '%Y-%m-%dT%H:%M:%S%:z' }}"
 }
 </script>
