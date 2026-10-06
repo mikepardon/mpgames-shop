@@ -167,6 +167,12 @@
   .mp-pdp-{{ section.id }} .pdp__notify-note { margin-top: 8px; font-size: 13px; color: #6b7a82; text-align: center; }
   .mp-pdp-{{ section.id }} .pdp__notify-note a { color: #c2410c; font-weight: 600; }
   .mp-pdp-{{ section.id }} .pdp__notify-err { color: #d6402e; }
+  .mp-pdp-{{ section.id }} .pdp__gw { margin-top: 14px; border: 1px solid #e7ddcb; border-radius: 11px; background: #fffdf9; overflow: hidden; }
+  .mp-pdp-{{ section.id }} .pdp__gw-toggle { display: flex; align-items: center; gap: 12px; padding: 14px 16px; cursor: pointer; }
+  .mp-pdp-{{ section.id }} .pdp__gw-check { width: 18px; height: 18px; flex: none; accent-color: #f2872f; cursor: pointer; }
+  .mp-pdp-{{ section.id }} .pdp__gw-lbl { font-size: 14.5px; font-weight: 600; color: #16323f; }
+  .mp-pdp-{{ section.id }} .pdp__gw-lbl strong { color: #f2872f; }
+  .mp-pdp-{{ section.id }} .pdp__gw-panel { padding: 0 16px 16px; border-top: 1px solid #f1ece2; }
   .mp-pdp-{{ section.id }} .pdp__appblocks { margin-top: 12px; }
   .mp-pdp-{{ section.id }} .pdp__preorder { margin-top: 14px; border: 1px solid #f2c79a; background: #fff5ec; border-radius: 10px; padding: 12px 14px; }
   .mp-pdp-{{ section.id }} .pdp__preorder-h { font-weight: 700; color: #b4560f; font-size: 14px; display: flex; align-items: center; gap: 7px; }
@@ -452,6 +458,25 @@
             <div class="pdp__notify-note">Log in or <a href="{{ routes.account_register_url }}?return_url={{ request.path | url_encode }}">create an account</a> and we&rsquo;ll email you the moment it&rsquo;s back in stock.</div>
           {%- endif -%}
         </div>
+
+        {%- comment -%} Gift wrap add-on — shown for all purchasable products except gift cards and the wrap product itself. {%- endcomment -%}
+        {%- unless gift_card_page -%}
+        {%- if product.handle != 'gift-wrap' and product.available -%}
+        {%- assign gw_product = all_products['gift-wrap'] -%}
+        {%- if gw_product.id != blank -%}
+        <div class="pdp__gw" data-pdp-gw>
+          <label class="pdp__gw-toggle">
+            <input type="checkbox" class="pdp__gw-check" data-gw-check>
+            <span class="pdp__gw-lbl">&#127873; Add gift wrap &mdash; <strong>&pound;3.99</strong></span>
+          </label>
+          <div class="pdp__gw-panel" data-gw-panel hidden>
+            {%- render 'gift-wrap-picker', picker_id: section.id -%}
+          </div>
+          <input type="hidden" data-gw-variant-id value="{{ gw_product.variants.first.id }}">
+        </div>
+        {%- endif -%}
+        {%- endif -%}
+        {%- endunless -%}
 
         {%- comment -%} 3D-printed storage inserts made for this game — quick-add straight to basket {%- endcomment -%}
         {%- assign game_inserts = m.available_inserts.value -%}
@@ -1181,14 +1206,17 @@
           });
         }).catch(function () {});
     }
-    function cartAdd(id, quantity) {
+    function cartAddItems(items) {
       return fetch('{{ routes.cart_add_url }}', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify({ items: [{ id: id, quantity: quantity || 1 }] })
+        body: JSON.stringify({ items: items })
       }).then(function (r) { return r.json(); }).then(function (res) {
         return refreshCartUI().then(function () { return res; });
       });
+    }
+    function cartAdd(id, quantity) {
+      return cartAddItems([{ id: id, quantity: quantity || 1 }]);
     }
 
     // cross-sell modal (rendered only when there are expansions/inserts)
@@ -1200,13 +1228,37 @@
       document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !upsellModal.hidden) closeModal(); });
     }
 
+    // gift wrap toggle
+    var gwCheck = root.querySelector('[data-gw-check]');
+    var gwPanel = root.querySelector('[data-gw-panel]');
+    if (gwCheck && gwPanel) {
+      gwCheck.addEventListener('change', function () {
+        gwPanel.hidden = !gwCheck.checked;
+      });
+    }
+
     // add to cart / buy now (main product)
     root.querySelectorAll('[data-add]').forEach(function (btn) {
       btn.addEventListener('click', function () {
         if (!variantId) return;
         var checkout = btn.getAttribute('data-add') === 'checkout';
         btn.disabled = true;
-        cartAdd(variantId, parseInt(qty.value, 10) || 1).then(function () {
+        var lineQty = parseInt(qty.value, 10) || 1;
+        var items = [{ id: variantId, quantity: lineQty }];
+        var gwVariantEl = root.querySelector('[data-gw-variant-id]');
+        if (gwCheck && gwCheck.checked && gwVariantEl && gwVariantEl.value) {
+          var gwStyleInput = root.querySelector('[data-gw-style]:checked');
+          var gwMsgEl = root.querySelector('[data-gw-msg]');
+          var gwProps = {
+            'For': {{ product.title | json }},
+            'Wrap style': gwStyleInput ? gwStyleInput.value : 'Classic'
+          };
+          if (gwMsgEl && gwMsgEl.value.trim()) {
+            gwProps['Gift message'] = gwMsgEl.value.trim();
+          }
+          items.push({ id: parseInt(gwVariantEl.value, 10), quantity: lineQty, properties: gwProps });
+        }
+        cartAddItems(items).then(function () {
           btn.disabled = false;
           if (checkout) { window.location.href = '/checkout'; return; }
           if (upsellModal) { openModal(); }

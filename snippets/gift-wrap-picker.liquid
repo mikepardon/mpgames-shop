@@ -1,0 +1,41 @@
+{%- comment -%}
+  Reusable gift wrap style picker + message field.
+  Pass picker_id to make radio names and label IDs unique across multiple instances on the same page.
+  Defaults to section.id when picker_id is not supplied.
+{%- endcomment -%}
+
+{%- liquid
+  assign gwp_id    = picker_id | default: section.id
+  assign gw_styles = "Festive,Kids Birthday,Classic" | split: ","
+  assign gw_images = "https://westpack.b-cdn.net/media/catalog/product/3/3/33328160x00_06_1.jpg?width=600&height=600&store=gbp_uk_eng&image-type=image,https://westpack.b-cdn.net/media/catalog/product/3/3/33310830300_04.jpg?width=600&height=600&store=gbp_uk_eng&image-type=image,https://westpack.b-cdn.net/media/catalog/product/3/3/33326010500_06_1.jpg?width=600&height=600&store=gbp_uk_eng&image-type=image" | split: ","
+-%}
+
+{%- style -%}
+  .gw-picker__lbl { font-size: 12px; font-weight: 700; color: #6b7a82; text-transform: uppercase; letter-spacing: .5px; margin: 0 0 10px; }
+  .gw-picker__styles { display: flex; gap: 10px; flex-wrap: wrap; margin: 0 0 14px; }
+  .gw-style { cursor: pointer; }
+  .gw-style__radio { position: absolute; opacity: 0; pointer-events: none; width: 0; height: 0; }
+  .gw-style__card { display: block; border: 2px solid #e7ddcb; border-radius: 10px; padding: 6px 6px 8px; background: #fff; transition: border-color .15s, box-shadow .15s; text-align: center; }
+  .gw-style__radio:checked ~ .gw-style__card { border-color: #f2872f; box-shadow: 0 0 0 3px rgba(242,135,47,.18); }
+  .gw-style__img { display: block; width: 80px; height: 80px; object-fit: cover; border-radius: 6px; }
+  .gw-style__name { display: block; font-size: 11.5px; font-weight: 600; color: #16323f; margin-top: 6px; }
+  .gw-picker__msg-lbl { font-size: 12px; font-weight: 700; color: #6b7a82; text-transform: uppercase; letter-spacing: .5px; display: block; margin-bottom: 6px; }
+  .gw-picker__msg { width: 100%; border: 1px solid #d8d4cc; border-radius: 8px; padding: 10px 12px; font-size: 13px; font-family: inherit; color: #16323f; background: #fbfaf7; resize: vertical; box-sizing: border-box; }
+  .gw-picker__msg:focus { outline: 2px solid #f2872f; outline-offset: 1px; border-color: #f2872f; }
+{%- endstyle -%}
+
+<div class="gw-picker__lbl">Choose your wrapping style</div>
+<div class="gw-picker__styles">
+  {%- for style in gw_styles -%}
+    {%- assign gw_img = gw_images[forloop.index0] -%}
+    <label class="gw-style">
+      <input type="radio" name="gw-style-{{ gwp_id }}" value="{{ style | escape }}" class="gw-style__radio" data-gw-style{% if forloop.first %} checked{% endif %}>
+      <span class="gw-style__card">
+        <img src="{{ gw_img }}" alt="{{ style | escape }}" class="gw-style__img" width="80" height="80" loading="lazy">
+        <span class="gw-style__name">{{ style }}</span>
+      </span>
+    </label>
+  {%- endfor -%}
+</div>
+<label class="gw-picker__msg-lbl" for="gw-msg-{{ gwp_id }}">Gift message <span style="font-weight:400;text-transform:none;opacity:.7">(optional)</span></label>
+<textarea id="gw-msg-{{ gwp_id }}" class="gw-picker__msg" data-gw-msg placeholder="Write your gift message here&#8230;" rows="3" maxlength="250"></textarea>
