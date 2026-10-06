@@ -83,12 +83,16 @@
         {%- elsif show_rrp -%}<span class="mp-card__rrp">RRP {{ mrsp_cents | money }}</span>{%- endif -%}
         <div class="mp-card__price mp-cond">{{ product.price | money }}</div>
       </div>
-      <form action="{{ routes.cart_add_url }}" method="post" enctype="multipart/form-data" class="mp-card__addform">
-        <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
-        <button type="submit" class="mp-card__add{% if style == 'release' %} mp-card__add--ghost{% endif %} mp-cond"{% unless product.available %} disabled{% endunless %}>
-          {%- if is_pre -%}Pre-order{%- elsif style == 'release' -%}{{ release_action | default: 'Add' }}{%- else -%}Add{%- endif -%}
-        </button>
-      </form>
+      {%- if product.available or is_pre -%}
+        <form action="{{ routes.cart_add_url }}" method="post" enctype="multipart/form-data" class="mp-card__addform">
+          <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+          <button type="submit" class="mp-card__add{% if style == 'release' %} mp-card__add--ghost{% endif %} mp-cond">
+            {%- if is_pre -%}Pre-order{%- elsif style == 'release' -%}{{ release_action | default: 'Add' }}{%- else -%}Add{%- endif -%}
+          </button>
+        </form>
+      {%- else -%}
+        <a href="{{ product.url }}" class="mp-card__notify mp-cond">Notify me</a>
+      {%- endif -%}
     </div>
   </div>
 </div>

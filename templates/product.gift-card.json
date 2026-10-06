@@ -1,0 +1,18 @@
+{
+  "sections": {
+    "mp_product": {
+      "type": "mp-product",
+      "blocks": {},
+      "block_order": [],
+      "settings": {
+        "delivery_line": "Free UK delivery over £50",
+        "show_features": false,
+        "also_heading": "You might also like",
+        "related_collection": "all-games"
+      }
+    }
+  },
+  "order": [
+    "mp_product"
+  ]
+}

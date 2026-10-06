@@ -7,6 +7,10 @@
 {%- liquid
   assign m = product.metafields.custom
   assign variant = product.selected_or_first_available_variant
+  assign gift_card_page = false
+  if template.suffix == 'gift-card'
+    assign gift_card_page = true
+  endif
 
   assign bgg = m.bgg_rating.value
   assign bggn = bgg | times: 1.0
@@ -526,6 +530,7 @@
       {%- endif -%}
     {%- endif -%}
 
+    {%- unless gift_card_page -%}
     <!-- Game at a glance + How to play -->
     <div class="pdp__cols">
       <div class="pdp__left">
@@ -647,10 +652,11 @@
       </div>
       {%- endif -%}
     </div>
+    {%- endunless -%}
 
     <!-- description + game information -->
     <div class="pdp__cols">
-      <div class="pdp__left">
+      <div class="pdp__left"{% if gift_card_page %} style="grid-column:1/-1"{% endif %}>
         <div class="pdp__desctabs">
           <button type="button" class="pdp__desctab is-active" data-desc="desc">Description</button>
           {%- if mechanics != blank and mechanics.size > 0 -%}<button type="button" class="pdp__desctab" data-desc="mech">Mechanics</button>{%- endif -%}
@@ -674,6 +680,7 @@
           </div>
         </div>
 
+        {%- unless gift_card_page -%}
         {%- if section.settings.show_features -%}
           <div class="pdp__h" style="font-size:17px;margin:24px 0 12px">Why you'll love it</div>
           <div class="pdp__feats">
@@ -683,6 +690,7 @@
             <div class="pdp__feat"><span class="ok">&#10003;</span> 100% official UK stock with price-match promise</div>
           </div>
         {%- endif -%}
+        {%- endunless -%}
 {%- assign faqs = product.metafields.custom.faqs.value -%}
 {%- if faqs != blank and faqs.size > 0 -%}
   <div class="pdp__faq">
@@ -738,6 +746,7 @@
 {%- endif -%}
       </div>
 
+      {%- unless gift_card_page -%}
       <div class="pdp__info">
         <h3>Game information</h3>
         {%- if m.designer.value != blank -%}<div class="pdp__inforow"><span class="k">Designer</span><span class="v">{{ designer_links }}</span></div>{%- endif -%}
@@ -769,6 +778,7 @@
           </div>
         {%- endif -%}
       </div>
+      {%- endunless -%}
     </div>
 
     <!-- customer reviews (Judge.me) -->
