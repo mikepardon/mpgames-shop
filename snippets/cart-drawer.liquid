@@ -654,6 +654,7 @@
             <p class="cd-loyalty__min" data-min hidden>Need at least 100 points to redeem.</p>
             <p class="cd-loyalty__err" data-err hidden></p>
           </div>
+          <p class="cd-loyalty__zero" data-zero hidden>Earn 1pt per &pound;1 spent &mdash; <a href="/pages/loyalty-points" style="color:#f2872f;font-weight:600;text-decoration:none">learn more</a></p>
         </div>
         {%- endif -%}
 
@@ -957,7 +958,8 @@
     .then(function (r) { return r.json(); })
     .then(function (data) {
       block.querySelector('.cd-loyalty__load').hidden = true;
-      if (!data.ok || data.points === 0) { block.hidden = true; return; }
+      if (!data.ok) { block.hidden = true; return; }
+      if (data.points === 0) { block.querySelector('[data-zero]').hidden = false; return; }
       block.querySelector('[data-pts]').textContent = data.points.toLocaleString();
       block.querySelector('[data-val]').textContent = data.pounds_value;
       block.querySelector('.cd-loyalty__body').hidden = false;

@@ -298,6 +298,9 @@
                 <p class="ct__lymin" data-ly-min hidden>You need at least 100 points to redeem a discount.</p>
                 <p class="ct__lyerr" data-ly-err hidden></p>
               </div>
+              <div class="ct__lyzero" data-ly-zero hidden>
+                <p class="ct__lymin">Earn 1 point for every &pound;1 you spend &mdash; redeem 100 points for &pound;1 off. <a href="/pages/loyalty-points" style="color:#f2872f;font-weight:600;text-decoration:none">Learn more</a></p>
+              </div>
             </div>
             {%- endif -%}
             <div class="ct__total">
@@ -387,7 +390,8 @@
         .then(function (r) { return r.json(); })
         .then(function (data) {
           lyBlock.querySelector('.ct__lyload').hidden = true;
-          if (!data.ok || data.points === 0) { lyBlock.hidden = true; return; }
+          if (!data.ok) { lyBlock.hidden = true; return; }
+          if (data.points === 0) { lyBlock.querySelector('[data-ly-zero]').hidden = false; return; }
           lyBlock.querySelector('[data-ly-pts]').textContent = data.points.toLocaleString();
           lyBlock.querySelector('[data-ly-val]').textContent = data.pounds_value;
           lyBlock.querySelector('.ct__lybody').hidden = false;
