@@ -1,0 +1,252 @@
+{%- comment -%}
+  MPGames Loyalty Points page — balance, redeem, and full transaction history.
+  All data is fetched from /apps/notify/proxy-loyalty/history on load.
+{%- endcomment -%}
+
+{%- style -%}
+  .mp-ly-{{ section.id }} { background: #f4efe6; font-family: 'Barlow', ui-sans-serif, system-ui, sans-serif; color: #16323f; min-height: 60vh; }
+  .mp-ly-{{ section.id }} .ly__wrap { max-width: 1040px; margin: 0 auto; padding: 34px 28px 48px; }
+  .mp-ly-{{ section.id }} .ly__top { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; margin-bottom: 24px; }
+  .mp-ly-{{ section.id }} .ly__kicker { font-size: 12px; font-weight: 700; letter-spacing: .6px; color: #f2872f; text-transform: uppercase; }
+  .mp-ly-{{ section.id }} .ly__h { font-size: 28px; font-weight: 700; line-height: 1.1; margin-top: 4px; }
+  .mp-ly-{{ section.id }} .ly__back { flex: none; font-size: 13px; font-weight: 600; color: #16323f; text-decoration: none; border: 1px solid #d8d4cc; border-radius: 8px; padding: 9px 16px; background: #fff; white-space: nowrap; }
+  .mp-ly-{{ section.id }} .ly__back:hover { border-color: #f2872f; color: #f2872f; }
+  .mp-ly-{{ section.id }} .ly__grid { display: grid; grid-template-columns: 1fr 280px; gap: 20px; margin-bottom: 24px; align-items: start; }
+  .mp-ly-{{ section.id }} .ly__card { background: #fff; border: 1px solid #e7ddcb; border-radius: 14px; padding: 26px 28px; box-shadow: 0 1px 3px rgba(20,40,50,.05); }
+  .mp-ly-{{ section.id }} .ly__ch { font-size: 17px; font-weight: 700; margin-bottom: 16px; }
+  .mp-ly-{{ section.id }} .ly__load { font-size: 13.5px; color: #8a8278; }
+  .mp-ly-{{ section.id }} .ly__pts { font-size: 38px; font-weight: 700; color: #16323f; line-height: 1; margin-bottom: 4px; }
+  .mp-ly-{{ section.id }} .ly__pts-unit { font-size: 18px; color: #8a8278; font-weight: 600; }
+  .mp-ly-{{ section.id }} .ly__val { font-size: 15px; color: #8a8278; margin: 0 0 22px; }
+  .mp-ly-{{ section.id }} .ly__form { display: flex; gap: 10px; flex-wrap: wrap; }
+  .mp-ly-{{ section.id }} .ly__sel { flex: 1; min-width: 160px; border: 1px solid #d8d4cc; border-radius: 8px; padding: 11px 10px; font-size: 13px; background: #fbfaf7; font-family: inherit; color: #16323f; cursor: pointer; }
+  .mp-ly-{{ section.id }} .ly__btn { background: #f2872f; color: #fff; border: 0; border-radius: 8px; padding: 11px 20px; font-size: 13.5px; font-weight: 700; cursor: pointer; font-family: inherit; white-space: nowrap; }
+  .mp-ly-{{ section.id }} .ly__btn:disabled { opacity: .55; cursor: not-allowed; }
+  .mp-ly-{{ section.id }} .ly__insufficient { font-size: 13px; color: #8a8278; margin: 0; }
+  .mp-ly-{{ section.id }} .ly__err { font-size: 13px; color: #c0392b; margin-top: 12px; }
+  .mp-ly-{{ section.id }} .ly__how { list-style: none; padding: 0; margin: 0; font-size: 13.5px; color: #4a443c; line-height: 1.5; }
+  .mp-ly-{{ section.id }} .ly__how li { display: flex; gap: 10px; align-items: baseline; padding: 8px 0; border-bottom: 1px solid #f1ece2; }
+  .mp-ly-{{ section.id }} .ly__how li:last-child { border-bottom: 0; }
+  .mp-ly-{{ section.id }} .ly__how .ic { width: 18px; flex: none; font-style: normal; }
+  .mp-ly-{{ section.id }} .ly__hist { background: #fff; border: 1px solid #e7ddcb; border-radius: 14px; padding: 26px 28px; box-shadow: 0 1px 3px rgba(20,40,50,.05); }
+  .mp-ly-{{ section.id }} .ly__hist table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  .mp-ly-{{ section.id }} .ly__hist thead th { text-align: left; font-size: 11px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; color: #8a8278; padding: 0 14px 10px 0; border-bottom: 1px solid #ece5d8; }
+  .mp-ly-{{ section.id }} .ly__hist thead th:last-child { text-align: right; padding-right: 0; }
+  .mp-ly-{{ section.id }} .ly__hist tbody td { padding: 13px 14px 13px 0; border-bottom: 1px solid #f1ece2; vertical-align: middle; }
+  .mp-ly-{{ section.id }} .ly__hist tbody td:last-child { text-align: right; padding-right: 0; }
+  .mp-ly-{{ section.id }} .ly__hist tbody tr:last-child td { border-bottom: 0; }
+  .mp-ly-{{ section.id }} .ly__pill { display: inline-block; font-size: 11.5px; font-weight: 600; padding: 3px 9px; border-radius: 20px; white-space: nowrap; }
+  .mp-ly-{{ section.id }} .ly__pill--earn { background: #e3f1e9; color: #1f6b45; }
+  .mp-ly-{{ section.id }} .ly__pill--redeem { background: #fbeadb; color: #a45a12; }
+  .mp-ly-{{ section.id }} .ly__earn { font-size: 15px; font-weight: 700; color: #2f8f5b; white-space: nowrap; }
+  .mp-ly-{{ section.id }} .ly__spent { font-size: 15px; font-weight: 700; color: #c0392b; white-space: nowrap; }
+  .mp-ly-{{ section.id }} .ly__code { font-size: 12px; font-family: ui-monospace, monospace; background: #f1ece2; padding: 2px 7px; border-radius: 4px; color: #4a443c; }
+  .mp-ly-{{ section.id }} .ly__empty { font-size: 13.5px; color: #8a8278; margin: 4px 0 0; }
+  .mp-ly-{{ section.id }} .ly__guest { background: #fff; border: 1px solid #e7ddcb; border-radius: 14px; padding: 48px; text-align: center; box-shadow: 0 1px 3px rgba(20,40,50,.05); }
+  .mp-ly-{{ section.id }} .ly__guest a { display: inline-block; margin-top: 14px; background: #f2872f; color: #fff; padding: 12px 24px; border-radius: 9px; text-decoration: none; font-weight: 700; }
+  @media (max-width: 749px) {
+    .mp-ly-{{ section.id }} .ly__wrap { padding: 20px 16px 32px; }
+    .mp-ly-{{ section.id }} .ly__grid { grid-template-columns: 1fr; }
+    .mp-ly-{{ section.id }} .ly__pts { font-size: 30px; }
+    .mp-ly-{{ section.id }} .ly__hist thead { display: none; }
+    .mp-ly-{{ section.id }} .ly__hist tbody td { display: flex; justify-content: space-between; gap: 10px; padding: 7px 0; border-bottom: 0; text-align: left; }
+    .mp-ly-{{ section.id }} .ly__hist tbody tr { display: block; padding: 10px 0; border-bottom: 1px solid #f1ece2; }
+    .mp-ly-{{ section.id }} .ly__hist tbody td::before { content: attr(data-label); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: #8a8278; white-space: nowrap; }
+  }
+{%- endstyle -%}
+
+<div class="mp-ly-{{ section.id }}">
+  <div class="ly__wrap">
+    {%- if customer -%}
+      <div class="ly__top">
+        <div>
+          <div class="ly__kicker mp-cond">MPGames account</div>
+          <h1 class="ly__h mp-cond">Loyalty Points</h1>
+        </div>
+        <a class="ly__back" href="{{ routes.account_url }}">&#8592; My account</a>
+      </div>
+
+      <div class="ly__grid">
+        <div class="ly__card">
+          <div class="ly__ch mp-cond">Your balance</div>
+          <div data-ly-loading class="ly__load">Loading your points&#8230;</div>
+          <div data-ly-balance hidden>
+            <p class="ly__pts mp-cond"><span data-ly-pts>0</span> <span class="ly__pts-unit">pts</span></p>
+            <p class="ly__val">worth &pound;<span data-ly-val>0.00</span></p>
+            <div data-ly-form hidden class="ly__form">
+              <select class="ly__sel" data-ly-sel aria-label="Points to redeem"></select>
+              <button type="button" class="ly__btn mp-cond" data-ly-btn>Apply discount &#8594;</button>
+            </div>
+            <p data-ly-insufficient hidden class="ly__insufficient">You need at least 100 points to redeem a discount.</p>
+            <p data-ly-err hidden class="ly__err"></p>
+          </div>
+        </div>
+
+        <div class="ly__card">
+          <div class="ly__ch mp-cond">How it works</div>
+          <ul class="ly__how">
+            <li><i class="ic">&#9733;</i><span>Earn <strong>1 point</strong> for every &pound;1 you spend (net of discounts, excluding shipping).</span></li>
+            <li><i class="ic">&pound;</i><span>Redeem <strong>100 points = &pound;1 off</strong> at checkout. Multiples of 100 up to your full balance.</span></li>
+            <li><i class="ic">&#9654;</i><span>Points are added automatically within seconds of a paid order.</span></li>
+            <li><i class="ic">&#8734;</i><span>Discount codes never expire and can be entered manually if you navigate away before checkout.</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="ly__hist">
+        <div class="ly__ch mp-cond">Transaction history</div>
+        <div data-ly-hist-load class="ly__load">Loading&#8230;</div>
+        <div data-ly-hist hidden>
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Date</th>
+                <th scope="col">Type</th>
+                <th scope="col">Order / Code</th>
+                <th scope="col">Points</th>
+              </tr>
+            </thead>
+            <tbody data-ly-tbody></tbody>
+          </table>
+          <p data-ly-hist-empty hidden class="ly__empty">No transactions yet. Points are added after each paid order.</p>
+        </div>
+      </div>
+    {%- else -%}
+      <div class="ly__guest">
+        <p style="font-size:17px;font-weight:700;margin:0">Sign in to view your loyalty points</p>
+        <p style="font-size:14px;color:#8a8278;margin:8px 0 0">Track every point you've earned and redeem them for discounts.</p>
+        <a href="{{ routes.account_login_url }}">Sign in to your account</a>
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+{%- if customer -%}
+<script>
+(function () {
+  var wrap = document.querySelector('.mp-ly-{{ section.id }}');
+  if (!wrap) return;
+
+  var HIST_URL = '/apps/notify/proxy-loyalty/history';
+  var LY_URL   = '/apps/notify/proxy-loyalty';
+
+  function fmt(isoDate) {
+    try {
+      return new Date(isoDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+    } catch (_) { return isoDate; }
+  }
+
+  function esc(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function populateSelect(balance) {
+    var sel = wrap.querySelector('[data-ly-sel]');
+    sel.innerHTML = '';
+    var max = Math.floor(balance / 100) * 100;
+    for (var pts = 100; pts <= max; pts += 100) {
+      var opt = document.createElement('option');
+      opt.value = pts;
+      opt.textContent = pts + ' points = £' + (pts / 100).toFixed(2) + ' off';
+      sel.appendChild(opt);
+    }
+    sel.value = max;
+  }
+
+  fetch(HIST_URL)
+    .then(function (r) { return r.json(); })
+    .then(function (data) {
+      // ── Balance ──────────────────────────────────────────────────
+      wrap.querySelector('[data-ly-loading]').hidden = true;
+      wrap.querySelector('[data-ly-hist-load]').hidden = true;
+
+      if (data.ok) {
+        wrap.querySelector('[data-ly-pts]').textContent = data.points.toLocaleString();
+        wrap.querySelector('[data-ly-val]').textContent = data.pounds_value;
+        wrap.querySelector('[data-ly-balance]').hidden = false;
+
+        if (data.points >= 100) {
+          populateSelect(data.points);
+          wrap.querySelector('[data-ly-form]').hidden = false;
+        } else {
+          wrap.querySelector('[data-ly-insufficient]').hidden = false;
+        }
+
+        // ── Transactions ─────────────────────────────────────────
+        wrap.querySelector('[data-ly-hist]').hidden = false;
+        var transactions = data.transactions || [];
+
+        if (transactions.length === 0) {
+          wrap.querySelector('[data-ly-hist-empty]').hidden = false;
+        } else {
+          var tbody = wrap.querySelector('[data-ly-tbody]');
+          transactions.forEach(function (tx) {
+            var isEarn = tx.type === 'earn';
+            var typeHtml = isEarn
+              ? '<span class="ly__pill ly__pill--earn">Earned</span>'
+              : '<span class="ly__pill ly__pill--redeem">Redeemed</span>';
+            var refHtml = isEarn
+              ? (tx.order_name ? esc(tx.order_name) : '&mdash;')
+              : (tx.discount_code ? '<span class="ly__code">' + esc(tx.discount_code) + '</span>' : '&mdash;');
+            var ptsHtml = isEarn
+              ? '<span class="ly__earn">+' + tx.points.toLocaleString() + ' pts</span>'
+              : '<span class="ly__spent">&minus;' + tx.points.toLocaleString() + ' pts</span>';
+            var tr = document.createElement('tr');
+            tr.innerHTML = '<td data-label="Date">' + fmt(tx.date) + '</td>'
+              + '<td data-label="Type">' + typeHtml + '</td>'
+              + '<td data-label="Order / Code">' + refHtml + '</td>'
+              + '<td data-label="Points">' + ptsHtml + '</td>';
+            tbody.appendChild(tr);
+          });
+        }
+      }
+    })
+    .catch(function () {
+      wrap.querySelector('[data-ly-loading]').hidden = true;
+      wrap.querySelector('[data-ly-hist-load]').hidden = true;
+    });
+
+  var lyBtn = wrap.querySelector('[data-ly-btn]');
+  if (lyBtn) {
+    lyBtn.addEventListener('click', function () {
+      var pts = parseInt(wrap.querySelector('[data-ly-sel]').value, 10);
+      var errEl = wrap.querySelector('[data-ly-err]');
+      lyBtn.disabled = true;
+      lyBtn.textContent = 'Applying…';
+      errEl.hidden = true;
+      fetch(LY_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ points: pts })
+      })
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          if (!data.ok) {
+            errEl.textContent = data.message || 'Something went wrong. Please try again.';
+            errEl.hidden = false;
+            lyBtn.disabled = false;
+            lyBtn.textContent = 'Apply discount →';
+            return;
+          }
+          window.location.href = '/checkout?discount=' + encodeURIComponent(data.discount_code);
+        })
+        .catch(function () {
+          errEl.textContent = 'Could not connect. Please try again.';
+          errEl.hidden = false;
+          lyBtn.disabled = false;
+          lyBtn.textContent = 'Apply discount →';
+        });
+    });
+  }
+})();
+</script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "MP Loyalty Points",
+  "settings": [],
+  "enabled_on": { "templates": ["page"] },
+  "presets": [ { "name": "MP Loyalty Points" } ]
+}
+{% endschema %}

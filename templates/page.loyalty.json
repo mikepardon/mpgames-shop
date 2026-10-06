@@ -1,0 +1,11 @@
+{
+  "sections": {
+    "mp_loyalty": {
+      "type": "mp-loyalty",
+      "settings": {}
+    }
+  },
+  "order": [
+    "mp_loyalty"
+  ]
+}
