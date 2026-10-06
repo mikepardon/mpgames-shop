@@ -447,9 +447,22 @@
 
         {%- comment -%} 3D-printed storage inserts made for this game — quick-add straight to basket {%- endcomment -%}
         {%- assign game_inserts = m.available_inserts.value -%}
-        {%- if product.type != 'Board Game Insert' and game_inserts != blank and game_inserts.size > 0 -%}
+        {%- if product.type != 'Board Game Insert' and product.type != 'Board Game Accessory' and game_inserts != blank and game_inserts.size > 0 -%}
+          {%- assign addon_has_accessory = false -%}
+          {%- assign addon_has_insert = false -%}
+          {%- for ins_check in game_inserts limit: 2 -%}
+            {%- if ins_check.type == 'Board Game Accessory' -%}{%- assign addon_has_accessory = true -%}{%- endif -%}
+            {%- if ins_check.type == 'Board Game Insert' -%}{%- assign addon_has_insert = true -%}{%- endif -%}
+          {%- endfor -%}
+          {%- if addon_has_accessory and addon_has_insert -%}
+            {%- assign addon_heading = 'Add-ons for this game' -%}
+          {%- elsif addon_has_accessory -%}
+            {%- if game_inserts.size == 1 -%}{%- assign addon_heading = 'Accessory for this game' -%}{%- else -%}{%- assign addon_heading = 'Accessories for this game' -%}{%- endif -%}
+          {%- else -%}
+            {%- if game_inserts.size == 1 -%}{%- assign addon_heading = 'Storage insert for this game' -%}{%- else -%}{%- assign addon_heading = 'Storage inserts for this game' -%}{%- endif -%}
+          {%- endif -%}
           <div class="pdp__addon">
-            <div class="pdp__addon-h">&#128230; Storage insert{% if game_inserts.size > 1 %}s{% endif %} for this game</div>
+            <div class="pdp__addon-h">&#128230; {{ addon_heading }}</div>
             {%- for ins in game_inserts limit: 2 -%}
               {%- comment -%} On a physical game page, prefer the printed (shippable) variant; fall back to whatever's available (e.g. STL-only). {%- endcomment -%}
               {%- assign ins_v = blank -%}
@@ -874,7 +887,7 @@
             {%- for v in rec.variants -%}{%- if rv == blank and v.available and v.requires_shipping -%}{%- assign rv = v -%}{%- endif -%}{%- endfor -%}
             {%- unless rv -%}{%- assign rv = rec.selected_or_first_available_variant -%}{%- endunless -%}
             <div class="pdp__modal-card">
-              <span class="pdp__modal-tag pdp__modal-tag--ins">Storage insert</span>
+              <span class="pdp__modal-tag pdp__modal-tag--ins">{% if rec.type == 'Board Game Accessory' %}Accessory{% else %}Storage insert{% endif %}</span>
               <a href="{{ rec.url }}" class="mc-media">{% if rec.featured_image %}<img src="{{ rec.featured_image | image_url: width: 300 }}" alt="{{ rec.title | escape }}" width="300" height="300" loading="lazy">{% endif %}</a>
               <a href="{{ rec.url }}" class="pdp__modal-name">{{ rec.title }}</a>
               <div class="pdp__modal-foot">
