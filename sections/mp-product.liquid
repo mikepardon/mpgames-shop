@@ -1226,7 +1226,10 @@
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         body: JSON.stringify({ items: items })
-      }).then(function (r) { return r.json(); }).then(function (res) {
+      }).then(function (r) {
+        if (!r.ok) { return r.json().then(function (j) { throw new Error(j.description || j.message || JSON.stringify(j.errors) || r.status); }); }
+        return r.json();
+      }).then(function (res) {
         return refreshCartUI().then(function () { return res; });
       });
     }
