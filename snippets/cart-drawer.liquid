@@ -197,7 +197,7 @@
                         <a href="{{ item.url }}" class="mp-cart-item__name">
                           {{- item.product.title | escape -}}
                         </a>
-                      {%- assign cart_disclosure_modal_id = 'CartDisclosureModal-drawer-' | append: item.key | replace: ':', '-' -%}
+                        {%- assign cart_disclosure_modal_id = 'CartDisclosureModal-drawer-' | append: item.key | replace: ':', '-' -%}
                         {%- render 'cart-disclosure-indicator',
                           product: item.product,
                           modal_id: cart_disclosure_modal_id
@@ -486,7 +486,7 @@
         </form>
       </cart-drawer-items>
       {%- if cart != empty -%}
-        {%- comment -%} Base game upsell: if an expansion / insert / accessory is in the cart, surface its base game if not already added. {%- endcomment -%}
+        {%- assign mp_cart_pids = cart.items | map: 'product_id' | join: ',' -%}
         {%- capture mp_basegame_upsell -%}
           {%- assign cart_product_ids = cart.items | map: 'product_id' -%}
           {%- assign shown_basegame_ids = '' -%}
@@ -532,7 +532,6 @@
             {{ mp_basegame_upsell }}
           </div>
         {%- endif -%}
-        {%- assign mp_cart_pids = cart.items | map: 'product_id' | join: ',' -%}
         <div class="mp-drawer-wishlist" data-mp-cart-pids="{{ mp_cart_pids }}" hidden>
           <div class="mp-drawer-wishlist__hd">From your wishlist</div>
           <div class="mp-drawer-wishlist__grid"></div>
