@@ -493,11 +493,13 @@
         {%- comment -%} STL/digital variants have requires_shipping = false — swap the physical reassurance for a download notice. Initial state reflects the selected variant; JS retoggles on option change. {%- endcomment -%}
         {%- assign has_digital = false -%}
         {%- for v in product.variants -%}{%- unless v.requires_shipping -%}{%- assign has_digital = true -%}{%- endunless -%}{%- endfor -%}
+        {%- unless gift_card_page -%}
         <div class="pdp__reassure" data-physical-notice{% if variant.requires_shipping == false %} hidden{% endif %}>
           <span>&#128666; <b>Free UK delivery</b> on orders over £{{ settings.free_shipping_threshold }} · next working day dispatch</span>
           <span>&#8634; <b>30-day returns</b> · unopened &amp; in original condition</span>
           <span>&#9989; <b>100% official UK stock</b> · price-match promise</span>
         </div>
+        {%- endunless -%}
         {%- if has_digital and product.type == 'Board Game Insert' -%}
           <div class="pdp__reassure pdp__digital" data-digital-notice{% unless variant.requires_shipping == false %} hidden{% endunless %}>
             <span>&#11015; <b>Instant digital download</b> · your STL files are delivered by email the moment your order is confirmed — nothing ships</span>
@@ -660,7 +662,7 @@
         <div class="pdp__desctabs">
           <button type="button" class="pdp__desctab is-active" data-desc="desc">Description</button>
           {%- if mechanics != blank and mechanics.size > 0 -%}<button type="button" class="pdp__desctab" data-desc="mech">Mechanics</button>{%- endif -%}
-          <button type="button" class="pdp__desctab" data-desc="delivery">Delivery &amp; returns</button>
+          {%- unless gift_card_page -%}<button type="button" class="pdp__desctab" data-desc="delivery">Delivery &amp; returns</button>{%- endunless -%}
         </div>
 
         <div class="pdp__descpanel" data-descpanel="desc">
@@ -673,12 +675,14 @@
             </div>
           </div>
         {%- endif -%}
+        {%- unless gift_card_page -%}
         <div class="pdp__descpanel" data-descpanel="delivery" hidden>
           <div class="pdp__rte">
             <p><b>Free UK delivery</b> on orders over £{{ settings.free_shipping_threshold }}. Orders are dispatched the next working day.</p>
             <p><b>30-day returns</b> on unopened items in their original condition. See our delivery &amp; returns policy for full details.</p>
           </div>
         </div>
+        {%- endunless -%}
 
         {%- unless gift_card_page -%}
         {%- if section.settings.show_features -%}
