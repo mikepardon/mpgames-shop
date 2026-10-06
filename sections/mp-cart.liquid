@@ -180,21 +180,10 @@
           <div class="ct__colhead"><span>PRODUCT</span><span style="text-align:center">QUANTITY</span><span style="text-align:right">TOTAL</span><span></span></div>
 
           {%- for item in cart.items -%}
-            {%- liquid
-              assign bgg = item.product.metafields.custom.bgg_rating.value
-              assign bggn = bgg | times: 1.0
-              assign bc = '#c79a1e'
-              if bggn >= 8.0
-                assign bc = '#3f8f5a'
-              elsif bggn >= 7.0
-                assign bc = '#7aa83c'
-              endif
-            -%}
             <div class="ct__line" data-key="{{ item.key }}" data-product-id="{{ item.product.id }}" data-product-handle="{{ item.product.handle }}" data-product-title="{{ item.product.title | escape }}">
               <div class="ct__prod">
                 <a href="{{ item.url }}">{% if item.image %}<img class="ct__img" src="{{ item.image | image_url: width: 160 }}" alt="{{ item.title | escape }}" width="74" height="74">{% else %}<span class="ct__img"></span>{% endif %}</a>
                 <div style="min-width:0">
-                  {%- if bgg != blank -%}<div class="ct__bgg"><b class="mp-cond">BGG</b><span style="font-size:10.5px;font-weight:700;color:{{ bc }}">{{ bgg }}</span></div>{%- endif -%}
                   <a class="ct__name mp-cond" href="{{ item.url }}">{{ item.product.title }}</a>
                   <div class="ct__meta">{{ item.product.vendor }}{% if item.product.metafields.custom.player_count.value %} · {{ item.product.metafields.custom.player_count.value }} players{% endif %}</div>
                   {%- liquid
