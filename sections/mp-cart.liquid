@@ -92,6 +92,17 @@
   .mp-ct-{{ section.id }} .ct__pays svg { height: 24px; width: auto; }
   .mp-ct-{{ section.id }} .ct__reassure { border: 1px solid #e7ddcb; border-radius: 14px; background: #fff; padding: 16px 18px; margin-top: 16px; display: flex; flex-direction: column; gap: 10px; font-size: 12.5px; color: #4a443c; box-shadow: 0 1px 2px rgba(20,40,50,.04); }
   .mp-ct-{{ section.id }} .ct__reassure b { color: #16323f; }
+  .mp-ct-{{ section.id }} .ct__loyalty { padding: 12px 20px 14px; border-top: 1px solid #efe7d8; }
+  .mp-ct-{{ section.id }} .ct__lyh { display: flex; align-items: center; gap: 6px; font-size: 13.5px; font-weight: 700; margin-bottom: 10px; color: #16323f; }
+  .mp-ct-{{ section.id }} .ct__lyload { font-size: 12.5px; color: #9b948a; }
+  .mp-ct-{{ section.id }} .ct__lybal { font-size: 13px; color: #4a443c; margin: 0 0 10px; }
+  .mp-ct-{{ section.id }} .ct__lybal strong { color: #16323f; }
+  .mp-ct-{{ section.id }} .ct__lyform { display: flex; gap: 8px; }
+  .mp-ct-{{ section.id }} .ct__lysel { flex: 1; min-width: 0; border: 1px solid #d8d4cc; border-radius: 8px; padding: 9px 8px; font-size: 12px; background: #fbfaf7; font-family: inherit; color: #16323f; cursor: pointer; }
+  .mp-ct-{{ section.id }} .ct__lyapply { background: #16323f; color: #fff; border: 0; border-radius: 8px; padding: 9px 14px; font-size: 12.5px; font-weight: 600; cursor: pointer; font-family: inherit; white-space: nowrap; }
+  .mp-ct-{{ section.id }} .ct__lyapply:disabled { opacity: .55; cursor: not-allowed; }
+  .mp-ct-{{ section.id }} .ct__lymin { font-size: 12px; color: #8a8278; margin: 0; }
+  .mp-ct-{{ section.id }} .ct__lyerr { font-size: 12px; color: #c0392b; margin: 8px 0 0; }
 
   .mp-ct-{{ section.id }} .ct__empty { background: #fff; border: 1px solid #e7ddcb; border-radius: 14px; padding: 48px; text-align: center; box-shadow: 0 1px 3px rgba(20,40,50,.05); }
   .mp-ct-{{ section.id }} .ct__empty a { display: inline-block; margin-top: 16px; background: #f2872f; color: #fff; padding: 12px 24px; border-radius: 9px; text-decoration: none; font-weight: 700; }
@@ -274,6 +285,21 @@
                 <button type="submit" class="mp-cond">Apply</button>
               </form>
             </div>
+            {%- if customer -%}
+            <div class="ct__loyalty" data-ct-loyalty>
+              <div class="ct__lyh mp-cond">&#9733; Loyalty Points</div>
+              <div class="ct__lyload">Loading your points&#8230;</div>
+              <div class="ct__lybody" hidden>
+                <p class="ct__lybal">You have <strong data-ly-pts>0</strong> points &mdash; worth <strong>&pound;<span data-ly-val>0.00</span></strong></p>
+                <div class="ct__lyform" data-ly-form hidden>
+                  <select class="ct__lysel" data-ly-sel aria-label="Points to redeem"></select>
+                  <button type="button" class="ct__lyapply mp-cond" data-ly-btn>Apply</button>
+                </div>
+                <p class="ct__lymin" data-ly-min hidden>You need at least 100 points to redeem a discount.</p>
+                <p class="ct__lyerr" data-ly-err hidden></p>
+              </div>
+            </div>
+            {%- endif -%}
             <div class="ct__total">
               <div class="ct__trow"><span class="ct__tl mp-cond">Total</span><span class="ct__tv mp-cond">{{ cart.total_price | money }}</span></div>
               <div class="ct__note">Taxes included. Shipping calculated at checkout.</div>
@@ -338,6 +364,73 @@
       var code = promo.querySelector('input').value.trim();
       if (code) window.location.href = '/discount/' + encodeURIComponent(code) + '?redirect=/cart';
     });
+
+    /* ── Loyalty Points ── */
+    var lyBlock = root.querySelector('[data-ct-loyalty]');
+    if (lyBlock) {
+      var LY_URL = '/apps/notify/proxy-loyalty';
+
+      function lyPopulateSelect(balance) {
+        var sel = lyBlock.querySelector('[data-ly-sel]');
+        sel.innerHTML = '';
+        var max = Math.floor(balance / 100) * 100;
+        for (var pts = 100; pts <= max; pts += 100) {
+          var opt = document.createElement('option');
+          opt.value = pts;
+          opt.textContent = pts + ' points = £' + (pts / 100).toFixed(2) + ' off';
+          sel.appendChild(opt);
+        }
+        sel.value = max;
+      }
+
+      fetch(LY_URL)
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          lyBlock.querySelector('.ct__lyload').hidden = true;
+          if (!data.ok || data.points === 0) { lyBlock.hidden = true; return; }
+          lyBlock.querySelector('[data-ly-pts]').textContent = data.points.toLocaleString();
+          lyBlock.querySelector('[data-ly-val]').textContent = data.pounds_value;
+          lyBlock.querySelector('.ct__lybody').hidden = false;
+          if (data.points < 100) {
+            lyBlock.querySelector('[data-ly-min]').hidden = false;
+          } else {
+            lyPopulateSelect(data.points);
+            lyBlock.querySelector('[data-ly-form]').hidden = false;
+          }
+        })
+        .catch(function () { lyBlock.hidden = true; });
+
+      var lyBtn = lyBlock.querySelector('[data-ly-btn]');
+      lyBtn.addEventListener('click', function () {
+        var pts = parseInt(lyBlock.querySelector('[data-ly-sel]').value, 10);
+        var errEl = lyBlock.querySelector('[data-ly-err]');
+        lyBtn.disabled = true;
+        lyBtn.textContent = 'Applying…';
+        errEl.hidden = true;
+        fetch(LY_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ points: pts })
+        })
+          .then(function (r) { return r.json(); })
+          .then(function (data) {
+            if (!data.ok) {
+              errEl.textContent = data.message || 'Something went wrong. Please try again.';
+              errEl.hidden = false;
+              lyBtn.disabled = false;
+              lyBtn.textContent = 'Apply';
+              return;
+            }
+            window.location.href = '/checkout?discount=' + encodeURIComponent(data.discount_code);
+          })
+          .catch(function () {
+            errEl.textContent = 'Could not connect. Please try again.';
+            errEl.hidden = false;
+            lyBtn.disabled = false;
+            lyBtn.textContent = 'Apply';
+          });
+      });
+    }
   })();
 </script>
 

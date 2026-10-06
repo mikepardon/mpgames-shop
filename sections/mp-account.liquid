@@ -28,6 +28,9 @@
   .mp-ac-{{ section.id }} .ac__addr p { margin: 0; }
   .mp-ac-{{ section.id }} .ac__link { display: inline-block; margin-top: 14px; font-size: 13px; font-weight: 600; color: #f2872f; text-decoration: none; }
   .mp-ac-{{ section.id }} .ac__pager { display: flex; gap: 8px; margin-top: 18px; }
+  .mp-ac-{{ section.id }} .ac__ly-load { font-size: 13.5px; color: #8a8278; margin: 0 0 12px; }
+  .mp-ac-{{ section.id }} .ac__ly-bal { font-size: 14px; color: #16323f; margin: 0 0 12px; font-weight: 600; }
+  .mp-ac-{{ section.id }} .ac__ly-tip { font-size: 12.5px; color: #8a8278; line-height: 1.55; margin: 0; }
   .mp-ac-{{ section.id }} .ac__pager a, .mp-ac-{{ section.id }} .ac__pager span { font-size: 13px; font-weight: 600; padding: 7px 12px; border-radius: 7px; text-decoration: none; color: #16323f; border: 1px solid #e7ddcb; }
   .mp-ac-{{ section.id }} .ac__pager span[aria-current] { background: #16323f; color: #fff; border-color: #16323f; }
   @media (max-width: 749px) {
@@ -102,6 +105,13 @@
       </div>
 
       <div class="ac__card">
+        <div class="ac__ch mp-cond">Loyalty Points</div>
+        <p class="ac__ly-load" id="ac-ly-load">Loading&#8230;</p>
+        <p class="ac__ly-bal" id="ac-ly-bal" hidden></p>
+        <p class="ac__ly-tip">Earn 1 point for every &pound;1 you spend (excluding shipping).<br>Redeem 100 points for &pound;1 off at checkout.</p>
+      </div>
+
+      <div class="ac__card">
         <div class="ac__ch mp-cond">Account details</div>
         {%- if customer.default_address != blank -%}
           <div class="ac__addr">{{ customer.default_address | format_address }}</div>
@@ -113,6 +123,27 @@
     </div>
   </div>
 </div>
+
+<script>
+  (function () {
+    var loadEl = document.getElementById('ac-ly-load');
+    var balEl = document.getElementById('ac-ly-bal');
+    if (!loadEl) return;
+    fetch('/apps/notify/proxy-loyalty')
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        loadEl.hidden = true;
+        if (!data.ok) return;
+        balEl.hidden = false;
+        if (data.points > 0) {
+          balEl.textContent = data.points.toLocaleString() + ' points — worth £' + data.pounds_value;
+        } else {
+          balEl.textContent = 'No points yet. Points are added after each paid order.';
+        }
+      })
+      .catch(function () { loadEl.hidden = true; });
+  })();
+</script>
 
 {% schema %}
 {

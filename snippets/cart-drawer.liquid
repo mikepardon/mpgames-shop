@@ -627,6 +627,36 @@
           </small>
         </div>
 
+        <!-- Loyalty Points -->
+        {%- if customer -%}
+        <style>
+          .cd-loyalty { margin: 12px 16px 0; background: #fff; border: 1px solid #e7ddcb; border-radius: 12px; padding: 14px 16px; font-family: 'Barlow', ui-sans-serif, sans-serif; }
+          .cd-loyalty__h { font-size: 13px; font-weight: 700; color: #16323f; display: flex; align-items: center; gap: 6px; margin-bottom: 9px; }
+          .cd-loyalty__load { font-size: 12px; color: #9b948a; }
+          .cd-loyalty__bal { font-size: 12.5px; color: #4a443c; margin: 0 0 9px; }
+          .cd-loyalty__bal strong { color: #16323f; }
+          .cd-loyalty__form { display: flex; gap: 7px; }
+          .cd-loyalty__sel { flex: 1; min-width: 0; border: 1px solid #d8d4cc; border-radius: 7px; padding: 7px 6px; font-size: 11px; background: #fbfaf7; font-family: inherit; color: #16323f; cursor: pointer; }
+          .cd-loyalty__btn { background: #16323f; color: #fff; border: 0; border-radius: 7px; padding: 7px 11px; font-size: 11.5px; font-weight: 600; cursor: pointer; font-family: inherit; white-space: nowrap; }
+          .cd-loyalty__btn:disabled { opacity: .55; cursor: not-allowed; }
+          .cd-loyalty__min { font-size: 11.5px; color: #8a8278; margin: 0; }
+          .cd-loyalty__err { font-size: 11px; color: #c0392b; margin: 6px 0 0; }
+        </style>
+        <div class="cd-loyalty" data-cd-loyalty>
+          <div class="cd-loyalty__h">&#9733; <span>Loyalty Points</span></div>
+          <div class="cd-loyalty__load">Loading&#8230;</div>
+          <div class="cd-loyalty__body" hidden>
+            <p class="cd-loyalty__bal">You have <strong data-pts>0</strong> points &mdash; worth <strong>&pound;<span data-val>0.00</span></strong></p>
+            <div class="cd-loyalty__form" data-form hidden>
+              <select class="cd-loyalty__sel" aria-label="Points to redeem"></select>
+              <button type="button" class="cd-loyalty__btn" data-btn>Apply</button>
+            </div>
+            <p class="cd-loyalty__min" data-min hidden>Need at least 100 points to redeem.</p>
+            <p class="cd-loyalty__err" data-err hidden></p>
+          </div>
+        </div>
+        {%- endif -%}
+
         <!-- CTAs -->
 
         <div class="cart__ctas" {{ block.shopify_attributes }}>
@@ -915,5 +945,71 @@
       .then(function () { window.location.reload(); })
       .catch(function () { btn.disabled = false; btn.textContent = 'Add'; });
   });
+})();
+
+/* ── Loyalty Points (drawer) ── */
+(function () {
+  var block = document.querySelector('[data-cd-loyalty]');
+  if (!block) return;
+  var LY_URL = '/apps/notify/proxy-loyalty';
+
+  fetch(LY_URL)
+    .then(function (r) { return r.json(); })
+    .then(function (data) {
+      block.querySelector('.cd-loyalty__load').hidden = true;
+      if (!data.ok || data.points === 0) { block.hidden = true; return; }
+      block.querySelector('[data-pts]').textContent = data.points.toLocaleString();
+      block.querySelector('[data-val]').textContent = data.pounds_value;
+      block.querySelector('.cd-loyalty__body').hidden = false;
+      if (data.points < 100) {
+        block.querySelector('[data-min]').hidden = false;
+      } else {
+        var sel = block.querySelector('.cd-loyalty__sel');
+        var max = Math.floor(data.points / 100) * 100;
+        for (var pts = 100; pts <= max; pts += 100) {
+          var opt = document.createElement('option');
+          opt.value = pts;
+          opt.textContent = pts + ' pts = £' + (pts / 100).toFixed(2) + ' off';
+          sel.appendChild(opt);
+        }
+        sel.value = max;
+        block.querySelector('[data-form]').hidden = false;
+      }
+    })
+    .catch(function () { block.hidden = true; });
+
+  var lyBtn = block.querySelector('[data-btn]');
+  if (lyBtn) {
+    lyBtn.addEventListener('click', function () {
+      var sel = block.querySelector('.cd-loyalty__sel');
+      var pts = parseInt(sel.value, 10);
+      var err = block.querySelector('[data-err]');
+      lyBtn.disabled = true;
+      lyBtn.textContent = 'Applying…';
+      err.hidden = true;
+      fetch(LY_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ points: pts })
+      })
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          if (!data.ok) {
+            err.textContent = data.message || 'Something went wrong.';
+            err.hidden = false;
+            lyBtn.disabled = false;
+            lyBtn.textContent = 'Apply';
+            return;
+          }
+          window.location.href = '/checkout?discount=' + encodeURIComponent(data.discount_code);
+        })
+        .catch(function () {
+          err.textContent = 'Could not connect. Please try again.';
+          err.hidden = false;
+          lyBtn.disabled = false;
+          lyBtn.textContent = 'Apply';
+        });
+    });
+  }
 })();
 </script>
