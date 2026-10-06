@@ -17,10 +17,14 @@
   .mp-ly-{{ section.id }} .ly__load { font-size: 13.5px; color: #8a8278; }
   .mp-ly-{{ section.id }} .ly__pts { font-size: 38px; font-weight: 700; color: #16323f; line-height: 1; margin-bottom: 4px; }
   .mp-ly-{{ section.id }} .ly__pts-unit { font-size: 18px; color: #8a8278; font-weight: 600; }
-  .mp-ly-{{ section.id }} .ly__val { font-size: 15px; color: #8a8278; margin: 0 0 22px; }
+  .mp-ly-{{ section.id }} .ly__val { font-size: 15px; color: #8a8278; margin: 0 0 20px; }
+  .mp-ly-{{ section.id }} .ly__zero-msg { font-size: 13.5px; color: #4a443c; margin: 0 0 16px; line-height: 1.6; }
+  .mp-ly-{{ section.id }} .ly__prog-msg { font-size: 13.5px; color: #4a443c; margin: 0 0 10px; }
+  .mp-ly-{{ section.id }} .ly__prog-track { height: 8px; background: #f1ece2; border-radius: 4px; overflow: hidden; margin: 0 0 10px; }
+  .mp-ly-{{ section.id }} .ly__prog-fill { height: 100%; background: #f2872f; border-radius: 4px; transition: width .5s ease; }
   .mp-ly-{{ section.id }} .ly__form { display: flex; gap: 10px; flex-wrap: wrap; }
   .mp-ly-{{ section.id }} .ly__sel { flex: 1; min-width: 160px; border: 1px solid #d8d4cc; border-radius: 8px; padding: 11px 10px; font-size: 13px; background: #fbfaf7; font-family: inherit; color: #16323f; cursor: pointer; }
-  .mp-ly-{{ section.id }} .ly__btn { background: #f2872f; color: #fff; border: 0; border-radius: 8px; padding: 11px 20px; font-size: 13.5px; font-weight: 700; cursor: pointer; font-family: inherit; white-space: nowrap; }
+  .mp-ly-{{ section.id }} .ly__btn { display: inline-block; background: #f2872f; color: #fff; border: 0; border-radius: 8px; padding: 11px 20px; font-size: 13.5px; font-weight: 700; cursor: pointer; font-family: inherit; white-space: nowrap; text-decoration: none; }
   .mp-ly-{{ section.id }} .ly__btn:disabled { opacity: .55; cursor: not-allowed; }
   .mp-ly-{{ section.id }} .ly__insufficient { font-size: 13px; color: #8a8278; margin: 0; }
   .mp-ly-{{ section.id }} .ly__err { font-size: 13px; color: #c0392b; margin-top: 12px; }
@@ -73,11 +77,28 @@
           <div data-ly-balance hidden>
             <p class="ly__pts mp-cond"><span data-ly-pts>0</span> <span class="ly__pts-unit">pts</span></p>
             <p class="ly__val">worth &pound;<span data-ly-val>0.00</span></p>
-            <div data-ly-form hidden class="ly__form">
-              <select class="ly__sel" data-ly-sel aria-label="Points to redeem"></select>
-              <button type="button" class="ly__btn mp-cond" data-ly-btn>Apply discount &#8594;</button>
+
+            {{- '<!-- zero state -->' }}
+            <div data-ly-zero hidden>
+              <p class="ly__zero-msg">You haven&rsquo;t earned any points yet. Shop and earn <strong>1 point for every &pound;1</strong> you spend &mdash; once you hit 100, you can redeem them right here for &pound;1 off.</p>
+              <a href="/collections/all-games" class="ly__btn mp-cond">Shop games &#8594;</a>
             </div>
-            <p data-ly-insufficient hidden class="ly__insufficient">You need at least 100 points to redeem a discount.</p>
+
+            {{- '<!-- progress state: 1–99 pts -->' }}
+            <div data-ly-progress hidden>
+              <p class="ly__prog-msg">Just <strong><span data-ly-needed></span> more points</strong> until you unlock your first discount.</p>
+              <div class="ly__prog-track"><div class="ly__prog-fill" data-ly-fill style="width:0%"></div></div>
+              <p class="ly__insufficient">100 points = &pound;1 off &mdash; keep shopping!</p>
+            </div>
+
+            {{- '<!-- redeem state: ≥ 100 pts -->' }}
+            <div data-ly-redeem hidden>
+              <div class="ly__form">
+                <select class="ly__sel" data-ly-sel aria-label="Points to redeem"></select>
+                <button type="button" class="ly__btn mp-cond" data-ly-btn>Apply discount &#8594;</button>
+              </div>
+            </div>
+
             <p data-ly-err hidden class="ly__err"></p>
           </div>
         </div>
@@ -165,11 +186,16 @@
         wrap.querySelector('[data-ly-val]').textContent = data.pounds_value;
         wrap.querySelector('[data-ly-balance]').hidden = false;
 
-        if (data.points >= 100) {
-          populateSelect(data.points);
-          wrap.querySelector('[data-ly-form]').hidden = false;
+        if (data.points === 0) {
+          wrap.querySelector('[data-ly-zero]').hidden = false;
+        } else if (data.points < 100) {
+          var needed = 100 - data.points;
+          wrap.querySelector('[data-ly-needed]').textContent = needed;
+          wrap.querySelector('[data-ly-fill]').style.width = Math.round((data.points / 100) * 100) + '%';
+          wrap.querySelector('[data-ly-progress]').hidden = false;
         } else {
-          wrap.querySelector('[data-ly-insufficient]').hidden = false;
+          populateSelect(data.points);
+          wrap.querySelector('[data-ly-redeem]').hidden = false;
         }
 
         // ── Transactions ─────────────────────────────────────────
