@@ -585,10 +585,9 @@
       {%- assign htp_yt_id = '' -%}
       {%- if m.how_to_play_url != blank -%}
         {%- assign has_howto = true -%}
-        {%- if m.how_to_play_url contains 'v=' -%}
-          {%- assign htp_yt_id = m.how_to_play_url | split: 'v=' | last | split: '&' | first -%}
-        {%- else -%}
-          {%- assign htp_yt_id = m.how_to_play_url | split: '/' | last | split: '?' | first -%}
+        {%- assign htp_yt_id = m.how_to_play_url | url_decode | split: 'v=' | last | split: '&' | first -%}
+        {%- if htp_yt_id contains '/' or htp_yt_id contains '.' -%}
+          {%- assign htp_yt_id = m.how_to_play_url | url_decode | split: 'youtu.be/' | last | split: '?' | first -%}
         {%- endif -%}
       {%- endif -%}
       {%- assign has_gamelinks = false -%}
