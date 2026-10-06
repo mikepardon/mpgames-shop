@@ -123,7 +123,7 @@
   .mp-ct-{{ section.id }} .ct__gw-modal-actions { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
   .mp-ct-{{ section.id }} .ct__gw-modal-confirm { background: #f2872f; color: #fff; border: 0; border-radius: 8px; padding: 12px 22px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit; flex: 1; }
   .mp-ct-{{ section.id }} .ct__gw-modal-cancel { background: none; border: 1px solid #d8d4cc; border-radius: 8px; padding: 12px 16px; font-size: 14px; color: #6b7a82; cursor: pointer; font-family: inherit; }
-  .mp-ct-{{ section.id }} .ct__gw-item { display: flex; align-items: center; gap: 8px; padding: 10px 4px; border-bottom: 1px solid #efe7d8; font-size: 13px; color: #6b7a82; }
+  .mp-ct-{{ section.id }} .ct__gw-item { display: flex; align-items: center; gap: 8px; padding: 8px 4px 0; font-size: 12px; color: #6b7a82; grid-column: 1/-1; border-top: 1px dashed #e7ddcb; margin-top: 4px; }
   .mp-ct-{{ section.id }} .ct__gw-item-icon { font-size: 16px; }
   .mp-ct-{{ section.id }} .ct__gw-item-info { flex: 1; min-width: 0; }
   .mp-ct-{{ section.id }} .ct__gw-item-style { font-weight: 600; color: #16323f; }
@@ -245,27 +245,7 @@
                 endif
               endfor
             -%}
-            {%- if is_gift_wrap_item -%}
-              {%- comment -%} Gift wrap line items are rendered as compact sub-rows, not full cart lines. {%- endcomment -%}
-              {%- assign gw_for = '' -%}
-              {%- assign gw_style = '' -%}
-              {%- assign gw_message = '' -%}
-              {%- for prop in item.properties -%}
-                {%- if prop.first == 'For' -%}{%- assign gw_for = prop.last -%}{%- endif -%}
-                {%- if prop.first == 'Wrap style' -%}{%- assign gw_style = prop.last -%}{%- endif -%}
-                {%- if prop.first == 'Gift message' -%}{%- assign gw_message = prop.last -%}{%- endif -%}
-              {%- endfor -%}
-              <div class="ct__gw-item" data-key="{{ item.key }}" data-gw-for="{{ gw_for | escape }}" data-gw-style="{{ gw_style | escape }}" data-gw-message="{{ gw_message | escape }}">
-                <span class="ct__gw-item-icon">&#127873;</span>
-                <div class="ct__gw-item-info">
-                  <span class="ct__gw-item-style">{{ gw_style | default: 'Gift Wrap' }}</span>
-                  {%- if gw_for != blank -%}<span style="color:#9b948a"> &mdash; for {{ gw_for }}</span>{%- endif -%}
-                  {%- if gw_message != blank -%}<div class="ct__gw-item-msg">&ldquo;{{ gw_message }}&rdquo;</div>{%- endif -%}
-                </div>
-                <span class="ct__gw-item-price">{{ item.final_price | money }}</span>
-                <button type="button" class="ct__rm" data-change="0" aria-label="Remove gift wrap">&times;</button>
-              </div>
-            {%- else -%}
+            {%- unless is_gift_wrap_item -%}
             <div class="ct__line" data-key="{{ item.key }}" data-product-id="{{ item.product.id }}" data-product-handle="{{ item.product.handle }}" data-product-title="{{ item.product.title | escape }}">
               <div class="ct__prod">
                 <a href="{{ item.url }}">{% if item.image %}<img class="ct__img" src="{{ item.image | image_url: width: 160 }}" alt="{{ item.title | escape }}" width="74" height="74">{% else %}<span class="ct__img"></span>{% endif %}</a>
@@ -310,8 +290,31 @@
                 {%- if item.quantity > 1 -%}<div class="ct__ea">{{ item.final_price | money }} ea</div>{%- endif -%}
               </div>
               <button type="button" class="ct__rm" data-change="0" aria-label="Remove">&times;</button>
+              {%- if item_is_wrapped -%}
+                {%- for gw_item in cart.items -%}
+                  {%- if gw_item.product.handle == 'gift-wrap' -%}
+                    {%- assign gw_for_i = '' -%}{%- assign gw_style_i = '' -%}{%- assign gw_msg_i = '' -%}
+                    {%- for gw_prop in gw_item.properties -%}
+                      {%- if gw_prop.first == 'For' -%}{%- assign gw_for_i = gw_prop.last -%}{%- endif -%}
+                      {%- if gw_prop.first == 'Wrap style' -%}{%- assign gw_style_i = gw_prop.last -%}{%- endif -%}
+                      {%- if gw_prop.first == 'Gift message' -%}{%- assign gw_msg_i = gw_prop.last -%}{%- endif -%}
+                    {%- endfor -%}
+                    {%- if gw_for_i == item.product.title -%}
+                      <div class="ct__gw-item" data-key="{{ gw_item.key }}" data-gw-for="{{ gw_for_i | escape }}" data-gw-style="{{ gw_style_i | escape }}" data-gw-message="{{ gw_msg_i | escape }}">
+                        <span class="ct__gw-item-icon">&#127873;</span>
+                        <div class="ct__gw-item-info">
+                          <span class="ct__gw-item-style">{{ gw_style_i | default: 'Gift Wrap' }}</span>
+                          {%- if gw_msg_i != blank -%}<div class="ct__gw-item-msg">&ldquo;{{ gw_msg_i }}&rdquo;</div>{%- endif -%}
+                        </div>
+                        <span class="ct__gw-item-price">{{ gw_item.final_price | money }}</span>
+                        <button type="button" class="ct__rm" data-change="0" aria-label="Remove gift wrap">&times;</button>
+                      </div>
+                    {%- endif -%}
+                  {%- endif -%}
+                {%- endfor -%}
+              {%- endif -%}
             </div>
-            {%- endif -%}
+            {%- endunless -%}
           {%- endfor -%}
 
           {%- if gw_variant_id_ct != blank -%}
@@ -539,7 +542,9 @@
       });
     }
     // gift wrap modal (add + edit)
+    // Move to <body> so position:fixed works regardless of any transformed ancestor
     var gwModal = root.querySelector('[data-gw-modal]');
+    if (gwModal) { document.body.appendChild(gwModal); }
     var gwModalTitle = gwModal && gwModal.querySelector('[data-gw-modal-title]');
     var gwModalFor = gwModal && gwModal.querySelector('[data-gw-modal-for]');
     var gwModalQtyRow = gwModal && gwModal.querySelector('[data-gw-modal-qty-row]');
