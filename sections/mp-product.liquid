@@ -700,6 +700,38 @@
     .mp-pdp-{{ section.id }} .pdp__faqa { padding: 0 4px 14px; font-size: 13.5px; line-height: 1.6; color: #4a443c; }
   </style>
 {%- endif -%}
+{%- comment -%} Related board game(s): expansions, inserts, and accessories link to their base game(s) via custom.insert_for_game. {%- endcomment -%}
+{%- if product.type == 'Board Game Expansion' or product.type == 'Board Game Insert' or product.type == 'Board Game Accessory' -%}
+  {%- assign insert_for_games = product.metafields.custom.insert_for_game.value -%}
+  {%- if insert_for_games != blank and insert_for_games.size > 0 -%}
+    <div class="pdp__relgame">
+      <p class="pdp__h" style="font-size:17px;margin:24px 0 12px">
+        {%- if insert_for_games.size == 1 -%}Related board game{%- else -%}Related board games{%- endif -%}
+      </p>
+      {%- for base_game in insert_for_games -%}
+        <a class="pdp__relgame-card" href="{{ base_game.url }}">
+          {%- if base_game.featured_image -%}
+            <img class="pdp__relgame-img" src="{{ base_game.featured_image | image_url: width: 80 }}" alt="{{ base_game.title | escape }}" loading="lazy">
+          {%- endif -%}
+          <div class="pdp__relgame-body">
+            <p class="pdp__relgame-label">Base game</p>
+            <p class="pdp__relgame-title">{{ base_game.title }}</p>
+          </div>
+        </a>
+      {%- endfor -%}
+    </div>
+    <style>
+      .mp-pdp-{{ section.id }} .pdp__relgame { margin: 20px 0; }
+      .mp-pdp-{{ section.id }} .pdp__relgame-card { display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: #f7f3ec; border: 1px solid #e7ddcb; border-radius: 8px; text-decoration: none; color: inherit; transition: border-color .15s; margin-bottom: 8px; }
+      .mp-pdp-{{ section.id }} .pdp__relgame-card:hover { border-color: #f2872f; }
+      .mp-pdp-{{ section.id }} .pdp__relgame-card:last-child { margin-bottom: 0; }
+      .mp-pdp-{{ section.id }} .pdp__relgame-img { width: 56px; height: 56px; object-fit: cover; border-radius: 4px; flex-shrink: 0; }
+      .mp-pdp-{{ section.id }} .pdp__relgame-body { flex: 1; min-width: 0; }
+      .mp-pdp-{{ section.id }} .pdp__relgame-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: #f2872f; margin: 0 0 3px; }
+      .mp-pdp-{{ section.id }} .pdp__relgame-title { font-size: 14px; font-weight: 600; color: #16323f; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    </style>
+  {%- endif -%}
+{%- endif -%}
       </div>
 
       <div class="pdp__info">
