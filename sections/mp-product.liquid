@@ -1271,6 +1271,7 @@
           var gwMsgEl = gwModal.querySelector('[data-gw-msg]');
           var gwProps = { 'For': {{ product.title | json }}, 'Wrap style': gwStyleInput ? gwStyleInput.value : 'Classic' };
           if (gwMsgEl && gwMsgEl.value.trim()) { gwProps['Gift message'] = gwMsgEl.value.trim(); }
+          if (!gwVariantEl) { console.error('Gift wrap: [data-gw-variant-id] element not found'); return; }
           cartAddItems([
             { id: variantId, quantity: lineQty },
             { id: parseInt(gwVariantEl.value, 10), quantity: lineQty, properties: gwProps }
@@ -1280,9 +1281,10 @@
             closeGwModal();
             if (upsellModal) { openModal(); }
             else { window.location.href = '{{ routes.cart_url }}'; }
-          }).catch(function () {
+          }).catch(function (error) {
             gwModalAddBtn.disabled = false;
             gwModalAddBtn.textContent = 'Add to basket — £3.99';
+            console.error('Gift wrap add failed:', error.message || error);
           });
         });
       }
