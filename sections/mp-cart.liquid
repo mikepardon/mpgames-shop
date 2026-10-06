@@ -111,18 +111,18 @@
   .mp-ct-{{ section.id }} .ct__gw-add:hover { border-color: #f2872f; color: #f2872f; }
   .mp-ct-{{ section.id }} .ct__gw-badge { display: inline-flex; align-items: center; gap: 6px; margin-top: 8px; font-size: 12px; font-weight: 600; color: #2f8f5b; background: none; border: 0; padding: 0; cursor: pointer; font-family: inherit; }
   .mp-ct-{{ section.id }} .ct__gw-badge:hover { text-decoration: underline; }
-  .mp-ct-{{ section.id }} .ct__gw-modal { position: fixed; inset: 0; z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 16px; }
-  .mp-ct-{{ section.id }} .ct__gw-modal-ov { position: absolute; inset: 0; background: rgba(0,0,0,.45); }
-  .mp-ct-{{ section.id }} .ct__gw-modal-panel { position: relative; background: #fff; border-radius: 16px; padding: 28px 24px 24px; max-width: 520px; width: 100%; max-height: 90vh; overflow-y: auto; }
-  .mp-ct-{{ section.id }} .ct__gw-modal-close { position: absolute; top: 14px; right: 16px; background: none; border: 0; font-size: 22px; cursor: pointer; color: #6b7a82; line-height: 1; padding: 4px; }
-  .mp-ct-{{ section.id }} .ct__gw-modal-badge { display: inline-flex; align-items: center; gap: 6px; background: #fff3e8; color: #b4560f; border-radius: 20px; padding: 4px 12px; font-size: 12px; font-weight: 700; margin-bottom: 14px; }
-  .mp-ct-{{ section.id }} .ct__gw-modal-h { font-size: 20px; font-weight: 700; color: #16323f; margin-bottom: 4px; }
-  .mp-ct-{{ section.id }} .ct__gw-modal-sub { font-size: 13px; color: #6b7a82; margin-bottom: 16px; }
-  .mp-ct-{{ section.id }} .ct__gw-modal-qty-row { margin-bottom: 16px; font-size: 13px; color: #16323f; }
-  .mp-ct-{{ section.id }} .ct__gw-modal-qty-row input[type=number] { width: 52px; text-align: center; border: 1px solid #d8d4cc; border-radius: 6px; padding: 4px 6px; font-size: 13px; font-family: inherit; margin: 0 4px; }
-  .mp-ct-{{ section.id }} .ct__gw-modal-actions { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
-  .mp-ct-{{ section.id }} .ct__gw-modal-confirm { background: #f2872f; color: #fff; border: 0; border-radius: 8px; padding: 12px 22px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit; flex: 1; }
-  .mp-ct-{{ section.id }} .ct__gw-modal-cancel { background: none; border: 1px solid #d8d4cc; border-radius: 8px; padding: 12px 16px; font-size: 14px; color: #6b7a82; cursor: pointer; font-family: inherit; }
+  .ct__gw-modal:not([hidden]) { position: fixed; inset: 0; z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 16px; }
+  .ct__gw-modal-ov { position: absolute; inset: 0; background: rgba(0,0,0,.45); }
+  .ct__gw-modal-panel { position: relative; background: #fff; border-radius: 16px; padding: 28px 24px 24px; max-width: 520px; width: 100%; max-height: 90vh; overflow-y: auto; }
+  .ct__gw-modal-close { position: absolute; top: 14px; right: 16px; background: none; border: 0; font-size: 22px; cursor: pointer; color: #6b7a82; line-height: 1; padding: 4px; }
+  .ct__gw-modal-badge { display: inline-flex; align-items: center; gap: 6px; background: #fff3e8; color: #b4560f; border-radius: 20px; padding: 4px 12px; font-size: 12px; font-weight: 700; margin-bottom: 14px; }
+  .ct__gw-modal-h { font-size: 20px; font-weight: 700; color: #16323f; margin-bottom: 4px; }
+  .ct__gw-modal-sub { font-size: 13px; color: #6b7a82; margin-bottom: 16px; }
+  .ct__gw-modal-qty-row { margin-bottom: 16px; font-size: 13px; color: #16323f; }
+  .ct__gw-modal-qty-row input[type=number] { width: 52px; text-align: center; border: 1px solid #d8d4cc; border-radius: 6px; padding: 4px 6px; font-size: 13px; font-family: inherit; margin: 0 4px; }
+  .ct__gw-modal-actions { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
+  .ct__gw-modal-confirm { background: #f2872f; color: #fff; border: 0; border-radius: 8px; padding: 12px 22px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit; flex: 1; }
+  .ct__gw-modal-cancel { background: none; border: 1px solid #d8d4cc; border-radius: 8px; padding: 12px 16px; font-size: 14px; color: #6b7a82; cursor: pointer; font-family: inherit; }
   .mp-ct-{{ section.id }} .ct__gw-item { display: flex; align-items: center; gap: 8px; padding: 8px 4px 0; font-size: 12px; color: #6b7a82; grid-column: 1/-1; border-top: 1px dashed #e7ddcb; margin-top: 4px; }
   .mp-ct-{{ section.id }} .ct__gw-item-icon { font-size: 16px; }
   .mp-ct-{{ section.id }} .ct__gw-item-info { flex: 1; min-width: 0; }
@@ -688,6 +688,8 @@
         } else {
           addWrap([]).then(onSuccess).catch(onError);
         }
+      });
+    }
   })();
 </script>
 
