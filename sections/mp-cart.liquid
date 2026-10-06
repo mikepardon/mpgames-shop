@@ -558,10 +558,14 @@
             headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
             body: JSON.stringify({ items: [{ id: gwVariantId, quantity: 1, properties: gwProps }] })
           })
-            .then(function () { window.location.reload(); })
-            .catch(function () {
+            .then(function (r) {
+              if (!r.ok) { return r.json().then(function (j) { throw new Error(j.description || j.message || r.status); }); }
+              window.location.reload();
+            })
+            .catch(function (err) {
               confirmBtn.disabled = false;
               confirmBtn.textContent = 'Add gift wrap — £3.99';
+              console.error('Gift wrap add failed:', err);
             });
         });
       }

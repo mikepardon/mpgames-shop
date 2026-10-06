@@ -332,6 +332,7 @@
     .mp-pdp-{{ section.id }} .pdp__specs { grid-template-columns: 1fr 1fr; }
     .mp-pdp-{{ section.id }} .pdp__h { font-size: 21px; }
   }
+  .mp-pdp-{{ section.id }} [data-gw-modal] .pdp__modal-add { flex: 1; padding: 13px; font-size: 14px; border-radius: 9px; }
 {%- endstyle -%}
 
 <div class="mp-pdp-{{ section.id }}" data-pdp>
@@ -468,9 +469,6 @@
             <input type="checkbox" class="pdp__gw-check" data-gw-check>
             <span class="pdp__gw-lbl">&#127873; Add gift wrap &mdash; <strong>&pound;3.99</strong></span>
           </label>
-          <div class="pdp__gw-panel" data-gw-panel hidden>
-            {%- render 'gift-wrap-picker', picker_id: section.id -%}
-          </div>
           <input type="hidden" data-gw-variant-id value="{{ gw_variant_id }}">
         </div>
         {%- endif -%}
@@ -983,6 +981,25 @@
       </div>
     </div>
   {%- endif -%}
+
+  {%- unless gift_card_page -%}
+  {%- if product.handle != 'gift-wrap' and product.available -%}
+  <div class="pdp__modal" data-gw-modal hidden role="dialog" aria-modal="true" aria-label="Gift wrap options">
+    <div class="pdp__modal-ov" data-gw-modal-close></div>
+    <div class="pdp__modal-panel">
+      <button type="button" class="pdp__modal-close" data-gw-modal-close aria-label="Close">&times;</button>
+      <span class="pdp__modal-badge" style="background:#fff3e8;color:#b4560f">&#127873; Gift wrapping &mdash; &pound;3.99</span>
+      <div class="pdp__modal-h">Choose your wrapping style</div>
+      <div class="pdp__modal-sub">For: <strong>{{ product.title }}</strong></div>
+      {%- render 'gift-wrap-picker', picker_id: 'pdp-modal' -%}
+      <div class="pdp__modal-actions">
+        <button type="button" class="pdp__modal-add" data-gw-modal-add>Add to basket &mdash; &pound;3.99</button>
+        <button type="button" class="dismiss" data-gw-modal-close>Cancel</button>
+      </div>
+    </div>
+  </div>
+  {%- endif -%}
+  {%- endunless -%}
 </div>
 
 {%- comment -%}
@@ -1226,37 +1243,56 @@
       document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !upsellModal.hidden) closeModal(); });
     }
 
-    // gift wrap toggle
+    // gift wrap modal — ticking the checkbox opens a picker modal; the modal's button adds product + wrap together
     var gwCheck = root.querySelector('[data-gw-check]');
-    var gwPanel = root.querySelector('[data-gw-panel]');
-    if (gwCheck && gwPanel) {
+    var gwModal = root.querySelector('[data-gw-modal]');
+    function openGwModal() { if (gwModal) { gwModal.hidden = false; document.body.style.overflow = 'hidden'; } }
+    function closeGwModal() { if (gwModal) { gwModal.hidden = true; document.body.style.overflow = ''; } }
+    if (gwCheck) {
       gwCheck.addEventListener('change', function () {
-        gwPanel.hidden = !gwCheck.checked;
+        if (gwCheck.checked) { gwCheck.checked = false; openGwModal(); }
       });
     }
+    if (gwModal) {
+      gwModal.querySelectorAll('[data-gw-modal-close]').forEach(function (el) { el.addEventListener('click', closeGwModal); });
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !gwModal.hidden) closeGwModal(); });
+      var gwModalAddBtn = gwModal.querySelector('[data-gw-modal-add]');
+      if (gwModalAddBtn) {
+        gwModalAddBtn.addEventListener('click', function () {
+          if (!variantId) return;
+          gwModalAddBtn.disabled = true;
+          gwModalAddBtn.textContent = 'Adding…';
+          var lineQty = parseInt(qty ? qty.value : '1', 10) || 1;
+          var gwVariantEl = root.querySelector('[data-gw-variant-id]');
+          var gwStyleInput = gwModal.querySelector('[data-gw-style]:checked');
+          var gwMsgEl = gwModal.querySelector('[data-gw-msg]');
+          var gwProps = { 'For': {{ product.title | json }}, 'Wrap style': gwStyleInput ? gwStyleInput.value : 'Classic' };
+          if (gwMsgEl && gwMsgEl.value.trim()) { gwProps['Gift message'] = gwMsgEl.value.trim(); }
+          cartAddItems([
+            { id: variantId, quantity: lineQty },
+            { id: parseInt(gwVariantEl.value, 10), quantity: lineQty, properties: gwProps }
+          ]).then(function () {
+            gwModalAddBtn.disabled = false;
+            gwModalAddBtn.textContent = 'Add to basket — £3.99';
+            closeGwModal();
+            if (upsellModal) { openModal(); }
+            else { window.location.href = '{{ routes.cart_url }}'; }
+          }).catch(function () {
+            gwModalAddBtn.disabled = false;
+            gwModalAddBtn.textContent = 'Add to basket — £3.99';
+          });
+        });
+      }
+    }
 
-    // add to cart / buy now (main product)
+    // add to cart / buy now (main product — gift wrap is handled separately via the modal above)
     root.querySelectorAll('[data-add]').forEach(function (btn) {
       btn.addEventListener('click', function () {
         if (!variantId) return;
         var checkout = btn.getAttribute('data-add') === 'checkout';
         btn.disabled = true;
         var lineQty = parseInt(qty.value, 10) || 1;
-        var items = [{ id: variantId, quantity: lineQty }];
-        var gwVariantEl = root.querySelector('[data-gw-variant-id]');
-        if (gwCheck && gwCheck.checked && gwVariantEl && gwVariantEl.value) {
-          var gwStyleInput = root.querySelector('[data-gw-style]:checked');
-          var gwMsgEl = root.querySelector('[data-gw-msg]');
-          var gwProps = {
-            'For': {{ product.title | json }},
-            'Wrap style': gwStyleInput ? gwStyleInput.value : 'Classic'
-          };
-          if (gwMsgEl && gwMsgEl.value.trim()) {
-            gwProps['Gift message'] = gwMsgEl.value.trim();
-          }
-          items.push({ id: parseInt(gwVariantEl.value, 10), quantity: lineQty, properties: gwProps });
-        }
-        cartAddItems(items).then(function () {
+        cartAddItems([{ id: variantId, quantity: lineQty }]).then(function () {
           btn.disabled = false;
           if (checkout) { window.location.href = '/checkout'; return; }
           if (upsellModal) { openModal(); }
