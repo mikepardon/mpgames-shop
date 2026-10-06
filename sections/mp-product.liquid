@@ -301,6 +301,10 @@
   .mp-pdp-{{ section.id }} .pdp__modal-add:hover { background: #e0761f; }
   .mp-pdp-{{ section.id }} .pdp__modal-add.is-added { background: #2f8f5b; }
   .mp-pdp-{{ section.id }} .pdp__modal-add[disabled] { opacity: .65; cursor: default; }
+  .mp-pdp-{{ section.id }} .pdp__modal-wish { background: none; border: 1px solid #d4cdc3; border-radius: 6px; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #8a8278; padding: 0; flex-shrink: 0; }
+  .mp-pdp-{{ section.id }} .pdp__modal-wish:hover { border-color: #f2872f; color: #f2872f; }
+  .mp-pdp-{{ section.id }} .pdp__modal-wish.mp-wish--active { color: #f2872f; border-color: #f2872f; fill: #f2872f; }
+  .mp-pdp-{{ section.id }} .pdp__modal-wish .mp-wish__icon { width: 16px; height: 16px; fill: currentColor; pointer-events: none; }
   .mp-pdp-{{ section.id }} .pdp__modal-actions { display: flex; align-items: center; gap: 16px; margin-top: 22px; }
   .mp-pdp-{{ section.id }} .pdp__modal-actions .go { flex: 1; background: #16323f; color: #fff; text-align: center; text-decoration: none; border-radius: 9px; padding: 13px; font-size: 14px; font-weight: 700; }
   .mp-pdp-{{ section.id }} .pdp__modal-actions .dismiss { background: none; border: 0; color: #6b7a82; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; text-decoration: underline; white-space: nowrap; }
@@ -899,7 +903,7 @@
         <button type="button" class="pdp__modal-close" data-modal-close aria-label="Close">&times;</button>
         <span class="pdp__modal-badge">&#10003; Added to your basket</span>
         <div class="pdp__modal-h">Complete your game</div>
-        <div class="pdp__modal-sub"><strong>{{ product.title }}</strong> is in your basket. Would you like to add{% if xp != blank and xp.size > 0 %} an expansion{% endif %}{% if xp != blank and xp.size > 0 and avins != blank and avins.size > 0 %} or{% endif %}{% if avins != blank and avins.size > 0 %} a 3D-printed storage insert{% endif %}?</div>
+        <div class="pdp__modal-sub"><strong>{{ product.title }}</strong> is in your basket. Would you like to add any accessories?</div>
         <div class="pdp__modal-grid">
           {%- if xp != blank -%}{%- for rec in xp limit: 4 -%}
             {%- assign rv = rec.selected_or_first_available_variant -%}
@@ -909,7 +913,10 @@
               <a href="{{ rec.url }}" class="pdp__modal-name">{{ rec.title }}</a>
               <div class="pdp__modal-foot">
                 <span class="pdp__modal-price">{% if rec.price_varies %}from {% endif %}{{ rec.price_min | money }}</span>
-                {%- if rv -%}<button type="button" class="pdp__modal-add" data-quick-add="{{ rv.id }}"{% unless rec.available %} disabled{% endunless %}>Add</button>{%- endif -%}
+                <div style="display:flex;gap:6px;align-items:center">
+                  {%- render 'mp-wishlist-button', product: rec, class: 'pdp__modal-wish' -%}
+                  {%- if rv -%}<button type="button" class="pdp__modal-add" data-quick-add="{{ rv.id }}"{% unless rec.available %} disabled{% endunless %}>Add</button>{%- endif -%}
+                </div>
               </div>
             </div>
           {%- endfor -%}{%- endif -%}
@@ -924,7 +931,10 @@
               <a href="{{ rec.url }}" class="pdp__modal-name">{{ rec.title }}</a>
               <div class="pdp__modal-foot">
                 <span class="pdp__modal-price">{{ rv.price | money }}{% if rec.variants.size > 1 %} · {{ rv.title }}{% endif %}</span>
-                {%- if rv -%}<button type="button" class="pdp__modal-add" data-quick-add="{{ rv.id }}"{% unless rec.available %} disabled{% endunless %}>Add</button>{%- endif -%}
+                <div style="display:flex;gap:6px;align-items:center">
+                  {%- render 'mp-wishlist-button', product: rec, class: 'pdp__modal-wish' -%}
+                  {%- if rv -%}<button type="button" class="pdp__modal-add" data-quick-add="{{ rv.id }}"{% unless rec.available %} disabled{% endunless %}>Add</button>{%- endif -%}
+                </div>
               </div>
             </div>
           {%- endfor -%}{%- endif -%}
