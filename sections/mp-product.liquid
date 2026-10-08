@@ -790,16 +790,16 @@
         {%- if has_bars -%}
           <div class="pdp__bars">
             {%- if show_weight -%}
-              <div class="pdp__brow"><div class="bl"><span>Complexity</span><b>{{ m.weight.value }} / 5</b></div><div class="pdp__btrack"><span style="width:{{ m.weight.value | times: 20 | round }}%;background:#9a3b2e"></span></div></div>
+              <div class="pdp__brow"><div class="bl"><span>Complexity</span><b>{{ m.weight.value | round: 1 }} / 5</b></div><div class="pdp__btrack"><span style="width:{{ m.weight.value | times: 20 | round }}%;background:#9a3b2e"></span></div></div>
             {%- endif -%}
             {%- if m.rating_strategy.value != blank -%}
-              <div class="pdp__brow"><div class="bl"><span>Strategy</span><b>{{ m.rating_strategy.value }} / 5</b></div><div class="pdp__btrack"><span style="width:{{ m.rating_strategy.value | times: 20 | round }}%;background:#2c3f8f"></span></div></div>
+              <div class="pdp__brow"><div class="bl"><span>Strategy</span><b>{{ m.rating_strategy.value | round: 1 }} / 5</b></div><div class="pdp__btrack"><span style="width:{{ m.rating_strategy.value | times: 20 | round }}%;background:#2c3f8f"></span></div></div>
             {%- endif -%}
             {%- if m.rating_luck.value != blank -%}
-              <div class="pdp__brow"><div class="bl"><span>Luck</span><b>{{ m.rating_luck.value }} / 5</b></div><div class="pdp__btrack"><span style="width:{{ m.rating_luck.value | times: 20 | round }}%;background:#3c3a34"></span></div></div>
+              <div class="pdp__brow"><div class="bl"><span>Luck</span><b>{{ m.rating_luck.value | round: 1 }} / 5</b></div><div class="pdp__btrack"><span style="width:{{ m.rating_luck.value | times: 20 | round }}%;background:#3c3a34"></span></div></div>
             {%- endif -%}
             {%- if m.rating_interaction.value != blank -%}
-              <div class="pdp__brow"><div class="bl"><span>Interaction</span><b>{{ m.rating_interaction.value }} / 5</b></div><div class="pdp__btrack"><span style="width:{{ m.rating_interaction.value | times: 20 | round }}%;background:#2f8f5b"></span></div></div>
+              <div class="pdp__brow"><div class="bl"><span>Interaction</span><b>{{ m.rating_interaction.value | round: 1 }} / 5</b></div><div class="pdp__btrack"><span style="width:{{ m.rating_interaction.value | times: 20 | round }}%;background:#2f8f5b"></span></div></div>
             {%- endif -%}
           </div>
         {%- endif -%}
