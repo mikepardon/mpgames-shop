@@ -311,6 +311,7 @@
   .mp-pdp-{{ section.id }} .pdp__modal-add:hover { background: #e0761f; }
   .mp-pdp-{{ section.id }} .pdp__modal-add.is-added { background: #2f8f5b; }
   .mp-pdp-{{ section.id }} .pdp__modal-add[disabled] { opacity: .65; cursor: default; }
+  .mp-pdp-{{ section.id }} .pdp__modal-vsel { width: 100%; margin: 8px 0 0; border: 1px solid #d4cdc3; border-radius: 7px; padding: 7px 9px; font-size: 12.5px; font-family: inherit; background: #fbfaf7; color: #16323f; cursor: pointer; }
   .mp-pdp-{{ section.id }} .pdp__modal-wish { background: none; border: 1px solid #d4cdc3; border-radius: 6px; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #8a8278; padding: 0; flex-shrink: 0; }
   .mp-pdp-{{ section.id }} .pdp__modal-wish:hover { border-color: #f2872f; color: #f2872f; }
   .mp-pdp-{{ section.id }} .pdp__modal-wish.mp-wish--active { color: #f2872f; border-color: #f2872f; fill: #f2872f; }
@@ -964,8 +965,15 @@
               <span class="pdp__modal-tag pdp__modal-tag--ins">{% if rec.type == 'Board Game Accessory' %}Accessory{% else %}Storage insert{% endif %}</span>
               <a href="{{ rec.url }}" class="mc-media">{% if rec.featured_image %}<img src="{{ rec.featured_image | image_url: width: 300 }}" alt="{{ rec.title | escape }}" width="300" height="300" loading="lazy">{% endif %}</a>
               <a href="{{ rec.url }}" class="pdp__modal-name">{{ rec.title }}</a>
+              {%- if rec.variants.size > 1 -%}
+                <select class="pdp__modal-vsel" data-variant-select aria-label="Choose variant">
+                  {%- for v in rec.variants -%}
+                    <option value="{{ v.id }}" data-price="{{ v.price }}"{% unless v.available %} disabled{% endunless %}{% if v.id == rv.id %} selected{% endif %}>{{ v.title }}{% unless v.available %} — sold out{% endunless %}</option>
+                  {%- endfor -%}
+                </select>
+              {%- endif -%}
               <div class="pdp__modal-foot">
-                <span class="pdp__modal-price">{{ rv.price | money }}{% if rec.variants.size > 1 %} · {{ rv.title }}{% endif %}</span>
+                <span class="pdp__modal-price" data-variant-price>{{ rv.price | money }}</span>
                 <div style="display:flex;gap:6px;align-items:center">
                   {%- render 'mp-wishlist-button', product: rec, class: 'pdp__modal-wish' -%}
                   {%- if rv -%}<button type="button" class="pdp__modal-add" data-quick-add="{{ rv.id }}"{% unless rec.available %} disabled{% endunless %}>Add</button>{%- endif -%}
@@ -1244,6 +1252,25 @@
     if (upsellModal) {
       upsellModal.querySelectorAll('[data-modal-close]').forEach(function (el) { el.addEventListener('click', closeModal); });
       document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !upsellModal.hidden) closeModal(); });
+      upsellModal.addEventListener('change', function (e) {
+        var sel = e.target.closest('[data-variant-select]');
+        if (!sel) return;
+        var card = sel.closest('.pdp__modal-card');
+        if (!card) return;
+        var opt = sel.options[sel.selectedIndex];
+        var priceEl = card.querySelector('[data-variant-price]');
+        var addBtn = card.querySelector('[data-quick-add]');
+        if (priceEl && opt.dataset.price) {
+          var pence = parseInt(opt.dataset.price, 10);
+          try { priceEl.textContent = new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(pence / 100); }
+          catch (_) { priceEl.textContent = '£' + (pence / 100).toFixed(2); }
+        }
+        if (addBtn) {
+          addBtn.setAttribute('data-quick-add', opt.value);
+          addBtn.disabled = opt.disabled;
+          if (!opt.disabled && !addBtn.classList.contains('is-added')) { addBtn.textContent = 'Add'; }
+        }
+      });
     }
 
     // gift wrap modal — ticking the checkbox opens a picker modal; the modal's button adds product + wrap together

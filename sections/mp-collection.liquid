@@ -400,6 +400,20 @@
       toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
     });
   })();
+
+  (function () {
+    // Guarantee available products appear before notify/sold-out ones within the
+    // current page. The Liquid two-pass can silently fail when collection.products
+    // is iterated twice inside a paginate block, so this is the reliable fallback.
+    var grid = document.querySelector('.mp-cl-{{ section.id }} .cl__grid');
+    if (!grid) return;
+    var available = [], unavailable = [];
+    grid.querySelectorAll('.cl__card').forEach(function (card) {
+      (card.querySelector('.cl__notify') ? unavailable : available).push(card);
+    });
+    available.forEach(function (el) { grid.appendChild(el); });
+    unavailable.forEach(function (el) { grid.appendChild(el); });
+  })();
 </script>
 
 {%- comment -%} SEO: CollectionPage + ItemList + BreadcrumbList structured data. {%- endcomment -%}
