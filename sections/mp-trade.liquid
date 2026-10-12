@@ -206,11 +206,15 @@
             statusEl.className = '';
             statusEl.textContent = '';
             try {
+              var params = new URLSearchParams(new FormData(form));
               var response = await fetch('/apps/notify/proxy-trade-in', {
                 method: 'POST',
-                body: new FormData(form),
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'Accept': 'application/json' },
+                body: params.toString(),
               });
-              var data = await response.json();
+              var text = await response.text();
+              var data;
+              try { data = JSON.parse(text); } catch (_) { throw new Error(response.status + ': ' + text.slice(0, 120)); }
               if (data.ok) {
                 form.hidden = true;
                 statusEl.className = 'ti__ok';
@@ -219,9 +223,10 @@
                 statusEl.className = 'ti__err';
                 statusEl.textContent = data.message || 'Something went wrong. Please try again.';
               }
-            } catch (_) {
+            } catch (error) {
               statusEl.className = 'ti__err';
               statusEl.textContent = 'Something went wrong. Please try again.';
+              console.error('[trade-in]', error);
             }
           });
         })();
