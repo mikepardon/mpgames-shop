@@ -1,0 +1,34 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "mp_trade": {
+      "type": "mp-trade",
+      "blocks": {
+        "h1": { "type": "highlight", "settings": { "icon": "💰", "title": "Fair valuations", "body": "We price based on condition, demand, and the current market — no algorithms, no low-ball offers." } },
+        "h2": { "type": "highlight", "settings": { "icon": "🚚", "title": "We sort the shipping", "body": "Nearby? We'll collect for free. Further away? We'll email you a prepaid label — no cost to you." } },
+        "h3": { "type": "highlight", "settings": { "icon": "⚡", "title": "Quick turnaround", "body": "Quote within 2 working days. Payment within 1–2 days of receiving and checking your games." } },
+        "s1": { "type": "step", "settings": { "title": "Send your list", "body": "Fill in the form with the games you'd like to trade. Include condition and any missing components — rough is fine." } },
+        "s2": { "type": "step", "settings": { "title": "Receive a quote", "body": "We'll review your list and come back within 2 working days with a fair valuation and your payment options." } },
+        "s3": { "type": "step", "settings": { "title": "Agree and ship", "body": "Happy with the offer? Tell us your postcode and preference — local collection or prepaid label — and we'll take it from there." } },
+        "s4": { "type": "step", "settings": { "title": "Get paid", "body": "Games arrive, we check them, we pay within 1–2 working days. Choose bank transfer, PayPal, or store credit with a bonus." } },
+        "f1": { "type": "faq", "settings": { "question": "What condition do games need to be in?", "answer": "<p>Good or better — minor shelf wear, small scuffs on the box, and light card wear are all fine. We can't take games with missing components, water damage, or heavy writing-in. If you're unsure, list it anyway and we'll advise.</p>" } },
+        "f2": { "type": "faq", "settings": { "question": "Do I have to pay for shipping?", "answer": "<p>No. If you're nearby we'll collect in person at no cost. If you're further away we'll send you a prepaid label — you just need to box the games up and drop them at a collection point.</p>" } },
+        "f3": { "type": "faq", "settings": { "question": "Can I trade expansions without the base game?", "answer": "<p>Yes — we'll consider expansions on their own. Just note which base game they belong to and we'll factor that into the quote.</p>" } },
+        "f4": { "type": "faq", "settings": { "question": "How is the value calculated?", "answer": "<p>We look at the game's condition, current demand, recent secondary-market prices, and our own stock levels. Store credit quotes come with a 10–15% bonus over the cash equivalent.</p>" } },
+        "f5": { "type": "faq", "settings": { "question": "What if I'm not happy with the quote?", "answer": "<p>No obligation — you can turn it down at any point before you ship. We'll never pressure you and we'll never cherry-pick; we quote on everything you list.</p>" } },
+        "f6": { "type": "faq", "settings": { "question": "How many games can I trade in at once?", "answer": "<p>As many as you like. If you're clearing a large collection, mention it in the form and we'll discuss the best way to handle it — we may be able to arrange collection even if you're further away.</p>" } }
+      },
+      "block_order": ["h1", "h2", "h3", "s1", "s2", "s3", "s4", "f1", "f2", "f3", "f4", "f5", "f6"],
+      "settings": {}
+    }
+  },
+  "order": ["mp_trade"]
+}
