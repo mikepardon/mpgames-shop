@@ -1,0 +1,312 @@
+{%- comment -%} MPGames Trade In — trade-in page with steps, condition info, quote form and FAQs. {%- endcomment -%}
+{%- style -%}
+  .mp-ti-{{ section.id }} { font-family: 'Barlow', ui-sans-serif, system-ui, sans-serif; color: #16323f; padding-bottom: 52px; }
+  .mp-ti-{{ section.id }} .ti__hero { background: linear-gradient(115deg,#16323f 0%,#1d4252 60%,#2c5466 100%); margin: 18px 24px 0; border-radius: 16px; padding: 48px 28px 52px; text-align: center; background-size: cover; background-position: center; }
+  .mp-ti-{{ section.id }} .ti__kick { display: inline-block; background: rgba(242,135,47,.18); color: #ffd2b0; font-size: 12px; font-weight: 600; padding: 5px 14px; border-radius: 20px; letter-spacing: .5px; text-transform: uppercase; }
+  .mp-ti-{{ section.id }} .ti__htitle { font-size: 44px; font-weight: 700; color: #fff; margin: 16px auto 0; line-height: 1.05; max-width: 700px; }
+  .mp-ti-{{ section.id }} .ti__hsub { color: #cfe0e6; font-size: 16px; margin: 14px auto 0; max-width: 580px; line-height: 1.6; }
+  .mp-ti-{{ section.id }} .ti__herob { display: inline-block; background: #f2872f; color: #fff; font-size: 15px; font-weight: 700; padding: 14px 30px; border-radius: 9px; text-decoration: none; margin-top: 24px; }
+  .mp-ti-{{ section.id }} .ti__wrap { max-width: 1080px; margin: 0 auto; padding: 0 28px; }
+  .mp-ti-{{ section.id }} .ti__cards { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; padding: 28px 0 6px; }
+  .mp-ti-{{ section.id }} .ti__card { border: 1px solid #e7ddcb; border-radius: 13px; background: #fff; padding: 22px; box-shadow: 0 1px 2px rgba(20,40,50,.04); }
+  .mp-ti-{{ section.id }} .ti__ct { font-size: 17px; font-weight: 700; margin-top: 10px; }
+  .mp-ti-{{ section.id }} .ti__cb { font-size: 13px; color: #6b6b62; margin-top: 5px; line-height: 1.55; }
+  .mp-ti-{{ section.id }} .ti__sh { font-size: 24px; font-weight: 700; margin: 34px 0 6px; }
+  .mp-ti-{{ section.id }} .ti__ss { font-size: 14px; color: #8a8278; margin: 0 0 16px; }
+  .mp-ti-{{ section.id }} .ti__steps { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; }
+  .mp-ti-{{ section.id }} .ti__step { border: 1px solid #e7ddcb; border-radius: 13px; background: #fff; padding: 18px; box-shadow: 0 1px 2px rgba(20,40,50,.04); }
+  .mp-ti-{{ section.id }} .ti__stepn { width: 32px; height: 32px; border-radius: 9px; background: #f2872f; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; }
+  .mp-ti-{{ section.id }} .ti__stept { font-size: 15px; font-weight: 700; margin-top: 11px; }
+  .mp-ti-{{ section.id }} .ti__stepb { font-size: 12.5px; color: #6b6b62; line-height: 1.55; margin-top: 5px; }
+  .mp-ti-{{ section.id }} .ti__twocol { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 34px; }
+  .mp-ti-{{ section.id }} .ti__panel { border: 1px solid #e7ddcb; border-radius: 13px; background: #fff; padding: 24px; box-shadow: 0 1px 2px rgba(20,40,50,.04); }
+  .mp-ti-{{ section.id }} .ti__ph { font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .mp-ti-{{ section.id }} .ti__pb { font-size: 13.5px; color: #4a443c; line-height: 1.65; }
+  .mp-ti-{{ section.id }} .ti__pb p { margin: 0 0 8px; }
+  .mp-ti-{{ section.id }} .ti__pb ul { margin: 2px 0 8px 0; padding: 0 0 0 20px; }
+  .mp-ti-{{ section.id }} .ti__pb li { margin-bottom: 5px; }
+  .mp-ti-{{ section.id }} .ti__pay { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .mp-ti-{{ section.id }} .ti__payc { border: 1px solid #e7ddcb; border-radius: 13px; background: #fff; padding: 22px 24px; box-shadow: 0 1px 2px rgba(20,40,50,.04); }
+  .mp-ti-{{ section.id }} .ti__payc--credit { border-color: #f0b37c; background: linear-gradient(135deg,#fef9f4,#fff8ef); }
+  .mp-ti-{{ section.id }} .ti__badge { display: inline-block; background: #f2872f; color: #fff; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; letter-spacing: .4px; margin-bottom: 10px; }
+  .mp-ti-{{ section.id }} .ti__payh { font-size: 17px; font-weight: 700; }
+  .mp-ti-{{ section.id }} .ti__payd { font-size: 13px; color: #6b6b62; margin-top: 8px; line-height: 1.6; }
+  .mp-ti-{{ section.id }} .ti__payd p { margin: 0 0 6px; }
+  .mp-ti-{{ section.id }} .ti__formbg { background: #f5f1ea; margin-top: 44px; padding: 42px 0; }
+  .mp-ti-{{ section.id }} .ti__formh { font-size: 26px; font-weight: 700; margin: 0 0 4px; }
+  .mp-ti-{{ section.id }} .ti__formhint { font-size: 14px; color: #8a8278; margin: 0 0 24px; }
+  .mp-ti-{{ section.id }} .ti__fbox { background: #fff; border: 1px solid #e7ddcb; border-radius: 14px; padding: 30px 32px; box-shadow: 0 1px 3px rgba(20,40,50,.05); }
+  .mp-ti-{{ section.id }} .ti__grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 14px; }
+  .mp-ti-{{ section.id }} .ti__field { margin-top: 16px; }
+  .mp-ti-{{ section.id }} .ti__label { font-size: 12.5px; font-weight: 600; color: #4a443c; margin-bottom: 6px; display: block; }
+  .mp-ti-{{ section.id }} .ti__opt { color: #a39c92; font-weight: 400; }
+  .mp-ti-{{ section.id }} .ti__input,
+  .mp-ti-{{ section.id }} .ti__select { width: 100%; box-sizing: border-box; border: 1px solid #d8d4cc; border-radius: 8px; padding: 12px 14px; font-size: 13.5px; background: #fbfaf7; font-family: inherit; color: #16323f; }
+  .mp-ti-{{ section.id }} .ti__area { width: 100%; box-sizing: border-box; border: 1px solid #d8d4cc; border-radius: 8px; padding: 12px 14px; font-size: 13.5px; background: #fbfaf7; font-family: inherit; color: #16323f; min-height: 160px; resize: vertical; }
+  .mp-ti-{{ section.id }} .ti__hint { font-size: 11.5px; color: #9b948a; margin-top: 5px; display: block; }
+  .mp-ti-{{ section.id }} .ti__ok { background: #e3f1e9; border: 1px solid #b6dcc6; color: #1f6b45; border-radius: 8px; padding: 12px 14px; font-size: 13px; margin-bottom: 16px; }
+  .mp-ti-{{ section.id }} .ti__err { background: #fdecea; border: 1px solid #f3c0bb; color: #9a3b2e; border-radius: 8px; padding: 10px 13px; font-size: 12.5px; margin-bottom: 14px; }
+  .mp-ti-{{ section.id }} .ti__submit { background: #f2872f; color: #fff; font-size: 15px; font-weight: 700; padding: 14px; border-radius: 9px; margin-top: 22px; border: 0; cursor: pointer; font-family: inherit; width: 100%; }
+  .mp-ti-{{ section.id }} .ti__faqlist { display: flex; flex-direction: column; gap: 10px; }
+  .mp-ti-{{ section.id }} .ti__faqitem { border: 1px solid #e7ddcb; border-radius: 12px; background: #fff; overflow: hidden; box-shadow: 0 1px 2px rgba(20,40,50,.04); }
+  .mp-ti-{{ section.id }} .ti__faqitem summary { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 16px 18px; cursor: pointer; list-style: none; }
+  .mp-ti-{{ section.id }} .ti__faqitem summary::-webkit-details-marker { display: none; }
+  .mp-ti-{{ section.id }} .ti__fqq { font-size: 15.5px; font-weight: 600; color: #16323f; }
+  .mp-ti-{{ section.id }} .ti__fqsign { font-size: 20px; color: #f2872f; flex: none; line-height: 1; }
+  .mp-ti-{{ section.id }} .ti__faqitem[open] .ti__fqsign { transform: rotate(45deg); }
+  .mp-ti-{{ section.id }} .ti__fqa { padding: 0 18px 16px; font-size: 14px; line-height: 1.65; color: #4a443c; }
+  .mp-ti-{{ section.id }} .ti__fqa p { margin: 0 0 8px; }
+  .mp-ti-{{ section.id }} .ti__band { margin-top: 38px; border-radius: 14px; background: #16323f; padding: 28px 36px; display: flex; align-items: center; justify-content: space-between; gap: 30px; }
+  .mp-ti-{{ section.id }} .ti__bandt { color: #fff; font-size: 22px; font-weight: 700; }
+  .mp-ti-{{ section.id }} .ti__bands { color: #9fb4bd; font-size: 13.5px; margin-top: 5px; }
+  .mp-ti-{{ section.id }} .ti__bandb { background: #f2872f; color: #fff; font-weight: 700; font-size: 14px; padding: 12px 24px; border-radius: 9px; text-decoration: none; white-space: nowrap; }
+  @media (max-width: 989px) {
+    .mp-ti-{{ section.id }} .ti__cards,
+    .mp-ti-{{ section.id }} .ti__steps { grid-template-columns: repeat(2,1fr); }
+  }
+  @media (max-width: 749px) {
+    .mp-ti-{{ section.id }} .ti__hero { margin: 14px 16px 0; padding: 36px 20px 40px; }
+    .mp-ti-{{ section.id }} .ti__htitle { font-size: 32px; }
+    .mp-ti-{{ section.id }} .ti__cards,
+    .mp-ti-{{ section.id }} .ti__steps,
+    .mp-ti-{{ section.id }} .ti__twocol,
+    .mp-ti-{{ section.id }} .ti__pay,
+    .mp-ti-{{ section.id }} .ti__grid2 { grid-template-columns: 1fr; }
+    .mp-ti-{{ section.id }} .ti__band { flex-direction: column; align-items: flex-start; }
+    .mp-ti-{{ section.id }} .ti__fbox { padding: 22px 18px; }
+  }
+{%- endstyle -%}
+
+{%- assign highlights = section.blocks | where: 'type', 'highlight' -%}
+{%- assign steps      = section.blocks | where: 'type', 'step' -%}
+{%- assign faqs       = section.blocks | where: 'type', 'faq' -%}
+
+<div class="mp-ti-{{ section.id }}">
+
+  <div class="ti__hero"{% if section.settings.hero_image %} style="background-image:linear-gradient(115deg,rgba(22,50,63,.88),rgba(44,84,102,.8)),url('{{ section.settings.hero_image | image_url: width: 1800 }}')"{% endif %}>
+    <span class="ti__kick mp-cond">{{ section.settings.kicker }}</span>
+    <h1 class="ti__htitle mp-cond" style="margin:0">{{ section.settings.title }}</h1>
+    <div class="ti__hsub">{{ section.settings.subtitle }}</div>
+    <a class="ti__herob mp-cond" href="#ti-form-{{ section.id }}">{{ section.settings.hero_button }}</a>
+  </div>
+
+  {%- if highlights.size > 0 -%}
+    <div class="ti__wrap">
+      <div class="ti__cards">
+        {%- for b in highlights -%}
+          <div class="ti__card" {{ b.shopify_attributes }}>
+            <div style="font-size:26px">{{ b.settings.icon }}</div>
+            <div class="ti__ct mp-cond">{{ b.settings.title }}</div>
+            <div class="ti__cb">{{ b.settings.body }}</div>
+          </div>
+        {%- endfor -%}
+      </div>
+    </div>
+  {%- endif -%}
+
+  {%- if steps.size > 0 -%}
+    <div class="ti__wrap">
+      <div class="ti__sh mp-cond">{{ section.settings.steps_heading }}</div>
+      <div class="ti__ss">{{ section.settings.steps_sub }}</div>
+      <div class="ti__steps">
+        {%- for b in steps -%}
+          <div class="ti__step" {{ b.shopify_attributes }}>
+            <div class="ti__stepn mp-cond">{{ forloop.index }}</div>
+            <div class="ti__stept mp-cond">{{ b.settings.title }}</div>
+            <div class="ti__stepb">{{ b.settings.body }}</div>
+          </div>
+        {%- endfor -%}
+      </div>
+    </div>
+  {%- endif -%}
+
+  <div class="ti__wrap">
+    <div class="ti__twocol">
+      <div class="ti__panel">
+        <div class="ti__ph mp-cond"><span>📦</span> {{ section.settings.accept_heading }}</div>
+        <div class="ti__pb">{{ section.settings.accept_body }}</div>
+      </div>
+      <div class="ti__panel">
+        <div class="ti__ph mp-cond"><span>🚚</span> {{ section.settings.collect_heading }}</div>
+        <div class="ti__pb">{{ section.settings.collect_body }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ti__wrap" style="margin-top:34px">
+    <div class="ti__sh mp-cond">{{ section.settings.payment_heading }}</div>
+    <div class="ti__pay">
+      <div class="ti__payc ti__payc--credit">
+        <span class="ti__badge mp-cond">BEST VALUE</span>
+        <div class="ti__payh mp-cond">{{ section.settings.credit_title }}</div>
+        <div class="ti__payd">{{ section.settings.credit_body }}</div>
+      </div>
+      <div class="ti__payc" style="padding-top:34px">
+        <div class="ti__payh mp-cond">{{ section.settings.cash_title }}</div>
+        <div class="ti__payd">{{ section.settings.cash_body }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ti__formbg" id="ti-form-{{ section.id }}">
+    <div class="ti__wrap">
+      <div class="ti__formh mp-cond">{{ section.settings.form_heading }}</div>
+      <div class="ti__formhint">{{ section.settings.form_sub }}</div>
+      <div class="ti__fbox">
+        {%- form 'contact' -%}
+          {%- if form.posted_successfully? -%}
+            <div class="ti__ok">Thanks for your list — we'll come back to you within 2 working days with a quote.</div>
+          {%- endif -%}
+          {%- if form.errors -%}
+            <div class="ti__err">{{ form.errors | default_errors }}</div>
+          {%- endif -%}
+          <input type="hidden" name="contact[Enquiry type]" value="Trade In">
+          <div class="ti__grid2">
+            <div class="ti__field">
+              <label class="ti__label" for="ti-name-{{ section.id }}">Your name</label>
+              <input id="ti-name-{{ section.id }}" class="ti__input" type="text" name="contact[name]" value="{% if customer %}{{ customer.name }}{% endif %}" required>
+            </div>
+            <div class="ti__field">
+              <label class="ti__label" for="ti-email-{{ section.id }}">Email address</label>
+              <input id="ti-email-{{ section.id }}" class="ti__input" type="email" name="contact[email]" value="{% if customer %}{{ customer.email }}{% endif %}" required>
+            </div>
+            <div class="ti__field">
+              <label class="ti__label" for="ti-postcode-{{ section.id }}">Postcode</label>
+              <input id="ti-postcode-{{ section.id }}" class="ti__input" type="text" name="contact[Postcode]" placeholder="e.g. SW1A 1AA" required>
+              <span class="ti__hint">Helps us work out whether we can collect or need to send a label.</span>
+            </div>
+            <div class="ti__field">
+              <label class="ti__label" for="ti-phone-{{ section.id }}">Phone number <span class="ti__opt">(optional)</span></label>
+              <input id="ti-phone-{{ section.id }}" class="ti__input" type="tel" name="contact[Phone]" value="{% if customer %}{{ customer.phone }}{% endif %}">
+              <span class="ti__hint">Useful if you'd prefer us to arrange collection by phone.</span>
+            </div>
+          </div>
+          <div class="ti__field">
+            <label class="ti__label" for="ti-games-{{ section.id }}">Games you'd like to trade in</label>
+            <textarea id="ti-games-{{ section.id }}" class="ti__area" name="contact[body]" placeholder="List each game on a new line — name, edition if relevant, and condition. For example:&#10;&#10;Wingspan (2nd Ed.) — Very Good, complete&#10;Catan — Good, all pieces present&#10;Root — Fair, slight box wear, complete" required></textarea>
+            <span class="ti__hint">Rough is fine. Just flag anything obviously missing or damaged and we'll factor it in.</span>
+          </div>
+          <div class="ti__field">
+            <label class="ti__label" for="ti-payment-{{ section.id }}">Payment preference</label>
+            <select id="ti-payment-{{ section.id }}" class="ti__select" name="contact[Payment preference]">
+              <option>Store credit (higher value)</option>
+              <option>Bank transfer</option>
+              <option>Not sure yet — happy to discuss</option>
+            </select>
+          </div>
+          <button type="submit" class="ti__submit mp-cond">Send my list for a quote &rarr;</button>
+        {%- endform -%}
+      </div>
+    </div>
+  </div>
+
+  {%- if faqs.size > 0 -%}
+    <div class="ti__wrap">
+      <div class="ti__sh mp-cond">{{ section.settings.faq_heading }}</div>
+      <div class="ti__faqlist">
+        {%- for b in faqs -%}
+          <details class="ti__faqitem" {{ b.shopify_attributes }}>
+            <summary><span class="ti__fqq mp-cond">{{ b.settings.question }}</span><span class="ti__fqsign">+</span></summary>
+            <div class="ti__fqa">{{ b.settings.answer }}</div>
+          </details>
+        {%- endfor -%}
+      </div>
+    </div>
+  {%- endif -%}
+
+  <div class="ti__wrap">
+    <div class="ti__band">
+      <div>
+        <div class="ti__bandt mp-cond">{{ section.settings.band_title }}</div>
+        <div class="ti__bands">{{ section.settings.band_text }}</div>
+      </div>
+      <a class="ti__bandb mp-cond" href="mailto:trade@mpgames.io">{{ section.settings.band_button }}</a>
+    </div>
+  </div>
+
+</div>
+
+{% schema %}
+{
+  "name": "MP Trade In",
+  "settings": [
+    { "type": "header", "content": "Hero" },
+    { "type": "text", "id": "kicker", "label": "Kicker", "default": "TRADE IN YOUR GAMES" },
+    { "type": "text", "id": "title", "label": "Title", "default": "Got games gathering dust? We'll take them off your hands." },
+    { "type": "textarea", "id": "subtitle", "label": "Subtitle", "default": "We buy board games you're ready to move on from. Nearby? We'll collect for free. Further away? We'll cover the postage. Fair quotes, fast payment." },
+    { "type": "text", "id": "hero_button", "label": "CTA button label", "default": "Get a quote" },
+    { "type": "image_picker", "id": "hero_image", "label": "Hero background image (optional)" },
+    { "type": "header", "content": "Steps" },
+    { "type": "text", "id": "steps_heading", "label": "Heading", "default": "How it works" },
+    { "type": "text", "id": "steps_sub", "label": "Subheading", "default": "Four simple steps from list to payment." },
+    { "type": "header", "content": "Info panels" },
+    { "type": "text", "id": "accept_heading", "label": "Left panel heading", "default": "What we're looking for" },
+    { "type": "richtext", "id": "accept_body", "label": "Left panel body", "default": "<p>We buy most modern board games in good condition. Here's what makes a strong trade:</p><ul><li><strong>Complete</strong> — all components present (check the insert)</li><li><strong>Good condition or better</strong> — light shelf wear is fine, no water damage or heavy marking</li><li><strong>Published in the last 20 years</strong>, or a genuine classic</li></ul><p>We also take RPG books, card games, miniature games, and accessories. Expansions are welcome with or without the base game. Not sure? List it anyway — the worst we can say is no.</p>" },
+    { "type": "text", "id": "collect_heading", "label": "Right panel heading", "default": "Local collection or prepaid label?" },
+    { "type": "richtext", "id": "collect_body", "label": "Right panel body", "default": "<p>We don't have a shop, but we do collect in person for customers close by.</p><ul><li><strong>Nearby?</strong> Once your quote is agreed, we'll arrange a free collection at a time that suits you.</li><li><strong>Further away?</strong> We'll email you a prepaid shipping label — box your games up and drop them at the nearest collection point.</li></ul><p>Let us know your postcode in the form and we'll advise which applies to you.</p>" },
+    { "type": "header", "content": "Payment" },
+    { "type": "text", "id": "payment_heading", "label": "Heading", "default": "How you get paid" },
+    { "type": "text", "id": "credit_title", "label": "Store credit title", "default": "Store credit" },
+    { "type": "richtext", "id": "credit_body", "label": "Store credit body", "default": "<p>Take your quote as store credit and we'll add a bonus on top — typically 10–15% above the cash value. Spend it straight away or save it up; there's no expiry date.</p>" },
+    { "type": "text", "id": "cash_title", "label": "Bank transfer title", "default": "Bank transfer" },
+    { "type": "richtext", "id": "cash_body", "label": "Bank transfer body", "default": "<p>Prefer cash in hand? We'll pay by bank transfer within 1–2 working days of receiving and checking your games. PayPal is also available — just let us know when you accept the quote.</p>" },
+    { "type": "header", "content": "Quote form" },
+    { "type": "text", "id": "form_heading", "label": "Heading", "default": "Get a quote" },
+    { "type": "text", "id": "form_sub", "label": "Subtitle", "default": "Fill in your list and we'll come back with a valuation within 2 working days. No obligation — you can turn down any offer." },
+    { "type": "header", "content": "FAQs" },
+    { "type": "text", "id": "faq_heading", "label": "Heading", "default": "Common questions" },
+    { "type": "header", "content": "Bottom CTA band" },
+    { "type": "text", "id": "band_title", "label": "Title", "default": "Prefer to email your list directly?" },
+    { "type": "textarea", "id": "band_text", "label": "Text", "default": "Drop us a line at trade@mpgames.io — we'll come back with a quote within 2 working days." },
+    { "type": "text", "id": "band_button", "label": "Button label", "default": "Email trade@mpgames.io" }
+  ],
+  "blocks": [
+    {
+      "type": "highlight",
+      "name": "Highlight card",
+      "settings": [
+        { "type": "text", "id": "icon", "label": "Icon (emoji)", "default": "🎲" },
+        { "type": "text", "id": "title", "label": "Title", "default": "Fair valuations" },
+        { "type": "textarea", "id": "body", "label": "Body", "default": "We price based on condition, demand, and the current market — no algorithms, no take-it-or-leave-it." }
+      ]
+    },
+    {
+      "type": "step",
+      "name": "Process step",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Title", "default": "Send your list" },
+        { "type": "textarea", "id": "body", "label": "Body", "default": "Fill in the quote form below or email your list to trade@mpgames.io. Include the game name, edition, and condition — rough is fine." }
+      ]
+    },
+    {
+      "type": "faq",
+      "name": "FAQ",
+      "settings": [
+        { "type": "text", "id": "question", "label": "Question", "default": "How long does a quote take?" },
+        { "type": "richtext", "id": "answer", "label": "Answer", "default": "<p>We aim to come back to you within 2 working days. If your list is particularly large, it can occasionally take a little longer — we'll always let you know.</p>" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "MP Trade In",
+      "blocks": [
+        { "type": "highlight", "settings": { "icon": "💰", "title": "Fair valuations", "body": "We price based on condition, demand, and the current market — no algorithms, no low-ball offers." } },
+        { "type": "highlight", "settings": { "icon": "🚚", "title": "We sort the shipping", "body": "Nearby? We'll collect for free. Further away? We'll email you a prepaid label — no cost to you." } },
+        { "type": "highlight", "settings": { "icon": "⚡", "title": "Quick turnaround", "body": "Quote within 2 working days. Payment within 1–2 days of receiving and checking your games." } },
+        { "type": "step", "settings": { "title": "Send your list", "body": "Fill in the form with the games you'd like to trade. Include condition and any missing components — rough is fine." } },
+        { "type": "step", "settings": { "title": "Receive a quote", "body": "We'll review your list and come back within 2 working days with a fair valuation and your payment options." } },
+        { "type": "step", "settings": { "title": "Agree and ship", "body": "Happy with the offer? Tell us your postcode and preference — local collection or prepaid label — and we'll take it from there." } },
+        { "type": "step", "settings": { "title": "Get paid", "body": "Games arrive, we check them, we pay within 1–2 working days. Choose bank transfer, PayPal, or store credit with a bonus." } },
+        { "type": "faq", "settings": { "question": "What condition do games need to be in?", "answer": "<p>Good or better — minor shelf wear, small scuffs on the box, and light card wear are all fine. We can't take games with missing components, water damage, or heavy writing-in. If you're unsure, list it anyway and we'll advise.</p>" } },
+        { "type": "faq", "settings": { "question": "Do I have to pay for shipping?", "answer": "<p>No. If you're nearby we'll collect in person at no cost. If you're further away we'll send you a prepaid label — you just need to box the games up and drop them at a collection point.</p>" } },
+        { "type": "faq", "settings": { "question": "Can I trade expansions without the base game?", "answer": "<p>Yes — we'll consider expansions on their own. Just note which base game they belong to and we'll factor that into the quote.</p>" } },
+        { "type": "faq", "settings": { "question": "How is the value calculated?", "answer": "<p>We look at the game's condition, current demand, recent secondary-market prices, and our own stock levels. Store credit quotes come with a 10–15% bonus over the cash equivalent.</p>" } },
+        { "type": "faq", "settings": { "question": "What if I'm not happy with the quote?", "answer": "<p>No obligation — you can turn it down at any point before you ship. We'll never pressure you and we'll never cherry-pick; we quote on everything you list.</p>" } },
+        { "type": "faq", "settings": { "question": "How many games can I trade in at once?", "answer": "<p>As many as you like. If you're clearing a large collection, mention it in the form and we'll discuss the best way to handle it — we may be able to arrange collection even if you're further away.</p>" } }
+      ]
+    }
+  ],
+  "enabled_on": { "templates": ["page"] }
+}
+{% endschema %}
