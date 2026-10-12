@@ -85,7 +85,7 @@
 
   <div class="ti__hero"{% if section.settings.hero_image %} style="background-image:linear-gradient(115deg,rgba(22,50,63,.88),rgba(44,84,102,.8)),url('{{ section.settings.hero_image | image_url: width: 1800 }}')"{% endif %}>
     <span class="ti__kick mp-cond">{{ section.settings.kicker }}</span>
-    <h1 class="ti__htitle mp-cond" style="margin:0">{{ section.settings.title }}</h1>
+    <h1 class="ti__htitle mp-cond" style="margin:0;text-align:center">{{ section.settings.title }}</h1>
     <div class="ti__hsub">{{ section.settings.subtitle }}</div>
     <a class="ti__herob mp-cond" href="#ti-form-{{ section.id }}">{{ section.settings.hero_button }}</a>
   </div>
