@@ -206,7 +206,7 @@
             statusEl.className = '';
             statusEl.textContent = '';
             try {
-              var params = new URLSearchParams(new FormData(form));
+              var params = new URLSearchParams(new FormData(event.target));
               var response = await fetch('/apps/notify/proxy-trade-in', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'Accept': 'application/json' },
