@@ -45,6 +45,10 @@
   .mp-ti-{{ section.id }} .ti__area { width: 100%; box-sizing: border-box; border: 1px solid #d8d4cc; border-radius: 8px; padding: 12px 14px; font-size: 13.5px; background: #fbfaf7; font-family: inherit; color: #16323f; min-height: 160px; resize: vertical; }
   .mp-ti-{{ section.id }} .ti__hint { font-size: 11.5px; color: #9b948a; margin-top: 5px; display: block; }
   .mp-ti-{{ section.id }} .ti__ok { background: #e3f1e9; border: 1px solid #b6dcc6; color: #1f6b45; border-radius: 8px; padding: 12px 14px; font-size: 13px; margin-bottom: 16px; }
+  .mp-ti-{{ section.id }} .ti__success { text-align: center; padding: 48px 24px; }
+  .mp-ti-{{ section.id }} .ti__success-icon { width: 64px; height: 64px; background: #e3f1e9; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 28px; }
+  .mp-ti-{{ section.id }} .ti__success-h { font-size: 22px; font-weight: 700; color: #16323f; margin: 0 0 10px; }
+  .mp-ti-{{ section.id }} .ti__success-p { font-size: 14px; color: #4a443c; line-height: 1.65; max-width: 440px; margin: 0 auto; }
   .mp-ti-{{ section.id }} .ti__err { background: #fdecea; border: 1px solid #f3c0bb; color: #9a3b2e; border-radius: 8px; padding: 10px 13px; font-size: 12.5px; margin-bottom: 14px; }
   .mp-ti-{{ section.id }} .ti__submit { background: #f2872f; color: #fff; font-size: 15px; font-weight: 700; padding: 14px; border-radius: 9px; margin-top: 22px; border: 0; cursor: pointer; font-family: inherit; width: 100%; }
   .mp-ti-{{ section.id }} .ti__faqlist { display: flex; flex-direction: column; gap: 10px; }
@@ -217,8 +221,8 @@
               try { data = JSON.parse(text); } catch (_) { throw new Error(response.status + ': ' + text.slice(0, 120)); }
               if (data.ok) {
                 form.hidden = true;
-                statusEl.className = 'ti__ok';
-                statusEl.textContent = 'Thanks for your list — we\'ll come back to you within 2 working days with a quote.';
+                statusEl.innerHTML = '<div class="ti__success"><div class="ti__success-icon">✓</div><p class="ti__success-h mp-cond">List received — thanks!</p><p class="ti__success-p">We\'ll come back to you within 2 working days with a valuation. Keep an eye on your inbox (and your spam folder, just in case).</p></div>';
+                statusEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
               } else {
                 statusEl.className = 'ti__err';
                 statusEl.textContent = data.message || 'Something went wrong. Please try again.';
