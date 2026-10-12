@@ -153,50 +153,79 @@
       <div class="ti__formh mp-cond">{{ section.settings.form_heading }}</div>
       <div class="ti__formhint">{{ section.settings.form_sub }}</div>
       <div class="ti__fbox">
-        {%- form 'contact' -%}
-          {%- if form.posted_successfully? -%}
-            <div class="ti__ok">Thanks for your list — we'll come back to you within 2 working days with a quote.</div>
-          {%- endif -%}
-          {%- if form.errors -%}
-            <div class="ti__err">{{ form.errors | default_errors }}</div>
-          {%- endif -%}
-          <input type="hidden" name="contact[Enquiry type]" value="Trade In">
+        <div id="ti-status-{{ section.id }}" role="status"></div>
+        <form id="ti-form-{{ section.id }}">
           <div class="ti__grid2">
             <div class="ti__field">
               <label class="ti__label" for="ti-name-{{ section.id }}">Your name</label>
-              <input id="ti-name-{{ section.id }}" class="ti__input" type="text" name="contact[name]" value="{% if customer %}{{ customer.name }}{% endif %}" required>
+              <input id="ti-name-{{ section.id }}" class="ti__input" type="text" name="name" value="{% if customer %}{{ customer.name }}{% endif %}" required>
             </div>
             <div class="ti__field">
               <label class="ti__label" for="ti-email-{{ section.id }}">Email address</label>
-              <input id="ti-email-{{ section.id }}" class="ti__input" type="email" name="contact[email]" value="{% if customer %}{{ customer.email }}{% endif %}" required>
+              <input id="ti-email-{{ section.id }}" class="ti__input" type="email" name="email" value="{% if customer %}{{ customer.email }}{% endif %}" required>
             </div>
             <div class="ti__field">
               <label class="ti__label" for="ti-postcode-{{ section.id }}">Postcode</label>
-              <input id="ti-postcode-{{ section.id }}" class="ti__input" type="text" name="contact[Postcode]" placeholder="e.g. SW1A 1AA" required>
+              <input id="ti-postcode-{{ section.id }}" class="ti__input" type="text" name="postcode" placeholder="e.g. SW1A 1AA" required>
               <span class="ti__hint">Helps us work out whether we can collect or need to send a label.</span>
             </div>
             <div class="ti__field">
               <label class="ti__label" for="ti-phone-{{ section.id }}">Phone number <span class="ti__opt">(optional)</span></label>
-              <input id="ti-phone-{{ section.id }}" class="ti__input" type="tel" name="contact[Phone]" value="{% if customer %}{{ customer.phone }}{% endif %}">
+              <input id="ti-phone-{{ section.id }}" class="ti__input" type="tel" name="phone" value="{% if customer %}{{ customer.phone }}{% endif %}">
               <span class="ti__hint">Useful if you'd prefer us to arrange collection by phone.</span>
             </div>
           </div>
           <div class="ti__field">
             <label class="ti__label" for="ti-games-{{ section.id }}">Games you'd like to trade in</label>
-            <textarea id="ti-games-{{ section.id }}" class="ti__area" name="contact[body]" placeholder="List each game on a new line — name, edition if relevant, and condition. For example:&#10;&#10;Wingspan (2nd Ed.) — Very Good, complete&#10;Catan — Good, all pieces present&#10;Root — Fair, slight box wear, complete" required></textarea>
+            <textarea id="ti-games-{{ section.id }}" class="ti__area" name="games_list" placeholder="List each game on a new line — name, edition if relevant, and condition. For example:&#10;&#10;Wingspan (2nd Ed.) — Very Good, complete&#10;Catan — Good, all pieces present&#10;Root — Fair, slight box wear, complete" required></textarea>
             <span class="ti__hint">Rough is fine. Just flag anything obviously missing or damaged and we'll factor it in.</span>
           </div>
           <div class="ti__field">
             <label class="ti__label" for="ti-payment-{{ section.id }}">Payment preference</label>
-            <select id="ti-payment-{{ section.id }}" class="ti__select" name="contact[Payment preference]">
-              <option>Store credit (higher value)</option>
-              <option>Bank transfer</option>
-              <option>Not sure yet — happy to discuss</option>
+            <select id="ti-payment-{{ section.id }}" class="ti__select" name="payment_preference">
+              <option value="store_credit">Store credit (higher value)</option>
+              <option value="cash">Bank transfer</option>
             </select>
           </div>
+          <div class="ti__field">
+            <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:#4a443c;cursor:pointer">
+              <input type="checkbox" name="marketing_opt_in" value="true">
+              Keep me updated with news and offers from MPGames
+            </label>
+          </div>
           <button type="submit" class="ti__submit mp-cond">Send my list for a quote &rarr;</button>
-        {%- endform -%}
+        </form>
       </div>
+      <script>
+        (function () {
+          var form = document.getElementById('ti-form-{{ section.id }}');
+          var statusEl = document.getElementById('ti-status-{{ section.id }}');
+          if (!form) return;
+          form.addEventListener('submit', async function (event) {
+            event.preventDefault();
+            statusEl.className = '';
+            statusEl.textContent = '';
+            try {
+              var response = await fetch('/apps/notify/proxy-trade-in', {
+                method: 'POST',
+                body: new FormData(form),
+              });
+              var data = await response.json();
+              if (data.ok) {
+                form.hidden = true;
+                statusEl.className = 'ti__ok';
+                statusEl.textContent = 'Thanks for your list — we\'ll come back to you within 2 working days with a quote.';
+              } else {
+                statusEl.className = 'ti__err';
+                statusEl.textContent = data.message || 'Something went wrong. Please try again.';
+              }
+            } catch (_) {
+              statusEl.className = 'ti__err';
+              statusEl.textContent = 'Something went wrong. Please try again.';
+            }
+          });
+        })();
+      </script>
     </div>
   </div>
 
