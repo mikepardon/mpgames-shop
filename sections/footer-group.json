@@ -34,12 +34,20 @@
             "heading": "Company",
             "links": "About MPGames|/pages/about\nFrom the blog|/blogs/news\nBrowse the collection|/collections"
           }
+        },
+        "sell-trade": {
+          "type": "column",
+          "settings": {
+            "heading": "Sell & Trade",
+            "links": "Trade in your games|/pages/trade-in"
+          }
         }
       },
       "block_order": [
         "shop",
         "help",
-        "company"
+        "company",
+        "sell-trade"
       ],
       "settings": {
         "blurb": "The UK's board game specialist — every title ranked by the data that matters.",
