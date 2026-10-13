@@ -49,6 +49,7 @@
   .mp-ti-{{ section.id }} .ti__success-icon { width: 64px; height: 64px; background: #e3f1e9; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 28px; }
   .mp-ti-{{ section.id }} .ti__success-h { font-size: 22px; font-weight: 700; color: #16323f; margin: 0 0 10px; }
   .mp-ti-{{ section.id }} .ti__success-p { font-size: 14px; color: #4a443c; line-height: 1.65; max-width: 440px; margin: 0 auto; }
+  .mp-ti-{{ section.id }} .ti__back-btn { display: inline-block; background: #f2872f; color: #fff; font-size: 15px; font-weight: 700; padding: 13px 28px; border-radius: 9px; text-decoration: none; margin-top: 22px; }
   .mp-ti-{{ section.id }} .ti__err { background: #fdecea; border: 1px solid #f3c0bb; color: #9a3b2e; border-radius: 8px; padding: 10px 13px; font-size: 12.5px; margin-bottom: 14px; }
   .mp-ti-{{ section.id }} .ti__submit { background: #f2872f; color: #fff; font-size: 15px; font-weight: 700; padding: 14px; border-radius: 9px; margin-top: 22px; border: 0; cursor: pointer; font-family: inherit; width: 100%; }
   .mp-ti-{{ section.id }} .ti__file-wrap { margin-top: 16px; }
@@ -212,23 +213,45 @@
           </div>
           <button type="submit" class="ti__submit mp-cond">Submit for a quote &rarr;</button>
         </form>
+        <div id="ti-success-{{ section.id }}" class="ti__success" style="display:none">
+          <div class="ti__success-icon">✓</div>
+          <h2 class="ti__success-h mp-cond">Request received — thank you!</h2>
+          <p class="ti__success-p">We'll review your collection and be in touch with a no-obligation quote. This usually takes 1–2 business days.</p>
+          <a href="{{ routes.root_url }}" class="ti__back-btn mp-cond">Go back to store</a>
+        </div>
       </div>
       <script>
         (function () {
           var form = document.getElementById('ti-form-{{ section.id }}');
           if (!form) return;
           form.addEventListener('submit', function (event) {
+            event.preventDefault();
             var gamesListEl = form.querySelector('[name="games_list"]');
             var spreadsheetEl = form.querySelector('[name="spreadsheet"]');
             var hasText = gamesListEl && gamesListEl.value.trim() !== '';
             var hasFile = spreadsheetEl && spreadsheetEl.files && spreadsheetEl.files.length > 0;
+            var statusEl = document.getElementById('ti-status-{{ section.id }}');
             if (!hasText && !hasFile) {
-              event.preventDefault();
-              var statusEl = document.getElementById('ti-status-{{ section.id }}');
               statusEl.className = 'ti__err';
               statusEl.textContent = 'Please either type your games list or upload a spreadsheet.';
               statusEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              return;
             }
+            var submitBtn = form.querySelector('.ti__submit');
+            if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Sending…'; }
+            fetch(form.action, { method: 'POST', body: new FormData(form), mode: 'no-cors' })
+              .then(function () {
+                form.style.display = 'none';
+                statusEl.className = '';
+                statusEl.textContent = '';
+                var successEl = document.getElementById('ti-success-{{ section.id }}');
+                if (successEl) { successEl.style.display = ''; }
+              })
+              .catch(function () {
+                if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Submit for a quote →'; }
+                statusEl.className = 'ti__err';
+                statusEl.textContent = 'Something went wrong — please try again or email us at trade@mpgames.io.';
+              });
           });
         })();
       </script>
