@@ -74,6 +74,12 @@
       padding-top: 0.5rem;
     }
   }
+
+  .header__trade-in-link {
+    white-space: nowrap;
+    font-size: 1.4rem;
+    padding: 1rem;
+  }
 </style>
 
 {%- style -%}
@@ -284,6 +290,8 @@
             {% render block %}
         {%- endcase -%}
       {%- endfor -%}
+
+      <a href="/pages/trade-in" class="header__trade-in-link link link--text focus-inset small-hide medium-hide">Trade In</a>
 
       <a href="{{ routes.cart_url }}" class="header__icon header__icon--cart link focus-inset" id="cart-icon-bubble">
         {% if cart == empty %}

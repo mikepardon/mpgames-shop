@@ -136,6 +136,9 @@
             </ul>
           </nav>
           <div class="menu-drawer__utility-links">
+            <a href="/pages/trade-in" class="menu-drawer__menu-item list-menu__item link link--text focus-inset">
+              Trade In
+            </a>
             {%- if shop.customer_accounts_enabled -%}
               <a
                 href="{%- if customer -%}{{ routes.account_url }}{%- else -%}{{ routes.account_login_url }}{%- endif -%}"
