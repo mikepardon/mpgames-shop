@@ -161,7 +161,7 @@
       <div class="ti__formhint">{{ section.settings.form_sub }}</div>
       <div class="ti__fbox">
         <div id="ti-status-{{ section.id }}" role="status"></div>
-        <form id="ti-form-{{ section.id }}">
+        <form id="ti-form-{{ section.id }}" action="https://partners.mpgames.io/sell-your-games" method="post" enctype="multipart/form-data">
           <div class="ti__grid2">
             <div class="ti__field">
               <label class="ti__label" for="ti-name-{{ section.id }}">Your name</label>
@@ -183,12 +183,19 @@
             </div>
           </div>
           <div class="ti__field">
-            <label class="ti__label" for="ti-games-{{ section.id }}">Games you'd like to trade in</label>
-            <textarea id="ti-games-{{ section.id }}" class="ti__area" name="games_list" placeholder="List each game on a new line — title, edition, and condition. Include any expansions, promos, or Kickstarter extras. For example:&#10;&#10;Wingspan (2nd Ed.) — Very Good, complete with all promos&#10;Catan — Good, all pieces present&#10;Root — Fair, slight box wear, missing one card" required></textarea>
+            <label class="ti__label" for="ti-games-{{ section.id }}">Games you'd like to trade in <span class="ti__opt">(optional if uploading a spreadsheet)</span></label>
+            <textarea id="ti-games-{{ section.id }}" class="ti__area" name="games_list" placeholder="List each game on a new line — title, edition, and condition. Include any expansions, promos, or Kickstarter extras. For example:&#10;&#10;Wingspan (2nd Ed.) — Very Good, complete with all promos&#10;Catan — Good, all pieces present&#10;Root — Fair, slight box wear, missing one card"></textarea>
             <span class="ti__hint">Include title, edition, condition, and any expansions or accessories. Flag anything missing or damaged. Rough is fine.</span>
           </div>
-          <div class="ti__field" style="background:#f5f1ea;border-radius:9px;padding:14px 16px;font-size:13px;color:#4a443c;line-height:1.55">
-            <strong>Got a large collection or want to include a spreadsheet or photos?</strong> Use our <a href="https://partners.mpgames.io/sell-your-games" style="color:#f2872f;text-decoration:underline">full upload form</a> instead — it accepts an Excel or CSV spreadsheet and lets you attach photos of any damage or missing components.
+          <div class="ti__file-wrap">
+            <label class="ti__label" for="ti-spreadsheet-{{ section.id }}">Or upload a spreadsheet <span class="ti__opt">(Excel or CSV — preferred for larger collections)</span></label>
+            <input id="ti-spreadsheet-{{ section.id }}" class="ti__file" type="file" name="spreadsheet" accept=".xlsx,.xls,.csv">
+            <span class="ti__hint">.xlsx, .xls, or .csv — up to 10 MB</span>
+          </div>
+          <div class="ti__file-wrap">
+            <label class="ti__label" for="ti-images-{{ section.id }}">Photos of damage or missing components <span class="ti__opt">(optional)</span></label>
+            <input id="ti-images-{{ section.id }}" class="ti__file" type="file" name="images[]" accept="image/jpeg,image/png,image/webp,image/gif" multiple>
+            <span class="ti__hint">Only if there's something we should see before we quote. JPG, PNG, WebP — up to 8 MB each, max 10 photos.</span>
           </div>
           <div class="ti__field">
             <label class="ti__label" for="ti-payment-{{ section.id }}">Payment preference</label>
@@ -203,40 +210,24 @@
               Keep me updated with news and offers from MPGames
             </label>
           </div>
-          <button type="submit" class="ti__submit mp-cond">Send my list for a quote &rarr;</button>
+          <button type="submit" class="ti__submit mp-cond">Submit for a quote &rarr;</button>
         </form>
       </div>
       <script>
         (function () {
           var form = document.getElementById('ti-form-{{ section.id }}');
-          var statusEl = document.getElementById('ti-status-{{ section.id }}');
           if (!form) return;
-          form.addEventListener('submit', async function (event) {
-            event.preventDefault();
-            statusEl.className = '';
-            statusEl.textContent = '';
-            try {
-              var params = new URLSearchParams(new FormData(event.target));
-              var response = await fetch('/apps/notify/proxy-trade-in', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'Accept': 'application/json' },
-                body: params.toString(),
-              });
-              var text = await response.text();
-              var data;
-              try { data = JSON.parse(text); } catch (_) { throw new Error(response.status + ': ' + text.slice(0, 120)); }
-              if (data.ok) {
-                form.hidden = true;
-                statusEl.innerHTML = '<div class="ti__success"><div class="ti__success-icon">&#10003;</div><p class="ti__success-h mp-cond">List received — thanks!</p><p class="ti__success-p">We\'ll come back to you within 2 working days with a valuation. Keep an eye on your inbox (and your spam folder, just in case).</p></div>';
-                statusEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-              } else {
-                statusEl.className = 'ti__err';
-                statusEl.textContent = data.message || 'Something went wrong. Please try again.';
-              }
-            } catch (error) {
+          form.addEventListener('submit', function (event) {
+            var gamesListEl = form.querySelector('[name="games_list"]');
+            var spreadsheetEl = form.querySelector('[name="spreadsheet"]');
+            var hasText = gamesListEl && gamesListEl.value.trim() !== '';
+            var hasFile = spreadsheetEl && spreadsheetEl.files && spreadsheetEl.files.length > 0;
+            if (!hasText && !hasFile) {
+              event.preventDefault();
+              var statusEl = document.getElementById('ti-status-{{ section.id }}');
               statusEl.className = 'ti__err';
-              statusEl.textContent = 'Something went wrong. Please try again.';
-              console.error('[trade-in]', error);
+              statusEl.textContent = 'Please either type your games list or upload a spreadsheet.';
+              statusEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
           });
         })();
