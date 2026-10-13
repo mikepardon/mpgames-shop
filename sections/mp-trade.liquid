@@ -51,6 +51,9 @@
   .mp-ti-{{ section.id }} .ti__success-p { font-size: 14px; color: #4a443c; line-height: 1.65; max-width: 440px; margin: 0 auto; }
   .mp-ti-{{ section.id }} .ti__err { background: #fdecea; border: 1px solid #f3c0bb; color: #9a3b2e; border-radius: 8px; padding: 10px 13px; font-size: 12.5px; margin-bottom: 14px; }
   .mp-ti-{{ section.id }} .ti__submit { background: #f2872f; color: #fff; font-size: 15px; font-weight: 700; padding: 14px; border-radius: 9px; margin-top: 22px; border: 0; cursor: pointer; font-family: inherit; width: 100%; }
+  .mp-ti-{{ section.id }} .ti__file-wrap { margin-top: 16px; }
+  .mp-ti-{{ section.id }} .ti__file { display: block; width: 100%; box-sizing: border-box; border: 1.5px dashed #c8c0b4; border-radius: 8px; padding: 11px 14px; font-size: 13px; background: #fbfaf7; font-family: inherit; color: #16323f; cursor: pointer; }
+  .mp-ti-{{ section.id }} .ti__file:hover { border-color: #f2872f; background: #fff9f4; }
   .mp-ti-{{ section.id }} .ti__faqlist { display: flex; flex-direction: column; gap: 10px; }
   .mp-ti-{{ section.id }} .ti__faqitem { border: 1px solid #e7ddcb; border-radius: 12px; background: #fff; overflow: hidden; box-shadow: 0 1px 2px rgba(20,40,50,.04); }
   .mp-ti-{{ section.id }} .ti__faqitem summary { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 16px 18px; cursor: pointer; list-style: none; }
@@ -158,7 +161,7 @@
       <div class="ti__formhint">{{ section.settings.form_sub }}</div>
       <div class="ti__fbox">
         <div id="ti-status-{{ section.id }}" role="status"></div>
-        <form id="ti-form-{{ section.id }}">
+        <form id="ti-form-{{ section.id }}" action="https://partners.mpgames.io/sell-your-games" method="post" enctype="multipart/form-data">
           <div class="ti__grid2">
             <div class="ti__field">
               <label class="ti__label" for="ti-name-{{ section.id }}">Your name</label>
@@ -180,9 +183,19 @@
             </div>
           </div>
           <div class="ti__field">
-            <label class="ti__label" for="ti-games-{{ section.id }}">Games you'd like to trade in</label>
-            <textarea id="ti-games-{{ section.id }}" class="ti__area" name="games_list" placeholder="List each game on a new line — name, edition if relevant, and condition. For example:&#10;&#10;Wingspan (2nd Ed.) — Very Good, complete&#10;Catan — Good, all pieces present&#10;Root — Fair, slight box wear, complete" required></textarea>
-            <span class="ti__hint">Rough is fine. Just flag anything obviously missing or damaged and we'll factor it in.</span>
+            <label class="ti__label" for="ti-games-{{ section.id }}">Games you'd like to trade in <span class="ti__opt">(or upload a spreadsheet below)</span></label>
+            <textarea id="ti-games-{{ section.id }}" class="ti__area" name="games_list" placeholder="List each game on a new line — title, edition, and condition. Include any expansions, promos, or Kickstarter extras. For example:&#10;&#10;Wingspan (2nd Ed.) — Very Good, complete with all promos&#10;Catan — Good, all pieces present&#10;Root — Fair, slight box wear, missing one card"></textarea>
+            <span class="ti__hint">Include title, edition, condition, and any expansions or accessories. Flag anything missing or damaged. Rough is fine.</span>
+          </div>
+          <div class="ti__file-wrap">
+            <label class="ti__label" for="ti-spreadsheet-{{ section.id }}">Spreadsheet <span class="ti__opt">(Excel or CSV — preferred for larger collections)</span></label>
+            <input id="ti-spreadsheet-{{ section.id }}" class="ti__file" type="file" name="spreadsheet" accept=".xlsx,.xls,.csv">
+            <span class="ti__hint">An Excel or CSV file listing your games. At least one of this or the text list above is required.</span>
+          </div>
+          <div class="ti__file-wrap">
+            <label class="ti__label" for="ti-images-{{ section.id }}">Photos <span class="ti__opt">(optional — up to 10 images)</span></label>
+            <input id="ti-images-{{ section.id }}" class="ti__file" type="file" name="images[]" accept="image/jpeg,image/png,image/webp,image/gif" multiple>
+            <span class="ti__hint">Only if there's notable damage, missing components, or anything else you'd like us to see before quoting. JPEG, PNG, or WebP, up to 8 MB each.</span>
           </div>
           <div class="ti__field">
             <label class="ti__label" for="ti-payment-{{ section.id }}">Payment preference</label>
@@ -205,32 +218,16 @@
           var form = document.getElementById('ti-form-{{ section.id }}');
           var statusEl = document.getElementById('ti-status-{{ section.id }}');
           if (!form) return;
-          form.addEventListener('submit', async function (event) {
-            event.preventDefault();
-            statusEl.className = '';
-            statusEl.textContent = '';
-            try {
-              var params = new URLSearchParams(new FormData(event.target));
-              var response = await fetch('/apps/notify/proxy-trade-in', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'Accept': 'application/json' },
-                body: params.toString(),
-              });
-              var text = await response.text();
-              var data;
-              try { data = JSON.parse(text); } catch (_) { throw new Error(response.status + ': ' + text.slice(0, 120)); }
-              if (data.ok) {
-                form.hidden = true;
-                statusEl.innerHTML = '<div class="ti__success"><div class="ti__success-icon">✓</div><p class="ti__success-h mp-cond">List received — thanks!</p><p class="ti__success-p">We\'ll come back to you within 2 working days with a valuation. Keep an eye on your inbox (and your spam folder, just in case).</p></div>';
-                statusEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-              } else {
-                statusEl.className = 'ti__err';
-                statusEl.textContent = data.message || 'Something went wrong. Please try again.';
-              }
-            } catch (error) {
+          form.addEventListener('submit', function (event) {
+            var gamesListEl = document.getElementById('ti-games-{{ section.id }}');
+            var spreadsheetEl = document.getElementById('ti-spreadsheet-{{ section.id }}');
+            var hasText = gamesListEl && gamesListEl.value.trim() !== '';
+            var hasSpreadsheet = spreadsheetEl && spreadsheetEl.files.length > 0;
+            if (!hasText && !hasSpreadsheet) {
+              event.preventDefault();
               statusEl.className = 'ti__err';
-              statusEl.textContent = 'Something went wrong. Please try again.';
-              console.error('[trade-in]', error);
+              statusEl.textContent = 'Please either list your games in the text field above, or upload a spreadsheet.';
+              statusEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
           });
         })();
@@ -279,7 +276,7 @@
     { "type": "text", "id": "steps_sub", "label": "Subheading", "default": "Four simple steps from list to payment." },
     { "type": "header", "content": "Info panels" },
     { "type": "text", "id": "accept_heading", "label": "Left panel heading", "default": "What we're looking for" },
-    { "type": "richtext", "id": "accept_body", "label": "Left panel body", "default": "<p>We buy most modern board games in good condition. Here's what makes a strong trade:</p><ul><li><strong>Complete</strong> — all components present (check the insert)</li><li><strong>Good condition or better</strong> — light shelf wear is fine, no water damage or heavy marking</li><li><strong>Published in the last 20 years</strong>, or a genuine classic</li></ul><p>We also take RPG books, card games, miniature games, and accessories. Expansions are welcome with or without the base game. Not sure? List it anyway — the worst we can say is no.</p>" },
+    { "type": "richtext", "id": "accept_body", "label": "Left panel body", "default": "<p>To get an accurate quote, please send us:</p><ul><li><strong>A list of your games</strong> — title, edition, and condition. A spreadsheet is preferred for larger collections.</li><li><strong>Expansions, promos, and Kickstarter content</strong> — note what's included with each game.</li><li><strong>Condition notes</strong> — shelf wear is fine; just be honest about anything obviously missing or damaged.</li><li><strong>Photos only if needed</strong> — damage, missing components, or anything else you'd like us to see before we quote.</li></ul><p>Expansions are welcome with or without the base game. Not sure if something's worth including? List it anyway.</p>" },
     { "type": "text", "id": "collect_heading", "label": "Right panel heading", "default": "Local collection or prepaid label?" },
     { "type": "richtext", "id": "collect_body", "label": "Right panel body", "default": "<p>We don't have a shop, but we do collect in person for customers close by.</p><ul><li><strong>Nearby?</strong> Once your quote is agreed, we'll arrange a free collection at a time that suits you.</li><li><strong>Further away?</strong> We'll email you a prepaid shipping label — box your games up and drop them at the nearest collection point.</li></ul><p>Let us know your postcode in the form and we'll advise which applies to you.</p>" },
     { "type": "header", "content": "Payment" },
@@ -290,7 +287,7 @@
     { "type": "richtext", "id": "cash_body", "label": "Bank transfer body", "default": "<p>Prefer cash in hand? We'll pay by bank transfer within 1–2 working days of receiving and checking your games. PayPal is also available — just let us know when you accept the quote.</p>" },
     { "type": "header", "content": "Quote form" },
     { "type": "text", "id": "form_heading", "label": "Heading", "default": "Get a quote" },
-    { "type": "text", "id": "form_sub", "label": "Subtitle", "default": "Fill in your list and we'll come back with a valuation within 2 working days. No obligation — you can turn down any offer." },
+    { "type": "text", "id": "form_sub", "label": "Subtitle", "default": "List your games below — or upload a spreadsheet for larger collections. Attach photos if there's any damage or missing components we should know about. We'll come back within 2 working days. No obligation." },
     { "type": "header", "content": "FAQs" },
     { "type": "text", "id": "faq_heading", "label": "Heading", "default": "Common questions" },
     { "type": "header", "content": "Bottom CTA band" },
