@@ -66,6 +66,15 @@
               data-cascade
             {% endif %}
           >
+            <div class="footer-block grid__item footer-block--menu{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
+              <h2 class="footer-block__heading inline-richtext">Sell &amp; Trade</h2>
+              <ul class="footer-block__details-content list-unstyled">
+                <li>
+                  <a href="/pages/trade-in" class="link link--text list-menu__item list-menu__item--link">Trade in your games</a>
+                </li>
+              </ul>
+            </div>
+
             {%- for block in section.blocks -%}
               <div
                 class="footer-block grid__item{% if block.type == 'link_list' %} footer-block--menu{% endif %}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
