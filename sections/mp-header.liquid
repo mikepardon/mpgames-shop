@@ -373,22 +373,35 @@
               {%- endfor -%}
             {%- endif -%}
           {%- endcapture -%}
-          {%- comment -%} Vary the featured card per panel so the same product doesn't repeat across menus.
-             Designer/Artist/Publisher panels feature a real game from that family; others use the merchandised pick. {%- endcomment -%}
+          {%- comment -%} Vary the featured card per panel. Pinned products (section settings) win;
+             designer/artist/mechanic panels fall back to the first matching collection product;
+             everything else uses the merchandised editor's pick. {%- endcomment -%}
           {%- assign panel_feature = featured -%}
           {%- assign panel_eyebrow = "Editor's pick" -%}
-          {%- if auto_kind == 'designer' or auto_kind == 'artist' or auto_kind == 'vendor' or auto_kind == 'mechanic' -%}
-            {%- assign cprefix = auto_prefix -%}
-            {%- for c in collections -%}
-              {%- if c.handle contains cprefix and c.all_products_count > 0 -%}
-                {%- assign cand = c.products.first -%}
-                {%- if cand != blank -%}
-                  {%- assign panel_feature = cand -%}
-                  {%- if auto_kind == 'designer' -%}{%- assign panel_eyebrow = 'Featured designer' -%}{%- elsif auto_kind == 'artist' -%}{%- assign panel_eyebrow = 'Featured artist' -%}{%- elsif auto_kind == 'mechanic' -%}{%- assign panel_eyebrow = 'Featured game' -%}{%- else -%}{%- assign panel_eyebrow = 'Featured publisher' -%}{%- endif -%}
-                {%- endif -%}
-                {%- break -%}
-              {%- endif -%}
-            {%- endfor -%}
+          {%- if auto_kind == 'designer' -%}
+            {%- assign panel_eyebrow = 'Featured designer' -%}
+            {%- if section.settings.featured_designer_product != blank -%}
+              {%- assign panel_feature = all_products[section.settings.featured_designer_product] -%}
+            {%- else -%}
+              {%- for c in collections -%}{%- if c.handle contains 'designer-' and c.all_products_count > 0 -%}{%- assign cand = c.products.first -%}{%- if cand != blank -%}{%- assign panel_feature = cand -%}{%- endif -%}{%- break -%}{%- endif -%}{%- endfor -%}
+            {%- endif -%}
+          {%- elsif auto_kind == 'artist' -%}
+            {%- assign panel_eyebrow = 'Featured artist' -%}
+            {%- if section.settings.featured_artist_product != blank -%}
+              {%- assign panel_feature = all_products[section.settings.featured_artist_product] -%}
+            {%- else -%}
+              {%- for c in collections -%}{%- if c.handle contains 'artist-' and c.all_products_count > 0 -%}{%- assign cand = c.products.first -%}{%- if cand != blank -%}{%- assign panel_feature = cand -%}{%- endif -%}{%- break -%}{%- endif -%}{%- endfor -%}
+            {%- endif -%}
+          {%- elsif auto_kind == 'mechanic' -%}
+            {%- assign panel_eyebrow = 'Featured game' -%}
+            {%- if section.settings.featured_mechanic_product != blank -%}
+              {%- assign panel_feature = all_products[section.settings.featured_mechanic_product] -%}
+            {%- else -%}
+              {%- for c in collections -%}{%- if c.handle contains 'mechanic-' and c.all_products_count > 0 -%}{%- assign cand = c.products.first -%}{%- if cand != blank -%}{%- assign panel_feature = cand -%}{%- endif -%}{%- break -%}{%- endif -%}{%- endfor -%}
+            {%- endif -%}
+          {%- elsif auto_kind == 'vendor' -%}
+            {%- assign panel_eyebrow = 'Featured publisher' -%}
+            {%- for c in collections -%}{%- if c.handle contains 'publisher-' and c.all_products_count > 0 -%}{%- assign cand = c.products.first -%}{%- if cand != blank -%}{%- assign panel_feature = cand -%}{%- endif -%}{%- break -%}{%- endif -%}{%- endfor -%}
           {%- endif -%}
           {%- if link.links.size > 0 -%}
             <div class="mp-nav__item">
@@ -396,11 +409,26 @@
               <div class="mp-mega">
                 <div class="mp-mega__in">
                   {%- for col in link.links -%}
+                    {%- assign col_title_lower = col.title | downcase -%}
+                    {%- assign col_prefix = '' -%}
+                    {%- if col_title_lower contains 'player' -%}{%- assign col_prefix = 'players-' -%}
+                    {%- elsif col_title_lower contains 'play time' or col_title_lower contains 'playtime' -%}{%- assign col_prefix = 'playtime-' -%}
+                    {%- elsif col_title_lower contains 'categor' -%}{%- assign col_prefix = 'cat-' -%}
+                    {%- elsif col_title_lower contains 'complex' -%}{%- assign col_prefix = 'complexity-' -%}
+                    {%- endif -%}
                     <div class="mp-mega__col">
                       <div class="mp-mega__h">{{ col.title }}</div>
-                      {%- for sub in col.links -%}
-                        <a class="mp-mega__link" href="{{ sub.url }}">{{ sub.title }}</a>
-                      {%- endfor -%}
+                      {%- if col.links.size > 0 -%}
+                        {%- for sub in col.links -%}
+                          <a class="mp-mega__link" href="{{ sub.url }}">{{ sub.title }}</a>
+                        {%- endfor -%}
+                      {%- elsif col_prefix != '' -%}
+                        {%- for c in collections -%}
+                          {%- if c.handle contains col_prefix and c.all_products_count > 0 -%}
+                            <a class="mp-mega__link" href="{{ c.url }}">{{ c.title }}</a>
+                          {%- endif -%}
+                        {%- endfor -%}
+                      {%- endif -%}
                       {%- if col.url != blank and col.url != '/' -%}
                         <a class="mp-mega__all" href="{{ col.url }}">Shop all &raquo;</a>
                       {%- endif -%}
@@ -502,7 +530,10 @@
     { "type": "text", "id": "search_placeholder", "label": "Search placeholder", "default": "Search games, designers, publishers…" },
     { "type": "link_list", "id": "menu", "label": "Mega-nav menu", "info": "Leave empty to use the built-in real-collection links." },
     { "type": "url", "id": "all_url", "label": "All Games link", "info": "Defaults to /collections/all-games." },
-    { "type": "product", "id": "featured_product", "label": "Mega-menu featured product" },
+    { "type": "product", "id": "featured_product", "label": "Mega-menu featured product (Editor's pick)" },
+    { "type": "product", "id": "featured_designer_product", "label": "Featured designer product (overrides auto-pick)" },
+    { "type": "product", "id": "featured_mechanic_product", "label": "Featured game product (overrides auto-pick)" },
+    { "type": "product", "id": "featured_artist_product", "label": "Featured artist product (overrides auto-pick)" },
     { "type": "url", "id": "wishlist_url", "label": "Wishlist URL" },
     { "type": "url", "id": "sale_url", "label": "Sale link URL", "info": "Defaults to /collections/sale." }
   ],
