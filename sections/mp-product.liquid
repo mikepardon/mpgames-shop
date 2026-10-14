@@ -87,6 +87,31 @@
   if section.settings.returns_fees == 'free'
     assign return_fees_url = 'https://schema.org/FreeReturn'
   endif
+
+  assign po_condition = m.preowned_condition.value
+  assign po_notes = m.preowned_condition_notes.value
+  assign po_photos = m.preowned_condition_photos.value
+  assign po_included = m.preowned_included.value
+  assign po_missing = m.preowned_missing.value
+  assign po_color = '#6b7a82'
+  assign po_bg = '#f0f2f4'
+  if po_condition == 'Like New'
+    assign po_color = '#2f8f5b'
+    assign po_bg = '#e3f1e9'
+  elsif po_condition == 'Very Good'
+    assign po_color = '#1d7db5'
+    assign po_bg = '#deeef8'
+  elsif po_condition == 'Good'
+    assign po_color = '#b4560f'
+    assign po_bg = '#fff0e4'
+  elsif po_condition == 'Acceptable'
+    assign po_color = '#7a5c48'
+    assign po_bg = '#f0ece6'
+  endif
+  assign is_preowned = false
+  if product.tags contains 'pre-owned'
+    assign is_preowned = true
+  endif
 -%}
 
 {%- style -%}
@@ -334,6 +359,32 @@
     .mp-pdp-{{ section.id }} .pdp__h { font-size: 21px; }
   }
   .mp-pdp-{{ section.id }} [data-gw-modal] .pdp__modal-add { flex: 1; padding: 13px; font-size: 14px; border-radius: 9px; }
+
+  /* Pre-owned condition */
+  .mp-pdp-{{ section.id }} .pdp__po-badge { display: flex; align-items: center; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+  .mp-pdp-{{ section.id }} .pdp__po-grade { display: inline-flex; align-items: center; gap: 7px; padding: 6px 13px; border-radius: 20px; font-size: 13px; font-weight: 700; }
+  .mp-pdp-{{ section.id }} .pdp__po-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex: none; }
+  .mp-pdp-{{ section.id }} .pdp__po-label { font-size: 12px; color: #6b7a82; font-weight: 600; }
+  .mp-pdp-{{ section.id }} .pdp__po { margin-top: 16px; border: 1.5px solid #e8d9a8; background: #fffbf0; border-radius: 12px; overflow: hidden; }
+  .mp-pdp-{{ section.id }} .pdp__po-h { font-size: 12px; font-weight: 700; color: #7a5c14; text-transform: uppercase; letter-spacing: .6px; display: flex; align-items: center; gap: 8px; padding: 13px 16px 0; margin-bottom: 0; }
+  .mp-pdp-{{ section.id }} .pdp__po-notes { font-size: 13px; line-height: 1.55; color: #4a443c; padding: 10px 16px 14px; border-bottom: 1px solid #f0e4c0; }
+  .mp-pdp-{{ section.id }} .pdp__po-photos { padding: 14px 16px; display: flex; gap: 9px; overflow-x: auto; scrollbar-width: thin; border-bottom: 1px solid #f0e4c0; }
+  .mp-pdp-{{ section.id }} .pdp__po-photos::-webkit-scrollbar { height: 4px; }
+  .mp-pdp-{{ section.id }} .pdp__po-photos::-webkit-scrollbar-thumb { background: #d8cbb0; border-radius: 4px; }
+  .mp-pdp-{{ section.id }} .pdp__po-photo { width: 90px; height: 90px; border-radius: 8px; overflow: hidden; flex: none; border: 2px solid transparent; cursor: pointer; background: #f0ece4; padding: 0; }
+  .mp-pdp-{{ section.id }} .pdp__po-photo.is-active { border-color: #b4560f; }
+  .mp-pdp-{{ section.id }} .pdp__po-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .mp-pdp-{{ section.id }} .pdp__po-checklist { padding: 14px 16px; border-bottom: 1px solid #f0e4c0; }
+  .mp-pdp-{{ section.id }} .pdp__po-clh { font-size: 11.5px; font-weight: 700; color: #7a5c14; text-transform: uppercase; letter-spacing: .6px; margin-bottom: 10px; }
+  .mp-pdp-{{ section.id }} .pdp__po-items { display: flex; flex-direction: column; gap: 7px; }
+  .mp-pdp-{{ section.id }} .pdp__po-item { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; color: #4a443c; }
+  .mp-pdp-{{ section.id }} .pdp__po-item--missing { color: #d6402e; }
+  .mp-pdp-{{ section.id }} .pdp__po-item--missing span:last-child { text-decoration: line-through; }
+  .mp-pdp-{{ section.id }} .pdp__po-icon { width: 16px; height: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; flex: none; margin-top: 1px; }
+  .mp-pdp-{{ section.id }} .pdp__po-icon--ok { background: #e3f1e9; color: #2f8f5b; }
+  .mp-pdp-{{ section.id }} .pdp__po-icon--miss { background: #fce8e6; color: #d6402e; }
+  .mp-pdp-{{ section.id }} .pdp__po-save { padding: 12px 16px; display: flex; align-items: center; gap: 7px; font-size: 13px; color: #7a5c14; font-weight: 600; }
+  .mp-pdp-{{ section.id }} .pdp__po-save strong { color: #2f8f5b; }
 {%- endstyle -%}
 
 <div class="mp-pdp-{{ section.id }}" data-pdp>
@@ -350,7 +401,8 @@
     <div class="pdp__top">
       <div class="pdp__gallery">
         <div class="pdp__main">
-          {%- if on_sale -%}<span class="pdp__flag">SALE · -{{ disc }}%</span>{%- endif -%}
+          {%- if is_preowned and on_sale -%}<span class="pdp__flag" style="background:#b4560f">PRE-OWNED</span>
+          {%- elsif on_sale -%}<span class="pdp__flag">SALE · -{{ disc }}%</span>{%- endif -%}
           {%- if product.featured_media -%}
             <img id="pdp-main-{{ section.id }}" src="{{ product.featured_media | image_url: width: 1100 }}" alt="{% if product.featured_media.alt != blank %}{{ product.featured_media.alt | escape }}{% else %}{{ alt_base | escape }}{% endif %}" width="1100" height="1100">
           {%- else -%}
@@ -381,11 +433,21 @@
           <span class="pdp__sub"><div class="jdgm-widget jdgm-preview-badge" data-id="{{ product.id }}">{{ product.metafields.judgeme.badge }}</div></span>
         </div>
 
+        {%- if is_preowned -%}
+          <div class="pdp__po-badge">
+            <span class="pdp__po-grade" style="background:{{ po_bg }};color:{{ po_color }}">
+              <span class="pdp__po-dot" style="background:{{ po_color }}"></span>
+              Pre-owned{%- if po_condition != blank -%} &middot; {{ po_condition }}{%- endif -%}
+            </span>
+            {%- if po_condition != blank -%}<span class="pdp__po-label">Condition grade</span>{%- endif -%}
+          </div>
+        {%- endif -%}
+
         <div class="pdp__price">
           <span class="pdp__rrp" data-rrp{% unless on_sale %} hidden{% endunless %}>{{ product.compare_at_price | money }}</span>
           {%- if has_msrp -%}<span class="pdp__rrp pdp__msrp" data-msrp-rrp><span class="pdp__rrp-label">RRP</span> <span class="pdp__rrp-val">{{ msrp_money }}</span></span>{%- endif -%}
           <span class="pdp__now" data-price>{{ product.price | money }}</span>
-          <span class="pdp__saletag" data-saletag{% unless on_sale %} hidden{% endunless %}>Sale</span>
+          <span class="pdp__saletag" data-saletag{% unless on_sale %} hidden{% endunless %}>{% if is_preowned %}Pre-Owned{% else %}Sale{% endif %}</span>
           {%- if has_msrp -%}<span class="pdp__saletag pdp__savetag" data-msrp-save>Save {{ msrp_save_money }}</span>{%- endif -%}
         </div>
         <div class="pdp__tax">Taxes included<span data-ships-note{% if variant.requires_shipping == false %} hidden{% endif %}> · {{ section.settings.delivery_line }}</span></div>
@@ -507,6 +569,65 @@
                 {%- if ins_v -%}<button type="button" class="pdp__addon-btn" data-quick-add="{{ ins_v.id }}"{% unless ins.available %} disabled{% endunless %}>Add</button>{%- endif -%}
               </div>
             {%- endfor -%}
+          </div>
+        {%- endif -%}
+
+        {%- comment -%} Pre-owned condition panel: shown whenever any pre-owned metafield is populated. {%- endcomment -%}
+        {%- assign po_has_panel = false -%}
+        {%- if po_condition != blank or po_notes != blank -%}{%- assign po_has_panel = true -%}{%- endif -%}
+        {%- if po_photos != blank and po_photos.size > 0 -%}{%- assign po_has_panel = true -%}{%- endif -%}
+        {%- if po_included != blank and po_included.size > 0 -%}{%- assign po_has_panel = true -%}{%- endif -%}
+        {%- if po_missing != blank and po_missing.size > 0 -%}{%- assign po_has_panel = true -%}{%- endif -%}
+        {%- if po_has_panel -%}
+          <div class="pdp__po">
+            <div class="pdp__po-h">
+              &#128269; Pre-Owned Condition
+              {%- if po_condition != blank -%}
+                &mdash; <span style="background:{{ po_bg }};color:{{ po_color }};padding:2px 9px;border-radius:12px;font-size:11px;font-weight:700;text-transform:none;letter-spacing:0">{{ po_condition }}</span>
+              {%- endif -%}
+            </div>
+            {%- if po_notes != blank -%}
+              <div class="pdp__po-notes">{{ po_notes | newline_to_br }}</div>
+            {%- endif -%}
+            {%- if po_photos != blank and po_photos.size > 0 -%}
+              <div class="pdp__po-photos">
+                {%- for photo in po_photos -%}
+                  <button type="button" class="pdp__po-photo{% if forloop.first %} is-active{% endif %}" data-po-photo="{{ photo | image_url: width: 1100 }}" aria-label="Condition photo {{ forloop.index }}">
+                    <img src="{{ photo | image_url: width: 200 }}" alt="{{ product.title | escape }} — condition photo {{ forloop.index }}" width="200" height="200" loading="lazy">
+                  </button>
+                {%- endfor -%}
+              </div>
+            {%- endif -%}
+            {%- assign po_has_checklist = false -%}
+            {%- if po_included != blank and po_included.size > 0 -%}{%- assign po_has_checklist = true -%}{%- endif -%}
+            {%- if po_missing != blank and po_missing.size > 0 -%}{%- assign po_has_checklist = true -%}{%- endif -%}
+            {%- if po_has_checklist -%}
+              <div class="pdp__po-checklist">
+                <div class="pdp__po-clh">What&rsquo;s included</div>
+                <div class="pdp__po-items">
+                  {%- if po_included != blank -%}
+                    {%- for item in po_included -%}
+                      <div class="pdp__po-item">
+                        <span class="pdp__po-icon pdp__po-icon--ok">&#10003;</span>
+                        <span>{{ item }}</span>
+                      </div>
+                    {%- endfor -%}
+                  {%- endif -%}
+                  {%- if po_missing != blank -%}
+                    {%- for item in po_missing -%}
+                      <div class="pdp__po-item pdp__po-item--missing">
+                        <span class="pdp__po-icon pdp__po-icon--miss">&#10007;</span>
+                        <span>{{ item }}</span>
+                      </div>
+                    {%- endfor -%}
+                  {%- endif -%}
+                </div>
+              </div>
+            {%- endif -%}
+            {%- if product.compare_at_price > product.price -%}
+              {%- assign po_new_save = product.compare_at_price | minus: product.price | money -%}
+              <div class="pdp__po-save">&#128176; You&rsquo;re saving <strong>{{ po_new_save }}</strong> compared to buying new</div>
+            {%- endif -%}
           </div>
         {%- endif -%}
 
@@ -1058,7 +1179,18 @@
       t.addEventListener('click', function () {
         if (main) main.src = t.getAttribute('data-src');
         root.querySelectorAll('.pdp__thumb').forEach(function (x) { x.classList.remove('is-active'); });
+        root.querySelectorAll('.pdp__po-photo').forEach(function (x) { x.classList.remove('is-active'); });
         t.classList.add('is-active');
+      });
+    });
+
+    // condition photo thumbnails — swap the main gallery image on click
+    root.querySelectorAll('.pdp__po-photo').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        if (main) main.src = btn.getAttribute('data-po-photo');
+        root.querySelectorAll('.pdp__thumb').forEach(function (x) { x.classList.remove('is-active'); });
+        root.querySelectorAll('.pdp__po-photo').forEach(function (x) { x.classList.remove('is-active'); });
+        btn.classList.add('is-active');
       });
     });
 
