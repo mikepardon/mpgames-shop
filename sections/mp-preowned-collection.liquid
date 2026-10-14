@@ -1,0 +1,467 @@
+{%- comment -%}
+  MPGames pre-owned collection — amber hero, condition grading guide, faceted filter
+  sidebar, product grid with condition badges and savings callout, pagination.
+  Assign to a collection via templates/collection.preowned.json.
+{%- endcomment -%}
+
+{%- style -%}
+  .mp-poc-{{ section.id }} { background: #f4efe6; font-family: 'Barlow', ui-sans-serif, system-ui, sans-serif; color: #16323f; overflow-x: clip; }
+  .mp-poc-{{ section.id }} .poc__wrap { max-width: 1240px; margin: 0 auto; padding: 0 28px; }
+  .mp-poc-{{ section.id }} .poc__crumb { padding: 15px 0 0; font-size: 12px; color: #9b948a; }
+  .mp-poc-{{ section.id }} .poc__crumb a { color: inherit; text-decoration: none; }
+  .mp-poc-{{ section.id }} .poc__crumb .sep { color: #cfc9be; margin: 0 5px; }
+
+  .mp-poc-{{ section.id }} .poc__hero {
+    margin-top: 14px; border-radius: 14px; padding: 30px 34px; position: relative; overflow: hidden;
+    background: linear-gradient(115deg,#2a1f10 0%,#3d2e1a 55%,#5a4030 100%);
+    display: flex; justify-content: space-between; align-items: flex-end; gap: 20px;
+    background-size: cover; background-position: center;
+  }
+  .mp-poc-{{ section.id }} .poc__heroimg { position: absolute; top: 0; right: 0; z-index: 0; max-width: 55%; max-height: 100%; width: auto; height: auto; filter: grayscale(1); opacity: .3; pointer-events: none; }
+  .mp-poc-{{ section.id }} .poc__herotext { position: relative; z-index: 1; }
+  .mp-poc-{{ section.id }} .poc__badge { background: rgba(242,135,47,.22); color: #ffd2b0; font-size: 12px; font-weight: 600; padding: 4px 12px; border-radius: 20px; letter-spacing: .4px; }
+  .mp-poc-{{ section.id }} .poc__htitle { font-size: 38px; font-weight: 700; color: #fff; margin-top: 12px; line-height: 1.04; }
+  .mp-poc-{{ section.id }} .poc__hdesc { color: #e0cfc2; font-size: 14px; margin-top: 8px; max-width: 560px; }
+  .mp-poc-{{ section.id }} .poc__hdesc-text { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; line-clamp: 3; overflow: hidden; }
+  .mp-poc-{{ section.id }} .poc__hdesc.is-expanded .poc__hdesc-text { -webkit-line-clamp: unset; line-clamp: unset; overflow: visible; }
+  .mp-poc-{{ section.id }} .poc__hdesc-text p { margin: 0 0 8px; }
+  .mp-poc-{{ section.id }} .poc__hdesc-text > :last-child { margin-bottom: 0; }
+  .mp-poc-{{ section.id }} .poc__hdesc-toggle { display: inline-block; margin-top: 6px; padding: 0; background: none; border: 0; color: #ffd2b0; font: inherit; font-weight: 600; text-decoration: underline; cursor: pointer; }
+  .mp-poc-{{ section.id }} .poc__htags { display: flex; gap: 8px; flex-wrap: wrap; max-width: 360px; justify-content: flex-end; }
+  .mp-poc-{{ section.id }} .poc__htag { background: rgba(255,255,255,.12); color: #fff; font-size: 12.5px; font-weight: 600; padding: 7px 13px; border-radius: 20px; }
+
+  .mp-poc-{{ section.id }} .poc__guide { display: flex; margin: 14px 0 0; border: 1px solid #e7ddcb; border-radius: 12px; overflow: hidden; background: #fff; }
+  .mp-poc-{{ section.id }} .poc__grade { flex: 1; padding: 13px 16px; border-right: 1px solid #f0e8d8; }
+  .mp-poc-{{ section.id }} .poc__grade:last-child { border-right: 0; }
+  .mp-poc-{{ section.id }} .poc__gpill { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; margin-bottom: 5px; }
+  .mp-poc-{{ section.id }} .poc__gdesc { font-size: 11.5px; color: #6b7a82; line-height: 1.4; }
+
+  .mp-poc-{{ section.id }} .poc__chips { display: flex; gap: 9px; padding: 18px 0 4px; overflow-x: auto; scrollbar-width: none; }
+  .mp-poc-{{ section.id }} .poc__chips::-webkit-scrollbar { display: none; }
+  .mp-poc-{{ section.id }} .poc__chip { background: #fff; border: 1px solid #e2ddd1; color: #4a443c; font-size: 13px; font-weight: 600; padding: 8px 15px; border-radius: 8px; white-space: nowrap; text-decoration: none; }
+  .mp-poc-{{ section.id }} .poc__chip.is-active { background: #16323f; border-color: #16323f; color: #fff; }
+
+  .mp-poc-{{ section.id }} .poc__toolbar { display: flex; align-items: center; justify-content: space-between; padding: 14px 0 6px; gap: 12px; flex-wrap: wrap; }
+  .mp-poc-{{ section.id }} .poc__count { font-size: 13px; color: #8a8278; }
+  .mp-poc-{{ section.id }} .poc__count b { color: #16323f; }
+  .mp-poc-{{ section.id }} .poc__sort select { background: #fff; border: 1px solid #d8d4cc; border-radius: 7px; padding: 9px 13px; color: #16323f; font-size: 12.5px; font-family: inherit; cursor: pointer; }
+
+  .mp-poc-{{ section.id }} .poc__body { display: flex; gap: 24px; padding: 6px 0 30px; align-items: flex-start; }
+  .mp-poc-{{ section.id }} .poc__side { width: 236px; flex: none; }
+  .mp-poc-{{ section.id }} .poc__ftoggle { display: none; }
+  .mp-poc-{{ section.id }} .poc__panel { background: #fff; border: 1px solid #e7ddcb; border-radius: 13px; overflow: hidden; box-shadow: 0 1px 2px rgba(20,40,50,.04); }
+  .mp-poc-{{ section.id }} .poc__phead { display: flex; justify-content: space-between; align-items: center; padding: 15px 17px; background: #2a1f10; }
+  .mp-poc-{{ section.id }} .poc__phead span:first-child { font-size: 15px; font-weight: 700; color: #fff; }
+  .mp-poc-{{ section.id }} .poc__clear { font-size: 12px; color: #ffd2b0; text-decoration: none; }
+  .mp-poc-{{ section.id }} .poc__active { padding: 13px 17px; border-bottom: 1px solid #efe7d8; display: flex; flex-wrap: wrap; gap: 7px; }
+  .mp-poc-{{ section.id }} .poc__achip { display: inline-flex; align-items: center; gap: 6px; background: #eef3f5; border: 1px solid #cfdde3; border-radius: 6px; padding: 4px 9px; font-size: 11.5px; color: #16323f; text-decoration: none; }
+  .mp-poc-{{ section.id }} .poc__group { padding: 14px 17px; border-bottom: 1px solid #efe7d8; }
+  .mp-poc-{{ section.id }} .poc__gh { font-size: 12.5px; font-weight: 700; color: #16323f; margin-bottom: 10px; }
+  .mp-poc-{{ section.id }} .poc__opts { display: flex; flex-direction: column; gap: 9px; font-size: 12.5px; color: #4a443c; }
+  .mp-poc-{{ section.id }} .poc__opt { display: flex; align-items: center; gap: 9px; text-decoration: none; color: inherit; }
+  .mp-poc-{{ section.id }} .poc__box { width: 15px; height: 15px; border: 1.5px solid #b6afa4; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; color: #fff; font-size: 10px; flex: none; }
+  .mp-poc-{{ section.id }} .poc__opt.is-on .poc__box { background: #16323f; border-color: #16323f; }
+  .mp-poc-{{ section.id }} .poc__cnt { color: #9b948a; margin-left: auto; }
+  .mp-poc-{{ section.id }} .poc__pricerange { display: flex; gap: 8px; align-items: center; }
+  .mp-poc-{{ section.id }} .poc__pricerange input { width: 78px; border: 1px solid #d8d4cc; border-radius: 6px; padding: 7px 9px; font-size: 12.5px; font-family: inherit; }
+  .mp-poc-{{ section.id }} .poc__pricerange button { background: #16323f; color: #fff; border: 0; border-radius: 6px; padding: 7px 11px; font-size: 12px; cursor: pointer; font-family: inherit; }
+
+  .mp-poc-{{ section.id }} .poc__main { flex: 1; min-width: 0; }
+  .mp-poc-{{ section.id }} .poc__grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 18px; }
+  .mp-poc-{{ section.id }} .poc__card { border: 1px solid #e7ddcb; border-radius: 12px; overflow: hidden; background: #fff; display: flex; flex-direction: column; position: relative; box-shadow: 0 1px 2px rgba(20,40,50,.04); }
+  .mp-poc-{{ section.id }} .poc__cond { position: absolute; top: 10px; left: 10px; z-index: 2; font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 5px; }
+  .mp-poc-{{ section.id }} .poc__wish { position: absolute; top: 10px; right: 10px; z-index: 2; background: #fff; border: 1px solid #e7e0d4; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; color: #8a8278; font-size: 13px; }
+  .mp-poc-{{ section.id }} .poc__media { height: 170px; display: flex; align-items: center; justify-content: center; background: transparent; padding: 10px; box-sizing: border-box; }
+  .mp-poc-{{ section.id }} .poc__media img { width: 100%; height: 100%; object-fit: contain; display: block; }
+  .mp-poc-{{ section.id }} .poc__cbody { padding: 13px 14px 15px; display: flex; flex-direction: column; flex: 1; }
+  .mp-poc-{{ section.id }} .poc__name { font-size: 14.5px; font-weight: 600; color: #16323f; line-height: 1.25; text-decoration: none; }
+  .mp-poc-{{ section.id }} .poc__pub { font-size: 11.5px; color: #9b948a; margin-top: 2px; }
+  .mp-poc-{{ section.id }} .poc__metarow { display: flex; gap: 13px; margin-top: 9px; font-size: 11px; color: #6b7a82; flex-wrap: wrap; }
+  .mp-poc-{{ section.id }} .poc__stock { display: flex; align-items: center; gap: 6px; margin-top: 10px; font-size: 11px; }
+  .mp-poc-{{ section.id }} .poc__foot { display: flex; align-items: flex-end; justify-content: space-between; margin-top: auto; padding-top: 12px; }
+  .mp-poc-{{ section.id }} .poc__rrp { font-size: 11px; color: #9b948a; text-decoration: line-through; }
+  .mp-poc-{{ section.id }} .poc__save { font-size: 11px; font-weight: 700; color: #2f8f5b; margin-top: 1px; }
+  .mp-poc-{{ section.id }} .poc__pr { font-size: 19px; font-weight: 700; color: #16323f; }
+  .mp-poc-{{ section.id }} .poc__add { background: #f2872f; color: #fff; border: 0; border-radius: 7px; padding: 9px 14px; font-size: 12.5px; font-weight: 600; cursor: pointer; font-family: inherit; }
+  .mp-poc-{{ section.id }} .poc__card form { margin: 0; }
+  .mp-poc-{{ section.id }} .poc__notify { display: inline-block; border: 1px solid #16323f; color: #16323f; border-radius: 7px; padding: 8px 13px; font-size: 12.5px; font-weight: 600; text-decoration: none; }
+
+  .mp-poc-{{ section.id }} .poc__pager { display: flex; justify-content: space-between; align-items: center; margin-top: 26px; }
+  .mp-poc-{{ section.id }} .poc__pager .pg { font-size: 12.5px; color: #8a8278; }
+  .mp-poc-{{ section.id }} .poc__pages { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+  .mp-poc-{{ section.id }} .poc__pages a, .mp-poc-{{ section.id }} .poc__pages span { border: 1px solid #d8d4cc; border-radius: 7px; padding: 8px 13px; color: #6b7a82; text-decoration: none; }
+  .mp-poc-{{ section.id }} .poc__pages .is-current { border-color: #16323f; background: #16323f; color: #fff; }
+  .mp-poc-{{ section.id }} .poc__empty { background: #fff; border: 1px solid #e7ddcb; border-radius: 12px; padding: 40px; text-align: center; color: #6b7a82; }
+
+  @media (max-width: 989px) {
+    .mp-poc-{{ section.id }} .poc__body { flex-direction: column; }
+    .mp-poc-{{ section.id }} .poc__side { width: 100%; }
+    .mp-poc-{{ section.id }} .poc__grid { grid-template-columns: repeat(2,1fr); }
+    .mp-poc-{{ section.id }} .poc__hero { flex-direction: column; align-items: flex-start; }
+    .mp-poc-{{ section.id }} .poc__htags { justify-content: flex-start; max-width: none; }
+    .mp-poc-{{ section.id }} .poc__guide { flex-wrap: wrap; }
+    .mp-poc-{{ section.id }} .poc__grade { min-width: calc(50% - 1px); border-bottom: 1px solid #f0e8d8; }
+    .mp-poc-{{ section.id }} .poc__grade:nth-child(3), .mp-poc-{{ section.id }} .poc__grade:nth-child(4) { border-bottom: 0; }
+    .mp-poc-{{ section.id }} .poc__grade:nth-child(odd) { border-right: 1px solid #f0e8d8; }
+    .mp-poc-{{ section.id }} .poc__grade:nth-child(even) { border-right: 0; }
+    .mp-poc-{{ section.id }} .poc__ftoggle {
+      display: flex; align-items: center; justify-content: space-between; gap: 10px;
+      width: 100%; box-sizing: border-box; background: #2a1f10; color: #fff; border: 0;
+      border-radius: 10px; padding: 13px 16px; font: 700 15px/1 'Barlow Semi Condensed', sans-serif;
+      cursor: pointer; margin-bottom: 12px;
+    }
+    .mp-poc-{{ section.id }} .poc__ftoggle .poc__ftcount { background: #f2872f; color: #fff; font-size: 12px; border-radius: 12px; padding: 2px 8px; margin-left: auto; }
+    .mp-poc-{{ section.id }} .poc__ftoggle .poc__ftchev { transition: transform .2s; }
+    .mp-poc-{{ section.id }} .poc__side.is-open .poc__ftoggle .poc__ftchev { transform: rotate(180deg); }
+    .mp-poc-{{ section.id }} .poc__side .poc__panel { display: none; }
+    .mp-poc-{{ section.id }} .poc__side.is-open .poc__panel { display: block; }
+  }
+  @media (max-width: 749px) {
+    .mp-poc-{{ section.id }} .poc__wrap { padding: 0 16px; }
+    .mp-poc-{{ section.id }} .poc__grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+    .mp-poc-{{ section.id }} .poc__htitle { font-size: 30px; }
+  }
+{%- endstyle -%}
+
+{%- liquid
+  assign hero_tags = collection.metafields.custom.hero_tags.value
+-%}
+
+<section class="mp-poc-{{ section.id }}">
+  <div class="poc__wrap">
+
+    <div class="poc__crumb">
+      <a href="{{ routes.root_url }}">Home</a><span class="sep">/</span><span style="color:#6b7a82">{{ collection.title }}</span>
+    </div>
+
+    <div class="poc__hero">
+      {%- if collection.image != blank -%}<img class="poc__heroimg" src="{{ collection.image | image_url: width: 1600 }}" alt="{{ collection.title | escape }}" loading="lazy">{%- endif -%}
+      <div class="poc__herotext">
+        <span class="poc__badge mp-cond">PRE-OWNED &middot; {{ collection.products_count }} GAMES</span>
+        <h1 class="poc__htitle mp-cond" style="margin:0">{{ collection.title }}</h1>
+        {%- if collection.description != blank -%}
+          <div class="poc__hdesc" data-mpg-desc>
+            <div class="poc__hdesc-text" data-mpg-desc-text>{{ collection.description }}</div>
+            <button type="button" class="poc__hdesc-toggle mp-cond" data-mpg-desc-toggle aria-expanded="false" hidden>
+              <span data-mpg-more>Read more</span><span data-mpg-less hidden>Read less</span>
+            </button>
+          </div>
+        {%- endif -%}
+      </div>
+      {%- if hero_tags != blank and hero_tags.size > 0 -%}
+        <div class="poc__htags">
+          {%- for t in hero_tags limit: 4 -%}<span class="poc__htag mp-cond">{{ t }}</span>{%- endfor -%}
+        </div>
+      {%- endif -%}
+    </div>
+
+    <div class="poc__guide">
+      <div class="poc__grade">
+        <span class="poc__gpill mp-cond" style="background:#e3f1e9;color:#2f8f5b">Like New</span>
+        <div class="poc__gdesc">Complete &amp; barely played. Box and components in excellent condition.</div>
+      </div>
+      <div class="poc__grade">
+        <span class="poc__gpill mp-cond" style="background:#deeef8;color:#1d7db5">Very Good</span>
+        <div class="poc__gdesc">Complete. Minor shelf-wear on box; components clean and undamaged.</div>
+      </div>
+      <div class="poc__grade">
+        <span class="poc__gpill mp-cond" style="background:#fff0e4;color:#b4560f">Good</span>
+        <div class="poc__gdesc">Complete. Visible wear on box or components; fully playable.</div>
+      </div>
+      <div class="poc__grade">
+        <span class="poc__gpill mp-cond" style="background:#f0ece6;color:#7a5c48">Acceptable</span>
+        <div class="poc__gdesc">Complete. Heavy wear; all pieces present. See photos for details.</div>
+      </div>
+    </div>
+
+    {%- if section.settings.chips_menu != blank and linklists[section.settings.chips_menu].links.size > 0 -%}
+      <div class="poc__chips">
+        {%- for link in linklists[section.settings.chips_menu].links -%}
+          <a class="poc__chip mp-cond{% if link.active or link.url == collection.url %} is-active{% endif %}" href="{{ link.url }}">{{ link.title }}</a>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+
+    {%- paginate collection.products by section.settings.products_per_page -%}
+      {%- liquid
+        assign start = paginate.current_offset | plus: 1
+        assign finish = paginate.current_offset | plus: collection.products.size
+      -%}
+      <div class="poc__toolbar">
+        <div class="poc__count">Showing <b>{{ start }}–{{ finish }}</b> of <b>{{ collection.products_count }}</b> games</div>
+        <form method="get" class="poc__sort">
+          {%- for f in collection.filters -%}
+            {%- for v in f.active_values -%}<input type="hidden" name="{{ v.param_name }}" value="{{ v.value }}">{%- endfor -%}
+            {%- if f.type == 'price_range' -%}
+              {%- if f.min_value.value -%}<input type="hidden" name="{{ f.min_value.param_name }}" value="{{ f.min_value.value }}">{%- endif -%}
+              {%- if f.max_value.value -%}<input type="hidden" name="{{ f.max_value.param_name }}" value="{{ f.max_value.value }}">{%- endif -%}
+            {%- endif -%}
+          {%- endfor -%}
+          <select name="sort_by" onchange="this.form.submit()" aria-label="Sort by">
+            {%- assign current_sort = collection.sort_by | default: collection.default_sort_by -%}
+            {%- for opt in collection.sort_options -%}
+              <option value="{{ opt.value }}"{% if opt.value == current_sort %} selected{% endif %}>Sort: {{ opt.name }}</option>
+            {%- endfor -%}
+          </select>
+        </form>
+      </div>
+
+      <div class="poc__body">
+        <aside class="poc__side" data-filter-side>
+          {%- assign active_count = 0 -%}
+          {%- for f in collection.filters -%}
+            {%- assign active_count = active_count | plus: f.active_values.size -%}
+            {%- if f.type == 'price_range' and f.min_value.value or f.max_value.value -%}{%- assign active_count = active_count | plus: 1 -%}{%- endif -%}
+          {%- endfor -%}
+          <button type="button" class="poc__ftoggle mp-cond" data-filter-toggle aria-expanded="false">
+            <span>Filter</span>
+            {%- if active_count > 0 -%}<span class="poc__ftcount">{{ active_count }}</span>{%- endif -%}
+            <span class="poc__ftchev" aria-hidden="true">&#9662;</span>
+          </button>
+          <div class="poc__panel">
+            <div class="poc__phead">
+              <span class="mp-cond">Filter</span>
+              <a class="poc__clear" href="{{ collection.url }}">Clear all</a>
+            </div>
+
+            {%- assign any_active = false -%}
+            {%- for f in collection.filters -%}{%- if f.active_values.size > 0 or f.min_value.value or f.max_value.value -%}{%- assign any_active = true -%}{%- endif -%}{%- endfor -%}
+            {%- if any_active -%}
+              <div class="poc__active">
+                {%- for f in collection.filters -%}
+                  {%- for v in f.active_values -%}
+                    <a class="poc__achip" href="{{ v.url_to_remove }}">{{ v.label }} &times;</a>
+                  {%- endfor -%}
+                  {%- if f.type == 'price_range' and f.min_value.value or f.max_value.value -%}
+                    <a class="poc__achip" href="{{ f.url_to_remove }}">{{ f.min_value.value | default: 0 | money }}–{{ f.max_value.value | default: f.range_max | money }} &times;</a>
+                  {%- endif -%}
+                {%- endfor -%}
+              </div>
+            {%- endif -%}
+
+            {%- for f in collection.filters -%}
+              <div class="poc__group">
+                <div class="poc__gh">{{ f.label }}</div>
+                {%- if f.type == 'price_range' -%}
+                  <form method="get" class="poc__pricerange">
+                    {%- for af in collection.filters -%}
+                      {%- unless af.type == 'price_range' -%}{%- for v in af.active_values -%}<input type="hidden" name="{{ v.param_name }}" value="{{ v.value }}">{%- endfor -%}{%- endunless -%}
+                    {%- endfor -%}
+                    {%- if collection.sort_by != blank -%}<input type="hidden" name="sort_by" value="{{ collection.sort_by }}">{%- endif -%}
+                    <input type="number" name="{{ f.min_value.param_name }}" placeholder="{{ f.range_min | money_without_currency | default: 'Min' }}" value="{{ f.min_value.value }}" min="0">
+                    <input type="number" name="{{ f.max_value.param_name }}" placeholder="{{ f.range_max | money_without_currency | default: 'Max' }}" value="{{ f.max_value.value }}" min="0">
+                    <button type="submit">Go</button>
+                  </form>
+                {%- else -%}
+                  <div class="poc__opts">
+                    {%- for v in f.values -%}
+                      <a class="poc__opt{% if v.active %} is-on{% endif %}" href="{% if v.active %}{{ v.url_to_remove }}{% else %}{{ v.url_to_add }}{% endif %}">
+                        <span class="poc__box">{% if v.active %}&#10003;{% endif %}</span>
+                        <span>{{ v.label }}</span>
+                        <span class="poc__cnt">{{ v.count }}</span>
+                      </a>
+                    {%- endfor -%}
+                  </div>
+                {%- endif -%}
+              </div>
+            {%- else -%}
+              <div class="poc__group" style="color:#8a8278;font-size:12.5px">
+                No filters configured yet. Enable product filters in <em>Search &amp; Discovery</em> and they'll appear here automatically.
+              </div>
+            {%- endfor -%}
+          </div>
+        </aside>
+
+        <div class="poc__main">
+          {%- if collection.products.size > 0 -%}
+            <div class="poc__grid">
+              {%- assign poc_passes = 'available,unavailable' | split: ',' -%}
+              {%- for poc_pass in poc_passes -%}
+              {%- for product in collection.products -%}
+              {%- if poc_pass == 'available' and product.available == false -%}{%- continue -%}{%- endif -%}
+              {%- if poc_pass == 'unavailable' and product.available -%}{%- continue -%}{%- endif -%}
+                {%- liquid
+                  assign poc_grade = product.metafields.custom.preowned_condition.value
+                  assign poc_color = '#6b7a82'
+                  assign poc_bg = '#f0f2f4'
+                  if poc_grade == 'Like New'
+                    assign poc_color = '#2f8f5b'
+                    assign poc_bg = '#e3f1e9'
+                  elsif poc_grade == 'Very Good'
+                    assign poc_color = '#1d7db5'
+                    assign poc_bg = '#deeef8'
+                  elsif poc_grade == 'Good'
+                    assign poc_color = '#b4560f'
+                    assign poc_bg = '#fff0e4'
+                  elsif poc_grade == 'Acceptable'
+                    assign poc_color = '#7a5c48'
+                    assign poc_bg = '#f0ece6'
+                  endif
+                  assign csale = false
+                  if product.compare_at_price > product.price
+                    assign csale = true
+                    assign csave = product.compare_at_price | minus: product.price | money
+                    assign cdisc = product.compare_at_price | minus: product.price | times: 100.0 | divided_by: product.compare_at_price | round
+                  endif
+                  assign players = product.metafields.custom.player_count.value
+                  assign playtime = product.metafields.custom.play_time.value
+                -%}
+                <div class="poc__card">
+                  {%- if poc_grade != blank -%}
+                    <span class="poc__cond mp-cond" style="background:{{ poc_bg }};color:{{ poc_color }}">{{ poc_grade }}</span>
+                  {%- endif -%}
+                  {% render 'mp-wishlist-button', product: product, class: 'mp-wish--float' %}
+                  <a href="{{ product.url }}" class="poc__media">
+                    {% if product.featured_image %}<img src="{{ product.featured_image | image_url: width: 420 }}" alt="{{ product.title | escape }}" width="420" height="420" loading="lazy">{% endif %}
+                  </a>
+                  <div class="poc__cbody">
+                    <a class="poc__name" href="{{ product.url }}">{{ product.title }}</a>
+                    {%- if product.vendor != blank -%}<div class="poc__pub">{{ product.vendor }}</div>{%- endif -%}
+                    {%- if players != blank or playtime != blank -%}
+                      <div class="poc__metarow">
+                        {%- if players != blank -%}<span>&#9823; {{ players }}</span>{%- endif -%}
+                        {%- if playtime != blank -%}<span>&#9201; {{ playtime }}</span>{%- endif -%}
+                      </div>
+                    {%- endif -%}
+                    {%- if product.available -%}
+                      <div class="poc__stock" style="color:#2f8f5b"><span style="width:7px;height:7px;border-radius:50%;background:#2f8f5b;display:inline-block"></span>In stock</div>
+                    {%- else -%}
+                      <div class="poc__stock" style="color:#d6402e"><span style="width:7px;height:7px;border-radius:50%;background:#d6402e;display:inline-block"></span>Sold out</div>
+                    {%- endif -%}
+                    <div class="poc__foot">
+                      <div>
+                        {%- if csale -%}
+                          <div class="poc__rrp">Was {{ product.compare_at_price | money }}</div>
+                          <div class="poc__save">Save {{ csave }} ({{ cdisc }}% off new)</div>
+                        {%- endif -%}
+                        <div class="poc__pr mp-cond">{{ product.price | money }}</div>
+                      </div>
+                      {%- if product.available -%}
+                        <form action="{{ routes.cart_add_url }}" method="post" enctype="multipart/form-data">
+                          <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+                          <button type="submit" class="poc__add mp-cond">Add</button>
+                        </form>
+                      {%- else -%}
+                        <a href="{{ product.url }}" class="poc__notify mp-cond">Notify me</a>
+                      {%- endif -%}
+                    </div>
+                  </div>
+                </div>
+              {%- endfor -%}
+              {%- endfor -%}
+            </div>
+
+            {%- if paginate.pages > 1 -%}
+              <div class="poc__pager">
+                <span class="pg">Page {{ paginate.current_page }} of {{ paginate.pages }}</span>
+                <div class="poc__pages">
+                  {%- if paginate.previous -%}<a href="{{ paginate.previous.url }}">&lsaquo; Prev</a>{%- else -%}<span style="color:#cbc4b8">&lsaquo; Prev</span>{%- endif -%}
+                  {%- for part in paginate.parts -%}
+                    {%- if part.is_link -%}<a href="{{ part.url }}">{{ part.title }}</a>
+                    {%- elsif part.title == paginate.current_page -%}<span class="is-current mp-cond">{{ part.title }}</span>
+                    {%- else -%}<span style="border:0;color:#a39c92">{{ part.title }}</span>{%- endif -%}
+                  {%- endfor -%}
+                  {%- if paginate.next -%}<a href="{{ paginate.next.url }}">Next &rsaquo;</a>{%- else -%}<span style="color:#cbc4b8">Next &rsaquo;</span>{%- endif -%}
+                </div>
+              </div>
+            {%- endif -%}
+          {%- else -%}
+            <div class="poc__empty">No pre-owned games match these filters. <a href="{{ collection.url }}" style="color:#f2872f">Clear all filters</a></div>
+          {%- endif -%}
+        </div>
+      </div>
+    {%- endpaginate -%}
+
+  </div>
+</section>
+
+<script>
+  (function () {
+    var root = document.querySelector('.mp-poc-{{ section.id }} [data-mpg-desc]');
+    if (!root) return;
+    var text = root.querySelector('[data-mpg-desc-text]');
+    var toggle = root.querySelector('[data-mpg-desc-toggle]');
+    var more = root.querySelector('[data-mpg-more]');
+    var less = root.querySelector('[data-mpg-less]');
+    if (!text || !toggle) return;
+    function overflows() { return text.scrollHeight - text.clientHeight > 1; }
+    function sync() { toggle.hidden = !(root.classList.contains('is-expanded') || overflows()); }
+    toggle.addEventListener('click', function () {
+      var ex = root.classList.toggle('is-expanded');
+      toggle.setAttribute('aria-expanded', ex ? 'true' : 'false');
+      more.hidden = ex; less.hidden = !ex;
+    });
+    sync();
+    window.addEventListener('resize', sync);
+    if (document.fonts && document.fonts.ready) { document.fonts.ready.then(sync); }
+  })();
+
+  (function () {
+    var root = document.querySelector('.mp-poc-{{ section.id }}');
+    if (!root) return;
+    var side = root.querySelector('[data-filter-side]');
+    var toggle = root.querySelector('[data-filter-toggle]');
+    if (!side || !toggle) return;
+    toggle.addEventListener('click', function () {
+      var open = side.classList.toggle('is-open');
+      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+  })();
+
+  (function () {
+    var grid = document.querySelector('.mp-poc-{{ section.id }} .poc__grid');
+    if (!grid) return;
+    var available = [], unavailable = [];
+    grid.querySelectorAll('.poc__card').forEach(function (card) {
+      (card.querySelector('.poc__notify') ? unavailable : available).push(card);
+    });
+    available.forEach(function (el) { grid.appendChild(el); });
+    unavailable.forEach(function (el) { grid.appendChild(el); });
+  })();
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "CollectionPage",
+      "name": {{ collection.title | json }},
+      "url": {{ canonical_url | json }},
+      {% if collection.description != blank %}"description": {{ collection.description | strip_html | truncatewords: 50 | json }},{% endif %}
+      "mainEntity": {
+        "@type": "ItemList",
+        "numberOfItems": {{ collection.products_count }},
+        "itemListElement": [
+          {%- assign pos = 0 -%}
+          {%- for product in collection.products limit: 30 -%}
+            {%- assign pos = pos | plus: 1 -%}
+            { "@type": "ListItem", "position": {{ pos }}, "name": {{ product.title | json }}, "url": {{ shop.url | append: product.url | json }} }{%- unless forloop.last -%},{%- endunless -%}
+          {%- endfor -%}
+        ]
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": {{ shop.url | append: routes.root_url | json }} },
+        { "@type": "ListItem", "position": 2, "name": {{ collection.title | json }}, "item": {{ canonical_url | json }} }
+      ]
+    }
+  ]
+}
+</script>
+
+{% schema %}
+{
+  "name": "MP Pre-Owned Collection",
+  "settings": [
+    { "type": "range", "id": "products_per_page", "min": 8, "max": 24, "step": 4, "label": "Products per page", "default": 12 },
+    { "type": "link_list", "id": "chips_menu", "label": "Subcategory chips menu", "info": "Optional row of related-collection chips under the condition guide." }
+  ],
+  "enabled_on": { "templates": ["collection"] },
+  "presets": [
+    { "name": "MP Pre-Owned Collection" }
+  ]
+}
+{% endschema %}
