@@ -1492,3 +1492,27 @@ a.product__text {
     border: none;
   }
 }
+
+.gift-wrap-addon {
+  margin-bottom: 1.2rem;
+}
+
+.gift-wrap-addon__label {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  cursor: pointer;
+  font-size: 1.4rem;
+}
+
+.gift-wrap-addon__checkbox {
+  width: 1.6rem;
+  height: 1.6rem;
+  flex-shrink: 0;
+  cursor: pointer;
+  accent-color: rgb(var(--color-button));
+}
+
+.gift-wrap-addon__price {
+  color: rgba(var(--color-foreground), 0.6);
+}

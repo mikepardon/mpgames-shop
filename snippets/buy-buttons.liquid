@@ -60,6 +60,31 @@
           {%- render 'gift-card-recipient-form', product: product, form: form, section: section -%}
         {%- endif -%}
 
+        {%- liquid
+          assign gift_wrap_product = all_products['gift-wrap']
+          assign show_gift_wrap = false
+          if gift_wrap_product != blank and gift_wrap_product.first_available_variant != blank and product.handle != 'gift-wrap'
+            assign show_gift_wrap = true
+          endif
+        -%}
+        {%- if show_gift_wrap -%}
+          <div class="gift-wrap-addon">
+            <label class="gift-wrap-addon__label">
+              <input
+                type="checkbox"
+                class="gift-wrap-addon__checkbox"
+                data-gift-wrap-checkbox
+                data-gift-wrap-variant-id="{{ gift_wrap_product.first_available_variant.id }}"
+              >
+              <span class="gift-wrap-addon__text">
+                Add gift wrap
+                <span class="gift-wrap-addon__price">({{ gift_wrap_product.price | money }})</span>
+              </span>
+            </label>
+          </div>
+          <script src="{{ 'gift-wrap.js' | asset_url }}" defer="defer"></script>
+        {%- endif -%}
+
         <div class="product-form__buttons">
           {%- liquid
             assign check_against_inventory = true
