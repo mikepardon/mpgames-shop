@@ -267,6 +267,10 @@
                 {%- liquid
                   assign cb = product.metafields.custom.bgg_rating.value
                   assign cbn = cb | times: 1.0
+                  assign cb_int = cbn | times: 10 | round
+                  assign cb_whole = cb_int | divided_by: 10 | floor
+                  assign cb_dec = cb_int | modulo: 10
+                  assign cb_display = cb_whole | append: '.' | append: cb_dec
                   assign cc = '#e0b441'
                   if cbn >= 8.0
                     assign cc = '#5fbf7e'
@@ -300,7 +304,7 @@
                     {%- if product.type == 'Board Game Expansion' -%}<span style="display:inline-block;width:fit-content;background:#ede7f3;color:#6a4f86;font-size:9.5px;font-weight:700;letter-spacing:.4px;padding:2px 7px;border-radius:5px;text-transform:uppercase;margin-bottom:7px">Expansion</span>{%- endif -%}
                     {%- if cb != blank -%}
                       <div style="display:flex;align-items:center;gap:6px;margin-bottom:7px">
-                        <span class="cl__bgg"><b class="mp-cond">BGG</b><span style="font-size:11.5px;font-weight:700;color:{{ cc }}">{{ cbn | round: 1 }}</span></span>
+                        <span class="cl__bgg"><b class="mp-cond">BGG</b><span style="font-size:11.5px;font-weight:700;color:{{ cc }}">{{ cb_display }}</span></span>
                         {%- if product.metafields.custom.bgg_rank.value != blank -%}<span style="font-size:10.5px;color:#9b948a">rank #{{ product.metafields.custom.bgg_rank.value }}</span>{%- endif -%}
                       </div>
                     {%- endif -%}

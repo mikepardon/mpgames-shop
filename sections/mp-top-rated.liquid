@@ -81,6 +81,10 @@
           {%- liquid
             assign bgg_mf = product.metafields.custom.bgg_rating
             assign bgg = bgg_mf.value | times: 1.0
+            assign bgg_int = bgg | times: 10 | round
+            assign bgg_whole = bgg_int | divided_by: 10 | floor
+            assign bgg_dec = bgg_int | modulo: 10
+            assign bgg_display = bgg_whole | append: '.' | append: bgg_dec
             assign bgg_color = '#e0b441'
             if bgg >= 8.0
               assign bgg_color = '#5fbf7e'
@@ -104,7 +108,7 @@
               {%- if product.type == 'Board Game Expansion' -%}<span style="display:inline-block;background:#ede7f3;color:#6a4f86;font-size:9px;font-weight:700;letter-spacing:.4px;padding:1px 6px;border-radius:5px;text-transform:uppercase;margin-bottom:4px">Expansion</span><br>{%- endif -%}
               <a class="mp-top__name" href="{{ product.url }}" style="text-decoration:none;color:inherit">{{ product.title }}</a>
               {%- if bgg_mf != blank -%}
-                <div class="mp-top__bgg"><b class="mp-cond">BGG</b><span style="font-size:11.5px;font-weight:700;color:{{ bgg_color }}">{{ bgg_mf.value }}</span></div>
+                <div class="mp-top__bgg"><b class="mp-cond">BGG</b><span style="font-size:11.5px;font-weight:700;color:{{ bgg_color }}">{{ bgg_display }}</span></div>
               {%- endif -%}
               <div class="mp-top__foot">
                 <span class="mp-top__pricewrap">{%- if show_rrp -%}<span class="mp-top__rrp">RRP {{ mrsp_cents | money }}</span>{%- endif -%}<span class="mp-top__price mp-cond">{{ product.price | money }}</span></span>

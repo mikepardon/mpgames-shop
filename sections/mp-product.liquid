@@ -14,7 +14,10 @@
 
   assign bgg = m.bgg_rating.value
   assign bggn = bgg | times: 1.0
-  assign bggdisp = bggn | round: 1
+  assign bgg_int = bggn | times: 10 | round
+  assign bgg_whole = bgg_int | divided_by: 10 | floor
+  assign bgg_dec = bgg_int | modulo: 10
+  assign bggdisp = bgg_whole | append: '.' | append: bgg_dec
   assign bgg_color = '#e0b441'
   if bggn >= 8.0
     assign bgg_color = '#5fbf7e'
@@ -1035,7 +1038,10 @@
             {%- liquid
               assign rbgg = rec.metafields.custom.bgg_rating.value
               assign rbggn = rbgg | times: 1.0
-              assign rbggdisp = rbggn | round: 1
+              assign rbgg_int = rbggn | times: 10 | round
+              assign rbgg_whole = rbgg_int | divided_by: 10 | floor
+              assign rbgg_dec = rbgg_int | modulo: 10
+              assign rbggdisp = rbgg_whole | append: '.' | append: rbgg_dec
               assign rc = '#e0b441'
               if rbggn >= 8.0
                 assign rc = '#5fbf7e'

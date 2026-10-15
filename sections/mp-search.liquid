@@ -238,6 +238,10 @@
                     {%- liquid
                       assign cb = product.metafields.custom.bgg_rating.value
                       assign cbn = cb | times: 1.0
+                      assign cb_int = cbn | times: 10 | round
+                      assign cb_whole = cb_int | divided_by: 10 | floor
+                      assign cb_dec = cb_int | modulo: 10
+                      assign cb_display = cb_whole | append: '.' | append: cb_dec
                       assign cc = '#e0b441'
                       if cbn >= 8.0
                         assign cc = '#5fbf7e'
@@ -267,7 +271,7 @@
                       <div class="se__cbody">
                         {%- if cb != blank -%}
                           <div style="display:flex;align-items:center;gap:6px;margin-bottom:7px">
-                            <span class="se__bgg"><b class="mp-cond">BGG</b><span style="font-size:11.5px;font-weight:700;color:{{ cc }}">{{ cb }}</span></span>
+                            <span class="se__bgg"><b class="mp-cond">BGG</b><span style="font-size:11.5px;font-weight:700;color:{{ cc }}">{{ cb_display }}</span></span>
                             {%- if product.metafields.custom.bgg_rank.value != blank -%}<span style="font-size:10.5px;color:#9b948a">rank #{{ product.metafields.custom.bgg_rank.value }}</span>{%- endif -%}
                           </div>
                         {%- endif -%}

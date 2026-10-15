@@ -156,7 +156,14 @@
               <span class="ar__gimg"{% if g.featured_image %} style="background-image:url('{{ g.featured_image | image_url: width: 90 }}')"{% endif %}></span>
               <span style="flex:1">
                 <span class="ar__gn mp-cond">{{ g.title }}</span>
-                <span class="ar__gm">{% if g.metafields.custom.bgg_rating.value %}BGG {{ g.metafields.custom.bgg_rating.value }} · {% endif %}{{ g.price | money }}</span>
+                {%- liquid
+                  assign _ar_bgg = g.metafields.custom.bgg_rating.value | times: 1.0
+                  assign _ar_bgg_int = _ar_bgg | times: 10 | round
+                  assign _ar_bgg_whole = _ar_bgg_int | divided_by: 10 | floor
+                  assign _ar_bgg_dec = _ar_bgg_int | modulo: 10
+                  assign _ar_bgg_display = _ar_bgg_whole | append: '.' | append: _ar_bgg_dec
+                -%}
+                <span class="ar__gm">{% if g.metafields.custom.bgg_rating.value %}BGG {{ _ar_bgg_display }} · {% endif %}{{ g.price | money }}</span>
               </span>
             </a>
           {%- endfor -%}

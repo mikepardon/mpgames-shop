@@ -252,7 +252,13 @@
                             {%- if m.designer != blank -%}<tr><td style="padding:6px 0;color:#6b7a82">Designer</td><td style="padding:6px 0;font-weight:600">{{ m.designer.value }}</td></tr>{%- endif -%}
                             {%- if m.year_published != blank -%}<tr><td style="padding:6px 0;color:#6b7a82">Year published</td><td style="padding:6px 0;font-weight:600">{{ m.year_published.value }}</td></tr>{%- endif -%}
                             {%- if mechanics != blank and mechanics.size > 0 -%}<tr><td style="padding:6px 0;color:#6b7a82">Mechanics</td><td style="padding:6px 0;font-weight:600">{{ mechanics | join: ', ' }}</td></tr>{%- endif -%}
-                            {%- if m.bgg_rating != blank -%}<tr><td style="padding:6px 0;color:#6b7a82">BGG rating</td><td style="padding:6px 0;font-weight:600">{{ m.bgg_rating.value }}{% if m.bgg_url != blank %} · <a href="{{ m.bgg_url }}" target="_blank" rel="noopener">View on BGG</a>{% endif %}</td></tr>{%- endif -%}
+                            {%- if m.bgg_rating != blank -%}{%- liquid
+  assign _mp_bgg = m.bgg_rating.value | times: 1.0
+  assign _mp_bgg_int = _mp_bgg | times: 10 | round
+  assign _mp_bgg_whole = _mp_bgg_int | divided_by: 10 | floor
+  assign _mp_bgg_dec = _mp_bgg_int | modulo: 10
+  assign _mp_bgg_display = _mp_bgg_whole | append: '.' | append: _mp_bgg_dec
+-%}<tr><td style="padding:6px 0;color:#6b7a82">BGG rating</td><td style="padding:6px 0;font-weight:600">{{ _mp_bgg_display }}{% if m.bgg_url != blank %} · <a href="{{ m.bgg_url }}" target="_blank" rel="noopener">View on BGG</a>{% endif %}</td></tr>{%- endif -%}
                           </table>
                         </div>
                       </details>

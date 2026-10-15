@@ -11,6 +11,10 @@
 {%- liquid
   assign bgg_mf = product.metafields.custom.bgg_rating
   assign bgg = bgg_mf.value | times: 1.0
+  assign bgg_int = bgg | times: 10 | round
+  assign bgg_whole = bgg_int | divided_by: 10 | floor
+  assign bgg_dec = bgg_int | modulo: 10
+  assign bgg_display = bgg_whole | append: '.' | append: bgg_dec
   assign bgg_color = '#e0b441'
   if bgg >= 8.0
     assign bgg_color = '#5fbf7e'
@@ -59,7 +63,7 @@
     {%- if product.type == 'Board Game Expansion' -%}<span style="display:inline-block;width:fit-content;background:#ede7f3;color:#6a4f86;font-size:9.5px;font-weight:700;letter-spacing:.4px;padding:2px 6px;border-radius:5px;text-transform:uppercase;margin-bottom:6px">Expansion</span>{%- endif -%}
     {%- if style == 'bestseller' and bgg_mf != blank -%}
       <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
-        <span class="mp-card__bgg"><b class="mp-cond">BGG</b><span style="font-size:11px;font-weight:700;color:{{ bgg_color }}">{{ bgg_mf.value }}</span></span>
+        <span class="mp-card__bgg"><b class="mp-cond">BGG</b><span style="font-size:11px;font-weight:700;color:{{ bgg_color }}">{{ bgg_display }}</span></span>
         {%- if product.metafields.custom.bgg_rank != blank -%}<span class="mp-card__rank">rank #{{ product.metafields.custom.bgg_rank.value }}</span>{%- endif -%}
       </div>
     {%- endif -%}
