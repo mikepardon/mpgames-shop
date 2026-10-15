@@ -1062,7 +1062,7 @@
         <div class="pdp__modal-h">Complete your game</div>
         <div class="pdp__modal-sub"><strong>{{ product.title }}</strong> is in your basket. Would you like to add any accessories?</div>
         <div class="pdp__modal-grid">
-          {%- if xp != blank -%}{%- for rec in xp limit: 4 -%}
+          {%- if xp != blank -%}{%- for rec in xp limit: 6 -%}
             {%- assign rv = rec.selected_or_first_available_variant -%}
             <div class="pdp__modal-card">
               <span class="pdp__modal-tag pdp__modal-tag--exp">Expansion</span>
