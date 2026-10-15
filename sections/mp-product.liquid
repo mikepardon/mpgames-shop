@@ -162,6 +162,12 @@
   .mp-pdp-{{ section.id }} .pdp__savetag { background: #e3f1e9; color: #2f8f5b; }
   .mp-pdp-{{ section.id }} .pdp__tax { font-size: 12.5px; color: #8a8278; margin-top: 4px; }
 
+  .mp-pdp-{{ section.id }} .pdp__stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 18px; }
+  .mp-pdp-{{ section.id }} .pdp__stat { display: flex; flex-direction: column; align-items: center; gap: 5px; background: #f5f1ea; border: 1px solid #e5dfd5; border-radius: 10px; padding: 12px 8px; text-align: center; }
+  .mp-pdp-{{ section.id }} .pdp__stat svg { color: #16323f; }
+  .mp-pdp-{{ section.id }} .pdp__stat-l { font-size: 10px; font-weight: 700; letter-spacing: .7px; text-transform: uppercase; color: #8a8278; }
+  .mp-pdp-{{ section.id }} .pdp__stat-v { font-size: 14px; font-weight: 700; color: #16323f; }
+
   .mp-pdp-{{ section.id }} .pdp__stock { display: flex; align-items: center; gap: 8px; margin-top: 16px; font-size: 13.5px; }
   .mp-pdp-{{ section.id }} .pdp__dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
 
@@ -425,11 +431,6 @@
         <h1 class="pdp__title">{{ product.title }}</h1>
 
         <div class="pdp__meta">
-          {%- if bgg != blank -%}
-            <span class="pdp__bgg"><b>BGG</b><span style="font-size:13px;font-weight:700;color:{{ bgg_color }}">{{ bggdisp }}</span></span>
-            {%- if m.bgg_rank.value != blank -%}<span class="pdp__sub">rank #{{ m.bgg_rank.value }}</span>{%- endif -%}
-            <span class="pdp__divider"></span>
-          {%- endif -%}
           <span class="pdp__sub"><div class="jdgm-widget jdgm-preview-badge" data-id="{{ product.id }}">{{ product.metafields.judgeme.badge }}</div></span>
         </div>
 
@@ -452,6 +453,39 @@
         </div>
         <div class="pdp__tax">Taxes included<span data-ships-note{% if variant.requires_shipping == false %} hidden{% endif %}> · {{ section.settings.delivery_line }}</span></div>
 
+        {%- if m.player_count != blank or m.play_time != blank or m.min_age != blank or bgg != blank -%}
+          <div class="pdp__stats">
+            {%- if m.player_count != blank -%}
+              <div class="pdp__stat">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                <span class="pdp__stat-l">Players</span>
+                <span class="pdp__stat-v">{{ m.player_count.value }}</span>
+              </div>
+            {%- endif -%}
+            {%- if m.play_time != blank -%}
+              <div class="pdp__stat">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                <span class="pdp__stat-l">Play Time</span>
+                <span class="pdp__stat-v">{{ m.play_time.value }}</span>
+              </div>
+            {%- endif -%}
+            {%- if m.min_age != blank -%}
+              <div class="pdp__stat">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <span class="pdp__stat-l">Age</span>
+                <span class="pdp__stat-v">{{ m.min_age.value }}+</span>
+              </div>
+            {%- endif -%}
+            {%- if bgg != blank -%}
+              <div class="pdp__stat">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                <span class="pdp__stat-l">BGG Score</span>
+                <span class="pdp__stat-v" style="color:{{ bgg_color }}">{{ bggdisp }}</span>
+              </div>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+
         {%- unless product.has_only_default_variant -%}
           <div class="pdp__options" data-options>
             {%- for option in product.options_with_values -%}
@@ -467,16 +501,16 @@
           </div>
         {%- endunless -%}
 
+        {%- unless is_preorder -%}
         <div class="pdp__stock" data-stock>
-          {%- if is_preorder -%}
-            <span class="pdp__dot" style="background:#f2872f"></span><b style="color:#b4560f">Available to pre-order</b>
-          {%- elsif product.available -%}
+          {%- if product.available -%}
             <span class="pdp__dot" style="background:#2f8f5b"></span><b style="color:#2f8f5b">In stock</b>
             {%- if variant.inventory_management and variant.inventory_quantity > 0 -%}<span style="color:#6b7a82"> · {{ variant.inventory_quantity }} available</span>{%- endif -%}
           {%- else -%}
             <span class="pdp__dot" style="background:#d6402e"></span><b style="color:#d6402e">Out of stock</b>
           {%- endif -%}
         </div>
+        {%- endunless -%}
 
         {%- if is_preorder -%}
           <div class="pdp__preorder">
@@ -503,14 +537,16 @@
           <button type="button" class="pdp__add" data-add="cart"{% unless product.available %} disabled{% endunless %}>{% if is_preorder %}Pre-order now{% else %}Add to basket{% endif %}</button>
           {%- render 'mp-wishlist-button', product: product, class: 'pdp__wish' -%}
         </div>
-        <button type="button" class="pdp__buynow" data-add="checkout"{% if show_notify %} hidden{% endif %}{% unless product.available %} disabled{% endunless %}>{% if is_preorder %}Pre-order &amp; checkout{% else %}Buy it now{% endif %}</button>
+        {%- unless is_preorder -%}
+        <button type="button" class="pdp__buynow" data-add="checkout"{% if show_notify %} hidden{% endif %}{% unless product.available %} disabled{% endunless %}>Buy it now</button>
+        {%- endunless -%}
         {%- comment -%} Out of stock (and not a pre-order): native back-in-stock relay to the /apps/notify app proxy. Logged-in shoppers register in one tap; logged-out shoppers are sent to log in or register first. {%- endcomment -%}
         <div class="pdp__notify-wrap" data-notify-wrap{% unless show_notify %} hidden{% endunless %}>
           <div style="display:flex;gap:11px">
             {%- if customer -%}
               <button type="button" class="pdp__notify" style="flex:1;width:auto;margin-top:0" data-notify>Notify me when available</button>
             {%- else -%}
-              <a class="pdp__notify" style="flex:1;width:auto;margin-top:0" href="{{ routes.account_login_url }}?return_url={{ request.path | url_encode }}">Log in to be notified</a>
+              <a class="pdp__notify" style="flex:1;width:auto;margin-top:0" href="{{ routes.account_login_url }}?return_url={{ request.path | url_encode }}">Notify me when in stock</a>
             {%- endif -%}
             {%- render 'mp-wishlist-button', product: product, class: 'pdp__wish' -%}
           </div>
