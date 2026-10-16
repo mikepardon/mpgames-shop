@@ -103,7 +103,7 @@
       "price": "{{ v.price | divided_by: 100.0 }}",
       "priceValidUntil": {{ price_valid_until | json }},
       "availability": "{% if is_preorder %}https://schema.org/PreOrder{% elsif v.available %}https://schema.org/InStock{% else %}https://schema.org/OutOfStock{% endif %}",
-      "itemCondition": "https://schema.org/NewCondition"{% if v.sku != blank %},
+      "itemCondition": "{% if p.tags contains 'pre-owned' %}https://schema.org/UsedCondition{% else %}https://schema.org/NewCondition{% endif %}"{% if v.sku != blank %},
       "sku": {{ v.sku | json }}{% endif %}{% if v.barcode != blank %},
       "gtin": {{ v.barcode | json }}{% endif %},
       "seller": { "@type": "Organization", "name": {{ shop.name | json }} }

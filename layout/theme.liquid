@@ -34,7 +34,7 @@
         when 'product'
           # only enrich when the merchant hasn't set a custom SEO title
           if page_title == product.title
-            assign seo_title = product.title | append: ' – ' | append: product.vendor | append: ' ' | append: product.type
+            assign seo_title = product.title | append: ' – ' | append: product.vendor | append: ' ' | append: product.type | strip
           endif
         when 'collection'
           if page_title == collection.title
@@ -108,7 +108,6 @@
         "name": {{ shop.name | json }},
         "url": {{ shop.url | append: routes.root_url | json }},
         "logo": {% if settings.logo != blank %}{{ settings.logo | image_url: width: 400 | prepend: "https:" | json }}{% else %}{{ 'MPGames-logo.png' | asset_url | prepend: "https:" | json }}{% endif %},
-        "email": "hello [at] mpgames [dot] io",
         "legalName": "MPGames Ltd",
         "address": {
           "@type": "PostalAddress",

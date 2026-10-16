@@ -62,7 +62,7 @@
           {%- if s.layout == 'image' and s.image != blank -%}
             {%- capture slide_inner -%}
               {%- if forloop.first -%}<h1 class="mp-hero__vh">{{ s.title | default: shop.name }}</h1>{%- endif -%}
-              <img class="mp-hero__img" src="{{ s.image | image_url: width: 2000 }}" alt="{{ s.title | escape }}" width="{{ s.image.width }}" height="{{ s.image.height }}"{% unless forloop.first %} loading="lazy"{% endunless %}>
+              <img class="mp-hero__img" src="{{ s.image | image_url: width: 2000 }}" alt="{{ s.image_alt | default: s.image.alt | default: '' | escape }}" width="{{ s.image.width }}" height="{{ s.image.height }}"{% unless forloop.first %} loading="lazy"{% endunless %}>
             {%- endcapture -%}
             {%- if s.cta_url != blank -%}
               <a class="mp-hero__slide mp-hero__slide--image mp-hero__slide--{{ s.image_fit }}" href="{{ s.cta_url }}" aria-label="{{ s.title | default: shop.name | escape }}" {{ block.shopify_attributes }}>{{ slide_inner }}</a>
@@ -112,8 +112,9 @@
       dots.forEach(function (d, idx) { d.setAttribute('aria-current', idx === i ? 'true' : 'false'); });
     }
     function go(n) { i = (n + count) % count; render(); }
-    function start() { if (delay > 0 && count > 1) { stop(); timer = setInterval(function () { go(i + 1); }, delay); } }
     function stop() { if (timer) { clearInterval(timer); timer = null; } }
+    var prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function start() { if (!prefersReduced && delay > 0 && count > 1) { stop(); timer = setInterval(function () { go(i + 1); }, delay); } }
 
     var prev = root.querySelector('[data-prev]');
     var next = root.querySelector('[data-next]');
@@ -122,6 +123,8 @@
     dots.forEach(function (d) { d.addEventListener('click', function () { go(parseInt(d.getAttribute('data-go'), 10)); start(); }); });
     root.addEventListener('mouseenter', stop);
     root.addEventListener('mouseleave', start);
+    root.addEventListener('focusin', stop);
+    root.addEventListener('focusout', function (e) { if (!root.contains(e.relatedTarget)) start(); });
 
     render();
     start();
@@ -145,6 +148,7 @@
           ]
         },
         { "type": "image_picker", "id": "image", "label": "Image", "info": "Required for the Image-only layout. In the Text layout it's used as a background behind the text (with a dark overlay)." },
+        { "type": "text", "id": "image_alt", "label": "Image alt text", "info": "Describes the image for screen readers and Google Images. Leave blank to use the alt text set on the image in Files, or empty for a decorative image." },
         {
           "type": "select", "id": "image_fit", "label": "Image fit", "default": "cover",
           "info": "Image-only layout: 'Fill & crop' keeps a consistent hero height; 'Fit whole image' shows the full image with no crop (height follows the image — best when every slide uses the same image shape).",
