@@ -75,8 +75,11 @@
           {%- if entry == blank -%}{%- continue -%}{%- endif -%}
           {%- if shown >= section.settings.products_to_show -%}{%- break -%}{%- endif -%}
           {%- assign parts = entry | split: '|' -%}
-          {%- assign product = all_products[parts[1]] -%}
-          {%- if product == empty -%}{%- continue -%}{%- endif -%}
+          {%- assign want = parts[1] -%}
+          {%- comment -%}Re-resolve via the collection to avoid all_products per-page lookup cap.{%- endcomment -%}
+          {%- assign product = nil -%}
+          {%- for p in rated_products -%}{%- if p.handle == want -%}{%- assign product = p -%}{%- break -%}{%- endif -%}{%- endfor -%}
+          {%- if product.handle != want -%}{%- continue -%}{%- endif -%}
           {%- assign shown = shown | plus: 1 -%}
           {%- liquid
             assign bgg_mf = product.metafields.custom.bgg_rating
