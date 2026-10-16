@@ -424,7 +424,13 @@
                         {%- endfor -%}
                       {%- elsif col_prefix != '' -%}
                         {%- for c in collections -%}
-                          {%- if c.handle contains col_prefix and c.all_products_count > 0 -%}
+                          {%- assign c_title_lower = c.title | downcase -%}
+                          {%- assign col_match = false -%}
+                          {%- if c.handle contains col_prefix -%}{%- assign col_match = true -%}{%- endif -%}
+                          {%- if col_title_lower contains 'categor' and col_match == false -%}
+                            {%- if c.handle contains 'category-' or c_title_lower == 'family games' or c_title_lower == 'strategy games' or c_title_lower == 'party games' or c_title_lower == 'card games' or c_title_lower == 'co-op games' or c_title_lower == 'engine-building games' -%}{%- assign col_match = true -%}{%- endif -%}
+                          {%- endif -%}
+                          {%- if col_match and c.all_products_count > 0 -%}
                             <a class="mp-mega__link" href="{{ c.url }}">{{ c.title }}</a>
                           {%- endif -%}
                         {%- endfor -%}
