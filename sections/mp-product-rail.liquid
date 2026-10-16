@@ -144,7 +144,7 @@
             {%- render 'mp-rail-card', product: match, style: style, release_action: rel -%}
           {%- endfor -%}
         {%- else -%}
-          {%- if source == 'preorder' -%}{%- assign src_products = collections.all.products -%}{%- else -%}{%- assign src_products = section.settings.collection.products -%}{%- endif -%}
+          {%- assign src_products = section.settings.collection.products -%}
           {%- for p in src_products -%}
             {%- if source == 'preorder' -%}{%- unless p.metafields.custom.is_preorder.value -%}{%- continue -%}{%- endunless -%}{%- endif -%}
             {%- if shown >= limit -%}{%- break -%}{%- endif -%}

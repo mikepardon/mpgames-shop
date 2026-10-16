@@ -329,7 +329,7 @@
     "mp_preorders": {
       "type": "mp-product-rail",
       "settings": {
-        "source": "preorder",
+        "source": "collection",
         "collection": "pre-orders",
         "products_to_show": 12,
         "title": "Pre-orders",
