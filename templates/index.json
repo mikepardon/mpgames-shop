@@ -216,7 +216,7 @@
       "settings": {
         "source": "collection",
         "collection": "best-sellers",
-        "products_to_show": 8,
+        "products_to_show": 12,
         "title": "Best sellers this month",
         "subtitle": "",
         "view_all_label": "View all",
@@ -317,7 +317,7 @@
       "settings": {
         "source": "newest",
         "collection": "new-releases",
-        "products_to_show": 10,
+        "products_to_show": 12,
         "title": "New & upcoming releases",
         "subtitle": "",
         "view_all_label": "View all new in",
@@ -330,12 +330,12 @@
       "type": "mp-product-rail",
       "settings": {
         "source": "preorder",
-        "collection": "new-releases",
-        "products_to_show": 10,
+        "collection": "pre-orders",
+        "products_to_show": 12,
         "title": "Pre-orders",
         "subtitle": "Reserve upcoming titles now — dispatched on release",
         "view_all_label": "View all pre-orders",
-        "view_all_url": "",
+        "view_all_url": "/collections/pre-orders",
         "card_style": "release",
         "release_action": "Pre-order"
       }
