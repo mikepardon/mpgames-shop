@@ -23,7 +23,7 @@
   <div class="mp-col">
     <div class="mp-cat__pad">
       <div class="mp-cat__head">
-        <div class="mp-cat__title mp-cond">{{ section.settings.title }}</div>
+        <h2 class="mp-cat__title mp-cond">{{ section.settings.title }}</h2>
         {%- if section.settings.link_label != blank -%}
           <a class="mp-cat__all" href="{{ section.settings.link_url | default: '#' }}">{{ section.settings.link_label }} &#8594;</a>
         {%- endif -%}
