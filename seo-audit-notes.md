@@ -17,29 +17,11 @@ Audit processed 2026-10-16. Items completed, deferred, and decisions still neede
 | Section titles using H2 | Changed `<div>` → `<h2>` for title elements in: `mp-product-rail`, `mp-top-rated`, `mp-category-tiles`, `mp-publishers`, `mp-player-count`, `mp-editorial`, `mp-designers`, `mp-newsletter` |
 | Noindex allowlist | Added force-index override in `theme.liquid` for 10 high-value collections below the 3-product threshold: `category-worker`, `sale`, `designer-matt-leacock`, `designer-wolfgang-kramer`, `mechanic-deck-construction`, `mechanic-closed-drafting`, `mechanic-auction-bidding`, `publisher-space-cowboys`, `publisher-lumberjacks-studio`, `publisher-cmyk` |
 | Complexity metafield | Standardised `Medium-Light` → `Light-Medium` for 4 products (Courtisans, Leaders: The Vermillion Emperor, One Deck Dungeon: Relics of the Forge, Zenith) — updated locally and pushed to Shopify |
+| Co-op collection overlap | Differentiated all three collections with distinct angles: `players-coop` → player-count focus (title: "Co-op Games by Player Count"), `category-coop` → genre overview (title: "Co-op Board Games"), `mechanic-cooperative-game` → mechanic deep-dive (title: "Cooperative Game Mechanic"). Each has a unique description and meta. |
 
 ---
 
 ## Needs a Decision
-
-### Co-op collection overlap
-
-Three collections all target "co-op board games" and share near-identical H1/meta:
-
-| Collection | Products | Notes |
-|------------|----------|-------|
-| `/collections/mechanic-cooperative-game` | — | The most semantically correct URL; mechanic-based |
-| `/collections/category-coop` | — | Category-based; arguably the primary browsing URL |
-| `/collections/players-coop` | — | Player-count section links here |
-
-**Options:**
-- **Redirect two to one** — pick one canonical URL (recommend `category-coop` or `mechanic-cooperative-game`) and 301 the others. Clean, consolidates link equity.
-- **Set noindex on two** — keep all three live for navigation but only index one. Quick fix but wastes crawl budget.
-- **Differentiate content** — give each a distinct angle (e.g. `players-coop` = "co-op games by player count", `category-coop` = "the best co-op games", `mechanic-cooperative-game` = "co-op mechanics explained"). More work but preserves all three URLs.
-
-The `mp-player-count` section on the homepage currently links to `players-coop`. If that URL is redirected, update the `index.json` block to point to the chosen canonical.
-
----
 
 ### `/collections` all-collections page
 
