@@ -175,49 +175,8 @@
 }
 
 /* ─── Blog article tables ─── */
-.article-template__content table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 2.8rem 0;
-  font-size: 1.4rem;
-  table-layout: auto;
-  border: 1px solid #e7e0d4;
-  border-style: solid;
-  box-shadow: none;
-}
-
 .article-template__content table th {
   background: #16323f;
   color: #fbf9f4;
-  font-weight: 700;
-  padding: 0.9rem 1.4rem;
-  text-align: left;
-  font-size: 1.15rem;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-  border: none;
-}
-
-.article-template__content table td {
-  padding: 0.9rem 1.4rem;
-  vertical-align: top;
-  border: none;
-  border-bottom: 1px solid #e7e0d4;
-  color: #16323f;
-}
-
-.article-template__content table tbody tr:nth-child(even) td {
-  background-color: #f4f0e8;
-}
-
-.article-template__content table tbody tr:last-child td {
-  border-bottom: none;
-}
-
-@media screen and (max-width: 749px) {
-  .article-template__content table {
-    display: block;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
+  border-color: #16323f;
 }
