@@ -72,7 +72,7 @@
 
     {%- assign cat_blocks = section.blocks | where: 'type', 'category' -%}
     {%- if cat_blocks.size > 0 -%}
-      <div class="ci__sh mp-cond">Shop by category</div>
+      <h2 class="ci__sh mp-cond">Shop by category</h2>
       <div class="ci__cats">
         {%- for block in cat_blocks -%}
           {%- assign col = block.settings.collection -%}
@@ -91,7 +91,7 @@
 
     <div class="ci__half">
       <div>
-        <div class="ci__sh mp-cond">By player count</div>
+        <h2 class="ci__sh mp-cond">By player count</h2>
         <div class="ci__players">
           {%- assign pc = 'players-solo:Solo,players-2:Two-player,players-3-4:Small group,players-5-6:Game night,players-7:Party,players-coop:Team up' | split: ',' -%}
           {%- assign pn = '1,2,3–4,5–6,7+,Co-op' | split: ',' -%}
@@ -108,7 +108,7 @@
         </div>
       </div>
       <div>
-        <div class="ci__sh mp-cond">By price</div>
+        <h2 class="ci__sh mp-cond">By price</h2>
         <div class="ci__prices">
           <a class="ci__price" href="/collections/all-games?filter.v.price.lte=20"><span class="ci__pricel mp-cond">Under £20</span><span class="ci__pricec">&#8250;</span></a>
           <a class="ci__price" href="/collections/all-games?filter.v.price.gte=20&filter.v.price.lte=40"><span class="ci__pricel mp-cond">£20 – £40</span><span class="ci__pricec">&#8250;</span></a>
@@ -120,7 +120,7 @@
 
     {%- assign vendors = collections['all-games'].products | map: 'vendor' | uniq -%}
     {%- if vendors.size > 0 -%}
-      <div class="ci__shrow"><div class="ci__sh mp-cond" style="margin:0">Shop by publisher</div><a class="ci__all" href="/pages/publishers">All publishers &#8594;</a></div>
+      <div class="ci__shrow"><h2 class="ci__sh mp-cond" style="margin:0">Shop by publisher</h2><a class="ci__all" href="/pages/publishers">All publishers &#8594;</a></div>
       <div class="ci__pubs">
         {%- assign pub_palette = '#2c5466,#2f8f5b,#9a3b2e,#6a4f86,#c2772a,#16323f' | split: ',' -%}
         {%- assign logo_handles = section.settings.logo_handles | split: ',' -%}
@@ -147,7 +147,7 @@
 
     {%- assign feat_blocks = section.blocks | where: 'type', 'featured' -%}
     {%- if feat_blocks.size > 0 -%}
-      <div class="ci__sh mp-cond">Featured collections</div>
+      <h2 class="ci__sh mp-cond">Featured collections</h2>
       <div class="ci__feat">
         {%- for block in feat_blocks -%}
           {%- assign col = block.settings.collection -%}
