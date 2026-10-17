@@ -1,0 +1,225 @@
+{%- comment -%}
+  MPGames BGG top 6 + customer reviews — side-by-side split panel.
+  Left: white card with top-rated products ordered by BGG score.
+  Right: purple reviews panel with Judge.me aggregate score and featured quote.
+{%- endcomment -%}
+
+{%- style -%}
+  .mp-br-{{ section.id }} {
+    padding: 72px 24px 0;
+    font-family: 'Barlow', ui-sans-serif, system-ui, sans-serif;
+  }
+  .mp-br-{{ section.id }} .mp-br__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    gap: 16px;
+    align-items: stretch;
+  }
+
+  /* ── BGG left panel ── */
+  .mp-br-{{ section.id }} .mp-br__bgg-card {
+    background: #fff;
+    border: 1px solid #ECE3D3;
+    border-radius: 20px;
+    padding: 28px 28px 20px;
+  }
+  .mp-br-{{ section.id }} .mp-br__kicker {
+    font-size: 11px; font-weight: 700; letter-spacing: .1em;
+    text-transform: uppercase; color: #B4530F; margin: 0 0 4px;
+  }
+  .mp-br-{{ section.id }} .mp-br__heading {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 36px; font-weight: 800; color: #14233A;
+    text-transform: uppercase; line-height: 1; margin: 0 0 18px;
+  }
+  .mp-br-{{ section.id }} .mp-br__list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0; }
+  .mp-br-{{ section.id }} .mp-br__row {
+    display: flex; align-items: center; gap: 14px;
+    padding: 10px 0; border-bottom: 1px solid #F5F0E8;
+    text-decoration: none;
+  }
+  .mp-br-{{ section.id }} .mp-br__list li:last-child .mp-br__row { border-bottom: 0; }
+  .mp-br-{{ section.id }} .mp-br__row:hover .mp-br__rname { color: #B4530F; }
+  .mp-br-{{ section.id }} .mp-br__rank {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 32px; font-weight: 800; color: #C9BFAE; flex: none; width: 36px; text-align: center; line-height: 1;
+  }
+  .mp-br-{{ section.id }} .mp-br__rthumb {
+    width: 44px; height: 54px; border-radius: 6px; overflow: hidden; flex: none;
+    background: #F5F0E8; display: flex; align-items: center; justify-content: center;
+  }
+  .mp-br-{{ section.id }} .mp-br__rthumb img { width: 100%; height: 100%; object-fit: contain; display: block; }
+  .mp-br-{{ section.id }} .mp-br__rmeta { flex: 1; min-width: 0; }
+  .mp-br-{{ section.id }} .mp-br__rname { font-size: 14px; font-weight: 600; color: #14233A; line-height: 1.2; transition: color .15s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .mp-br-{{ section.id }} .mp-br__rtype { font-size: 11.5px; color: #6A7686; margin-top: 2px; }
+  .mp-br-{{ section.id }} .mp-br__rprice {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 18px; font-weight: 800; color: #14233A; flex: none; margin: 0 6px;
+  }
+  .mp-br-{{ section.id }} .mp-br__radd {
+    border: 1.5px solid #14233A; color: #14233A; border-radius: 8px;
+    padding: 6px 12px; font-size: 12px; font-weight: 600; background: transparent;
+    cursor: pointer; font-family: inherit; flex: none;
+  }
+  .mp-br-{{ section.id }} .mp-br__radd:hover { background: #14233A; color: #fff; }
+  .mp-br-{{ section.id }} .mp-br__radd[disabled] { opacity: .4; cursor: not-allowed; }
+  .mp-br-{{ section.id }} .mp-br__raddform { margin: 0; }
+
+  /* ── Reviews right panel ── */
+  .mp-br-{{ section.id }} .mp-br__rev-card {
+    background: #3A2A56;
+    border-radius: 20px;
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+  }
+  .mp-br-{{ section.id }} .mp-br__rev-kicker {
+    font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+    color: #D9CCF0; margin: 0 0 12px;
+  }
+  .mp-br-{{ section.id }} .mp-br__score {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 72px; font-weight: 800; color: #fff; line-height: 1; margin: 0;
+  }
+  .mp-br-{{ section.id }} .mp-br__stars {
+    display: flex; gap: 4px; margin-top: 6px;
+  }
+  .mp-br-{{ section.id }} .mp-br__star { color: #F5B841; font-size: 20px; }
+  .mp-br-{{ section.id }} .mp-br__rev-count { font-size: 13px; color: #D9CCF0; margin-top: 4px; }
+  .mp-br-{{ section.id }} .mp-br__quote {
+    margin: 20px 0 0;
+    font-size: 15px; line-height: 1.55; color: #E8E0F5; font-style: italic;
+    flex: 1;
+  }
+  .mp-br-{{ section.id }} .mp-br__quote::before { content: '\201C'; }
+  .mp-br-{{ section.id }} .mp-br__quote::after { content: '\201D'; }
+  .mp-br-{{ section.id }} .mp-br__reviewer { font-size: 13px; color: #D9CCF0; margin-top: 10px; font-style: normal; }
+  .mp-br-{{ section.id }} .mp-br__rev-product {
+    margin-top: 20px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,.12);
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  }
+  .mp-br-{{ section.id }} .mp-br__rev-pname { font-size: 14px; font-weight: 600; color: #fff; }
+  .mp-br-{{ section.id }} .mp-br__rev-shop {
+    border: 1.5px solid rgba(255,255,255,.4); border-radius: 8px; padding: 7px 14px;
+    font-size: 13px; font-weight: 600; color: #fff; text-decoration: none; white-space: nowrap;
+    transition: background .15s;
+  }
+  .mp-br-{{ section.id }} .mp-br__rev-shop:hover { background: rgba(255,255,255,.12); }
+
+  @media (max-width: 900px) {
+    .mp-br-{{ section.id }} .mp-br__grid { grid-template-columns: 1fr; }
+    .mp-br-{{ section.id }} { padding-left: 16px; padding-right: 16px; }
+    .mp-br-{{ section.id }} .mp-br__heading { font-size: 28px; }
+  }
+{%- endstyle -%}
+
+<div class="mp-cream mp-br-{{ section.id }}">
+  <div class="mp-col" style="padding-bottom:0">
+    <div class="mp-br__grid">
+
+      <!-- BGG top list -->
+      <div class="mp-br__bgg-card">
+        <p class="mp-br__kicker">{{ section.settings.kicker }}</p>
+        <h2 class="mp-br__heading mp-cond">{{ section.settings.heading }}</h2>
+        {%- liquid
+          assign bgg_source = section.settings.collection.products
+          if section.settings.collection == blank
+            assign bgg_source = collections.all.products
+          endif
+          assign bgg_keyed = ''
+          for p in bgg_source
+            assign r = p.metafields.custom.bgg_rating.value | default: 0 | times: 10 | round | plus: 100000
+            assign bgg_keyed = bgg_keyed | append: r | append: '|' | append: p.handle | append: ','
+          endfor
+          assign bgg_keyed = bgg_keyed | split: ',' | sort | reverse
+          assign bgg_shown = 0
+        -%}
+        <ul class="mp-br__list">
+          {%- for entry in bgg_keyed -%}
+            {%- if entry == blank -%}{%- continue -%}{%- endif -%}
+            {%- if bgg_shown >= 6 -%}{%- break -%}{%- endif -%}
+            {%- assign parts = entry | split: '|' -%}
+            {%- assign want = parts[1] -%}
+            {%- assign bgg_product = nil -%}
+            {%- for p in bgg_source -%}{%- if p.handle == want -%}{%- assign bgg_product = p -%}{%- break -%}{%- endif -%}{%- endfor -%}
+            {%- if bgg_product.handle != want -%}{%- continue -%}{%- endif -%}
+            {%- assign bgg_shown = bgg_shown | plus: 1 -%}
+            <li>
+              <a class="mp-br__row" href="{{ bgg_product.url }}">
+                <span class="mp-br__rank mp-cond">{{ bgg_shown }}</span>
+                <span class="mp-br__rthumb">
+                  {%- if bgg_product.featured_image -%}
+                    {{ bgg_product.featured_image | image_url: width: 100 | image_tag: alt: bgg_product.title, loading: 'lazy', width: 44, height: 54 }}
+                  {%- endif -%}
+                </span>
+                <span class="mp-br__rmeta">
+                  <span class="mp-br__rname">{{ bgg_product.title }}</span>
+                  <span class="mp-br__rtype">{{ bgg_product.type }}</span>
+                </span>
+                <span class="mp-br__rprice mp-cond">{{ bgg_product.price | money }}</span>
+                <form action="{{ routes.cart_add_url }}" method="post" enctype="multipart/form-data" class="mp-br__raddform">
+                  <input type="hidden" name="id" value="{{ bgg_product.selected_or_first_available_variant.id }}">
+                  <button type="submit" class="mp-br__radd"{% unless bgg_product.available %} disabled{% endunless %}>
+                    {%- if bgg_product.available -%}Add{%- else -%}Out{%- endif -%}
+                  </button>
+                </form>
+              </a>
+            </li>
+          {%- endfor -%}
+        </ul>
+      </div>
+
+      <!-- Reviews panel -->
+      <div class="mp-br__rev-card">
+        <p class="mp-br__rev-kicker">{{ section.settings.reviews_kicker }}</p>
+        {%- liquid
+          assign jm_rating = shop.metafields.judgeme.rating.value | default: section.settings.rating_fallback
+          assign jm_count = shop.metafields.judgeme.all_reviews_count.value | default: section.settings.count_fallback
+        -%}
+        <p class="mp-br__score mp-cond">{{ jm_rating }}</p>
+        <div class="mp-br__stars" aria-label="{{ jm_rating }} out of 5 stars">
+          <span class="mp-br__star">&#9733;</span>
+          <span class="mp-br__star">&#9733;</span>
+          <span class="mp-br__star">&#9733;</span>
+          <span class="mp-br__star">&#9733;</span>
+          <span class="mp-br__star">&#9733;</span>
+        </div>
+        {%- if jm_count != blank -%}
+          <p class="mp-br__rev-count">{{ jm_count }} verified reviews</p>
+        {%- endif -%}
+        <blockquote class="mp-br__quote">{{ section.settings.quote_text }}</blockquote>
+        <p class="mp-br__reviewer">— {{ section.settings.quote_reviewer }}</p>
+        {%- if section.settings.featured_product_name != blank -%}
+          <div class="mp-br__rev-product">
+            <span class="mp-br__rev-pname">{{ section.settings.featured_product_name }}</span>
+            {%- if section.settings.featured_product_url != blank -%}
+              <a class="mp-br__rev-shop" href="{{ section.settings.featured_product_url }}">Shop {{ section.settings.featured_product_name }}</a>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+      </div>
+
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "MP BGG + Reviews",
+  "settings": [
+    { "type": "text",       "id": "kicker",              "label": "BGG kicker",           "default": "The hobbyist corner" },
+    { "type": "text",       "id": "heading",             "label": "BGG heading",          "default": "Highest rated on BoardGameGeek" },
+    { "type": "collection", "id": "collection",          "label": "Collection",           "info": "Products sorted by custom.bgg_rating metafield. Defaults to all products." },
+    { "type": "text",       "id": "reviews_kicker",      "label": "Reviews kicker",       "default": "Customers are saying" },
+    { "type": "text",       "id": "rating_fallback",     "label": "Rating fallback",      "default": "4.93", "info": "Shown if Judge.me metafield is not set." },
+    { "type": "text",       "id": "count_fallback",      "label": "Review count fallback","default": "",     "info": "Shown if Judge.me metafield is not set." },
+    { "type": "textarea",   "id": "quote_text",          "label": "Featured quote",       "default": "Arrived quickly, beautifully packaged and exactly as described. MPGames is our go-to for every game night." },
+    { "type": "text",       "id": "quote_reviewer",      "label": "Reviewer name",        "default": "Sarah M., verified buyer" },
+    { "type": "text",       "id": "featured_product_name", "label": "Featured product name",  "default": "" },
+    { "type": "url",        "id": "featured_product_url",  "label": "Featured product URL",   "default": "" }
+  ],
+  "presets": [
+    { "name": "MP BGG + Reviews" }
+  ]
+}
+{% endschema %}

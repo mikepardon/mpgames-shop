@@ -7,8 +7,8 @@
 {%- style -%}
   .mp-catg-{{ section.id }} {
     font-family: 'Barlow', ui-sans-serif, system-ui, sans-serif;
-    background: #e9e4da;
-    padding: 24px 28px 20px;
+    background: #FBF7F0;
+    padding: 72px 24px 20px;
   }
 
   /* Section header */
@@ -16,20 +16,20 @@
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
-    margin-bottom: 14px;
+    margin-bottom: 16px;
     gap: 16px;
   }
   .mp-catg-{{ section.id }} .mp-catg__kicker {
-    font-size: 11px; font-weight: 700; letter-spacing: .07em;
-    text-transform: uppercase; color: #f2872f; margin: 0 0 5px;
+    font-size: 11px; font-weight: 700; letter-spacing: .1em;
+    text-transform: uppercase; color: #B4530F; margin: 0 0 4px;
   }
   .mp-catg-{{ section.id }} .mp-catg__heading {
-    font-family: 'Barlow Semi Condensed', 'Barlow', sans-serif;
-    font-size: 30px; font-weight: 800; color: #16323f;
+    font-family: 'Barlow Condensed', 'Barlow', sans-serif;
+    font-size: 44px; font-weight: 800; color: #14233A;
     text-transform: uppercase; line-height: 1; margin: 0;
   }
   .mp-catg-{{ section.id }} .mp-catg__all-link {
-    font-size: 14px; font-weight: 600; color: #f2872f;
+    font-size: 14px; font-weight: 600; color: #B4530F;
     text-decoration: none; white-space: nowrap; flex: none;
   }
   .mp-catg-{{ section.id }} .mp-catg__all-link:hover { text-decoration: underline; }
@@ -45,12 +45,12 @@
   .mp-catg-{{ section.id }} .mp-catg__card {
     position: relative;
     overflow: hidden;
-    border-radius: 14px;
+    border-radius: 20px;
     padding: 20px 20px 16px;
     text-decoration: none;
     display: flex;
     flex-direction: column;
-    min-height: 190px;
+    min-height: 210px;
     grid-column: span 1;
     transition: filter .18s;
   }
@@ -58,20 +58,23 @@
   .mp-catg-{{ section.id }} .mp-catg__card--large {
     grid-column: span 2;
     min-height: 300px;
-    padding: 26px 28px 20px;
+    padding: 28px 28px 22px;
   }
 
-  /* Text content — capped to left half so it never runs under the image */
+  /* Text content — capped to left portion so it never runs under the image */
   .mp-catg-{{ section.id }} .mp-catg__body {
     display: flex;
     flex-direction: column;
     flex: 1;
     position: relative;
     z-index: 1;
-    max-width: 50%;
+    max-width: 48%;
+  }
+  .mp-catg-{{ section.id }} .mp-catg__card--large .mp-catg__body {
+    max-width: 40%;
   }
   .mp-catg-{{ section.id }} .mp-catg__name {
-    font-family: 'Barlow Semi Condensed', 'Barlow', sans-serif;
+    font-family: 'Barlow Condensed', 'Barlow', sans-serif;
     font-size: 22px; font-weight: 800; text-transform: uppercase;
     line-height: 1; margin: 0 0 8px;
   }
@@ -207,14 +210,14 @@
     {
       "name": "MP Category grid",
       "blocks": [
-        { "type": "category", "settings": { "size": "large", "title": "Party Games",  "description": "Big groups, loud tables, rules explained in five minutes.", "tagline": "Start with Magical Athlete, Codenames, Hot Streak", "url": "/collections/category-party",    "bg": "#c05430", "text_color": "#ffffff" } },
-        { "type": "category", "settings": { "size": "large", "title": "Family Games", "description": "Easy to teach, hard to put down. Great from age 8.",       "tagline": "Start with Forbidden Island, Fliptoons, No Thanks!", "url": "/collections/category-family",   "bg": "#e8b412", "text_color": "#1a2633" } },
-        { "type": "category", "settings": { "size": "small", "title": "Strategy",     "description": "Long-haul thinkers for nights that run late.",              "tagline": "A Feast for Odin, Solstis",                          "url": "/collections/category-strategy", "bg": "#16323f", "text_color": "#ffffff" } },
-        { "type": "category", "settings": { "size": "small", "title": "Two-Player",   "description": "Head-to-head duels for you and one other.",                 "tagline": "Duel for Cardia, Splendor Duel",                     "url": "/collections/players-2",         "bg": "#2d5f78", "text_color": "#ffffff" } },
-        { "type": "category", "settings": { "size": "small", "title": "Co-op",        "description": "Win together, or lose together.",                           "tagline": "Mechs vs Minions, Final Girl",                        "url": "/collections/players-coop",      "bg": "#1a4a38", "text_color": "#ffffff" } },
-        { "type": "category", "settings": { "size": "small", "title": "Card Games",   "description": "Pocket-sized, big on play.",                               "tagline": "No Thanks!, Maybe Not Perfect",                       "url": "/collections/category-card",     "bg": "#4a2878", "text_color": "#ffffff" } },
-        { "type": "category", "settings": { "size": "small", "title": "Expansions",   "description": "More of the games you already love.",                      "tagline": "Shackleton Base, Courtisans",                         "url": "/collections/expansions",        "bg": "#ede8de", "text_color": "#16323f" } },
-        { "type": "category", "settings": { "size": "small", "title": "Pre-Owned",    "description": "Checked, counted and cheaper.",                            "tagline": "From £3.50",                                          "url": "/collections/pre-owned",         "bg": "#0d1c27", "text_color": "#ffffff" } }
+        { "type": "category", "settings": { "size": "large", "title": "Party Games",  "description": "Big groups, loud tables, rules explained in five minutes.", "tagline": "Start with Magical Athlete, Codenames, Hot Streak", "url": "/collections/category-party",    "bg": "#C2410C", "text_color": "#ffffff" } },
+        { "type": "category", "settings": { "size": "large", "title": "Family Games", "description": "Easy to teach, hard to put down. Great from age 8.",       "tagline": "Start with Forbidden Island, Fliptoons, No Thanks!", "url": "/collections/category-family",   "bg": "#F5B841", "text_color": "#14233A" } },
+        { "type": "category", "settings": { "size": "small", "title": "Strategy",     "description": "Long-haul thinkers for nights that run late.",              "tagline": "A Feast for Odin, Solstis",                          "url": "/collections/category-strategy", "bg": "#1F4E5A", "text_color": "#ffffff" } },
+        { "type": "category", "settings": { "size": "small", "title": "Two-Player",   "description": "Head-to-head duels for you and one other.",                 "tagline": "Duel for Cardia, Splendor Duel",                     "url": "/collections/players-2",         "bg": "#2E4A8C", "text_color": "#ffffff" } },
+        { "type": "category", "settings": { "size": "small", "title": "Co-op",        "description": "Win together, or lose together.",                           "tagline": "Mechs vs Minions, Final Girl",                        "url": "/collections/players-coop",      "bg": "#2F6B47", "text_color": "#ffffff" } },
+        { "type": "category", "settings": { "size": "small", "title": "Card Games",   "description": "Pocket-sized, big on play.",                               "tagline": "No Thanks!, Maybe Not Perfect",                       "url": "/collections/category-card",     "bg": "#5B3F8C", "text_color": "#ffffff" } },
+        { "type": "category", "settings": { "size": "small", "title": "Expansions",   "description": "More of the games you already love.",                      "tagline": "Shackleton Base, Courtisans",                         "url": "/collections/expansions",        "bg": "#EDE3D1", "text_color": "#14233A" } },
+        { "type": "category", "settings": { "size": "small", "title": "Pre-Owned",    "description": "Checked, counted and cheaper.",                            "tagline": "From £3.50",                                          "url": "/collections/pre-owned",         "bg": "#1B1E26", "text_color": "#ffffff" } }
       ]
     }
   ]

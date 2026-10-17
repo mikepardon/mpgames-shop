@@ -9,30 +9,38 @@
 -%}
 
 {%- style -%}
-  .mp-rail-{{ section.id }} .mp-rail__pad { padding: 24px 0 6px; }
+  .mp-rail-{{ section.id }} .mp-rail__pad { padding: 72px 0 6px; }
   .mp-rail-{{ section.id }} .mp-rail__head {
-    display: flex; justify-content: space-between; align-items: baseline;
-    padding: 0 28px; margin-bottom: 14px; gap: 16px;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0 24px; margin-bottom: 18px; gap: 16px;
   }
-  .mp-rail-{{ section.id }} .mp-rail__title { font-size: 20px; font-weight: 700; color: #16323f; }
-  .mp-rail-{{ section.id }} .mp-rail__sub { font-size: 12.5px; color: #8a8278; margin-top: 1px; }
+  .mp-rail-{{ section.id }} .mp-rail__kicker {
+    font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+    color: #B4530F; margin: 0 0 4px;
+  }
+  .mp-rail-{{ section.id }} .mp-rail__title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 44px; font-weight: 800; color: #14233A;
+    text-transform: uppercase; line-height: 1; margin: 0;
+  }
+  .mp-rail-{{ section.id }} .mp-rail__sub { font-size: 12.5px; color: #8a8278; margin-top: 4px; }
   .mp-rail-{{ section.id }} .mp-rail__tools { display: flex; align-items: center; gap: 12px; white-space: nowrap; }
-  .mp-rail-{{ section.id }} .mp-rail__viewall { font-size: 12.5px; color: #f2872f; font-weight: 600; text-decoration: none; }
+  .mp-rail-{{ section.id }} .mp-rail__viewall { font-size: 13px; color: #B4530F; font-weight: 600; text-decoration: none; }
   .mp-rail-{{ section.id }} .mp-rail__nav { display: flex; gap: 6px; }
   .mp-rail-{{ section.id }} .mp-rail__nav button {
     width: 32px; height: 32px; border: 1px solid #d8d4cc; border-radius: 7px; background: #fff;
     display: flex; align-items: center; justify-content: center; color: #6b7a82; cursor: pointer;
   }
-  .mp-rail-{{ section.id }} .mp-rail__nav button.is-active { border-color: #16323f; background: #16323f; color: #fff; }
+  .mp-rail-{{ section.id }} .mp-rail__nav button.is-active { border-color: #14233A; background: #14233A; color: #fff; }
   .mp-rail-{{ section.id }} .mp-rail__track {
-    display: flex; gap: 16px; overflow-x: auto; padding: 4px 28px 14px;
+    display: flex; gap: 16px; overflow-x: auto; padding: 4px 24px 14px;
     scrollbar-width: thin; scrollbar-color: #c9c2b6 transparent;
   }
   .mp-rail-{{ section.id }} .mp-rail__track::-webkit-scrollbar { height: 8px; }
   .mp-rail-{{ section.id }} .mp-rail__track::-webkit-scrollbar-thumb { background: #c9c2b6; border-radius: 8px; }
 
   .mp-rail-{{ section.id }} .mp-card {
-    flex: 0 0 212px; border: 1px solid #e7e0d4; border-radius: 10px; overflow: hidden;
+    flex: 0 0 212px; border: 1px solid #ECE3D3; border-radius: 16px; overflow: hidden;
     background: #fff; display: flex; flex-direction: column; position: relative;
   }
   .mp-rail-{{ section.id }} .mp-card__media {
@@ -48,8 +56,8 @@
     font-size: 12px; font-weight: 700; padding: 3px 8px; border-radius: 5px;
   }
   .mp-rail-{{ section.id }} .mp-card__flag--sale { background: #d6402e; }
-  .mp-rail-{{ section.id }} .mp-card__flag--pre { background: #f2872f; }
-  .mp-rail-{{ section.id }} .mp-card__flag--badge { background: #16323f; font-size: 11px; }
+  .mp-rail-{{ section.id }} .mp-card__flag--pre { background: #F59A3A; }
+  .mp-rail-{{ section.id }} .mp-card__flag--badge { background: #14233A; font-size: 11px; }
   .mp-rail-{{ section.id }} .mp-card__wish {
     position: absolute; top: 9px; right: 9px; z-index: 2; background: #fff; border: 1px solid #e7e0d4;
     border-radius: 50%; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center;
@@ -61,25 +69,27 @@
   }
   .mp-rail-{{ section.id }} .mp-card__bgg b { font-size: 10px; font-weight: 700; color: #fff; letter-spacing: .5px; }
   .mp-rail-{{ section.id }} .mp-card__rank { font-size: 10.5px; color: #9b948a; }
-  .mp-rail-{{ section.id }} .mp-card__name { font-size: 13.5px; font-weight: 600; color: #16323f; line-height: 1.25; }
+  .mp-rail-{{ section.id }} .mp-card__name { font-size: 13.5px; font-weight: 600; color: #14233A; line-height: 1.25; }
   .mp-rail-{{ section.id }} .mp-card__pub { font-size: 11px; color: #9b948a; margin-top: 3px; }
   .mp-rail-{{ section.id }} .mp-card__meta { display: flex; gap: 10px; margin-top: 7px; font-size: 11px; color: #6b7a82; }
   .mp-rail-{{ section.id }} .mp-card__foot {
     display: flex; align-items: flex-end; justify-content: space-between; margin-top: auto; padding-top: 11px;
   }
   .mp-rail-{{ section.id }} .mp-card__rrp { font-size: 11px; color: #9b948a; text-decoration: line-through; }
-  .mp-rail-{{ section.id }} .mp-card__price { font-size: 18px; font-weight: 700; color: #16323f; }
+  .mp-rail-{{ section.id }} .mp-card__price { font-size: 18px; font-weight: 700; color: #14233A; }
   .mp-rail-{{ section.id }} .mp-card__add {
-    background: #f2872f; color: #fff; border-radius: 7px; padding: 8px 12px; font-size: 12.5px; font-weight: 600;
+    background: #F59A3A; color: #fff; border-radius: 7px; padding: 8px 12px; font-size: 12.5px; font-weight: 600;
     text-decoration: none; border: 0; cursor: pointer;
   }
-  .mp-rail-{{ section.id }} .mp-card__add--ghost { background: #fff; border: 1px solid #16323f; color: #16323f; padding: 7px 11px; font-size: 12px; }
+  .mp-rail-{{ section.id }} .mp-card__add--ghost { background: #fff; border: 1px solid #14233A; color: #14233A; padding: 7px 11px; font-size: 12px; }
   .mp-rail-{{ section.id }} .mp-card__add[disabled] { opacity: .45; cursor: not-allowed; }
   .mp-rail-{{ section.id }} .mp-card__addform { margin: 0; }
-  .mp-rail-{{ section.id }} .mp-card__notify { display: inline-block; border: 1px solid #16323f; color: #16323f; border-radius: 7px; padding: 7px 11px; font-size: 12px; font-weight: 600; text-decoration: none; }
+  .mp-rail-{{ section.id }} .mp-card__notify { display: inline-block; border: 1px solid #14233A; color: #14233A; border-radius: 7px; padding: 7px 11px; font-size: 12px; font-weight: 600; text-decoration: none; }
   .mp-rail-{{ section.id }} .mp-card__media { text-decoration: none; }
   @media (max-width: 749px) {
-    .mp-rail-{{ section.id }} .mp-rail__head, .mp-rail-{{ section.id }} .mp-rail__track { padding-left: 16px; padding-right: 16px; }
+    .mp-rail-{{ section.id }} .mp-rail__head { padding-left: 16px; padding-right: 16px; }
+    .mp-rail-{{ section.id }} .mp-rail__title { font-size: 34px; }
+    .mp-rail-{{ section.id }} .mp-rail__track { padding-left: 16px; padding-right: 16px; }
     .mp-rail-{{ section.id }} .mp-rail__nav { display: none; }
   }
 {%- endstyle -%}
@@ -89,6 +99,7 @@
     <div class="mp-rail__pad">
       <div class="mp-rail__head">
         <div>
+          {%- if section.settings.kicker != blank -%}<p class="mp-rail__kicker">{{ section.settings.kicker }}</p>{%- endif -%}
           <h2 class="mp-rail__title mp-cond">{{ section.settings.title }}</h2>
           {%- if section.settings.subtitle != blank -%}<div class="mp-rail__sub">{{ section.settings.subtitle }}</div>{%- endif -%}
         </div>
@@ -190,6 +201,7 @@
     },
     { "type": "collection", "id": "collection", "label": "Collection" },
     { "type": "range", "id": "products_to_show", "min": 4, "max": 16, "step": 1, "label": "Products to show", "default": 8 },
+    { "type": "text", "id": "kicker", "label": "Kicker (eyebrow text)", "default": "Top picks" },
     { "type": "text", "id": "title", "label": "Title", "default": "Best sellers this month" },
     { "type": "text", "id": "subtitle", "label": "Subtitle (optional)" },
     { "type": "text", "id": "view_all_label", "label": "View-all label", "default": "View all" },

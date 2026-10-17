@@ -1,0 +1,162 @@
+{%- comment -%}
+  MPGames "New in & coming soon" — tabbed section combining new releases and pre-orders.
+{%- endcomment -%}
+
+{%- style -%}
+  .mp-ni-{{ section.id }} { padding: 72px 24px 0; font-family: 'Barlow', ui-sans-serif, system-ui, sans-serif; }
+  .mp-ni-{{ section.id }} .mp-ni__kicker { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #B4530F; margin: 0 0 4px; }
+  .mp-ni-{{ section.id }} .mp-ni__heading {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 44px; font-weight: 800; color: #14233A;
+    text-transform: uppercase; line-height: 1; margin: 0 0 20px;
+  }
+  .mp-ni-{{ section.id }} .mp-ni__tabs {
+    display: inline-flex; gap: 4px; background: #EFE7DA; border-radius: 12px; padding: 4px; margin-bottom: 20px;
+  }
+  .mp-ni-{{ section.id }} .mp-ni__tab {
+    padding: 8px 20px; border-radius: 9px; border: 0; background: transparent;
+    font-size: 14px; font-weight: 600; color: #4F5D70; cursor: pointer; font-family: inherit;
+    transition: background .15s, color .15s;
+  }
+  .mp-ni-{{ section.id }} .mp-ni__tab.is-active { background: #fff; color: #14233A; box-shadow: 0 1px 4px rgba(0,0,0,.1); }
+  .mp-ni-{{ section.id }} .mp-ni__panel { display: none; }
+  .mp-ni-{{ section.id }} .mp-ni__panel.is-active { display: block; }
+  .mp-ni-{{ section.id }} .mp-ni__grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px;
+  }
+  .mp-ni-{{ section.id }} .mp-ni__card {
+    display: flex; gap: 14px; background: #fff; border: 1px solid #ECE3D3; border-radius: 14px;
+    padding: 12px; text-decoration: none; transition: border-color .15s;
+  }
+  .mp-ni-{{ section.id }} .mp-ni__card:hover { border-color: #14233A; }
+  .mp-ni-{{ section.id }} .mp-ni__thumb {
+    flex: none; width: 72px; height: 72px; border-radius: 8px; overflow: hidden;
+    background: #F5F0E8; display: flex; align-items: center; justify-content: center;
+  }
+  .mp-ni-{{ section.id }} .mp-ni__thumb img { width: 100%; height: 100%; object-fit: contain; display: block; }
+  .mp-ni-{{ section.id }} .mp-ni__info { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+  .mp-ni-{{ section.id }} .mp-ni__badge {
+    display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: .05em;
+    text-transform: uppercase; border-radius: 5px; padding: 2px 7px; margin-bottom: 5px; align-self: flex-start;
+  }
+  .mp-ni-{{ section.id }} .mp-ni__badge--new { background: #DDEAFF; color: #3554A8; }
+  .mp-ni-{{ section.id }} .mp-ni__badge--pre { background: #D1EAD8; color: #1F5C3E; }
+  .mp-ni-{{ section.id }} .mp-ni__name { font-size: 15px; font-weight: 700; color: #14233A; line-height: 1.25; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .mp-ni-{{ section.id }} .mp-ni__pub { font-size: 12px; color: #6A7686; margin: 2px 0 0; }
+  .mp-ni-{{ section.id }} .mp-ni__price {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 20px; font-weight: 800; color: #14233A; margin-top: auto; padding-top: 4px;
+  }
+  .mp-ni-{{ section.id }} .mp-ni__empty { color: #8a8278; font-size: 14px; padding: 20px 0; }
+  @media (max-width: 749px) {
+    .mp-ni-{{ section.id }} { padding-left: 16px; padding-right: 16px; }
+    .mp-ni-{{ section.id }} .mp-ni__heading { font-size: 34px; }
+    .mp-ni-{{ section.id }} .mp-ni__grid { grid-template-columns: 1fr; }
+  }
+{%- endstyle -%}
+
+<div class="mp-cream mp-ni-{{ section.id }}">
+  <div class="mp-col" style="padding-bottom: 48px">
+    <p class="mp-ni__kicker">{{ section.settings.kicker }}</p>
+    <h2 class="mp-ni__heading mp-cond">{{ section.settings.title }}</h2>
+
+    <div class="mp-ni__tabs" role="tablist" aria-label="New in / Pre-orders">
+      <button class="mp-ni__tab is-active" role="tab" aria-selected="true" aria-controls="mp-ni-panel-new-{{ section.id }}" data-ni-tab="new">{{ section.settings.tab_new_label }}</button>
+      <button class="mp-ni__tab" role="tab" aria-selected="false" aria-controls="mp-ni-panel-pre-{{ section.id }}" data-ni-tab="pre">{{ section.settings.tab_pre_label }}</button>
+    </div>
+
+    {%- liquid
+      assign new_col = section.settings.new_col
+      assign pre_col = section.settings.preorder_col
+      assign cards_limit = section.settings.products_to_show
+    -%}
+
+    <div class="mp-ni__panel is-active" id="mp-ni-panel-new-{{ section.id }}" role="tabpanel">
+      <div class="mp-ni__grid">
+        {%- if new_col != blank -%}
+          {%- for product in new_col.products limit: cards_limit -%}
+            <a class="mp-ni__card" href="{{ product.url }}">
+              <div class="mp-ni__thumb">
+                {%- if product.featured_image -%}
+                  {{ product.featured_image | image_url: width: 144 | image_tag: alt: product.title, loading: 'lazy', width: 72, height: 72 }}
+                {%- endif -%}
+              </div>
+              <div class="mp-ni__info">
+                <span class="mp-ni__badge mp-ni__badge--new">New</span>
+                <p class="mp-ni__name">{{ product.title }}</p>
+                <p class="mp-ni__pub">{{ product.vendor }}</p>
+                <p class="mp-ni__price">{{ product.price | money }}</p>
+              </div>
+            </a>
+          {%- else -%}
+            <p class="mp-ni__empty">No new arrivals yet — check back soon.</p>
+          {%- endfor -%}
+        {%- else -%}
+          <p class="mp-ni__empty">Select a collection in the section settings.</p>
+        {%- endif -%}
+      </div>
+    </div>
+
+    <div class="mp-ni__panel" id="mp-ni-panel-pre-{{ section.id }}" role="tabpanel">
+      <div class="mp-ni__grid">
+        {%- if pre_col != blank -%}
+          {%- for product in pre_col.products limit: cards_limit -%}
+            <a class="mp-ni__card" href="{{ product.url }}">
+              <div class="mp-ni__thumb">
+                {%- if product.featured_image -%}
+                  {{ product.featured_image | image_url: width: 144 | image_tag: alt: product.title, loading: 'lazy', width: 72, height: 72 }}
+                {%- endif -%}
+              </div>
+              <div class="mp-ni__info">
+                <span class="mp-ni__badge mp-ni__badge--pre">Pre-order</span>
+                <p class="mp-ni__name">{{ product.title }}</p>
+                <p class="mp-ni__pub">{{ product.vendor }}</p>
+                <p class="mp-ni__price">{{ product.price | money }}</p>
+              </div>
+            </a>
+          {%- else -%}
+            <p class="mp-ni__empty">No pre-orders available right now.</p>
+          {%- endfor -%}
+        {%- else -%}
+          <p class="mp-ni__empty">Select a collection in the section settings.</p>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function () {
+    var section = document.querySelector('.mp-ni-{{ section.id }}');
+    if (!section) return;
+    var tabs = section.querySelectorAll('[data-ni-tab]');
+    tabs.forEach(function (tab) {
+      tab.addEventListener('click', function () {
+        var key = tab.dataset.niTab;
+        tabs.forEach(function (t) { t.classList.remove('is-active'); t.setAttribute('aria-selected', 'false'); });
+        tab.classList.add('is-active'); tab.setAttribute('aria-selected', 'true');
+        section.querySelectorAll('.mp-ni__panel').forEach(function (p) { p.classList.remove('is-active'); });
+        var panel = section.querySelector('#mp-ni-panel-' + key + '-{{ section.id }}');
+        if (panel) panel.classList.add('is-active');
+      });
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "MP New in & Pre-orders",
+  "settings": [
+    { "type": "text", "id": "kicker", "label": "Kicker (eyebrow text)", "default": "Fresh on the shelf" },
+    { "type": "text", "id": "title", "label": "Heading", "default": "New in & coming soon" },
+    { "type": "text", "id": "tab_new_label", "label": "New in tab label", "default": "New in" },
+    { "type": "text", "id": "tab_pre_label", "label": "Pre-orders tab label", "default": "Pre-orders" },
+    { "type": "collection", "id": "new_col", "label": "New arrivals collection" },
+    { "type": "collection", "id": "preorder_col", "label": "Pre-orders collection" },
+    { "type": "range", "id": "products_to_show", "min": 4, "max": 16, "step": 4, "label": "Products to show per tab", "default": 8 }
+  ],
+  "presets": [
+    { "name": "MP New in & Pre-orders" }
+  ]
+}
+{% endschema %}

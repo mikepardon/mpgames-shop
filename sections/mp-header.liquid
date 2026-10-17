@@ -7,18 +7,18 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Semi+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,600;0,700;0,800;1,800;1,900&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 {%- style -%}
-  .mp-cond { font-family: 'Barlow Semi Condensed', ui-sans-serif, sans-serif; }
+  .mp-cond { font-family: 'Barlow Condensed', ui-sans-serif, sans-serif; }
 
   /* Global side-scroll guard: nothing may push the page wider than the viewport.
      `clip` (not `hidden`) so it never creates a scroll container that would break
      position: sticky. Internal rails keep their own overflow-x: auto scrolling. */
-  html, body { overflow-x: clip; max-width: 100%; background-color: #e9e4da; }
+  html, body { overflow-x: clip; max-width: 100%; background-color: #FBF7F0; }
 
   /* shared layout helpers used by every MP* homepage section */
-  .mp-cream { background: #e9e4da; font-family: 'Barlow', ui-sans-serif, system-ui, sans-serif; max-width: 100%; }
+  .mp-cream { background: #FBF7F0; font-family: 'Barlow', ui-sans-serif, system-ui, sans-serif; max-width: 100%; }
   /* overflow-x: clip stops any full-width rail/grid (e.g. the Top-rated track)
      from pushing the whole page wider than the viewport and causing side-scroll,
      while leaving each rail's own internal horizontal scrolling intact. */
@@ -27,7 +27,7 @@
   .mp-hd-{{ section.id }} { font-family: 'Barlow', ui-sans-serif, system-ui, sans-serif; }
 
   /* row 1 */
-  .mp-hd-{{ section.id }} .mp-hd__bar { background: #16323f; }
+  .mp-hd-{{ section.id }} .mp-hd__bar { background: #14233A; }
   .mp-hd-{{ section.id }} .mp-hd__in {
     width: 100%;
     padding: 15px 28px; display: flex; align-items: center; gap: 24px;
@@ -36,7 +36,7 @@
     font-size: 26px; font-weight: 700; color: #fff; white-space: nowrap;
     letter-spacing: .5px; text-decoration: none; display: flex; align-items: center;
   }
-  .mp-hd-{{ section.id }} .mp-hd__logo span { color: #f2872f; }
+  .mp-hd-{{ section.id }} .mp-hd__logo span { color: #F59A3A; }
   .mp-hd-{{ section.id }} .mp-hd__logo img { display: block; width: auto; }
   .mp-hd-{{ section.id }} .mp-hd__logo .mp-hd__logo-mark { display: none; height: 34px; }
   .mp-hd-{{ section.id }} .mp-hd__search {
@@ -49,11 +49,11 @@
   }
   .mp-hd-{{ section.id }} .mp-hd__search input {
     flex: 1; border: 0; outline: 0; padding: 11px 13px; font-size: 13px;
-    color: #16323f; font-family: inherit; min-width: 0; background: transparent;
+    color: #14233A; font-family: inherit; min-width: 0; background: transparent;
   }
   .mp-hd-{{ section.id }} .mp-hd__search input::placeholder { color: #a39c92; }
   .mp-hd-{{ section.id }} .mp-hd__search button {
-    background: #f2872f; color: #fff; padding: 11px 18px; font-size: 13px;
+    background: #F59A3A; color: #fff; padding: 11px 18px; font-size: 13px;
     font-weight: 600; border: 0; cursor: pointer; font-family: inherit; white-space: nowrap;
   }
   .mp-hd-{{ section.id }} .mp-hd__util {
@@ -73,8 +73,8 @@
   .mp-hd-{{ section.id }} .mp-hd__wish-label { font-size: 11px; color: #9fb4bd; }
   .mp-hd-{{ section.id }} .mp-hd__wish-count { font-size: 13px; font-weight: 600; }
   /* basket */
-  .mp-hd-{{ section.id }} .mp-hd__basket { display: inline-flex; align-items: center; gap: 8px; background: #fff; border-radius: 7px; padding: 9px 15px; color: #16323f; font-size: 13px; font-weight: 600; }
-  .mp-hd-{{ section.id }} .mp-hd__basket:hover { background: #f0ebe2; color: #16323f; }
+  .mp-hd-{{ section.id }} .mp-hd__basket { display: inline-flex; align-items: center; gap: 8px; background: #fff; border-radius: 7px; padding: 9px 15px; color: #14233A; font-size: 13px; font-weight: 600; }
+  .mp-hd-{{ section.id }} .mp-hd__basket:hover { background: #f0ebe2; color: #14233A; }
   .mp-hd-{{ section.id }} .mp-hd__basket svg { flex: none; }
   /* kept for legacy use */
   .mp-hd-{{ section.id }} .mp-hd__stack { display: flex; flex-direction: column; line-height: 1.3; }
@@ -96,11 +96,11 @@
   .mp-hd-{{ section.id }} .mp-nav__sale-spacer { margin-left: auto; }
   .mp-hd-{{ section.id }} .mp-nav__caret { font-size: 10px; opacity: .8; }
   .mp-hd-{{ section.id }} .mp-nav__item:hover .mp-nav__top,
-  .mp-hd-{{ section.id }} .mp-nav__top:hover { background: #16323f; color: #fff; }
+  .mp-hd-{{ section.id }} .mp-nav__top:hover { background: #14233A; color: #fff; }
 
   .mp-hd-{{ section.id }} .mp-mega {
     display: none; position: absolute; left: 0; right: 0; top: 100%; z-index: 60;
-    background: #16323f; border-top: 2px solid #f2872f; box-shadow: 0 18px 44px rgba(0,0,0,.4);
+    background: #14233A; border-top: 2px solid #F59A3A; box-shadow: 0 18px 44px rgba(0,0,0,.4);
   }
   .mp-hd-{{ section.id }} .mp-nav__item:hover .mp-mega { display: block; }
   .mp-hd-{{ section.id }} .mp-mega__in { max-width: 1200px; margin: 0 auto; padding: 26px 28px; display: flex; gap: 34px; }
@@ -111,21 +111,21 @@
   }
   .mp-hd-{{ section.id }} .mp-mega__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 26px; }
   .mp-hd-{{ section.id }} .mp-mega__link { display: block; color: #9fb4bd; text-decoration: none; font-size: 13.5px; padding: 6px 0; }
-  .mp-hd-{{ section.id }} .mp-mega__link:hover { color: #f2872f; }
+  .mp-hd-{{ section.id }} .mp-mega__link:hover { color: #F59A3A; }
   .mp-hd-{{ section.id }} .mp-mega__cnt { color: #6b7f8a; font-size: 12px; }
-  .mp-hd-{{ section.id }} .mp-mega__all { display: inline-block; margin-top: 9px; color: #f2872f; font-weight: 600; font-size: 12.5px; text-decoration: none; }
+  .mp-hd-{{ section.id }} .mp-mega__all { display: inline-block; margin-top: 9px; color: #F59A3A; font-weight: 600; font-size: 12.5px; text-decoration: none; }
   .mp-hd-{{ section.id }} .mp-mega__feature {
     width: 270px; flex: none; margin-left: auto; background: #0f242e; border: 1px solid #25434f;
     border-radius: 12px; padding: 16px; text-align: center;
   }
-  .mp-hd-{{ section.id }} .mp-mega__feyebrow { color: #f2872f; font-size: 10.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 7px; }
+  .mp-hd-{{ section.id }} .mp-mega__feyebrow { color: #F59A3A; font-size: 10.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 7px; }
   .mp-hd-{{ section.id }} .mp-mega__fh { color: #fff; font-weight: 700; font-size: 15px; line-height: 1.2; }
   .mp-hd-{{ section.id }} .mp-mega__fsub { color: #9fb4bd; font-size: 12px; margin-top: 3px; }
-  .mp-hd-{{ section.id }} .mp-mega__fprice { color: #f2872f; font-weight: 700; font-size: 19px; margin-top: 8px; }
+  .mp-hd-{{ section.id }} .mp-mega__fprice { color: #F59A3A; font-weight: 700; font-size: 19px; margin-top: 8px; }
   .mp-hd-{{ section.id }} .mp-mega__fimg { display: block; margin: 11px 0; border-radius: 8px; overflow: hidden; background: #dfd9cd; aspect-ratio: 1/1; }
   .mp-hd-{{ section.id }} .mp-mega__fimg img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .mp-hd-{{ section.id }} .mp-mega__feature form { margin: 0; }
-  .mp-hd-{{ section.id }} .mp-mega__fadd { width: 100%; background: #f2872f; color: #fff; border: 0; border-radius: 8px; padding: 11px; font-weight: 700; cursor: pointer; font-family: inherit; font-size: 13.5px; }
+  .mp-hd-{{ section.id }} .mp-mega__fadd { width: 100%; background: #F59A3A; color: #fff; border: 0; border-radius: 8px; padding: 11px; font-weight: 700; cursor: pointer; font-family: inherit; font-size: 13.5px; }
 
   /* mobile drawer chrome (hidden on desktop) */
   .mp-hd-{{ section.id }} .mp-hd__burger {
@@ -144,7 +144,7 @@
     /* nav becomes an off-canvas drawer */
     .mp-hd-{{ section.id }} .mp-nav {
       position: fixed; top: 0; left: 0; bottom: 0; width: 86%; max-width: 340px; z-index: 210;
-      background: #16323f; overflow-y: auto; -webkit-overflow-scrolling: touch;
+      background: #14233A; overflow-y: auto; -webkit-overflow-scrolling: touch;
       transform: translateX(-100%); transition: transform .25s ease; visibility: hidden;
     }
     .mp-hd-{{ section.id }}.is-mopen .mp-nav { transform: translateX(0); visibility: visible; }
@@ -192,11 +192,11 @@
   .cart-drawer .drawer__inner {
     width: 44rem;
     border-color: rgba(22, 50, 63, 0.18);
-    border-left: 3px solid #f2872f;
+    border-left: 3px solid #F59A3A;
   }
 
   .cart-drawer .drawer__header {
-    background: #16323f;
+    background: #14233A;
     margin-left: -1.5rem;
     margin-right: -1.5rem;
     padding: 1.3rem 4rem 1.3rem 2rem;
@@ -205,7 +205,7 @@
 
   .cart-drawer .drawer__heading {
     color: #ffffff;
-    font-family: 'Barlow Semi Condensed', ui-sans-serif, sans-serif;
+    font-family: 'Barlow Condensed', ui-sans-serif, sans-serif;
     font-size: 1.8rem;
     font-weight: 700;
     letter-spacing: 0.02em;
@@ -221,13 +221,13 @@
 
   .cart-drawer .drawer__close:hover,
   .cart-drawer .drawer__close:focus-visible {
-    color: #f2872f;
+    color: #F59A3A;
     background: transparent;
     box-shadow: none;
   }
 
   .cart-drawer .cart__checkout-button {
-    background: #f2872f;
+    background: #F59A3A;
     border: 0;
     border-radius: 8px;
     color: #ffffff;
@@ -246,7 +246,7 @@
   }
 
   .cart-drawer .cart-drawer__empty-content .button {
-    background: #f2872f;
+    background: #F59A3A;
     border: 0;
     border-radius: 8px;
     color: #ffffff;
@@ -257,18 +257,18 @@
   .cart-drawer .totals__total {
     font-family: 'Barlow', ui-sans-serif, system-ui, sans-serif;
     font-weight: 500;
-    color: #16323f;
+    color: #14233A;
   }
 
   .cart-drawer .totals__total-value {
-    font-family: 'Barlow Semi Condensed', ui-sans-serif, sans-serif;
+    font-family: 'Barlow Condensed', ui-sans-serif, sans-serif;
     font-size: 2rem;
     font-weight: 700;
-    color: #16323f;
+    color: #14233A;
   }
 
   .cart-drawer .cart-item__name {
-    color: #16323f;
+    color: #14233A;
     font-weight: 600;
   }
 
@@ -277,7 +277,7 @@
   }
 
   .cart-drawer .cart-remove-button button:hover {
-    color: #f2872f;
+    color: #F59A3A;
   }
 
   .cart-drawer .tax-note {
@@ -285,7 +285,7 @@
   }
 
   .cart-drawer .quantity__button {
-    color: #16323f;
+    color: #14233A;
   }
 {%- endstyle -%}
 
