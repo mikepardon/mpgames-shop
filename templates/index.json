@@ -102,7 +102,7 @@
           "settings": {
             "group": "vibe",
             "label": "Co-op",
-            "tag": "category-co-op"
+            "tag": "players-coop"
           }
         },
         "option_Gpp9ke": {
@@ -117,8 +117,8 @@
           "type": "option",
           "settings": {
             "group": "players",
-            "label": "1",
-            "tag": "players-1"
+            "label": "Solo",
+            "tag": "players-solo"
           }
         },
         "option_aBgy7h": {
@@ -134,47 +134,39 @@
           "settings": {
             "group": "players",
             "label": "3-4",
-            "tag": "players-3-4"
+            "tag": "players-3-plus"
           }
         },
         "option_NtqGBT": {
           "type": "option",
           "settings": {
             "group": "players",
-            "label": "5-6",
-            "tag": "players-5-6"
-          }
-        },
-        "option_tyJmJ7": {
-          "type": "option",
-          "settings": {
-            "group": "players",
-            "label": "7+",
-            "tag": "players-7-plus"
+            "label": "5+",
+            "tag": "players-5-plus"
           }
         },
         "option_fdQAAF": {
           "type": "option",
           "settings": {
             "group": "duration",
-            "label": "Under 30m",
-            "tag": "playtime-under-30"
+            "label": "Under 45m",
+            "tag": "playtime-quick"
           }
         },
         "option_9FREBj": {
           "type": "option",
           "settings": {
             "group": "duration",
-            "label": "30-60m",
-            "tag": "playtime-30-60"
+            "label": "~1 hour",
+            "tag": "playtime-medium"
           }
         },
         "option_EktUdC": {
           "type": "option",
           "settings": {
             "group": "duration",
-            "label": "1-2h",
-            "tag": "playtime-1-2h"
+            "label": "~2 hours",
+            "tag": "playtime-long"
           }
         },
         "option_q6Jaqn": {
@@ -182,7 +174,7 @@
           "settings": {
             "group": "duration",
             "label": "2h+",
-            "tag": "playtime-2h-plus"
+            "tag": "playtime-epic"
           }
         }
       },
@@ -195,7 +187,6 @@
         "option_aBgy7h",
         "option_ykiebt",
         "option_NtqGBT",
-        "option_tyJmJ7",
         "option_fdQAAF",
         "option_9FREBj",
         "option_EktUdC",

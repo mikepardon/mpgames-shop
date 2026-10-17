@@ -14,7 +14,9 @@
     "mp-utility-bar": {
       "type": "mp-utility-bar",
       "settings": {
-        "promo_text": "Free UK delivery over £50 · Next working day dispatch"
+        "usp_1_label": "Free UK delivery over £50",
+        "usp_2_label": "Next working day dispatch",
+        "usp_3_label": "Price-match promise"
       }
     },
     "mp-header": {
