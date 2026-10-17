@@ -1,0 +1,612 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "mp_hero": {
+      "type": "mp-hero-carousel",
+      "blocks": {
+        "slide_K9iJqL": {
+          "type": "slide",
+          "settings": {
+            "layout": "image",
+            "image": "shopify://shop_images/Wacky_Racing_Banner_2a.png",
+            "image_alt": "",
+            "cta_url": "shopify://collections/racer",
+            "kicker": "TOP-RANKED TABLETOP",
+            "title": "Board games ranked by BoardGameGeek, delivered across the UK",
+            "sub": "Shop by BGG score, player count and play time — next working day dispatch.",
+            "cta_label": "Shop the collection",
+            "bg": "linear-gradient(120deg,#16323f,#2c5466)"
+          }
+        },
+        "s1": {
+          "type": "slide",
+          "settings": {
+            "layout": "image",
+            "image": "shopify://shop_images/mpgames-trade-in-banner.png",
+            "image_alt": "",
+            "cta_url": "shopify://pages/trade-in",
+            "kicker": "TOP-RANKED TABLETOP",
+            "title": "The biggest names in tabletop, all in one place",
+            "sub": "Games ranked by BoardGameGeek score, player count and play time.",
+            "cta_label": "Shop the collection",
+            "bg": "linear-gradient(120deg,#16323f,#2c5466)"
+          }
+        },
+        "slide_TCTHdh": {
+          "type": "slide",
+          "settings": {
+            "layout": "image",
+            "image": "shopify://shop_images/kcd-preorder-banner.png",
+            "image_alt": "",
+            "cta_url": "shopify://products/kingdom-come-deliverance-the-board-game-pre-order",
+            "kicker": "TOP-RANKED TABLETOP",
+            "title": "The biggest names in tabletop, all in one place",
+            "sub": "Games ranked by BoardGameGeek score, player count and play time.",
+            "cta_label": "Shop the collection",
+            "bg": "linear-gradient(120deg,#16323f,#2c5466)"
+          }
+        }
+      },
+      "block_order": [
+        "slide_K9iJqL",
+        "s1",
+        "slide_TCTHdh"
+      ],
+      "settings": {
+        "autoplay_seconds": 6,
+        "card_1_kicker": "GIFT IDEAS",
+        "card_1_kicker_color": "#202226",
+        "card_1_title": "Find the perfect Christmas Board Game Gift!",
+        "card_1_title_color": "#1a2633",
+        "card_1_cta": "Find the perfect gift",
+        "card_1_url": "shopify://blogs/news/best-board-games-christmas-2026",
+        "card_1_bg": "linear-gradient(135deg,#fbbf24,#f59e0b)",
+        "card_2_kicker": "TRADE IN YOUR GAMES",
+        "card_2_kicker_color": "#86efac",
+        "card_2_title": "Turn your shelf into store credit",
+        "card_2_title_color": "#ffffff",
+        "card_2_cta": "Get a quote",
+        "card_2_url": "shopify://pages/trade-in",
+        "card_2_bg": "linear-gradient(135deg,#15803d,#166534)"
+      }
+    },
+    "mp_game_finder_ypyQft": {
+      "type": "mp-game-finder",
+      "blocks": {
+        "option_nirmAF": {
+          "type": "option",
+          "settings": {
+            "group": "vibe",
+            "label": "Party",
+            "tag": "category-party"
+          }
+        },
+        "option_pTBJrE": {
+          "type": "option",
+          "settings": {
+            "group": "vibe",
+            "label": "Strategy",
+            "tag": "category-strategy"
+          }
+        },
+        "option_dzJJ6L": {
+          "type": "option",
+          "settings": {
+            "group": "vibe",
+            "label": "Co-op",
+            "tag": "players-coop"
+          }
+        },
+        "option_Gpp9ke": {
+          "type": "option",
+          "settings": {
+            "group": "vibe",
+            "label": "Family",
+            "tag": "category-family"
+          }
+        },
+        "option_cTi6DN": {
+          "type": "option",
+          "settings": {
+            "group": "players",
+            "label": "Solo",
+            "tag": "players-solo"
+          }
+        },
+        "option_aBgy7h": {
+          "type": "option",
+          "settings": {
+            "group": "players",
+            "label": "2",
+            "tag": "players-2"
+          }
+        },
+        "option_ykiebt": {
+          "type": "option",
+          "settings": {
+            "group": "players",
+            "label": "3-4",
+            "tag": "players-3-plus"
+          }
+        },
+        "option_NtqGBT": {
+          "type": "option",
+          "settings": {
+            "group": "players",
+            "label": "5+",
+            "tag": "players-5-plus"
+          }
+        },
+        "option_fdQAAF": {
+          "type": "option",
+          "settings": {
+            "group": "duration",
+            "label": "Under 45m",
+            "tag": "playtime-quick"
+          }
+        },
+        "option_9FREBj": {
+          "type": "option",
+          "settings": {
+            "group": "duration",
+            "label": "~1 hour",
+            "tag": "playtime-medium"
+          }
+        },
+        "option_EktUdC": {
+          "type": "option",
+          "settings": {
+            "group": "duration",
+            "label": "~2 hours",
+            "tag": "playtime-long"
+          }
+        },
+        "option_q6Jaqn": {
+          "type": "option",
+          "settings": {
+            "group": "duration",
+            "label": "2h+",
+            "tag": "playtime-epic"
+          }
+        }
+      },
+      "block_order": [
+        "option_nirmAF",
+        "option_pTBJrE",
+        "option_dzJJ6L",
+        "option_Gpp9ke",
+        "option_cTi6DN",
+        "option_aBgy7h",
+        "option_ykiebt",
+        "option_NtqGBT",
+        "option_fdQAAF",
+        "option_9FREBj",
+        "option_EktUdC",
+        "option_q6Jaqn"
+      ],
+      "name": "MP Game finder",
+      "settings": {
+        "title": "Find your next game",
+        "subtitle": "Three taps. No jargon.",
+        "vibe_label": "What's the vibe?",
+        "players_label": "How many players?",
+        "duration_label": "How long have you got?",
+        "go_label": "Show games",
+        "base_url": ""
+      }
+    },
+    "mp_usp": {
+      "type": "mp-usp-strip",
+      "blocks": {
+        "u1": {
+          "type": "usp",
+          "settings": {
+            "icon": "🚚",
+            "title": "Next working day dispatch",
+            "subtitle": "On all orders"
+          }
+        },
+        "u2": {
+          "type": "usp",
+          "settings": {
+            "icon": "🏆",
+            "title": "BGG-ranked browsing",
+            "subtitle": "Shop by score"
+          }
+        },
+        "u3": {
+          "type": "usp",
+          "settings": {
+            "icon": "💰",
+            "title": "Price-match promise",
+            "subtitle": "Found it cheaper? Tell us"
+          }
+        },
+        "u4": {
+          "type": "usp",
+          "settings": {
+            "icon": "🔄",
+            "title": "30-day returns",
+            "subtitle": "On unopened games"
+          }
+        }
+      },
+      "block_order": [
+        "u1",
+        "u2",
+        "u3",
+        "u4"
+      ],
+      "settings": {}
+    },
+    "mp_categories": {
+      "type": "mp-category-tiles",
+      "blocks": {
+        "c1": {
+          "type": "category",
+          "settings": {
+            "icon": "♟",
+            "collection": "category-strategy",
+            "name": "Strategy",
+            "count": "",
+            "url": ""
+          }
+        },
+        "c2": {
+          "type": "category",
+          "settings": {
+            "icon": "♚",
+            "collection": "category-family",
+            "name": "Strategy",
+            "count": "",
+            "url": ""
+          }
+        },
+        "c3": {
+          "type": "category",
+          "settings": {
+            "icon": "🃏",
+            "collection": "category-card",
+            "name": "Strategy",
+            "count": "",
+            "url": ""
+          }
+        },
+        "c4": {
+          "type": "category",
+          "settings": {
+            "icon": "👷",
+            "collection": "category-worker",
+            "name": "Strategy",
+            "count": "",
+            "url": ""
+          }
+        },
+        "c5": {
+          "type": "category",
+          "settings": {
+            "icon": "🧩",
+            "collection": "expansions",
+            "name": "Strategy",
+            "count": "",
+            "url": ""
+          }
+        }
+      },
+      "block_order": [
+        "c1",
+        "c2",
+        "c3",
+        "c4",
+        "c5"
+      ],
+      "settings": {
+        "title": "Shop by category",
+        "link_label": "All categories",
+        "link_url": "/collections/all-games"
+      }
+    },
+    "mp_promos": {
+      "type": "mp-promo-banners",
+      "blocks": {
+        "p1": {
+          "type": "promo",
+          "settings": {
+            "layout": "text",
+            "image_fit": "natural",
+            "url": "/collections/top-rated",
+            "kicker": "HOBBYIST CORNER",
+            "kicker_color": "#d7b8ef",
+            "title": "The highest-rated games on BoardGameGeek",
+            "cta_label": "Explore the ranking",
+            "bg": "linear-gradient(115deg,#2b2233,#4a3a5c)"
+          }
+        },
+        "p2": {
+          "type": "promo",
+          "settings": {
+            "layout": "text",
+            "image_fit": "natural",
+            "url": "/collections/gateway-under-30",
+            "kicker": "NEW TO THE HOBBY?",
+            "kicker_color": "#bfe9d2",
+            "title": "Gateway games under £30",
+            "cta_label": "Start here",
+            "bg": "linear-gradient(115deg,#13513f,#2f8f5b)"
+          }
+        }
+      },
+      "block_order": [
+        "p1",
+        "p2"
+      ],
+      "settings": {}
+    },
+    "mp_bestsellers": {
+      "type": "mp-product-rail",
+      "settings": {
+        "source": "collection",
+        "collection": "best-sellers",
+        "products_to_show": 12,
+        "title": "Best sellers this month",
+        "subtitle": "",
+        "view_all_label": "View all",
+        "view_all_url": "",
+        "card_style": "bestseller",
+        "release_action": "Add"
+      }
+    },
+    "mp_toprated": {
+      "type": "mp-top-rated",
+      "settings": {
+        "collection": "top-rated",
+        "products_to_show": 10,
+        "title": "Highest rated on BGG",
+        "subtitle": "The board game community's top-scoring titles",
+        "link_label": "See full ranking",
+        "link_url": "/collections/top-rated"
+      }
+    },
+    "mp_players": {
+      "type": "mp-player-count",
+      "blocks": {
+        "n1": {
+          "type": "tile",
+          "settings": {
+            "number": "1",
+            "label": "Solo",
+            "pips": 1,
+            "collection": "players-solo",
+            "url": ""
+          }
+        },
+        "n2": {
+          "type": "tile",
+          "settings": {
+            "number": "2",
+            "label": "Two-player",
+            "pips": 2,
+            "collection": "players-2",
+            "url": ""
+          }
+        },
+        "n3": {
+          "type": "tile",
+          "settings": {
+            "number": "3–4",
+            "label": "Small group",
+            "pips": 4,
+            "collection": "players-3-4",
+            "url": ""
+          }
+        },
+        "n4": {
+          "type": "tile",
+          "settings": {
+            "number": "5–6",
+            "label": "Game night",
+            "pips": 6,
+            "collection": "players-5-6",
+            "url": ""
+          }
+        },
+        "n5": {
+          "type": "tile",
+          "settings": {
+            "number": "7+",
+            "label": "Party",
+            "pips": 7,
+            "collection": "players-7",
+            "url": ""
+          }
+        },
+        "n6": {
+          "type": "tile",
+          "settings": {
+            "number": "Co-op",
+            "label": "Team up",
+            "pips": 0,
+            "collection": "players-coop",
+            "url": ""
+          }
+        }
+      },
+      "block_order": [
+        "n1",
+        "n2",
+        "n3",
+        "n4",
+        "n5",
+        "n6"
+      ],
+      "settings": {
+        "title": "Shop by player count"
+      }
+    },
+    "mp_newreleases": {
+      "type": "mp-product-rail",
+      "settings": {
+        "source": "newest",
+        "collection": "new-releases",
+        "products_to_show": 12,
+        "title": "New & upcoming releases",
+        "subtitle": "",
+        "view_all_label": "View all new in",
+        "view_all_url": "",
+        "card_style": "release",
+        "release_action": "Add"
+      }
+    },
+    "mp_preorders": {
+      "type": "mp-product-rail",
+      "settings": {
+        "source": "collection",
+        "collection": "pre-orders",
+        "products_to_show": 12,
+        "title": "Pre-orders",
+        "subtitle": "Reserve upcoming titles now — dispatched on release",
+        "view_all_label": "View all pre-orders",
+        "view_all_url": "/collections/pre-orders",
+        "card_style": "release",
+        "release_action": "Pre-order"
+      }
+    },
+    "mp_publishers": {
+      "type": "mp-publishers",
+      "settings": {
+        "title": "Shop by publisher",
+        "collection": "all-games",
+        "count": 12,
+        "logo_handles": "stonemaier-games,roxley-games,z-man-games,cephalofair-games,stronghold-games,capstone-games,greater-than-games,plan-b-games,catan-studio,days-of-wonder,flatout-games,starling-games,repos-production,space-cowboys,leder-games,dire-wolf,czech-games-edition,kosmos,cocktail-games,delicious-games,burnt-island-games",
+        "link_label": "All publishers",
+        "link_url": "/pages/publishers"
+      }
+    },
+    "mp_editorial": {
+      "type": "mp-editorial",
+      "settings": {
+        "title": "From the MPGames blog",
+        "blog": "news",
+        "articles_to_show": 3,
+        "link_label": "All articles",
+        "link_url": "/blogs/news"
+      }
+    },
+    "1784328042325af5f3": {
+      "type": "apps",
+      "blocks": {
+        "judge_me_reviews_testimonials_carousel_e7EGVM": {
+          "type": "shopify://apps/judge-me-reviews/blocks/testimonials_carousel/61ccd3b1-a9f2-4160-9fe9-4fec8413e5d8",
+          "settings": {
+            "show_sample_reviews": true,
+            "reviews_selection": "all",
+            "products": [],
+            "filter_pinned": false,
+            "filter_featured": false,
+            "filter_custom_tags": "",
+            "star_rating": "all",
+            "max_reviews": 20,
+            "quote_marks_size": "small",
+            "product_name_text_size": "small",
+            "verified_badge_style": "icon",
+            "card_height": "medium",
+            "text_size": "small",
+            "stars_size": "medium",
+            "arrows_position": "bottom",
+            "max_width": 1100,
+            "corner_styling": "soft",
+            "quote_marks_style": "serif",
+            "card_color": "#f9f9f9",
+            "stars_and_quote_marks_color": "#108474",
+            "text_color": "#000000",
+            "arrows_color": "#000000",
+            "show_border": false,
+            "border_color": "#108474",
+            "show_drop_shadow": false,
+            "transition_speed": 5,
+            "header_text": "Customers are saying",
+            "show_average_rating": true,
+            "rating_display": "default"
+          }
+        }
+      },
+      "block_order": [
+        "judge_me_reviews_testimonials_carousel_e7EGVM"
+      ],
+      "settings": {
+        "include_margins": true
+      }
+    },
+    "mp_newsletter": {
+      "type": "mp-newsletter",
+      "settings": {
+        "title": "Join the MPGames club",
+        "subtitle": "Early access to restocks, new releases and the guides we publish each week.",
+        "placeholder": "Enter your email address",
+        "button_label": "Sign up",
+        "success_text": "Thanks for subscribing!",
+        "consent_text": "Yes, email me restocks, new releases and offers. I can unsubscribe anytime — see our"
+      }
+    },
+    "1789728103c1354ab4": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_a3fa85b_DDpikJ": {
+          "type": "ai_gen_block_a3fa85b",
+          "settings": {
+            "heading": "Notify me when available",
+            "logged_in_message": "Get an email when this product is back in stock.",
+            "logged_out_message": "Sign in or create an account to receive a back-in-stock notification.",
+            "button_label": "Notify me",
+            "sign_in_label": "Sign in",
+            "create_account_label": "Create an account",
+            "sending_message": "Sending your request…",
+            "success_message": "Thanks. We’ll email you when it’s back in stock.",
+            "success_button_label": "Request submitted",
+            "error_message": "We couldn’t submit your request. Please try again.",
+            "endpoint": "https://partners.mpgames.io/webhooks/shopify/stock-notifications",
+            "desktop_width_percent": 100,
+            "background_color": "#f3f3f3",
+            "text_color": "#121212",
+            "border_color": "#b7b7b7",
+            "button_color": "#121212",
+            "button_text_color": "#ffffff",
+            "link_color": "#121212",
+            "border_radius": 0,
+            "button_radius": 0
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_a3fa85b_DDpikJ"
+      ],
+      "settings": {}
+    }
+  },
+  "order": [
+    "mp_hero",
+    "mp_game_finder_ypyQft",
+    "mp_usp",
+    "mp_categories",
+    "mp_promos",
+    "mp_bestsellers",
+    "mp_toprated",
+    "mp_players",
+    "mp_newreleases",
+    "mp_preorders",
+    "mp_publishers",
+    "mp_editorial",
+    "1784328042325af5f3",
+    "mp_newsletter",
+    "1789728103c1354ab4"
+  ]
+}
