@@ -1,0 +1,215 @@
+{%- comment -%}
+  MPGames category grid — editorial card grid with configurable colour,
+  text and corner graphic per card. Large cards span 2 of 4 columns;
+  small cards span 1.
+{%- endcomment -%}
+
+{%- style -%}
+  .mp-catg-{{ section.id }} {
+    font-family: 'Barlow', ui-sans-serif, system-ui, sans-serif;
+    padding: 24px 28px 20px;
+  }
+
+  /* Section header */
+  .mp-catg-{{ section.id }} .mp-catg__hd {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 14px;
+    gap: 16px;
+  }
+  .mp-catg-{{ section.id }} .mp-catg__kicker {
+    font-size: 11px; font-weight: 700; letter-spacing: .07em;
+    text-transform: uppercase; color: #f2872f; margin: 0 0 5px;
+  }
+  .mp-catg-{{ section.id }} .mp-catg__heading {
+    font-family: 'Barlow Semi Condensed', 'Barlow', sans-serif;
+    font-size: 30px; font-weight: 800; color: #16323f;
+    text-transform: uppercase; line-height: 1; margin: 0;
+  }
+  .mp-catg-{{ section.id }} .mp-catg__all-link {
+    font-size: 14px; font-weight: 600; color: #f2872f;
+    text-decoration: none; white-space: nowrap; flex: none;
+  }
+  .mp-catg-{{ section.id }} .mp-catg__all-link:hover { text-decoration: underline; }
+
+  /* Grid */
+  .mp-catg-{{ section.id }} .mp-catg__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+
+  /* Card base */
+  .mp-catg-{{ section.id }} .mp-catg__card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 14px;
+    padding: 20px 20px 16px;
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    min-height: 190px;
+    grid-column: span 1;
+    transition: filter .18s;
+  }
+  .mp-catg-{{ section.id }} .mp-catg__card:hover { filter: brightness(1.06); }
+  .mp-catg-{{ section.id }} .mp-catg__card--large {
+    grid-column: span 2;
+    min-height: 290px;
+    padding: 26px 28px 20px;
+  }
+
+  /* Text content */
+  .mp-catg-{{ section.id }} .mp-catg__body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    position: relative;
+    z-index: 1;
+  }
+  .mp-catg-{{ section.id }} .mp-catg__name {
+    font-family: 'Barlow Semi Condensed', 'Barlow', sans-serif;
+    font-size: 22px; font-weight: 800; text-transform: uppercase;
+    line-height: 1; margin: 0 0 8px;
+  }
+  .mp-catg-{{ section.id }} .mp-catg__card--large .mp-catg__name {
+    font-size: 34px; margin-bottom: 10px;
+  }
+  .mp-catg-{{ section.id }} .mp-catg__desc {
+    font-size: 13px; line-height: 1.45;
+    opacity: .88; margin: 0; max-width: 55%;
+  }
+  .mp-catg-{{ section.id }} .mp-catg__card--large .mp-catg__desc {
+    font-size: 14px; max-width: 52%;
+  }
+  .mp-catg-{{ section.id }} .mp-catg__tagline {
+    margin-top: auto;
+    padding-top: 14px;
+    font-size: 11px; opacity: .65; line-height: 1.4;
+  }
+
+  /* Corner graphic */
+  .mp-catg-{{ section.id }} .mp-catg__graphic {
+    position: absolute;
+    bottom: 0; right: 0;
+    width: 110px;
+    pointer-events: none;
+  }
+  .mp-catg-{{ section.id }} .mp-catg__card--large .mp-catg__graphic {
+    width: 170px;
+  }
+  .mp-catg-{{ section.id }} .mp-catg__graphic img {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    object-position: bottom right;
+  }
+
+  /* Responsive */
+  @media (max-width: 989px) {
+    .mp-catg-{{ section.id }} { padding: 20px 16px 16px; }
+    .mp-catg-{{ section.id }} .mp-catg__grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .mp-catg-{{ section.id }} .mp-catg__heading { font-size: 22px; }
+    .mp-catg-{{ section.id }} .mp-catg__card--large { min-height: 220px; }
+    .mp-catg-{{ section.id }} .mp-catg__card--large .mp-catg__graphic { width: 130px; }
+  }
+  @media (max-width: 749px) {
+    .mp-catg-{{ section.id }} .mp-catg__card { min-height: 160px; }
+    .mp-catg-{{ section.id }} .mp-catg__graphic { width: 80px; }
+    .mp-catg-{{ section.id }} .mp-catg__card--large .mp-catg__graphic { width: 110px; }
+    .mp-catg-{{ section.id }} .mp-catg__desc { max-width: 60%; }
+  }
+{%- endstyle -%}
+
+<div class="mp-catg-{{ section.id }} mp-cond">
+  <div class="mp-catg__hd">
+    <div>
+      {%- if section.settings.kicker != blank -%}
+        <p class="mp-catg__kicker">{{ section.settings.kicker }}</p>
+      {%- endif -%}
+      <h2 class="mp-catg__heading">{{ section.settings.heading }}</h2>
+    </div>
+    {%- if section.settings.link_label != blank and section.settings.link_url != blank -%}
+      <a href="{{ section.settings.link_url }}" class="mp-catg__all-link">{{ section.settings.link_label }} &#8594;</a>
+    {%- endif -%}
+  </div>
+
+  <div class="mp-catg__grid">
+    {%- for block in section.blocks -%}
+      <a href="{{ block.settings.url | default: '#' }}"
+         class="mp-catg__card mp-catg__card--{{ block.settings.size | default: 'small' }}"
+         style="background:{{ block.settings.bg }}; color:{{ block.settings.text_color }};"
+         {{ block.shopify_attributes }}>
+        <div class="mp-catg__body">
+          <div class="mp-catg__name">{{ block.settings.title }}</div>
+          {%- if block.settings.description != blank -%}
+            <p class="mp-catg__desc">{{ block.settings.description }}</p>
+          {%- endif -%}
+          {%- if block.settings.tagline != blank -%}
+            <div class="mp-catg__tagline">{{ block.settings.tagline }}</div>
+          {%- endif -%}
+        </div>
+        {%- if block.settings.image != blank -%}
+          <div class="mp-catg__graphic">
+            {{- block.settings.image | image_url: width: 340 | image_tag: alt: block.settings.title, loading: 'lazy' -}}
+          </div>
+        {%- endif -%}
+      </a>
+    {%- endfor -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "MP Category grid",
+  "max_blocks": 12,
+  "blocks": [
+    {
+      "type": "category",
+      "name": "Category card",
+      "settings": [
+        {
+          "type": "select",
+          "id": "size",
+          "label": "Card size",
+          "options": [
+            { "value": "large", "label": "Large — half width (2 columns)" },
+            { "value": "small", "label": "Small — quarter width (1 column)" }
+          ],
+          "default": "small"
+        },
+        { "type": "text",         "id": "title",       "label": "Title",            "default": "Strategy" },
+        { "type": "textarea",     "id": "description", "label": "Description" },
+        { "type": "text",         "id": "tagline",     "label": "Tagline",          "info": "Shown at the bottom, e.g. Start with Wingspan, Azul" },
+        { "type": "url",          "id": "url",         "label": "Collection URL" },
+        { "type": "color",        "id": "bg",          "label": "Background colour", "default": "#16323f" },
+        { "type": "color",        "id": "text_color",  "label": "Text colour",       "default": "#ffffff" },
+        { "type": "image_picker", "id": "image",       "label": "Corner graphic",    "info": "Image shown in the bottom-right corner of the card. Works best with a transparent PNG." }
+      ]
+    }
+  ],
+  "settings": [
+    { "type": "text", "id": "kicker",     "label": "Kicker",     "default": "Shop by category" },
+    { "type": "text", "id": "heading",    "label": "Heading",    "default": "What kind of game night is it?" },
+    { "type": "text", "id": "link_label", "label": "Link label", "default": "All categories" },
+    { "type": "url",  "id": "link_url",   "label": "Link URL" }
+  ],
+  "presets": [
+    {
+      "name": "MP Category grid",
+      "blocks": [
+        { "type": "category", "settings": { "size": "large", "title": "Party Games",  "description": "Big groups, loud tables, rules explained in five minutes.", "tagline": "Start with Magical Athlete, Codenames, Hot Streak", "url": "/collections/category-party",    "bg": "#c05430", "text_color": "#ffffff" } },
+        { "type": "category", "settings": { "size": "large", "title": "Family Games", "description": "Easy to teach, hard to put down. Great from age 8.",       "tagline": "Start with Forbidden Island, Fliptoons, No Thanks!", "url": "/collections/category-family",   "bg": "#e8b412", "text_color": "#1a2633" } },
+        { "type": "category", "settings": { "size": "small", "title": "Strategy",     "description": "Long-haul thinkers for nights that run late.",              "tagline": "A Feast for Odin, Solstis",                          "url": "/collections/category-strategy", "bg": "#16323f", "text_color": "#ffffff" } },
+        { "type": "category", "settings": { "size": "small", "title": "Two-Player",   "description": "Head-to-head duels for you and one other.",                 "tagline": "Duel for Cardia, Splendor Duel",                     "url": "/collections/players-2",         "bg": "#2d5f78", "text_color": "#ffffff" } },
+        { "type": "category", "settings": { "size": "small", "title": "Co-op",        "description": "Win together, or lose together.",                           "tagline": "Mechs vs Minions, Final Girl",                        "url": "/collections/players-coop",      "bg": "#1a4a38", "text_color": "#ffffff" } },
+        { "type": "category", "settings": { "size": "small", "title": "Card Games",   "description": "Pocket-sized, big on play.",                               "tagline": "No Thanks!, Maybe Not Perfect",                       "url": "/collections/category-card",     "bg": "#4a2878", "text_color": "#ffffff" } },
+        { "type": "category", "settings": { "size": "small", "title": "Expansions",   "description": "More of the games you already love.",                      "tagline": "Shackleton Base, Courtisans",                         "url": "/collections/expansions",        "bg": "#ede8de", "text_color": "#16323f" } },
+        { "type": "category", "settings": { "size": "small", "title": "Pre-Owned",    "description": "Checked, counted and cheaper.",                            "tagline": "From £3.50",                                          "url": "/collections/pre-owned",         "bg": "#0d1c27", "text_color": "#ffffff" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

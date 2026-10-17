@@ -247,69 +247,119 @@
       ],
       "settings": {}
     },
-    "mp_categories": {
-      "type": "mp-category-tiles",
+    "mp_category_grid": {
+      "type": "mp-category-grid",
       "blocks": {
-        "c1": {
+        "cat_party": {
           "type": "category",
           "settings": {
-            "icon": "♟",
-            "collection": "category-strategy",
-            "name": "Strategy",
-            "count": "",
-            "url": ""
+            "size": "large",
+            "title": "Party Games",
+            "description": "Big groups, loud tables, rules explained in five minutes.",
+            "tagline": "Start with Magical Athlete, Codenames, Hot Streak",
+            "url": "/collections/category-party",
+            "bg": "#c05430",
+            "text_color": "#ffffff"
           }
         },
-        "c2": {
+        "cat_family": {
           "type": "category",
           "settings": {
-            "icon": "♚",
-            "collection": "category-family",
-            "name": "Strategy",
-            "count": "",
-            "url": ""
+            "size": "large",
+            "title": "Family Games",
+            "description": "Easy to teach, hard to put down. Great from age 8.",
+            "tagline": "Start with Forbidden Island, Fliptoons, No Thanks!",
+            "url": "/collections/category-family",
+            "bg": "#e8b412",
+            "text_color": "#1a2633"
           }
         },
-        "c3": {
+        "cat_strategy": {
           "type": "category",
           "settings": {
-            "icon": "🃏",
-            "collection": "category-card",
-            "name": "Strategy",
-            "count": "",
-            "url": ""
+            "size": "small",
+            "title": "Strategy",
+            "description": "Long-haul thinkers for nights that run late.",
+            "tagline": "A Feast for Odin, Solstis",
+            "url": "/collections/category-strategy",
+            "bg": "#16323f",
+            "text_color": "#ffffff"
           }
         },
-        "c4": {
+        "cat_two": {
           "type": "category",
           "settings": {
-            "icon": "👷",
-            "collection": "category-worker",
-            "name": "Strategy",
-            "count": "",
-            "url": ""
+            "size": "small",
+            "title": "Two-Player",
+            "description": "Head-to-head duels for you and one other.",
+            "tagline": "Duel for Cardia, Splendor Duel",
+            "url": "/collections/players-2",
+            "bg": "#2d5f78",
+            "text_color": "#ffffff"
           }
         },
-        "c5": {
+        "cat_coop": {
           "type": "category",
           "settings": {
-            "icon": "🧩",
-            "collection": "expansions",
-            "name": "Strategy",
-            "count": "",
-            "url": ""
+            "size": "small",
+            "title": "Co-op",
+            "description": "Win together, or lose together.",
+            "tagline": "Mechs vs Minions, Final Girl",
+            "url": "/collections/players-coop",
+            "bg": "#1a4a38",
+            "text_color": "#ffffff"
+          }
+        },
+        "cat_card": {
+          "type": "category",
+          "settings": {
+            "size": "small",
+            "title": "Card Games",
+            "description": "Pocket-sized, big on play.",
+            "tagline": "No Thanks!, Maybe Not Perfect",
+            "url": "/collections/category-card",
+            "bg": "#4a2878",
+            "text_color": "#ffffff"
+          }
+        },
+        "cat_expansions": {
+          "type": "category",
+          "settings": {
+            "size": "small",
+            "title": "Expansions",
+            "description": "More of the games you already love.",
+            "tagline": "Shackleton Base, Courtisans",
+            "url": "/collections/expansions",
+            "bg": "#ede8de",
+            "text_color": "#16323f"
+          }
+        },
+        "cat_preowned": {
+          "type": "category",
+          "settings": {
+            "size": "small",
+            "title": "Pre-Owned",
+            "description": "Checked, counted and cheaper.",
+            "tagline": "From £3.50",
+            "url": "/collections/pre-owned",
+            "bg": "#0d1c27",
+            "text_color": "#ffffff"
           }
         }
       },
       "block_order": [
-        "c1",
-        "c2",
-        "c3",
-        "c4",
-        "c5"
+        "cat_party",
+        "cat_family",
+        "cat_strategy",
+        "cat_two",
+        "cat_coop",
+        "cat_card",
+        "cat_expansions",
+        "cat_preowned"
       ],
       "settings": {
-        "title": "Shop by category",
+        "kicker": "Shop by category",
+        "heading": "What kind of game night is it?",
         "link_label": "All categories",
         "link_url": "/collections/all-games"
       }
@@ -596,7 +646,7 @@
     "mp_hero",
     "mp_game_finder_ypyQft",
     "mp_usp",
-    "mp_categories",
+    "mp_category_grid",
     "mp_promos",
     "mp_bestsellers",
     "mp_toprated",
