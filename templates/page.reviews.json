@@ -1,0 +1,12 @@
+{
+  "sections": {
+    "mp_reviews": {
+      "type": "mp-reviews",
+      "settings": {
+        "title": "Customer Reviews",
+        "subtitle": "Real reviews from real board gamers."
+      }
+    }
+  },
+  "order": ["mp_reviews"]
+}

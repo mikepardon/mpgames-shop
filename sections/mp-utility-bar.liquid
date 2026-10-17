@@ -43,6 +43,17 @@
   }
 {%- endstyle -%}
 
+{%- liquid
+  assign jm_count  = shop.metafields.judgeme.all_reviews_count
+  assign jm_rating = shop.metafields.judgeme.all_reviews_rating
+  if jm_count != blank and jm_count > 0
+    assign review_text = jm_rating | round: 2 | append: ' from ' | append: jm_count | append: ' customer reviews'
+  elsif section.settings.review_label != blank
+    assign review_text = section.settings.review_label
+  endif
+  assign review_href = section.settings.review_url | default: '/pages/reviews'
+-%}
+
 <div class="mp-ub-{{ section.id }}">
   <div class="mp-ub__in">
     <div class="mp-ub__usps">
@@ -68,15 +79,11 @@
         {%- endif -%}
       {%- endif -%}
     </div>
-    {%- if section.settings.review_label != blank -%}
-      <div class="mp-ub__reviews">
+    {%- if review_text != blank -%}
+      <a href="{{ review_href }}" class="mp-ub__reviews" aria-label="See all customer reviews">
         <span class="mp-ub__stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
-        {%- if section.settings.review_url != blank -%}
-          <a href="{{ section.settings.review_url }}" class="mp-ub__review-link">{{ section.settings.review_label }}</a>
-        {%- else -%}
-          <span class="mp-ub__review-link">{{ section.settings.review_label }}</span>
-        {%- endif -%}
-      </div>
+        <span class="mp-ub__review-link">{{ review_text }}</span>
+      </a>
     {%- endif -%}
   </div>
 </div>
@@ -93,8 +100,9 @@
     { "type": "text", "id": "usp_3_label", "label": "USP 3", "default": "Price-match promise" },
     { "type": "url", "id": "usp_3_url", "label": "USP 3 link (optional)" },
     { "type": "header", "content": "Reviews" },
-    { "type": "text", "id": "review_label", "label": "Review text", "default": "4.93 from 44 customer reviews" },
-    { "type": "url", "id": "review_url", "label": "Review link (optional)" }
+    { "type": "paragraph", "content": "Rating and count are read automatically from Judge.me. The fallback text below is shown only if Judge.me has no data yet." },
+    { "type": "text", "id": "review_label", "label": "Fallback review text", "info": "Only shown when Judge.me aggregate data is unavailable." },
+    { "type": "url", "id": "review_url", "label": "Reviews page link", "info": "Defaults to /pages/reviews." }
   ],
   "enabled_on": { "groups": ["header"] }
 }
