@@ -56,17 +56,18 @@
   .mp-catg-{{ section.id }} .mp-catg__card:hover { filter: brightness(1.06); }
   .mp-catg-{{ section.id }} .mp-catg__card--large {
     grid-column: span 2;
-    min-height: 290px;
+    min-height: 300px;
     padding: 26px 28px 20px;
   }
 
-  /* Text content */
+  /* Text content — capped to left half so it never runs under the image */
   .mp-catg-{{ section.id }} .mp-catg__body {
     display: flex;
     flex-direction: column;
     flex: 1;
     position: relative;
     z-index: 1;
+    max-width: 50%;
   }
   .mp-catg-{{ section.id }} .mp-catg__name {
     font-family: 'Barlow Semi Condensed', 'Barlow', sans-serif;
@@ -74,14 +75,14 @@
     line-height: 1; margin: 0 0 8px;
   }
   .mp-catg-{{ section.id }} .mp-catg__card--large .mp-catg__name {
-    font-size: 34px; margin-bottom: 10px;
+    font-size: 38px; margin-bottom: 10px;
   }
   .mp-catg-{{ section.id }} .mp-catg__desc {
     font-size: 13px; line-height: 1.45;
-    opacity: .88; margin: 0; max-width: 55%;
+    opacity: .88; margin: 0;
   }
   .mp-catg-{{ section.id }} .mp-catg__card--large .mp-catg__desc {
-    font-size: 14px; max-width: 52%;
+    font-size: 14px;
   }
   .mp-catg-{{ section.id }} .mp-catg__tagline {
     margin-top: auto;
@@ -89,15 +90,15 @@
     font-size: 11px; opacity: .65; line-height: 1.4;
   }
 
-  /* Corner graphic */
+  /* Right-side graphic — fills ~52% of card width from the bottom-right */
   .mp-catg-{{ section.id }} .mp-catg__graphic {
     position: absolute;
     bottom: 0; right: 0;
-    width: 110px;
+    width: 52%;
     pointer-events: none;
   }
   .mp-catg-{{ section.id }} .mp-catg__card--large .mp-catg__graphic {
-    width: 170px;
+    width: 55%;
   }
   .mp-catg-{{ section.id }} .mp-catg__graphic img {
     display: block;
@@ -112,14 +113,13 @@
     .mp-catg-{{ section.id }} { padding: 20px 16px 16px; }
     .mp-catg-{{ section.id }} .mp-catg__grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
     .mp-catg-{{ section.id }} .mp-catg__heading { font-size: 22px; }
-    .mp-catg-{{ section.id }} .mp-catg__card--large { min-height: 220px; }
-    .mp-catg-{{ section.id }} .mp-catg__card--large .mp-catg__graphic { width: 130px; }
+    .mp-catg-{{ section.id }} .mp-catg__card--large { min-height: 240px; }
+    .mp-catg-{{ section.id }} .mp-catg__body { max-width: 54%; }
   }
   @media (max-width: 749px) {
     .mp-catg-{{ section.id }} .mp-catg__card { min-height: 160px; }
-    .mp-catg-{{ section.id }} .mp-catg__graphic { width: 80px; }
-    .mp-catg-{{ section.id }} .mp-catg__card--large .mp-catg__graphic { width: 110px; }
-    .mp-catg-{{ section.id }} .mp-catg__desc { max-width: 60%; }
+    .mp-catg-{{ section.id }} .mp-catg__body { max-width: 58%; }
+    .mp-catg-{{ section.id }} .mp-catg__graphic { width: 44%; }
   }
 {%- endstyle -%}
 
@@ -153,7 +153,11 @@
         </div>
         {%- if block.settings.image != blank -%}
           <div class="mp-catg__graphic">
-            {{- block.settings.image | image_url: width: 340 | image_tag: alt: block.settings.title, loading: 'lazy' -}}
+            {{- block.settings.image | image_url: width: 680 | image_tag: alt: block.settings.title, loading: 'lazy' -}}
+          </div>
+        {%- elsif block.settings.image_asset != blank -%}
+          <div class="mp-catg__graphic">
+            <img src="{{ block.settings.image_asset | asset_url }}" alt="{{ block.settings.title }}" loading="lazy">
           </div>
         {%- endif -%}
       </a>
@@ -186,7 +190,8 @@
         { "type": "url",          "id": "url",         "label": "Collection URL" },
         { "type": "color",        "id": "bg",          "label": "Background colour", "default": "#16323f" },
         { "type": "color",        "id": "text_color",  "label": "Text colour",       "default": "#ffffff" },
-        { "type": "image_picker", "id": "image",       "label": "Corner graphic",    "info": "Image shown in the bottom-right corner of the card. Works best with a transparent PNG." }
+        { "type": "image_picker", "id": "image",       "label": "Corner graphic",      "info": "Upload via Shopify Files and select here. Takes priority over the asset filename below." },
+        { "type": "text",         "id": "image_asset", "label": "Corner graphic (asset filename)", "info": "Filename from the theme assets folder, e.g. party-games-tile-art2x.png. Used when no image is selected above." }
       ]
     }
   ],

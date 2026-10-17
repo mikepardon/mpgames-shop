@@ -259,7 +259,8 @@
             "tagline": "Start with Magical Athlete, Codenames, Hot Streak",
             "url": "/collections/category-party",
             "bg": "#c05430",
-            "text_color": "#ffffff"
+            "text_color": "#ffffff",
+            "image_asset": "party-games-tile-art2x.png"
           }
         },
         "cat_family": {
@@ -268,10 +269,11 @@
             "size": "large",
             "title": "Family Games",
             "description": "Easy to teach, hard to put down. Great from age 8.",
-            "tagline": "Start with Forbidden Island, Fliptoons, No Thanks!",
+            "tagline": "Start with MicroMacro, Fliptoons, No Thanks!",
             "url": "/collections/category-family",
             "bg": "#e8b412",
-            "text_color": "#1a2633"
+            "text_color": "#1a2633",
+            "image_asset": "family-games-tile-art2x.png"
           }
         },
         "cat_strategy": {
@@ -280,10 +282,11 @@
             "size": "small",
             "title": "Strategy",
             "description": "Long-haul thinkers for nights that run late.",
-            "tagline": "A Feast for Odin, Solstis",
+            "tagline": "Drillers, Wingspan Pocket",
             "url": "/collections/category-strategy",
             "bg": "#16323f",
-            "text_color": "#ffffff"
+            "text_color": "#ffffff",
+            "image_asset": "strategy-tile-art2x.png"
           }
         },
         "cat_two": {
@@ -292,10 +295,11 @@
             "size": "small",
             "title": "Two-Player",
             "description": "Head-to-head duels for you and one other.",
-            "tagline": "Duel for Cardia, Splendor Duel",
+            "tagline": "Leaders, Splendor Duel",
             "url": "/collections/players-2",
             "bg": "#2d5f78",
-            "text_color": "#ffffff"
+            "text_color": "#ffffff",
+            "image_asset": "two-player-tile-art2x.png"
           }
         },
         "cat_coop": {
@@ -304,10 +308,11 @@
             "size": "small",
             "title": "Co-op",
             "description": "Win together, or lose together.",
-            "tagline": "Mechs vs Minions, Final Girl",
+            "tagline": "Mechs vs. Minions, Shackleton Base",
             "url": "/collections/players-coop",
             "bg": "#1a4a38",
-            "text_color": "#ffffff"
+            "text_color": "#ffffff",
+            "image_asset": "co-op-tile-art2x.png"
           }
         },
         "cat_card": {
@@ -316,10 +321,11 @@
             "size": "small",
             "title": "Card Games",
             "description": "Pocket-sized, big on play.",
-            "tagline": "No Thanks!, Maybe Not Perfect",
+            "tagline": "Paper World, Slide",
             "url": "/collections/category-card",
             "bg": "#4a2878",
-            "text_color": "#ffffff"
+            "text_color": "#ffffff",
+            "image_asset": "card-games-tile-art2x.png"
           }
         },
         "cat_expansions": {
@@ -328,10 +334,11 @@
             "size": "small",
             "title": "Expansions",
             "description": "More of the games you already love.",
-            "tagline": "Shackleton Base, Courtisans",
+            "tagline": "Akropolis Athena, Courtisans",
             "url": "/collections/expansions",
             "bg": "#ede8de",
-            "text_color": "#16323f"
+            "text_color": "#16323f",
+            "image_asset": "expansions-tile-art2x.png"
           }
         },
         "cat_preowned": {
