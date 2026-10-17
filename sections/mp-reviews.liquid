@@ -64,6 +64,19 @@
   </div>
 </div>
 
+<script>
+(function () {
+  function tryLoad(attempts) {
+    if (window.jdgm && typeof jdgm.loadAll === 'function') {
+      jdgm.loadAll();
+      return;
+    }
+    if (attempts > 0) { setTimeout(function () { tryLoad(attempts - 1); }, 500); }
+  }
+  document.addEventListener('DOMContentLoaded', function () { tryLoad(10); });
+})();
+</script>
+
 {% schema %}
 {
   "name": "MP Reviews page",

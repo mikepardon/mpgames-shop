@@ -194,7 +194,7 @@
           ]
         },
         { "type": "text", "id": "label", "label": "Button label", "default": "Party" },
-        { "type": "text", "id": "tag",   "label": "Filter tag value", "info": "Must match the Shopify product tag exactly, e.g. category-party or players-3-4", "default": "category-party" }
+        { "type": "text", "id": "tag",   "label": "Filter tag value", "info": "Must match the Shopify product tag exactly, e.g. category-party, players-coop, playtime-quick", "default": "category-party" }
       ]
     }
   ],
@@ -213,17 +213,16 @@
       "blocks": [
         { "type": "option", "settings": { "group": "vibe",     "label": "Party",      "tag": "category-party" } },
         { "type": "option", "settings": { "group": "vibe",     "label": "Strategy",   "tag": "category-strategy" } },
-        { "type": "option", "settings": { "group": "vibe",     "label": "Co-op",      "tag": "category-co-op" } },
+        { "type": "option", "settings": { "group": "vibe",     "label": "Co-op",      "tag": "players-coop" } },
         { "type": "option", "settings": { "group": "vibe",     "label": "Family",     "tag": "category-family" } },
-        { "type": "option", "settings": { "group": "players",  "label": "1",          "tag": "players-1" } },
+        { "type": "option", "settings": { "group": "players",  "label": "Solo",       "tag": "players-solo" } },
         { "type": "option", "settings": { "group": "players",  "label": "2",          "tag": "players-2" } },
-        { "type": "option", "settings": { "group": "players",  "label": "3-4",        "tag": "players-3-4" } },
-        { "type": "option", "settings": { "group": "players",  "label": "5-6",        "tag": "players-5-6" } },
-        { "type": "option", "settings": { "group": "players",  "label": "7+",         "tag": "players-7-plus" } },
-        { "type": "option", "settings": { "group": "duration", "label": "Under 30m",  "tag": "playtime-under-30" } },
-        { "type": "option", "settings": { "group": "duration", "label": "30-60m",     "tag": "playtime-30-60" } },
-        { "type": "option", "settings": { "group": "duration", "label": "1-2h",       "tag": "playtime-1-2h" } },
-        { "type": "option", "settings": { "group": "duration", "label": "2h+",        "tag": "playtime-2h-plus" } }
+        { "type": "option", "settings": { "group": "players",  "label": "3-4",        "tag": "players-3-plus" } },
+        { "type": "option", "settings": { "group": "players",  "label": "5+",         "tag": "players-5-plus" } },
+        { "type": "option", "settings": { "group": "duration", "label": "Under 45m",  "tag": "playtime-quick" } },
+        { "type": "option", "settings": { "group": "duration", "label": "~1 hour",    "tag": "playtime-medium" } },
+        { "type": "option", "settings": { "group": "duration", "label": "~2 hours",   "tag": "playtime-long" } },
+        { "type": "option", "settings": { "group": "duration", "label": "2h+",        "tag": "playtime-epic" } }
       ]
     }
   ]
