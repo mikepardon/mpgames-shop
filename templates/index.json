@@ -203,50 +203,6 @@
         "base_url": ""
       }
     },
-    "mp_usp": {
-      "type": "mp-usp-strip",
-      "blocks": {
-        "u1": {
-          "type": "usp",
-          "settings": {
-            "icon": "🚚",
-            "title": "Next working day dispatch",
-            "subtitle": "On all orders"
-          }
-        },
-        "u2": {
-          "type": "usp",
-          "settings": {
-            "icon": "🏆",
-            "title": "BGG-ranked browsing",
-            "subtitle": "Shop by score"
-          }
-        },
-        "u3": {
-          "type": "usp",
-          "settings": {
-            "icon": "💰",
-            "title": "Price-match promise",
-            "subtitle": "Found it cheaper? Tell us"
-          }
-        },
-        "u4": {
-          "type": "usp",
-          "settings": {
-            "icon": "🔄",
-            "title": "30-day returns",
-            "subtitle": "On unopened games"
-          }
-        }
-      },
-      "block_order": [
-        "u1",
-        "u2",
-        "u3",
-        "u4"
-      ],
-      "settings": {}
-    },
     "mp_category_grid": {
       "type": "mp-category-grid",
       "blocks": {
@@ -370,42 +326,6 @@
         "link_label": "All categories",
         "link_url": "/collections/all-games"
       }
-    },
-    "mp_promos": {
-      "type": "mp-promo-banners",
-      "blocks": {
-        "p1": {
-          "type": "promo",
-          "settings": {
-            "layout": "text",
-            "image_fit": "natural",
-            "url": "/collections/top-rated",
-            "kicker": "HOBBYIST CORNER",
-            "kicker_color": "#d7b8ef",
-            "title": "The highest-rated games on BoardGameGeek",
-            "cta_label": "Explore the ranking",
-            "bg": "linear-gradient(115deg,#2b2233,#4a3a5c)"
-          }
-        },
-        "p2": {
-          "type": "promo",
-          "settings": {
-            "layout": "text",
-            "image_fit": "natural",
-            "url": "/collections/gateway-under-30",
-            "kicker": "NEW TO THE HOBBY?",
-            "kicker_color": "#bfe9d2",
-            "title": "Gateway games under £30",
-            "cta_label": "Start here",
-            "bg": "linear-gradient(115deg,#13513f,#2f8f5b)"
-          }
-        }
-      },
-      "block_order": [
-        "p1",
-        "p2"
-      ],
-      "settings": {}
     },
     "mp_bestsellers": {
       "type": "mp-product-rail",
@@ -652,9 +572,7 @@
   "order": [
     "mp_hero",
     "mp_game_finder_ypyQft",
-    "mp_usp",
     "mp_category_grid",
-    "mp_promos",
     "mp_bestsellers",
     "mp_toprated",
     "mp_players",
