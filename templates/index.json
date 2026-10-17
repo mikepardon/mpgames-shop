@@ -17,7 +17,7 @@
           "settings": {
             "layout": "image",
             "image": "shopify://shop_images/Wacky_Racing_Banner_2a.png",
-            "image_fit": "natural",
+            "image_alt": "",
             "cta_url": "shopify://collections/racer",
             "kicker": "TOP-RANKED TABLETOP",
             "title": "Board games ranked by BoardGameGeek, delivered across the UK",
@@ -31,7 +31,7 @@
           "settings": {
             "layout": "image",
             "image": "shopify://shop_images/mpgames-trade-in-banner.png",
-            "image_fit": "natural",
+            "image_alt": "",
             "cta_url": "shopify://pages/trade-in",
             "kicker": "TOP-RANKED TABLETOP",
             "title": "The biggest names in tabletop, all in one place",
@@ -45,7 +45,7 @@
           "settings": {
             "layout": "image",
             "image": "shopify://shop_images/kcd-preorder-banner.png",
-            "image_fit": "natural",
+            "image_alt": "",
             "cta_url": "shopify://products/kingdom-come-deliverance-the-board-game-pre-order",
             "kicker": "TOP-RANKED TABLETOP",
             "title": "The biggest names in tabletop, all in one place",
@@ -61,7 +61,21 @@
         "slide_TCTHdh"
       ],
       "settings": {
-        "autoplay_seconds": 6
+        "autoplay_seconds": 6,
+        "card_1_kicker": "GIFT IDEAS",
+        "card_1_kicker_color": "#92400e",
+        "card_1_title": "What board game should I buy?",
+        "card_1_title_color": "#1a2633",
+        "card_1_cta": "Find the perfect gift",
+        "card_1_url": "",
+        "card_1_bg": "linear-gradient(135deg,#fbbf24,#f59e0b)",
+        "card_2_kicker": "TRADE IN YOUR GAMES",
+        "card_2_kicker_color": "#86efac",
+        "card_2_title": "Turn your shelf into store credit",
+        "card_2_title_color": "#ffffff",
+        "card_2_cta": "Get a quote",
+        "card_2_url": "shopify://pages/trade-in",
+        "card_2_bg": "linear-gradient(135deg,#15803d,#166534)"
       }
     },
     "mp_usp": {
