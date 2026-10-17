@@ -57,18 +57,29 @@
     font-weight: 600; border: 0; cursor: pointer; font-family: inherit; white-space: nowrap;
   }
   .mp-hd-{{ section.id }} .mp-hd__util {
-    display: flex; gap: 22px; color: #dce6ea; font-size: 12.5px;
-    align-items: center; white-space: nowrap;
+    display: flex; gap: 18px; align-items: center; white-space: nowrap;
   }
-  .mp-hd-{{ section.id }} .mp-hd__util a { color: inherit; text-decoration: none; }
+  .mp-hd-{{ section.id }} .mp-hd__util a { text-decoration: none; }
+  /* account */
+  .mp-hd-{{ section.id }} .mp-hd__acct { display: inline-flex; align-items: center; gap: 9px; color: #dce6ea; }
+  .mp-hd-{{ section.id }} .mp-hd__acct svg { flex: none; color: #9fb4bd; }
+  .mp-hd-{{ section.id }} .mp-hd__acct-text { display: flex; flex-direction: column; line-height: 1.3; }
+  .mp-hd-{{ section.id }} .mp-hd__acct-name { font-size: 13px; font-weight: 600; color: #fff; }
+  .mp-hd-{{ section.id }} .mp-hd__acct-pts { font-size: 11px; color: #7fc8a4; }
+  /* wishlist */
+  .mp-hd-{{ section.id }} .mp-hd__wish-btn { display: inline-flex; align-items: center; gap: 8px; background: #1d4252; border: 1px solid #2c5466; border-radius: 7px; padding: 8px 13px; color: #fff; }
+  .mp-hd-{{ section.id }} .mp-hd__wish-btn svg { flex: none; }
+  .mp-hd-{{ section.id }} .mp-hd__wish-inner { display: flex; flex-direction: column; line-height: 1.3; }
+  .mp-hd-{{ section.id }} .mp-hd__wish-label { font-size: 11px; color: #9fb4bd; }
+  .mp-hd-{{ section.id }} .mp-hd__wish-count { font-size: 13px; font-weight: 600; }
+  /* basket */
+  .mp-hd-{{ section.id }} .mp-hd__basket { display: inline-flex; align-items: center; gap: 8px; background: #fff; border-radius: 7px; padding: 9px 15px; color: #16323f; font-size: 13px; font-weight: 600; }
+  .mp-hd-{{ section.id }} .mp-hd__basket:hover { background: #f0ebe2; color: #16323f; }
+  .mp-hd-{{ section.id }} .mp-hd__basket svg { flex: none; }
+  /* kept for legacy use */
   .mp-hd-{{ section.id }} .mp-hd__stack { display: flex; flex-direction: column; line-height: 1.3; }
   .mp-hd-{{ section.id }} .mp-hd__muted { color: #9fb4bd; font-size: 11px; }
   .mp-hd-{{ section.id }} .mp-hd__white { color: #fff; }
-  .mp-hd-{{ section.id }} .mp-hd__basket {
-    display: inline-flex; align-items: center; gap: 8px; background: #1d4252;
-    border: 1px solid #2c5466; border-radius: 7px; padding: 8px 13px;
-  }
-  .mp-hd-{{ section.id }} .mp-hd__wish { display: flex; align-items: center; gap: 7px; }
 
   /* row 2 — mega nav */
   .mp-hd-{{ section.id }} .mp-nav { background: #1d4252; position: relative; }
@@ -126,8 +137,8 @@
   .mp-hd-{{ section.id }} .mp-nav__backdrop { display: none; }
 
   @media (max-width: 989px) {
-    .mp-hd-{{ section.id }} .mp-hd__util .mp-hd__stack span:first-child,
-    .mp-hd-{{ section.id }} .mp-hd__muted { display: none; }
+    .mp-hd-{{ section.id }} .mp-hd__acct-text,
+    .mp-hd-{{ section.id }} .mp-hd__wish-inner { display: none; }
     .mp-hd-{{ section.id }} .mp-hd__burger { display: inline-flex; }
 
     /* nav becomes an off-canvas drawer */
@@ -167,8 +178,7 @@
     .mp-hd-{{ section.id }} .mp-hd__in { flex-wrap: wrap; gap: 12px; padding: 12px 16px; }
     .mp-hd-{{ section.id }} .mp-hd__search { order: 3; flex: 1 0 100%; }
     .mp-hd-{{ section.id }} .mp-hd__cats { display: none; }
-    .mp-hd-{{ section.id }} .mp-hd__util { margin-left: auto; gap: 16px; }
-    .mp-hd-{{ section.id }} .mp-hd__wish span:last-child { display: none; }
+    .mp-hd-{{ section.id }} .mp-hd__util { margin-left: auto; gap: 12px; }
     .mp-hd-{{ section.id }} .mp-nav__in { padding: 0 16px; }
     .mp-hd-{{ section.id }} .mp-hd__logo .mp-hd__logo-full { display: none; }
     .mp-hd-{{ section.id }} .mp-hd__logo .mp-hd__logo-mark { display: block; }
@@ -301,29 +311,31 @@
       </form>
 
       <div class="mp-hd__util">
-        <a href="{{ routes.account_url }}" class="mp-hd__stack">
-          {%- if customer -%}
-            <span class="mp-hd__muted">{% if customer.first_name != blank %}Hello{% else %}Account{% endif %}</span>
-            <span class="mp-hd__white">{{ customer.first_name | default: 'My account' }} &#9662;</span>
-          {%- else -%}
-            <span class="mp-hd__muted">Account</span>
-            <span class="mp-hd__white">Sign in &#9662;</span>
-          {%- endif -%}
+        <!-- account: person icon + name + points -->
+        <a href="{{ routes.account_url }}" class="mp-hd__acct">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <span class="mp-hd__acct-text">
+            <span class="mp-hd__acct-name">{%- if customer -%}{{ customer.first_name | default: 'Account' }}{%- else -%}Sign in{%- endif -%}</span>
+            <span class="mp-hd__acct-pts">{%- if customer -%}<span data-hd-pts-num></span> points{%- else -%}Earn points{%- endif -%}</span>
+          </span>
         </a>
-        {%- if customer -%}
-          <a href="/pages/wishlist" class="mp-hd__stack mp-hd__wish" aria-label="My wishlist">
-            <span class="mp-hd__muted">Saved</span>
-            <span class="mp-hd__white">My Wishlist <span class="mp-wish-nav__count" data-wishlist-count hidden></span></span>
-          </a>
-        {%- endif -%}
+
+        <!-- wishlist: dark card with heart icon + count -->
+        <a href="{% if customer %}/pages/wishlist{% else %}{{ routes.account_login_url }}{% endif %}" class="mp-hd__wish-btn" aria-label="Wishlist">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          <span class="mp-hd__wish-inner">
+            <span class="mp-hd__wish-label">Wishlist</span>
+            <span class="mp-hd__wish-count"><span class="mp-wish-nav__count" data-wishlist-count>0</span> saved</span>
+          </span>
+        </a>
+
         {%- comment -%} Hidden element that CartDrawer uses for section-rendering updates. {%- endcomment -%}
         <span id="cart-icon-bubble" aria-hidden="true" style="position:absolute;visibility:hidden;pointer-events:none;"></span>
+
+        <!-- basket: white button -->
         <a href="{{ routes.cart_url }}" class="mp-hd__basket" data-mp-cart-btn>
-          <span>&#128722;</span>
-          <span class="mp-hd__stack">
-            <span class="mp-hd__muted">Basket</span>
-            <span class="mp-hd__white" style="font-weight:600" data-cart-summary>{{ cart.item_count }} &middot; {{ cart.total_price | money }}</span>
-          </span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+          <span>Basket &middot; <span data-cart-total>{{ cart.total_price | money }}</span></span>
         </a>
       </div>
     </div>
@@ -509,9 +521,8 @@
   document.addEventListener('DOMContentLoaded', function () {
     if (typeof subscribe !== 'function' || typeof PUB_SUB_EVENTS !== 'object') return;
     subscribe(PUB_SUB_EVENTS.cartUpdate, function (data) {
-      var summary = document.querySelector('[data-cart-summary]');
-      if (!summary || !data || !data.cartData) return;
-      var count = data.cartData.item_count;
+      var totalEl = document.querySelector('[data-cart-total]');
+      if (!totalEl || !data || !data.cartData) return;
       var total = data.cartData.total_price;
       var currency = data.cartData.currency || 'GBP';
       var locale = document.documentElement.lang || 'en-GB';
@@ -521,10 +532,22 @@
           currency: currency,
           minimumFractionDigits: 2
         }).format(total / 100);
-        summary.textContent = count + ' · ' + formatted;
+        totalEl.textContent = formatted;
       } catch (_) {}
     });
   }, { once: true });
+
+  {%- if customer -%}
+  // Load loyalty points balance into the header account area
+  (function () {
+    var ptsEl = document.querySelector('[data-hd-pts-num]');
+    if (!ptsEl) return;
+    fetch('/apps/notify/proxy-loyalty/history')
+      .then(function (r) { return r.json(); })
+      .then(function (data) { if (data && data.ok) { ptsEl.textContent = data.points.toLocaleString(); } })
+      .catch(function () {});
+  })();
+  {%- endif -%}
 </script>
 
 {% schema %}
