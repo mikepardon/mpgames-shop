@@ -40,8 +40,8 @@
 {%- endstyle -%}
 
 {%- liquid
-  assign jm_count  = shop.metafields.judgeme.all_reviews_count
-  assign jm_rating = shop.metafields.judgeme.all_reviews_rating
+  assign jm_count  = shop.metafields.judgeme.all_reviews_count | plus: 0
+  assign jm_rating = shop.metafields.judgeme.all_reviews_rating | plus: 0
 -%}
 
 <div class="mp-rv-{{ section.id }} mp-cond">

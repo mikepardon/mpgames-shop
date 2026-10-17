@@ -44,8 +44,8 @@
 {%- endstyle -%}
 
 {%- liquid
-  assign jm_count  = shop.metafields.judgeme.all_reviews_count
-  assign jm_rating = shop.metafields.judgeme.all_reviews_rating
+  assign jm_count  = shop.metafields.judgeme.all_reviews_count | plus: 0
+  assign jm_rating = shop.metafields.judgeme.all_reviews_rating | plus: 0
   if jm_count != blank and jm_count > 0
     assign review_text = jm_rating | round: 2 | append: ' from ' | append: jm_count | append: ' customer reviews'
   elsif section.settings.review_label != blank

@@ -1,0 +1,231 @@
+{%- comment -%}
+  MPGames "Find Your Next Game" quick-filter widget.
+  Buttons are grouped by type (vibe / players / duration). Selecting one per
+  group and clicking "Show games" navigates to the configured base collection
+  with Shopify tag filter params appended for each selection.
+{%- endcomment -%}
+
+{%- style -%}
+  .mp-fnd-{{ section.id }} { font-family: 'Barlow', ui-sans-serif, system-ui, sans-serif; }
+  .mp-fnd-{{ section.id }} .mp-fnd__wrap {
+    margin: 0 28px 20px;
+    background: #fff;
+    border: 1px solid #e7e0d4;
+    border-radius: 14px;
+    padding: 26px 28px;
+    display: flex;
+    align-items: flex-start;
+    gap: 32px;
+  }
+  /* left column */
+  .mp-fnd-{{ section.id }} .mp-fnd__left { flex: none; min-width: 200px; }
+  .mp-fnd-{{ section.id }} .mp-fnd__title {
+    font-size: 22px; font-weight: 700; color: #16323f;
+    line-height: 1.1; margin: 0 0 4px;
+  }
+  .mp-fnd-{{ section.id }} .mp-fnd__sub {
+    font-size: 13px; color: #9fb4bd; margin: 0 0 18px;
+  }
+  /* right columns */
+  .mp-fnd-{{ section.id }} .mp-fnd__filters {
+    flex: 1; display: flex; gap: 28px; flex-wrap: wrap; align-items: flex-start;
+  }
+  .mp-fnd-{{ section.id }} .mp-fnd__group { min-width: 0; }
+  .mp-fnd-{{ section.id }} .mp-fnd__group-label {
+    font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+    color: #9fb4bd; margin-bottom: 10px;
+  }
+  /* pill buttons */
+  .mp-fnd-{{ section.id }} .mp-fnd__pills { display: flex; flex-wrap: wrap; gap: 8px; }
+  .mp-fnd-{{ section.id }} .mp-fnd__pill {
+    border: 1.5px solid #d6cfc5; border-radius: 8px;
+    padding: 7px 14px; font-size: 13.5px; font-weight: 600;
+    color: #16323f; background: #fff; cursor: pointer;
+    font-family: inherit; transition: background .15s, border-color .15s, color .15s;
+    white-space: nowrap;
+  }
+  .mp-fnd-{{ section.id }} .mp-fnd__pill:hover { border-color: #16323f; }
+  .mp-fnd-{{ section.id }} .mp-fnd__pill[aria-pressed="true"] {
+    background: #16323f; border-color: #16323f; color: #fff;
+  }
+  /* go button */
+  .mp-fnd-{{ section.id }} .mp-fnd__go {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: #f2872f; color: #fff; border: 0; border-radius: 9px;
+    padding: 11px 22px; font-size: 15px; font-weight: 700;
+    cursor: pointer; font-family: inherit; margin-top: 18px;
+    white-space: nowrap; text-decoration: none;
+  }
+  .mp-fnd-{{ section.id }} .mp-fnd__go:hover { background: #e07928; }
+
+  @media (max-width: 989px) {
+    .mp-fnd-{{ section.id }} .mp-fnd__wrap { flex-direction: column; gap: 20px; padding: 22px 20px; margin: 0 16px 16px; }
+    .mp-fnd-{{ section.id }} .mp-fnd__left { min-width: 0; width: 100%; }
+    .mp-fnd-{{ section.id }} .mp-fnd__filters { gap: 20px; }
+  }
+{%- endstyle -%}
+
+{%- comment -%} Collect blocks by group into arrays via captures {%- endcomment -%}
+{%- assign vibe_blocks = '' -%}
+{%- assign players_blocks = '' -%}
+{%- assign duration_blocks = '' -%}
+
+<div class="mp-cream mp-fnd-{{ section.id }}">
+  <div class="mp-col">
+    <div class="mp-fnd__wrap" data-mp-finder data-base="{{ section.settings.base_url | default: '/collections/all-games' }}">
+
+      <!-- left: title + vibe -->
+      <div class="mp-fnd__left">
+        <h2 class="mp-fnd__title mp-cond">{{ section.settings.title }}</h2>
+        <p class="mp-fnd__sub">{{ section.settings.subtitle }}</p>
+
+        {%- assign has_vibe = false -%}
+        {%- for block in section.blocks -%}
+          {%- if block.settings.group == 'vibe' -%}{%- assign has_vibe = true -%}{%- break -%}{%- endif -%}
+        {%- endfor -%}
+        {%- if has_vibe -%}
+          <div class="mp-fnd__group-label">{{ section.settings.vibe_label }}</div>
+          <div class="mp-fnd__pills">
+            {%- for block in section.blocks -%}
+              {%- if block.settings.group == 'vibe' -%}
+                <button class="mp-fnd__pill" type="button" aria-pressed="false" data-tag="{{ block.settings.tag }}" data-group="vibe" {{ block.shopify_attributes }}>{{ block.settings.label }}</button>
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+
+        <a class="mp-fnd__go mp-cond" href="{{ section.settings.base_url | default: '/collections/all-games' }}" data-go>{{ section.settings.go_label | default: 'Show games' }} &#8594;</a>
+      </div>
+
+      <!-- right: players + duration -->
+      <div class="mp-fnd__filters">
+        {%- assign has_players = false -%}
+        {%- for block in section.blocks -%}
+          {%- if block.settings.group == 'players' -%}{%- assign has_players = true -%}{%- break -%}{%- endif -%}
+        {%- endfor -%}
+        {%- if has_players -%}
+          <div class="mp-fnd__group">
+            <div class="mp-fnd__group-label">{{ section.settings.players_label }}</div>
+            <div class="mp-fnd__pills">
+              {%- for block in section.blocks -%}
+                {%- if block.settings.group == 'players' -%}
+                  <button class="mp-fnd__pill" type="button" aria-pressed="false" data-tag="{{ block.settings.tag }}" data-group="players" {{ block.shopify_attributes }}>{{ block.settings.label }}</button>
+                {%- endif -%}
+              {%- endfor -%}
+            </div>
+          </div>
+        {%- endif -%}
+
+        {%- assign has_duration = false -%}
+        {%- for block in section.blocks -%}
+          {%- if block.settings.group == 'duration' -%}{%- assign has_duration = true -%}{%- break -%}{%- endif -%}
+        {%- endfor -%}
+        {%- if has_duration -%}
+          <div class="mp-fnd__group">
+            <div class="mp-fnd__group-label">{{ section.settings.duration_label }}</div>
+            <div class="mp-fnd__pills">
+              {%- for block in section.blocks -%}
+                {%- if block.settings.group == 'duration' -%}
+                  <button class="mp-fnd__pill" type="button" aria-pressed="false" data-tag="{{ block.settings.tag }}" data-group="duration" {{ block.shopify_attributes }}>{{ block.settings.label }}</button>
+                {%- endif -%}
+              {%- endfor -%}
+            </div>
+          </div>
+        {%- endif -%}
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  var wrap = document.querySelector('.mp-fnd-{{ section.id }} [data-mp-finder]');
+  if (!wrap) return;
+
+  var base = wrap.getAttribute('data-base') || '/collections/all-games';
+  var goBtn = wrap.querySelector('[data-go]');
+
+  // Toggle pill selection — one active per group
+  wrap.querySelectorAll('.mp-fnd__pill').forEach(function (pill) {
+    pill.addEventListener('click', function () {
+      var group = pill.getAttribute('data-group');
+      var wasOn = pill.getAttribute('aria-pressed') === 'true';
+      // Deselect all in same group
+      wrap.querySelectorAll('[data-group="' + group + '"]').forEach(function (p) {
+        p.setAttribute('aria-pressed', 'false');
+      });
+      // Toggle this one
+      pill.setAttribute('aria-pressed', wasOn ? 'false' : 'true');
+      updateGoUrl();
+    });
+  });
+
+  function updateGoUrl() {
+    var tags = [];
+    wrap.querySelectorAll('.mp-fnd__pill[aria-pressed="true"]').forEach(function (p) {
+      var tag = p.getAttribute('data-tag');
+      if (tag) { tags.push(tag); }
+    });
+    var url = base;
+    if (tags.length) {
+      url += '?' + tags.map(function (t) { return 'filter.p.tag=' + encodeURIComponent(t); }).join('&');
+    }
+    goBtn.setAttribute('href', url);
+  }
+})();
+</script>
+
+{% schema %}
+{
+  "name": "MP Game finder",
+  "max_blocks": 20,
+  "blocks": [
+    {
+      "type": "option",
+      "name": "Filter option",
+      "settings": [
+        {
+          "type": "select", "id": "group", "label": "Group", "default": "vibe",
+          "options": [
+            { "value": "vibe",     "label": "Vibe / category" },
+            { "value": "players",  "label": "Player count" },
+            { "value": "duration", "label": "Play duration" }
+          ]
+        },
+        { "type": "text", "id": "label", "label": "Button label", "default": "Party" },
+        { "type": "text", "id": "tag",   "label": "Filter tag value", "info": "Must match the Shopify product tag exactly, e.g. category-party or players-3-4", "default": "category-party" }
+      ]
+    }
+  ],
+  "settings": [
+    { "type": "text", "id": "title",    "label": "Title",    "default": "Find your next game" },
+    { "type": "text", "id": "subtitle", "label": "Subtitle", "default": "Three taps. No jargon." },
+    { "type": "text", "id": "vibe_label",     "label": "Vibe group label",     "default": "What's the vibe?" },
+    { "type": "text", "id": "players_label",  "label": "Players group label",  "default": "How many players?" },
+    { "type": "text", "id": "duration_label", "label": "Duration group label", "default": "How long have you got?" },
+    { "type": "text", "id": "go_label",       "label": "Button label",         "default": "Show games" },
+    { "type": "url",  "id": "base_url",       "label": "Base collection URL",  "info": "Filter params are appended to this URL. Defaults to /collections/all-games." }
+  ],
+  "presets": [
+    {
+      "name": "MP Game finder",
+      "blocks": [
+        { "type": "option", "settings": { "group": "vibe",     "label": "Party",      "tag": "category-party" } },
+        { "type": "option", "settings": { "group": "vibe",     "label": "Strategy",   "tag": "category-strategy" } },
+        { "type": "option", "settings": { "group": "vibe",     "label": "Co-op",      "tag": "category-co-op" } },
+        { "type": "option", "settings": { "group": "vibe",     "label": "Family",     "tag": "category-family" } },
+        { "type": "option", "settings": { "group": "players",  "label": "1",          "tag": "players-1" } },
+        { "type": "option", "settings": { "group": "players",  "label": "2",          "tag": "players-2" } },
+        { "type": "option", "settings": { "group": "players",  "label": "3-4",        "tag": "players-3-4" } },
+        { "type": "option", "settings": { "group": "players",  "label": "5-6",        "tag": "players-5-6" } },
+        { "type": "option", "settings": { "group": "players",  "label": "7+",         "tag": "players-7-plus" } },
+        { "type": "option", "settings": { "group": "duration", "label": "Under 30m",  "tag": "playtime-under-30" } },
+        { "type": "option", "settings": { "group": "duration", "label": "30-60m",     "tag": "playtime-30-60" } },
+        { "type": "option", "settings": { "group": "duration", "label": "1-2h",       "tag": "playtime-1-2h" } },
+        { "type": "option", "settings": { "group": "duration", "label": "2h+",        "tag": "playtime-2h-plus" } }
+      ]
+    }
+  ]
+}
+{% endschema %}
