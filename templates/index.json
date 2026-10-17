@@ -78,6 +78,140 @@
         "card_2_bg": "linear-gradient(135deg,#15803d,#166534)"
       }
     },
+    "mp_game_finder_ypyQft": {
+      "type": "mp-game-finder",
+      "blocks": {
+        "option_nirmAF": {
+          "type": "option",
+          "settings": {
+            "group": "vibe",
+            "label": "Party",
+            "tag": "category-party"
+          }
+        },
+        "option_pTBJrE": {
+          "type": "option",
+          "settings": {
+            "group": "vibe",
+            "label": "Strategy",
+            "tag": "category-strategy"
+          }
+        },
+        "option_dzJJ6L": {
+          "type": "option",
+          "settings": {
+            "group": "vibe",
+            "label": "Co-op",
+            "tag": "category-co-op"
+          }
+        },
+        "option_Gpp9ke": {
+          "type": "option",
+          "settings": {
+            "group": "vibe",
+            "label": "Family",
+            "tag": "category-family"
+          }
+        },
+        "option_cTi6DN": {
+          "type": "option",
+          "settings": {
+            "group": "players",
+            "label": "1",
+            "tag": "players-1"
+          }
+        },
+        "option_aBgy7h": {
+          "type": "option",
+          "settings": {
+            "group": "players",
+            "label": "2",
+            "tag": "players-2"
+          }
+        },
+        "option_ykiebt": {
+          "type": "option",
+          "settings": {
+            "group": "players",
+            "label": "3-4",
+            "tag": "players-3-4"
+          }
+        },
+        "option_NtqGBT": {
+          "type": "option",
+          "settings": {
+            "group": "players",
+            "label": "5-6",
+            "tag": "players-5-6"
+          }
+        },
+        "option_tyJmJ7": {
+          "type": "option",
+          "settings": {
+            "group": "players",
+            "label": "7+",
+            "tag": "players-7-plus"
+          }
+        },
+        "option_fdQAAF": {
+          "type": "option",
+          "settings": {
+            "group": "duration",
+            "label": "Under 30m",
+            "tag": "playtime-under-30"
+          }
+        },
+        "option_9FREBj": {
+          "type": "option",
+          "settings": {
+            "group": "duration",
+            "label": "30-60m",
+            "tag": "playtime-30-60"
+          }
+        },
+        "option_EktUdC": {
+          "type": "option",
+          "settings": {
+            "group": "duration",
+            "label": "1-2h",
+            "tag": "playtime-1-2h"
+          }
+        },
+        "option_q6Jaqn": {
+          "type": "option",
+          "settings": {
+            "group": "duration",
+            "label": "2h+",
+            "tag": "playtime-2h-plus"
+          }
+        }
+      },
+      "block_order": [
+        "option_nirmAF",
+        "option_pTBJrE",
+        "option_dzJJ6L",
+        "option_Gpp9ke",
+        "option_cTi6DN",
+        "option_aBgy7h",
+        "option_ykiebt",
+        "option_NtqGBT",
+        "option_tyJmJ7",
+        "option_fdQAAF",
+        "option_9FREBj",
+        "option_EktUdC",
+        "option_q6Jaqn"
+      ],
+      "name": "MP Game finder",
+      "settings": {
+        "title": "Find your next game",
+        "subtitle": "Three taps. No jargon.",
+        "vibe_label": "What's the vibe?",
+        "players_label": "How many players?",
+        "duration_label": "How long have you got?",
+        "go_label": "Show games",
+        "base_url": ""
+      }
+    },
     "mp_usp": {
       "type": "mp-usp-strip",
       "blocks": {
@@ -469,6 +603,7 @@
   },
   "order": [
     "mp_hero",
+    "mp_game_finder_ypyQft",
     "mp_usp",
     "mp_categories",
     "mp_promos",
