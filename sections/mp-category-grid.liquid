@@ -90,11 +90,12 @@
     font-size: 11px; opacity: .65; line-height: 1.4;
   }
 
-  /* Right-side graphic — fills ~52% of card width from the bottom-right */
+  /* Right-side graphic — fills ~52% of card width, bounded by card height */
   .mp-catg-{{ section.id }} .mp-catg__graphic {
     position: absolute;
     bottom: 0; right: 0;
     width: 52%;
+    height: 100%;
     pointer-events: none;
   }
   .mp-catg-{{ section.id }} .mp-catg__card--large .mp-catg__graphic {
@@ -103,7 +104,7 @@
   .mp-catg-{{ section.id }} .mp-catg__graphic img {
     display: block;
     width: 100%;
-    height: auto;
+    height: 100%;
     object-fit: contain;
     object-position: bottom right;
   }

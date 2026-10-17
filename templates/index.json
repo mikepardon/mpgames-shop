@@ -331,7 +331,7 @@
         "cat_expansions": {
           "type": "category",
           "settings": {
-            "size": "small",
+            "size": "large",
             "title": "Expansions",
             "description": "More of the games you already love.",
             "tagline": "Akropolis Athena, Courtisans",
@@ -344,7 +344,7 @@
         "cat_preowned": {
           "type": "category",
           "settings": {
-            "size": "small",
+            "size": "large",
             "title": "Pre-Owned",
             "description": "Checked, counted and cheaper.",
             "tagline": "From £3.50",
