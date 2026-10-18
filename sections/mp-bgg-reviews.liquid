@@ -354,7 +354,7 @@
       slide.appendChild(quote);
       slide.appendChild(reviewer);
 
-      if (r.product_title) {
+      if (r.product_handle && r.product_title) {
         var productDiv = document.createElement('div');
         productDiv.className = 'mp-br__slide-product';
 
@@ -362,13 +362,7 @@
         pname.className = 'mp-br__slide-pname';
         pname.textContent = r.product_title;
 
-        var shopLink = document.createElement('a');
-        shopLink.className = 'mp-br__slide-shop';
-        shopLink.textContent = 'Shop now';
-        shopLink.href = '/products/' + encodeURIComponent(r.product_handle || '');
-
         productDiv.appendChild(pname);
-        productDiv.appendChild(shopLink);
         slide.appendChild(productDiv);
       }
 
