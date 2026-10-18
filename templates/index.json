@@ -86,7 +86,7 @@
           "settings": {
             "group": "vibe",
             "label": "Party",
-            "tag": "category-party"
+            "tag": "filter.p.tag=category-party"
           }
         },
         "option_pTBJrE": {
@@ -94,7 +94,7 @@
           "settings": {
             "group": "vibe",
             "label": "Strategy",
-            "tag": "category-strategy"
+            "tag": "filter.p.tag=category-strategy"
           }
         },
         "option_dzJJ6L": {
@@ -102,7 +102,7 @@
           "settings": {
             "group": "vibe",
             "label": "Co-op",
-            "tag": "players-coop"
+            "tag": "filter.p.tag=players-coop"
           }
         },
         "option_Gpp9ke": {
@@ -110,7 +110,7 @@
           "settings": {
             "group": "vibe",
             "label": "Family",
-            "tag": "category-family"
+            "tag": "filter.p.tag=category-family"
           }
         },
         "option_cTi6DN": {
@@ -118,7 +118,7 @@
           "settings": {
             "group": "players",
             "label": "Solo",
-            "tag": "players-solo"
+            "tag": "filter.p.m.custom.player_band=Solo"
           }
         },
         "option_aBgy7h": {
@@ -126,7 +126,7 @@
           "settings": {
             "group": "players",
             "label": "2",
-            "tag": "players-2-plus"
+            "tag": "filter.p.m.custom.player_band=2+Players"
           }
         },
         "option_ykiebt": {
@@ -134,7 +134,7 @@
           "settings": {
             "group": "players",
             "label": "3-4",
-            "tag": "players-3-plus"
+            "tag": "filter.p.m.custom.player_band=3-4+Players"
           }
         },
         "option_NtqGBT": {
@@ -142,7 +142,7 @@
           "settings": {
             "group": "players",
             "label": "5+",
-            "tag": "players-5-plus"
+            "tag": "filter.p.m.custom.player_band=5-6+Players"
           }
         },
         "option_fdQAAF": {
@@ -150,7 +150,7 @@
           "settings": {
             "group": "duration",
             "label": "Under 45m",
-            "tag": "playtime-quick"
+            "tag": "filter.p.tag=playtime-quick"
           }
         },
         "option_9FREBj": {
@@ -158,7 +158,7 @@
           "settings": {
             "group": "duration",
             "label": "~1 hour",
-            "tag": "playtime-medium"
+            "tag": "filter.p.tag=playtime-medium"
           }
         },
         "option_EktUdC": {
@@ -166,7 +166,7 @@
           "settings": {
             "group": "duration",
             "label": "~2 hours",
-            "tag": "playtime-epic"
+            "tag": "filter.p.tag=playtime-epic"
           }
         },
         "option_q6Jaqn": {
@@ -174,7 +174,7 @@
           "settings": {
             "group": "duration",
             "label": "2h+",
-            "tag": "playtime-epic"
+            "tag": "filter.p.tag=playtime-epic"
           }
         }
       },

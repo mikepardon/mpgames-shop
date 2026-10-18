@@ -194,7 +194,7 @@
     });
     var url = base;
     if (tags.length) {
-      url += '?' + tags.map(function (t) { return 'filter.p.tag=' + encodeURIComponent(t); }).join('&');
+      url += '?' + tags.join('&');
     }
     goBtn.setAttribute('href', url);
   }
@@ -236,18 +236,17 @@
     {
       "name": "MP Game finder",
       "blocks": [
-        { "type": "option", "settings": { "group": "vibe",     "label": "Party",     "tag": "category-party" } },
-        { "type": "option", "settings": { "group": "vibe",     "label": "Strategy",  "tag": "category-strategy" } },
-        { "type": "option", "settings": { "group": "vibe",     "label": "Co-op",     "tag": "players-coop" } },
-        { "type": "option", "settings": { "group": "vibe",     "label": "Family",    "tag": "category-family" } },
-        { "type": "option", "settings": { "group": "players",  "label": "Solo",      "tag": "players-solo" } },
-        { "type": "option", "settings": { "group": "players",  "label": "2",         "tag": "players-2-plus" } },
-        { "type": "option", "settings": { "group": "players",  "label": "3-4",       "tag": "players-3-plus" } },
-        { "type": "option", "settings": { "group": "players",  "label": "5+",        "tag": "players-5-plus" } },
-        { "type": "option", "settings": { "group": "duration", "label": "Under 45m", "tag": "playtime-quick" } },
-        { "type": "option", "settings": { "group": "duration", "label": "~1 hour",   "tag": "playtime-medium" } },
-        { "type": "option", "settings": { "group": "duration", "label": "~2 hours",  "tag": "playtime-epic" } },
-        { "type": "option", "settings": { "group": "duration", "label": "2h+",       "tag": "playtime-epic" } }
+        { "type": "option", "settings": { "group": "vibe",     "label": "Party",     "tag": "filter.p.tag=category-party" } },
+        { "type": "option", "settings": { "group": "vibe",     "label": "Strategy",  "tag": "filter.p.tag=category-strategy" } },
+        { "type": "option", "settings": { "group": "vibe",     "label": "Co-op",     "tag": "filter.p.tag=players-coop" } },
+        { "type": "option", "settings": { "group": "vibe",     "label": "Family",    "tag": "filter.p.tag=category-family" } },
+        { "type": "option", "settings": { "group": "players",  "label": "Solo",      "tag": "filter.p.m.custom.player_band=Solo" } },
+        { "type": "option", "settings": { "group": "players",  "label": "2",         "tag": "filter.p.m.custom.player_band=2+Players" } },
+        { "type": "option", "settings": { "group": "players",  "label": "3-4",       "tag": "filter.p.m.custom.player_band=3-4+Players" } },
+        { "type": "option", "settings": { "group": "players",  "label": "5+",        "tag": "filter.p.m.custom.player_band=5-6+Players" } },
+        { "type": "option", "settings": { "group": "duration", "label": "Under 45m", "tag": "filter.p.tag=playtime-quick" } },
+        { "type": "option", "settings": { "group": "duration", "label": "~1 hour",   "tag": "filter.p.tag=playtime-medium" } },
+        { "type": "option", "settings": { "group": "duration", "label": "2h+",       "tag": "filter.p.tag=playtime-epic" } }
       ]
     }
   ]
