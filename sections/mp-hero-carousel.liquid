@@ -103,11 +103,12 @@
     .mp-hero-{{ section.id }} .mp-hero__main { min-height: 0; }
   }
   @media (max-width: 749px) {
+    .mp-hero-{{ section.id }} .mp-hero__vp { aspect-ratio: 4/3; }
     .mp-hero-{{ section.id }} .mp-hero__img { object-position: center top; }
-    .mp-hero-{{ section.id }} .mp-hero__slide { padding: 28px 20px; }
+    .mp-hero-{{ section.id }} .mp-hero__slide { padding: 28px 60px; }
     .mp-hero-{{ section.id }} .mp-hero__slide--image { padding: 0; }
     .mp-hero-{{ section.id }} .mp-hero__title { font-size: 26px; }
-    .mp-hero-{{ section.id }} .mp-hero__dots { left: 20px; }
+    .mp-hero-{{ section.id }} .mp-hero__dots { left: 60px; }
   }
 {%- endstyle -%}
 
