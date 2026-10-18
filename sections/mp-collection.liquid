@@ -285,7 +285,8 @@
                 {%- endfor -%}
               </div>
             </details>
-          {%- endfor -%}
+          {%- endif -%}
+        {%- endfor -%}
 
         <form method="get" class="cl__fsort">
           {%- for f in collection.filters -%}
