@@ -24,7 +24,10 @@
   .mp-pub-{{ section.id }} .mp-pub__av--logo { background: #fff; border: 1px solid #ECE3D3; overflow: hidden; padding: 3px; box-sizing: border-box; }
   .mp-pub-{{ section.id }} .mp-pub__av--logo img { width: 100%; height: 100%; object-fit: contain; display: block; }
   .mp-pub-{{ section.id }} .mp-pub__name { font-size: 14px; font-weight: 700; color: #14233A; letter-spacing: .1px; line-height: 1.2; white-space: nowrap; }
-  @media (max-width: 749px) { .mp-pub-{{ section.id }} .mp-pub__pad { padding: 72px 16px 6px; } }
+  @media (max-width: 749px) {
+    .mp-pub-{{ section.id }} .mp-pub__pad { padding: 72px 16px 6px; }
+    .mp-pub-{{ section.id }} { display: none; }
+  }
 {%- endstyle -%}
 
 <div class="mp-cream mp-pub-{{ section.id }}">

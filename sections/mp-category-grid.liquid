@@ -122,14 +122,14 @@
     .mp-catg-{{ section.id }} .mp-catg__body { max-width: 54%; }
   }
   @media (max-width: 749px) {
-    .mp-catg-{{ section.id }} .mp-catg__card { min-height: 160px; }
-    .mp-catg-{{ section.id }} .mp-catg__body { max-width: 58%; }
-    .mp-catg-{{ section.id }} .mp-catg__graphic { width: 44%; }
-    /* Large cards are full-width on mobile — give the text column more room and
-       scale down the heading so it doesn't wrap. */
+    .mp-catg-{{ section.id }} .mp-catg__card { min-height: 180px; }
+    .mp-catg-{{ section.id }} .mp-catg__body { max-width: 55%; }
+    .mp-catg-{{ section.id }} .mp-catg__graphic { width: 48%; }
+    /* Large cards collapse to 1 column on mobile so all cards sit in a 2-col grid */
+    .mp-catg-{{ section.id }} .mp-catg__card--large { grid-column: span 1; min-height: 180px; }
     .mp-catg-{{ section.id }} .mp-catg__card--large .mp-catg__name { font-size: 22px; }
-    .mp-catg-{{ section.id }} .mp-catg__card--large .mp-catg__body { max-width: 62%; }
-    .mp-catg-{{ section.id }} .mp-catg__card--large .mp-catg__graphic { width: 40%; }
+    .mp-catg-{{ section.id }} .mp-catg__card--large .mp-catg__body { max-width: 55%; }
+    .mp-catg-{{ section.id }} .mp-catg__card--large .mp-catg__graphic { width: 48%; }
   }
 {%- endstyle -%}
 

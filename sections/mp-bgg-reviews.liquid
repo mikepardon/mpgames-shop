@@ -134,7 +134,17 @@
   @media (max-width: 900px) {
     .mp-br-{{ section.id }} .mp-br__grid { grid-template-columns: 1fr; }
     .mp-br-{{ section.id }} { padding-left: 16px; padding-right: 16px; }
-    .mp-br-{{ section.id }} .mp-br__heading { font-size: 28px; }
+    .mp-br-{{ section.id }} .mp-br__heading { font-size: 24px; }
+  }
+  @media (max-width: 749px) {
+    .mp-br-{{ section.id }} .mp-br__bgg-card { padding: 20px 16px 16px; }
+    .mp-br-{{ section.id }} .mp-br__rprice,
+    .mp-br-{{ section.id }} .mp-br__raddform { display: none; }
+    .mp-br-{{ section.id }} .mp-br__rev-card { padding: 24px 20px; }
+    .mp-br-{{ section.id }} .mp-br__slider { min-width: 0; }
+    .mp-br-{{ section.id }} .mp-br__slide { min-width: 0; }
+    .mp-br-{{ section.id }} .mp-br__slide-quote { overflow-wrap: break-word; word-break: break-word; }
+    .mp-br-{{ section.id }} .mp-br__slide-product { flex-wrap: wrap; gap: 8px; }
   }
 {%- endstyle -%}
 
