@@ -4,94 +4,204 @@
 {%- endcomment -%}
 
 {%- style -%}
-  .mp-ly-{{ section.id }} { background: #f4efe6; font-family: 'Barlow', ui-sans-serif, system-ui, sans-serif; color: #16323f; min-height: 60vh; }
-  .mp-ly-{{ section.id }} .ly__wrap { max-width: 1040px; margin: 0 auto; padding: 34px 28px 48px; }
-  .mp-ly-{{ section.id }} .ly__top { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; margin-bottom: 24px; }
-  .mp-ly-{{ section.id }} .ly__kicker { font-size: 12px; font-weight: 700; letter-spacing: .6px; color: #f2872f; text-transform: uppercase; }
-  .mp-ly-{{ section.id }} .ly__h { font-size: 28px; font-weight: 700; line-height: 1.1; margin-top: 4px; }
-  .mp-ly-{{ section.id }} .ly__back { flex: none; font-size: 13px; font-weight: 600; color: #16323f; text-decoration: none; border: 1px solid #d8d4cc; border-radius: 8px; padding: 9px 16px; background: #fff; white-space: nowrap; }
-  .mp-ly-{{ section.id }} .ly__back:hover { border-color: #f2872f; color: #f2872f; }
-  .mp-ly-{{ section.id }} .ly__grid { display: grid; grid-template-columns: 1fr 280px; gap: 20px; margin-bottom: 24px; align-items: start; }
-  .mp-ly-{{ section.id }} .ly__card { background: #fff; border: 1px solid #e7ddcb; border-radius: 14px; padding: 26px 28px; box-shadow: 0 1px 3px rgba(20,40,50,.05); }
-  .mp-ly-{{ section.id }} .ly__ch { font-size: 17px; font-weight: 700; margin-bottom: 16px; }
+  .mp-ly-{{ section.id }} {
+    background: #FBF7F0;
+    font-family: 'Barlow', ui-sans-serif, system-ui, sans-serif;
+    color: #14233A;
+    min-height: 60vh;
+  }
+  .mp-ly-{{ section.id }} .ly__wrap { max-width: 1040px; margin: 0 auto; padding: 40px 24px 64px; }
+
+  /* page header */
+  .mp-ly-{{ section.id }} .ly__top {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    gap: 16px; margin-bottom: 28px;
+  }
+  .mp-ly-{{ section.id }} .ly__kicker {
+    font-size: 11px; font-weight: 700; letter-spacing: .1em;
+    color: #B4530F; text-transform: uppercase; margin: 0 0 4px;
+  }
+  .mp-ly-{{ section.id }} .ly__h {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 44px; font-weight: 800; line-height: 1;
+    text-transform: uppercase; margin: 0;
+  }
+  .mp-ly-{{ section.id }} .ly__back {
+    flex: none; font-size: 13px; font-weight: 600; color: #14233A;
+    text-decoration: none; border: 1px solid #ECE3D3; border-radius: 10px;
+    padding: 9px 16px; background: #fff; white-space: nowrap;
+  }
+  .mp-ly-{{ section.id }} .ly__back:hover { border-color: #14233A; }
+
+  /* main grid */
+  .mp-ly-{{ section.id }} .ly__grid {
+    display: grid; grid-template-columns: 1fr 300px; gap: 16px;
+    margin-bottom: 16px; align-items: start;
+  }
+  .mp-ly-{{ section.id }} .ly__card {
+    background: #fff; border: 1px solid #ECE3D3; border-radius: 18px;
+    padding: 28px 30px;
+  }
+  .mp-ly-{{ section.id }} .ly__ch {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 22px; font-weight: 800; text-transform: uppercase;
+    color: #14233A; margin: 0 0 16px;
+  }
   .mp-ly-{{ section.id }} .ly__load { font-size: 13.5px; color: #8a8278; }
-  .mp-ly-{{ section.id }} .ly__pts { font-size: 38px; font-weight: 700; color: #16323f; line-height: 1; margin-bottom: 4px; }
-  .mp-ly-{{ section.id }} .ly__pts-unit { font-size: 18px; color: #8a8278; font-weight: 600; }
+
+  /* balance display */
+  .mp-ly-{{ section.id }} .ly__pts {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 56px; font-weight: 800; color: #14233A; line-height: 1; margin-bottom: 4px;
+  }
+  .mp-ly-{{ section.id }} .ly__pts-unit { font-size: 24px; color: #8a8278; font-weight: 600; }
   .mp-ly-{{ section.id }} .ly__val { font-size: 15px; color: #8a8278; margin: 0 0 20px; }
-  .mp-ly-{{ section.id }} .ly__zero-msg { font-size: 13.5px; color: #4a443c; margin: 0 0 16px; line-height: 1.6; }
-  .mp-ly-{{ section.id }} .ly__prog-msg { font-size: 13.5px; color: #4a443c; margin: 0 0 10px; }
-  .mp-ly-{{ section.id }} .ly__prog-track { height: 8px; background: #f1ece2; border-radius: 4px; overflow: hidden; margin: 0 0 10px; }
-  .mp-ly-{{ section.id }} .ly__prog-fill { height: 100%; background: #f2872f; border-radius: 4px; transition: width .5s ease; }
-  .mp-ly-{{ section.id }} .ly__form { display: flex; gap: 10px; flex-wrap: wrap; }
-  .mp-ly-{{ section.id }} .ly__sel { flex: 1; min-width: 160px; border: 1px solid #d8d4cc; border-radius: 8px; padding: 11px 10px; font-size: 13px; background: #fbfaf7; font-family: inherit; color: #16323f; cursor: pointer; }
-  .mp-ly-{{ section.id }} .ly__btn { display: inline-block; background: #f2872f; color: #fff; border: 0; border-radius: 8px; padding: 11px 20px; font-size: 13.5px; font-weight: 700; cursor: pointer; font-family: inherit; white-space: nowrap; text-decoration: none; }
-  .mp-ly-{{ section.id }} .ly__btn:disabled { opacity: .55; cursor: not-allowed; }
+  .mp-ly-{{ section.id }} .ly__zero-msg { font-size: 14px; color: #4F5D70; margin: 0 0 20px; line-height: 1.6; }
+  .mp-ly-{{ section.id }} .ly__prog-msg { font-size: 14px; color: #4F5D70; margin: 0 0 10px; }
+  .mp-ly-{{ section.id }} .ly__prog-track { height: 8px; background: #F5F0E8; border-radius: 4px; overflow: hidden; margin: 0 0 10px; }
+  .mp-ly-{{ section.id }} .ly__prog-fill { height: 100%; background: #F59A3A; border-radius: 4px; transition: width .5s ease; }
   .mp-ly-{{ section.id }} .ly__insufficient { font-size: 13px; color: #8a8278; margin: 0; }
+
+  /* redeem form */
+  .mp-ly-{{ section.id }} .ly__form { display: flex; gap: 10px; flex-wrap: wrap; }
+  .mp-ly-{{ section.id }} .ly__sel {
+    flex: 1; min-width: 160px; border: 1px solid #ECE3D3; border-radius: 10px;
+    padding: 11px 12px; font-size: 14px; background: #FBF7F0;
+    font-family: inherit; color: #14233A; cursor: pointer;
+  }
+  .mp-ly-{{ section.id }} .ly__btn {
+    display: inline-flex; align-items: center;
+    background: #F59A3A; color: #14233A; border: 0; border-radius: 10px;
+    padding: 11px 20px; font-size: 14px; font-weight: 700;
+    cursor: pointer; font-family: inherit; white-space: nowrap; text-decoration: none;
+  }
+  .mp-ly-{{ section.id }} .ly__btn:hover { background: #e88a28; }
+  .mp-ly-{{ section.id }} .ly__btn:disabled { opacity: .55; cursor: not-allowed; }
   .mp-ly-{{ section.id }} .ly__err { font-size: 13px; color: #c0392b; margin-top: 12px; }
-  .mp-ly-{{ section.id }} .ly__how { list-style: none; padding: 0; margin: 0; font-size: 13.5px; color: #4a443c; line-height: 1.5; }
-  .mp-ly-{{ section.id }} .ly__how li { display: flex; gap: 10px; align-items: baseline; padding: 8px 0; border-bottom: 1px solid #f1ece2; }
+
+  /* how it works sidebar */
+  .mp-ly-{{ section.id }} .ly__how { list-style: none; padding: 0; margin: 0; font-size: 14px; color: #4F5D70; line-height: 1.5; }
+  .mp-ly-{{ section.id }} .ly__how li {
+    display: flex; gap: 12px; align-items: baseline;
+    padding: 10px 0; border-bottom: 1px solid #F5F0E8;
+  }
   .mp-ly-{{ section.id }} .ly__how li:last-child { border-bottom: 0; }
-  .mp-ly-{{ section.id }} .ly__how .ic { width: 18px; flex: none; font-style: normal; }
-  .mp-ly-{{ section.id }} .ly__hist { background: #fff; border: 1px solid #e7ddcb; border-radius: 14px; padding: 26px 28px; box-shadow: 0 1px 3px rgba(20,40,50,.05); }
+  .mp-ly-{{ section.id }} .ly__how .ic {
+    width: 22px; height: 22px; flex: none; border-radius: 50%;
+    background: #FBF7F0; display: inline-flex; align-items: center; justify-content: center;
+    font-style: normal; font-size: 12px; color: #B4530F; margin-top: 1px;
+  }
+
+  /* transaction history */
+  .mp-ly-{{ section.id }} .ly__hist {
+    background: #fff; border: 1px solid #ECE3D3; border-radius: 18px; padding: 28px 30px;
+  }
   .mp-ly-{{ section.id }} .ly__hist table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
-  .mp-ly-{{ section.id }} .ly__hist thead th { text-align: left; font-size: 11px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; color: #8a8278; padding: 0 14px 10px 0; border-bottom: 1px solid #ece5d8; }
+  .mp-ly-{{ section.id }} .ly__hist thead th {
+    text-align: left; font-size: 11px; font-weight: 700; letter-spacing: .5px;
+    text-transform: uppercase; color: #8a8278; padding: 0 14px 10px 0;
+    border-bottom: 1px solid #ECE3D3;
+  }
   .mp-ly-{{ section.id }} .ly__hist thead th:last-child { text-align: right; padding-right: 0; }
-  .mp-ly-{{ section.id }} .ly__hist tbody td { padding: 13px 14px 13px 0; border-bottom: 1px solid #f1ece2; vertical-align: middle; }
+  .mp-ly-{{ section.id }} .ly__hist tbody td { padding: 13px 14px 13px 0; border-bottom: 1px solid #F5F0E8; vertical-align: middle; }
   .mp-ly-{{ section.id }} .ly__hist tbody td:last-child { text-align: right; padding-right: 0; }
   .mp-ly-{{ section.id }} .ly__hist tbody tr:last-child td { border-bottom: 0; }
   .mp-ly-{{ section.id }} .ly__pill { display: inline-block; font-size: 11.5px; font-weight: 600; padding: 3px 9px; border-radius: 20px; white-space: nowrap; }
-  .mp-ly-{{ section.id }} .ly__pill--earn { background: #e3f1e9; color: #1f6b45; }
-  .mp-ly-{{ section.id }} .ly__pill--redeem { background: #fbeadb; color: #a45a12; }
-  .mp-ly-{{ section.id }} .ly__earn { font-size: 15px; font-weight: 700; color: #2f8f5b; white-space: nowrap; }
+  .mp-ly-{{ section.id }} .ly__pill--earn { background: #e3f1e9; color: #1F5C3E; }
+  .mp-ly-{{ section.id }} .ly__pill--redeem { background: #fbeadb; color: #B4530F; }
+  .mp-ly-{{ section.id }} .ly__earn { font-size: 15px; font-weight: 700; color: #1F5C3E; white-space: nowrap; }
   .mp-ly-{{ section.id }} .ly__spent { font-size: 15px; font-weight: 700; color: #c0392b; white-space: nowrap; }
-  .mp-ly-{{ section.id }} .ly__code { font-size: 12px; font-family: ui-monospace, monospace; background: #f1ece2; padding: 2px 7px; border-radius: 4px; color: #4a443c; }
+  .mp-ly-{{ section.id }} .ly__code { font-size: 12px; font-family: ui-monospace, monospace; background: #F5F0E8; padding: 2px 7px; border-radius: 4px; color: #4F5D70; }
   .mp-ly-{{ section.id }} .ly__empty { font-size: 13.5px; color: #8a8278; margin: 4px 0 0; }
-  .mp-ly-{{ section.id }} .ly__guest { background: #fff; border: 1px solid #e7ddcb; border-radius: 14px; padding: 48px; text-align: center; box-shadow: 0 1px 3px rgba(20,40,50,.05); }
-  .mp-ly-{{ section.id }} .ly__guest a { display: inline-block; margin-top: 14px; background: #f2872f; color: #fff; padding: 12px 24px; border-radius: 9px; text-decoration: none; font-weight: 700; }
+
+  /* guest state */
+  .mp-ly-{{ section.id }} .ly__guest-grid {
+    display: grid; grid-template-columns: 1fr 340px; gap: 16px; align-items: start;
+  }
+  .mp-ly-{{ section.id }} .ly__guest-hero {
+    background: #14233A; border-radius: 18px; padding: 40px;
+    display: flex; flex-direction: column; gap: 20px;
+  }
+  .mp-ly-{{ section.id }} .ly__guest-kicker {
+    font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+    color: #F59A3A; margin: 0;
+  }
+  .mp-ly-{{ section.id }} .ly__guest-h {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 40px; font-weight: 800; text-transform: uppercase; line-height: 1;
+    color: #fff; margin: 0;
+  }
+  .mp-ly-{{ section.id }} .ly__guest-sub { font-size: 15px; color: #8da8bb; line-height: 1.6; margin: 0; }
+  .mp-ly-{{ section.id }} .ly__guest-perks { list-style: none; padding: 0; margin: 4px 0 0; display: flex; flex-direction: column; gap: 12px; }
+  .mp-ly-{{ section.id }} .ly__guest-perk { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; color: #C4D8E6; }
+  .mp-ly-{{ section.id }} .ly__guest-perk-icon {
+    width: 24px; height: 24px; border-radius: 50%; background: #F59A3A;
+    display: inline-flex; align-items: center; justify-content: center;
+    color: #14233A; font-size: 11px; font-weight: 700; flex: none; margin-top: 1px;
+  }
+  .mp-ly-{{ section.id }} .ly__guest-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
+  .mp-ly-{{ section.id }} .ly__guest-btn-primary {
+    display: inline-flex; align-items: center;
+    background: #F59A3A; color: #14233A; padding: 13px 24px; border-radius: 10px;
+    font-size: 14px; font-weight: 700; text-decoration: none; white-space: nowrap;
+  }
+  .mp-ly-{{ section.id }} .ly__guest-btn-primary:hover { background: #e88a28; }
+  .mp-ly-{{ section.id }} .ly__guest-btn-ghost {
+    display: inline-flex; align-items: center;
+    border: 1.5px solid rgba(255,255,255,.3); color: #fff; padding: 13px 24px;
+    border-radius: 10px; font-size: 14px; font-weight: 600; text-decoration: none; white-space: nowrap;
+  }
+  .mp-ly-{{ section.id }} .ly__guest-btn-ghost:hover { background: rgba(255,255,255,.08); }
+
+  /* responsive */
   @media (max-width: 749px) {
-    .mp-ly-{{ section.id }} .ly__wrap { padding: 20px 16px 32px; }
+    .mp-ly-{{ section.id }} .ly__wrap { padding: 24px 16px 40px; }
     .mp-ly-{{ section.id }} .ly__grid { grid-template-columns: 1fr; }
-    .mp-ly-{{ section.id }} .ly__pts { font-size: 30px; }
+    .mp-ly-{{ section.id }} .ly__guest-grid { grid-template-columns: 1fr; }
+    .mp-ly-{{ section.id }} .ly__h { font-size: 34px; }
+    .mp-ly-{{ section.id }} .ly__pts { font-size: 40px; }
     .mp-ly-{{ section.id }} .ly__hist thead { display: none; }
     .mp-ly-{{ section.id }} .ly__hist tbody td { display: flex; justify-content: space-between; gap: 10px; padding: 7px 0; border-bottom: 0; text-align: left; }
-    .mp-ly-{{ section.id }} .ly__hist tbody tr { display: block; padding: 10px 0; border-bottom: 1px solid #f1ece2; }
+    .mp-ly-{{ section.id }} .ly__hist tbody tr { display: block; padding: 10px 0; border-bottom: 1px solid #F5F0E8; }
     .mp-ly-{{ section.id }} .ly__hist tbody td::before { content: attr(data-label); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: #8a8278; white-space: nowrap; }
   }
 {%- endstyle -%}
 
+{%- liquid
+  assign how_it_works = true
+-%}
+
 <div class="mp-ly-{{ section.id }}">
   <div class="ly__wrap">
+
     {%- if customer -%}
       <div class="ly__top">
         <div>
-          <div class="ly__kicker mp-cond">MPGames account</div>
-          <h1 class="ly__h mp-cond">MPGames Loyalty Points</h1>
+          <p class="ly__kicker mp-cond">MPGames account</p>
+          <h1 class="ly__h mp-cond">Loyalty Points</h1>
         </div>
         <a class="ly__back" href="{{ routes.account_url }}">&#8592; My account</a>
       </div>
 
       <div class="ly__grid">
         <div class="ly__card">
-          <div class="ly__ch mp-cond">Your balance</div>
+          <h2 class="ly__ch mp-cond">Your balance</h2>
           <div data-ly-loading class="ly__load">Loading your points&#8230;</div>
           <div data-ly-balance hidden>
             <p class="ly__pts mp-cond"><span data-ly-pts>0</span> <span class="ly__pts-unit">pts</span></p>
             <p class="ly__val">worth &pound;<span data-ly-val>0.00</span></p>
 
-            {{- '<!-- zero state -->' }}
             <div data-ly-zero hidden>
-              <p class="ly__zero-msg">You haven&rsquo;t earned any points yet. Shop and earn <strong>2 points for every &pound;1</strong> you spend &mdash; once you hit 100, you can redeem them right here for &pound;1 off. Points are valid for 12 months from the date of each order.</p>
+              <p class="ly__zero-msg">You haven&rsquo;t earned any points yet. Shop and earn <strong>2 points for every &pound;1</strong> you spend &mdash; once you hit 100 you can redeem them here for &pound;1 off. Points are valid for 12 months.</p>
               <a href="/collections/all-games" class="ly__btn mp-cond">Shop games &#8594;</a>
             </div>
 
-            {{- '<!-- progress state: 1–99 pts -->' }}
             <div data-ly-progress hidden>
-              <p class="ly__prog-msg">Just <strong><span data-ly-needed></span> more points</strong> until you unlock your first discount.</p>
+              <p class="ly__prog-msg">Just <strong><span data-ly-needed></span> more points</strong> until your first discount.</p>
               <div class="ly__prog-track"><div class="ly__prog-fill" data-ly-fill style="width:0%"></div></div>
               <p class="ly__insufficient">100 points = &pound;1 off &mdash; keep shopping!</p>
             </div>
 
-            {{- '<!-- redeem state: ≥ 100 pts -->' }}
             <div data-ly-redeem hidden>
               <div class="ly__form">
                 <select class="ly__sel" data-ly-sel aria-label="Points to redeem"></select>
@@ -104,19 +214,19 @@
         </div>
 
         <div class="ly__card">
-          <div class="ly__ch mp-cond">How it works</div>
+          <h2 class="ly__ch mp-cond">How it works</h2>
           <ul class="ly__how">
             <li><i class="ic">&#9733;</i><span>Earn <strong>2 points</strong> for every &pound;1 you spend (net of discounts, excluding shipping).</span></li>
             <li><i class="ic">&pound;</i><span>Redeem <strong>100 points = &pound;1 off</strong> at checkout. Multiples of 100 up to your full balance.</span></li>
             <li><i class="ic">&#9654;</i><span>Points are added automatically within seconds of a paid order.</span></li>
             <li><i class="ic">&#8734;</i><span>Discount codes never expire and can be entered manually if you navigate away before checkout.</span></li>
-            <li><i class="ic">&#128337;</i><span>Points expire <strong>12 months</strong> after the order they were earned on.</span></li>
+            <li><i class="ic">&#9719;</i><span>Points expire <strong>12 months</strong> after the order they were earned on.</span></li>
           </ul>
         </div>
       </div>
 
       <div class="ly__hist">
-        <div class="ly__ch mp-cond">Transaction history</div>
+        <h2 class="ly__ch mp-cond">Transaction history</h2>
         <div data-ly-hist-load class="ly__load">Loading&#8230;</div>
         <div data-ly-hist hidden>
           <table>
@@ -133,12 +243,45 @@
           <p data-ly-hist-empty hidden class="ly__empty">No transactions yet. Points are added after each paid order.</p>
         </div>
       </div>
+
     {%- else -%}
-      <div class="ly__guest">
-        <p style="font-size:17px;font-weight:700;margin:0">Sign in to view your loyalty points</p>
-        <p style="font-size:14px;color:#8a8278;margin:8px 0 0">Track every point you've earned and redeem them for discounts.</p>
-        <a href="{{ routes.account_login_url }}">Sign in to your account</a>
+
+      <div class="ly__top">
+        <div>
+          <p class="ly__kicker mp-cond">MPGames account</p>
+          <h1 class="ly__h mp-cond">Loyalty Points</h1>
+        </div>
       </div>
+
+      <div class="ly__guest-grid">
+        <div class="ly__guest-hero">
+          <p class="ly__guest-kicker">Start earning today</p>
+          <h2 class="ly__guest-h mp-cond">Every game earns you points</h2>
+          <p class="ly__guest-sub">Create a free account and earn 2 points for every £1 you spend. Redeem 100 points for £1 off your next order — it stacks up fast.</p>
+          <ul class="ly__guest-perks">
+            <li class="ly__guest-perk"><span class="ly__guest-perk-icon">2×</span><span>Earn <strong>2 points</strong> per £1 spent, automatically on every order.</span></li>
+            <li class="ly__guest-perk"><span class="ly__guest-perk-icon">&pound;</span><span>Redeem at checkout — <strong>100 pts = £1 off</strong>. No minimum spend.</span></li>
+            <li class="ly__guest-perk"><span class="ly__guest-perk-icon">&#9654;</span><span>Points credit within seconds of a paid order, no waiting around.</span></li>
+            <li class="ly__guest-perk"><span class="ly__guest-perk-icon">&#8734;</span><span>Discount codes never expire, even if you close the tab.</span></li>
+          </ul>
+          <div class="ly__guest-actions">
+            <a class="ly__guest-btn-primary mp-cond" href="{{ routes.account_register_url }}">Create free account &#8594;</a>
+            <a class="ly__guest-btn-ghost" href="{{ routes.account_login_url }}">Sign in</a>
+          </div>
+        </div>
+
+        <div class="ly__card">
+          <h2 class="ly__ch mp-cond">How it works</h2>
+          <ul class="ly__how">
+            <li><i class="ic">&#9733;</i><span>Earn <strong>2 points</strong> for every &pound;1 you spend (net of discounts, excluding shipping).</span></li>
+            <li><i class="ic">&pound;</i><span>Redeem <strong>100 points = &pound;1 off</strong> at checkout. Multiples of 100 up to your full balance.</span></li>
+            <li><i class="ic">&#9654;</i><span>Points are added automatically within seconds of a paid order.</span></li>
+            <li><i class="ic">&#8734;</i><span>Discount codes never expire and can be entered manually if you navigate away before checkout.</span></li>
+            <li><i class="ic">&#9719;</i><span>Points expire <strong>12 months</strong> after the order they were earned on.</span></li>
+          </ul>
+        </div>
+      </div>
+
     {%- endif -%}
   </div>
 </div>
@@ -178,7 +321,6 @@
   fetch(HIST_URL)
     .then(function (r) { return r.json(); })
     .then(function (data) {
-      // ── Balance ──────────────────────────────────────────────────
       wrap.querySelector('[data-ly-loading]').hidden = true;
       wrap.querySelector('[data-ly-hist-load]').hidden = true;
 
@@ -199,7 +341,6 @@
           wrap.querySelector('[data-ly-redeem]').hidden = false;
         }
 
-        // ── Transactions ─────────────────────────────────────────
         wrap.querySelector('[data-ly-hist]').hidden = false;
         var transactions = data.transactions || [];
 
