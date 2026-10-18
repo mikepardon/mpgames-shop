@@ -214,7 +214,7 @@
             "description": "Big groups, loud tables, rules explained in five minutes.",
             "tagline": "Start with Magical Athlete, Codenames, Hot Streak",
             "url": "/collections/category-party",
-            "bg": "#C2410C",
+            "bg": "#c2410c",
             "text_color": "#ffffff",
             "image_asset": "party-games-tile-art2x.png"
           }
@@ -227,8 +227,8 @@
             "description": "Easy to teach, hard to put down. Great from age 8.",
             "tagline": "Start with MicroMacro, Fliptoons, No Thanks!",
             "url": "/collections/category-family",
-            "bg": "#F5B841",
-            "text_color": "#14233A",
+            "bg": "#f5b841",
+            "text_color": "#14233a",
             "image_asset": "family-games-tile-art2x.png"
           }
         },
@@ -240,7 +240,7 @@
             "description": "Long-haul thinkers for nights that run late.",
             "tagline": "Drillers, Wingspan Pocket",
             "url": "/collections/category-strategy",
-            "bg": "#1F4E5A",
+            "bg": "#1f4e5a",
             "text_color": "#ffffff",
             "image_asset": "strategy-tile-art2x.png"
           }
@@ -253,7 +253,7 @@
             "description": "Head-to-head duels for you and one other.",
             "tagline": "Leaders, Splendor Duel",
             "url": "/collections/players-2",
-            "bg": "#2E4A8C",
+            "bg": "#2e4a8c",
             "text_color": "#ffffff",
             "image_asset": "two-player-tile-art2x.png"
           }
@@ -266,7 +266,7 @@
             "description": "Win together, or lose together.",
             "tagline": "Mechs vs. Minions, Shackleton Base",
             "url": "/collections/players-coop",
-            "bg": "#2F6B47",
+            "bg": "#2f6b47",
             "text_color": "#ffffff",
             "image_asset": "co-op-tile-art2x.png"
           }
@@ -279,7 +279,7 @@
             "description": "Pocket-sized, big on play.",
             "tagline": "Paper World, Slide",
             "url": "/collections/category-card",
-            "bg": "#5B3F8C",
+            "bg": "#5b3f8c",
             "text_color": "#ffffff",
             "image_asset": "card-games-tile-art2x.png"
           }
@@ -292,8 +292,8 @@
             "description": "More of the games you already love.",
             "tagline": "Akropolis Athena, Courtisans",
             "url": "/collections/expansions",
-            "bg": "#EDE3D1",
-            "text_color": "#14233A",
+            "bg": "#ede3d1",
+            "text_color": "#14233a",
             "image_asset": "expansions-tile-art2x.png"
           }
         },
@@ -305,8 +305,9 @@
             "description": "Checked, counted and cheaper.",
             "tagline": "From £3.50",
             "url": "/collections/pre-owned",
-            "bg": "#1B1E26",
-            "text_color": "#ffffff"
+            "bg": "#1b1e26",
+            "text_color": "#ffffff",
+            "image_asset": ""
           }
         }
       },
@@ -362,11 +363,15 @@
           "settings": {
             "body": "Arrived quickly, beautifully packaged and exactly as described. MPGames is our go-to for every game night.",
             "reviewer": "Sarah M., verified buyer",
-            "rating": 5
+            "rating": 5,
+            "product_name": "",
+            "product_url": ""
           }
         }
       },
-      "block_order": ["review_1"],
+      "block_order": [
+        "review_1"
+      ],
       "settings": {
         "kicker": "The hobbyist corner",
         "heading": "Highest rated on BoardGameGeek",
@@ -374,7 +379,7 @@
         "reviews_kicker": "Customers are saying",
         "rating_fallback": "4.93",
         "count_fallback": "",
-        "jm_api_token": ""
+        "jm_api_token": "U_IdrKBMsy3qA0rjqmSwfgJaRkU"
       }
     },
     "mp_preowned_band": {
