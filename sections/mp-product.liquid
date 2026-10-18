@@ -166,7 +166,7 @@
   .mp-pdp-{{ section.id }} .pdp__tax { font-size: 12.5px; color: #8a8278; margin-top: 4px; }
 
   .mp-pdp-{{ section.id }} .pdp__stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 18px; }
-  .mp-pdp-{{ section.id }} .pdp__stat { display: flex; flex-direction: column; align-items: center; gap: 5px; background: #f5f1ea; border: 1px solid #e5dfd5; border-radius: 10px; padding: 12px 8px; text-align: center; }
+  .mp-pdp-{{ section.id }} .pdp__stat { display: flex; flex-direction: column; align-items: center; gap: 5px; background: #fff; border: 1px solid #e5dfd5; border-radius: 10px; padding: 12px 8px; text-align: center; }
   .mp-pdp-{{ section.id }} .pdp__stat svg { color: #16323f; }
   .mp-pdp-{{ section.id }} .pdp__stat-l { font-size: 10px; font-weight: 700; letter-spacing: .7px; text-transform: uppercase; color: #8a8278; }
   .mp-pdp-{{ section.id }} .pdp__stat-v { font-size: 14px; font-weight: 700; color: #16323f; }
@@ -515,9 +515,7 @@
         <h1 class="pdp__title">{{ product.title }}</h1>
 
         <div class="pdp__meta">
-          <span class="pdp__sub"><div class="jdgm-widget jdgm-preview-badge" data-id="{{ product.id }}">{{ product.metafields.judgeme.badge }}</div></span>
           {%- if bgg != blank -%}
-            <span class="pdp__divider"></span>
             <span class="pdp__bgg"><b>BGG&nbsp;</b><b style="color:{{ bgg_color }}">{{ bggdisp }}</b></span>
             {%- if m.bgg_rank.value != blank -%}
               <span class="pdp__divider"></span>
@@ -525,7 +523,7 @@
             {%- endif -%}
           {%- endif -%}
           {%- if product.type != blank -%}
-            <span class="pdp__divider"></span>
+            {%- if bgg != blank -%}<span class="pdp__divider"></span>{%- endif -%}
             <span class="pdp__type-tag">{{ product.type }}</span>
           {%- endif -%}
         </div>
@@ -633,9 +631,6 @@
           <button type="button" class="pdp__add" data-add="cart"{% unless product.available %} disabled{% endunless %}>{% if is_preorder %}Pre-order now{% else %}Add to basket{% endif %}</button>
           {%- render 'mp-wishlist-button', product: product, class: 'pdp__wish' -%}
         </div>
-        {%- unless is_preorder -%}
-        <button type="button" class="pdp__buynow" data-add="checkout"{% if show_notify %} hidden{% endif %}{% unless product.available %} disabled{% endunless %}>Buy it now</button>
-        {%- endunless -%}
         {%- comment -%} Out of stock (and not a pre-order): native back-in-stock relay to the /apps/notify app proxy. Logged-in shoppers register in one tap; logged-out shoppers are sent to log in or register first. {%- endcomment -%}
         <div class="pdp__notify-wrap" data-notify-wrap{% unless show_notify %} hidden{% endunless %}>
           <div style="display:flex;gap:11px">
