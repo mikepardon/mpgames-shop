@@ -76,14 +76,14 @@
   /* Count + grid */
   .mp-cl-{{ section.id }} .cl__count { margin: 18px 0 16px; font-size: 14px; color: #4F5D70; }
   .mp-cl-{{ section.id }} .cl__count b { color: #14233A; }
-  .mp-cl-{{ section.id }} .cl__grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(260px,1fr)); gap: 16px; }
+  .mp-cl-{{ section.id }} .cl__grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(200px,1fr)); gap: 16px; }
 
   /* Cards */
   .mp-cl-{{ section.id }} .cl__card { background: #fff; border: 1px solid #ECE3D3; border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; position: relative; }
   .mp-cl-{{ section.id }} .cl__flag { position: absolute; top: 12px; left: 12px; z-index: 2; font-size: 11px; font-weight: 800; letter-spacing: .8px; text-transform: uppercase; padding: 5px 9px; border-radius: 6px; }
   .mp-cl-{{ section.id }} .cl__flag--pre { background: #FDE9D4; color: #B4530F; }
   .mp-cl-{{ section.id }} .cl__flag--sale { background: #FFE4E1; color: #C0392B; }
-  .mp-cl-{{ section.id }} .cl__media-wrap { aspect-ratio: 1/1; background: #F3EDE2; display: flex; align-items: center; justify-content: center; padding: 28px; box-sizing: border-box; text-decoration: none; }
+  .mp-cl-{{ section.id }} .cl__media-wrap { aspect-ratio: 1/1; max-height: 240px; background: #F3EDE2; display: flex; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; text-decoration: none; }
   .mp-cl-{{ section.id }} .cl__media-wrap img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 4px; box-shadow: 0 10px 22px rgba(20,35,58,.18); }
   .mp-cl-{{ section.id }} .cl__cbody { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
   .mp-cl-{{ section.id }} .cl__eyebrow { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 20px; }
@@ -128,8 +128,8 @@
   .mp-cl-{{ section.id }} .cl__nudge-cta:hover { background: #E8862A; }
 
   /* SEO section */
-  .mp-cl-{{ section.id }} .cl__about { margin-top: 48px; padding-top: 48px; border-top: 1px solid #ECE3D3; display: grid; grid-template-columns: repeat(auto-fit,minmax(300px,1fr)); gap: 24px 48px; }
-  .mp-cl-{{ section.id }} .cl__about-heading { margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 32px; line-height: 1; text-transform: uppercase; color: #14233A; }
+  .mp-cl-{{ section.id }} .cl__about { margin-top: 48px; padding-top: 48px; border-top: 1px solid #ECE3D3; max-width: 720px; }
+  .mp-cl-{{ section.id }} .cl__about-heading { margin: 0 0 20px; font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 32px; line-height: 1; text-transform: uppercase; color: #14233A; }
   .mp-cl-{{ section.id }} .cl__about-body { font-size: 15px; line-height: 1.65; color: #34445A; }
   .mp-cl-{{ section.id }} .cl__about-body p { margin: 0 0 12px; }
   .mp-cl-{{ section.id }} .cl__about-body > :last-child { margin-bottom: 0; }
@@ -153,8 +153,58 @@
 {%- endstyle -%}
 
 {%- liquid
-  assign hero_bg = collection.metafields.custom.hero_bg.value | default: section.settings.hero_bg | default: '#14233A'
-  assign hero_subtitle = collection.metafields.custom.hero_subtitle.value
+  case collection.handle
+    when 'category-party'
+      assign default_hero_bg = '#C2410C'
+      assign default_hero_subtitle = 'Big groups, loud tables, rules explained in five minutes.'
+      assign default_hero_asset = 'party-games-tile-art2x.png'
+    when 'category-family'
+      assign default_hero_bg = '#F5B841'
+      assign default_hero_subtitle = 'Easy to teach, hard to put down. Great from age 8.'
+      assign default_hero_asset = 'family-games-tile-art2x.png'
+    when 'category-strategy'
+      assign default_hero_bg = '#1F4E5A'
+      assign default_hero_subtitle = 'Long-haul thinkers for nights that run late.'
+      assign default_hero_asset = 'strategy-tile-art2x.png'
+    when 'players-2'
+      assign default_hero_bg = '#2E4A8C'
+      assign default_hero_subtitle = 'Head-to-head duels for you and one other.'
+      assign default_hero_asset = 'two-player-tile-art2x.png'
+    when 'players-coop'
+      assign default_hero_bg = '#2F6B47'
+      assign default_hero_subtitle = 'Win together, or lose together. Everyone is on the same side.'
+      assign default_hero_asset = 'co-op-tile-art2x.png'
+    when 'category-card'
+      assign default_hero_bg = '#5B3F8C'
+      assign default_hero_subtitle = 'Pocket-sized, big on play.'
+      assign default_hero_asset = 'card-games-tile-art2x.png'
+    when 'expansions'
+      assign default_hero_bg = '#4A3820'
+      assign default_hero_subtitle = 'More of the games you already love.'
+      assign default_hero_asset = 'expansions-tile-art2x.png'
+    when 'pre-owned'
+      assign default_hero_bg = '#1B1E26'
+      assign default_hero_subtitle = 'Checked, counted and cheaper. Every copy photographed before it ships.'
+    when 'players-solo'
+      assign default_hero_bg = '#3D2B5C'
+      assign default_hero_subtitle = 'Games built to challenge one player — no compromises.'
+    when 'best-sellers'
+      assign default_hero_bg = '#14233A'
+      assign default_hero_subtitle = 'The games your customers keep coming back to buy.'
+    when 'new-releases'
+      assign default_hero_bg = '#14233A'
+      assign default_hero_subtitle = 'Fresh stock, straight off the pallet.'
+    when 'pre-orders'
+      assign default_hero_bg = '#1C3A4A'
+      assign default_hero_subtitle = 'Lock in your copy before it lands. We ship the day stock arrives.'
+    when 'top-rated'
+      assign default_hero_bg = '#2B1F40'
+      assign default_hero_subtitle = 'Ranked by BoardGameGeek score — the community's favourite games.'
+    else
+      assign default_hero_bg = '#14233A'
+  endcase
+  assign hero_bg = collection.metafields.custom.hero_bg.value | default: section.settings.hero_bg | default: default_hero_bg
+  assign hero_subtitle = collection.metafields.custom.hero_subtitle.value | default: default_hero_subtitle
   assign hero_link_label = collection.metafields.custom.hero_link_label.value | default: section.settings.hero_link_label
   assign hero_link_url = collection.metafields.custom.hero_link_url.value | default: section.settings.hero_link_url
   if section.settings.hero_image != blank
@@ -191,6 +241,8 @@
         <span class="cl__hero-glow"></span>
         {%- if hero_art_image != blank -%}
           {{ hero_art_image | image_url: width: 600 | image_tag: alt: '', class: 'cl__hero-img', loading: 'eager', width: 600, height: 600 }}
+        {%- elsif default_hero_asset != blank -%}
+          <img class="cl__hero-img" src="{{ default_hero_asset | asset_url }}" alt="" loading="eager" width="600" height="600">
         {%- endif -%}
       </div>
     </section>
