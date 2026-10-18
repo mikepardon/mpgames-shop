@@ -394,6 +394,87 @@
   .mp-pdp-{{ section.id }} .pdp__po-icon--miss { background: #fce8e6; color: #d6402e; }
   .mp-pdp-{{ section.id }} .pdp__po-save { padding: 12px 16px; display: flex; align-items: center; gap: 7px; font-size: 13px; color: #7a5c14; font-weight: 600; }
   .mp-pdp-{{ section.id }} .pdp__po-save strong { color: #2f8f5b; }
+
+  /* ── Product type badge (meta row) ── */
+  .mp-pdp-{{ section.id }} .pdp__type-tag {
+    display: inline-block; background: #e3f1e9; color: #2a6b42; border-radius: 20px;
+    font-size: 12px; font-weight: 700; padding: 3px 10px;
+  }
+
+  /* ── Reviews section header card ── */
+  .mp-pdp-{{ section.id }} .pdp__reviews { padding: 8px 0 0; }
+  .mp-pdp-{{ section.id }} .pdp__reviews-hd {
+    display: flex; align-items: center; justify-content: space-between;
+    background: #fff; border: 1px solid #e2ddd1; border-radius: 12px;
+    padding: 20px 24px; margin-bottom: 24px; gap: 20px; flex-wrap: wrap;
+  }
+  .mp-pdp-{{ section.id }} .pdp__reviews-hd-left { flex: 1; min-width: 0; }
+  .mp-pdp-{{ section.id }} .pdp__reviews-hd-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 22px; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; color: #16323f;
+  }
+  .mp-pdp-{{ section.id }} .pdp__reviews-hd-sub { font-size: 13px; color: #6b7a82; margin-top: 4px; }
+  .mp-pdp-{{ section.id }} .pdp__reviews-hd-right { display: flex; align-items: center; gap: 20px; flex-shrink: 0; flex-wrap: wrap; }
+  .mp-pdp-{{ section.id }} .pdp__reviews-bgg { display: flex; align-items: center; gap: 10px; }
+  .mp-pdp-{{ section.id }} .pdp__reviews-bgg-score {
+    font-family: 'Barlow Condensed', sans-serif; font-size: 42px; font-weight: 800; line-height: 1; color: #16323f;
+  }
+  .mp-pdp-{{ section.id }} .pdp__reviews-bgg-label { font-size: 11px; color: #6b7a82; line-height: 1.4; }
+  .mp-pdp-{{ section.id }} .pdp__reviews-write {
+    display: inline-block; border: 1.5px solid #16323f; border-radius: 8px;
+    padding: 10px 18px; font-size: 13.5px; font-weight: 700; color: #16323f;
+    text-decoration: none; white-space: nowrap; transition: background .15s, color .15s;
+  }
+  .mp-pdp-{{ section.id }} .pdp__reviews-write:hover { background: #16323f; color: #fff; }
+  @media (max-width: 749px) {
+    .mp-pdp-{{ section.id }} .pdp__reviews-hd { flex-direction: column; align-items: flex-start; }
+    .mp-pdp-{{ section.id }} .pdp__reviews-hd-right { width: 100%; justify-content: space-between; }
+  }
+
+  /* ── Keep exploring banner ── */
+  .mp-pdp-{{ section.id }} .pdp__explore { padding: 0 0 40px; }
+  .mp-pdp-{{ section.id }} .pdp__explore-inner {
+    background: #2a5240; border-radius: 16px; padding: 30px 36px;
+    display: flex; align-items: center; justify-content: space-between; gap: 20px;
+    overflow: hidden;
+  }
+  .mp-pdp-{{ section.id }} .pdp__explore-text { flex: 1; min-width: 0; }
+  .mp-pdp-{{ section.id }} .pdp__explore-kicker {
+    font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+    color: rgba(255,255,255,.6); margin: 0 0 6px;
+  }
+  .mp-pdp-{{ section.id }} .pdp__explore-heading {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 36px; font-weight: 800; text-transform: uppercase; color: #fff;
+    line-height: 1; margin: 0 0 16px;
+  }
+  .mp-pdp-{{ section.id }} .pdp__explore-btn {
+    display: inline-block; border: 1.5px solid rgba(255,255,255,.6); border-radius: 8px;
+    padding: 10px 18px; font-size: 13.5px; font-weight: 700; color: #fff;
+    text-decoration: none; transition: border-color .15s, background .15s;
+  }
+  .mp-pdp-{{ section.id }} .pdp__explore-btn:hover { border-color: #fff; background: rgba(255,255,255,.1); }
+  .mp-pdp-{{ section.id }} .pdp__explore-imgs { display: flex; align-items: flex-end; flex-shrink: 0; }
+  .mp-pdp-{{ section.id }} .pdp__explore-img {
+    width: 88px; height: 110px; object-fit: cover; border-radius: 8px;
+    border: 2px solid rgba(255,255,255,.2); margin-left: -16px;
+    box-shadow: -4px 4px 12px rgba(0,0,0,.3);
+  }
+  .mp-pdp-{{ section.id }} .pdp__explore-img:first-child { margin-left: 0; }
+  @media (max-width: 749px) {
+    .mp-pdp-{{ section.id }} .pdp__explore-imgs { display: none; }
+    .mp-pdp-{{ section.id }} .pdp__explore-inner { padding: 24px 20px; }
+    .mp-pdp-{{ section.id }} .pdp__explore-heading { font-size: 28px; }
+  }
+
+  /* ── Also bought cards: type label + updated Add button ── */
+  .mp-pdp-{{ section.id }} .pdp__card .cmedia { height: 180px; }
+  .mp-pdp-{{ section.id }} .pdp__card .cmeta { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; flex-wrap: wrap; }
+  .mp-pdp-{{ section.id }} .pdp__card .ctype {
+    font-size: 10.5px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: #f2872f;
+  }
+  .mp-pdp-{{ section.id }} .pdp__card .cadd { background: #16323f; }
+  .mp-pdp-{{ section.id }} .pdp__card .cadd:hover { background: #23485a; }
 {%- endstyle -%}
 
 <div class="mp-pdp-{{ section.id }}" data-pdp>
@@ -435,6 +516,18 @@
 
         <div class="pdp__meta">
           <span class="pdp__sub"><div class="jdgm-widget jdgm-preview-badge" data-id="{{ product.id }}">{{ product.metafields.judgeme.badge }}</div></span>
+          {%- if bgg != blank -%}
+            <span class="pdp__divider"></span>
+            <span class="pdp__bgg"><b>BGG&nbsp;</b><b style="color:{{ bgg_color }}">{{ bggdisp }}</b></span>
+            {%- if m.bgg_rank.value != blank -%}
+              <span class="pdp__divider"></span>
+              <span class="pdp__sub">Ranked #{{ m.bgg_rank.value }} on BoardGameGeek</span>
+            {%- endif -%}
+          {%- endif -%}
+          {%- if product.type != blank -%}
+            <span class="pdp__divider"></span>
+            <span class="pdp__type-tag">{{ product.type }}</span>
+          {%- endif -%}
         </div>
 
         {%- if is_preowned -%}
@@ -969,6 +1062,25 @@
 
     <!-- customer reviews (Judge.me) -->
     <div class="pdp__reviews" id="reviews">
+      <div class="pdp__reviews-hd">
+        <div class="pdp__reviews-hd-left">
+          <div class="pdp__reviews-hd-title">Customer Reviews</div>
+          {%- if rcount != blank -%}
+            <div class="pdp__reviews-hd-sub">{{ rcount }} verified review{% unless rcount == '1' %}s{% endunless %} &middot; rated {{ rscore }}/5</div>
+          {%- else -%}
+            <div class="pdp__reviews-hd-sub">No reviews yet. Played it? Tell other players what you thought.</div>
+          {%- endif -%}
+        </div>
+        <div class="pdp__reviews-hd-right">
+          {%- if bgg != blank -%}
+            <div class="pdp__reviews-bgg">
+              <span class="pdp__reviews-bgg-score" style="color:{{ bgg_color }}">{{ bggdisp }}</span>
+              <span class="pdp__reviews-bgg-label">BoardGameGeek<br>community rating</span>
+            </div>
+          {%- endif -%}
+          <a class="pdp__reviews-write" href="{{ product.url }}#reviews">Write a review</a>
+        </div>
+      </div>
       {%- if section.blocks.size > 0 -%}
         {%- comment -%} Judge.me Review Widget (v3) added as an @app block via Theme editor › Apps. {%- endcomment -%}
         {%- for block in section.blocks -%}
@@ -980,6 +1092,35 @@
         <div id="judgeme_product_reviews" class="jdgm-widget jdgm-review-widget" data-product-title="{{ product.title | escape }}" data-id="{{ product.id }}"></div>
       {%- endif -%}
     </div>
+
+    <!-- keep exploring: browse the collection this product belongs to -->
+    {%- liquid
+      assign explore_coll = collection
+      if explore_coll == blank or explore_coll.handle == 'all' or explore_coll.handle == 'all-games'
+        assign explore_coll = product.collections | first
+      endif
+    -%}
+    {%- if explore_coll != blank and explore_coll.handle != 'all' and explore_coll.handle != 'all-games' -%}
+      <div class="pdp__explore">
+        <div class="pdp__explore-inner">
+          <div class="pdp__explore-text">
+            <p class="pdp__explore-kicker">Keep exploring</p>
+            <h2 class="pdp__explore-heading">More {{ explore_coll.title }}</h2>
+            <a class="pdp__explore-btn" href="{{ explore_coll.url }}">Browse all {{ explore_coll.title | downcase }}</a>
+          </div>
+          <div class="pdp__explore-imgs">
+            {%- assign explore_shown = 0 -%}
+            {%- for explore_p in explore_coll.products -%}
+              {%- if explore_shown >= 3 -%}{%- break -%}{%- endif -%}
+              {%- if explore_p.id == product.id -%}{%- continue -%}{%- endif -%}
+              {%- if explore_p.featured_image == blank -%}{%- continue -%}{%- endif -%}
+              {%- assign explore_shown = explore_shown | plus: 1 -%}
+              {{ explore_p.featured_image | image_url: width: 200 | image_tag: loading: 'lazy', width: 88, height: 110, class: 'pdp__explore-img', alt: explore_p.title }}
+            {%- endfor -%}
+          </div>
+        </div>
+      </div>
+    {%- endif -%}
 
     <!-- expansions for this game -->
     {%- assign exps = product.metafields.custom.expansions.value -%}
@@ -1058,19 +1199,13 @@
               {%- if rsale -%}<span class="cflag">-{{ rdisc }}%</span>{%- endif -%}
               <a href="{{ rec.url }}" class="cmedia">{% if rec.featured_image %}<img src="{{ rec.featured_image | image_url: width: 360 }}" alt="{{ rec.title | escape }}" width="360" height="360" loading="lazy">{% endif %}</a>
               <div class="cbody">
-                {%- if rbgg != blank -%}
-                  <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
+                <div class="cmeta">
+                  {%- if rec.type != blank -%}<span class="ctype">{{ rec.type }}</span>{%- endif -%}
+                  {%- if rbgg != blank -%}
                     <span style="display:inline-flex;align-items:center;gap:5px;background:#2b2233;border-radius:5px;padding:2px 6px"><span style="font-size:10px;font-weight:700;color:#fff;letter-spacing:.5px">BGG</span><span style="font-size:11px;font-weight:700;color:{{ rc }}">{{ rbggdisp }}</span></span>
-                    {%- if rec.metafields.custom.bgg_rank.value != blank -%}<span style="font-size:10.5px;color:#9b948a">rank #{{ rec.metafields.custom.bgg_rank.value }}</span>{%- endif -%}
-                  </div>
-                {%- endif -%}
+                  {%- endif -%}
+                </div>
                 <a class="cname" href="{{ rec.url }}">{{ rec.title }}</a>
-                {%- if rec.metafields.custom.player_count.value != blank or rec.metafields.custom.play_time.value != blank -%}
-                  <div style="display:flex;gap:10px;margin-top:7px;font-size:11px;color:#6b7a82">
-                    {%- if rec.metafields.custom.player_count.value != blank -%}<span>&#9823; {{ rec.metafields.custom.player_count.value }}</span>{%- endif -%}
-                    {%- if rec.metafields.custom.play_time.value != blank -%}<span>&#9201; {{ rec.metafields.custom.play_time.value }}</span>{%- endif -%}
-                  </div>
-                {%- endif -%}
                 <div class="cfoot">
                   <div>
                     {%- if rsale -%}<span style="font-size:11px;color:#9b948a;text-decoration:line-through">{{ rec.compare_at_price | money }}</span>{%- endif -%}
