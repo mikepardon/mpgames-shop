@@ -268,9 +268,8 @@
   .mp-pdp-{{ section.id }} .pdp__desctab.is-active { color: #16323f; border-bottom: 2px solid #f2872f; }
   .mp-pdp-{{ section.id }} .pdp__rte { font-size: 14.5px; line-height: 1.72; color: #3c3a34; margin-top: 18px; }
   .mp-pdp-{{ section.id }} .pdp__rte p { margin: 0 0 14px; }
-  .mp-pdp-{{ section.id }} .pdp__feats { display: grid; grid-template-columns: 1fr 1fr; gap: 11px; margin-top: 14px; }
-  .mp-pdp-{{ section.id }} .pdp__feat { display: flex; gap: 10px; align-items: flex-start; font-size: 13.5px; color: #4a443c; }
-  .mp-pdp-{{ section.id }} .pdp__feat .ok { color: #2f8f5b; margin-top: 1px; }
+  .mp-pdp-{{ section.id }} .pdp__feats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 14px; }
+  .mp-pdp-{{ section.id }} .pdp__feat { background: #fff; border: 1px solid #e2ddd1; border-radius: 12px; padding: 16px 18px; font-size: 14px; font-weight: 600; color: #16323f; line-height: 1.45; }
 
   .mp-pdp-{{ section.id }} .pdp__info { width: 420px; flex: none; border: 1px solid #e2ddd1; border-radius: 12px; background: #fff; overflow: hidden; }
   .mp-pdp-{{ section.id }} .pdp__info h3 { font-size: 17px; font-weight: 700; padding: 16px 18px; border-bottom: 1px solid #efe9dd; margin: 0; }
@@ -366,6 +365,7 @@
     /* Game at a glance: keep the spec cards two-up on mobile (rating cells wrap 2-up on their own) */
     .mp-pdp-{{ section.id }} .pdp__specs { grid-template-columns: 1fr 1fr; }
     .mp-pdp-{{ section.id }} .pdp__h { font-size: 21px; }
+    .mp-pdp-{{ section.id }} .pdp__feats { grid-template-columns: 1fr 1fr; }
   }
   .mp-pdp-{{ section.id }} [data-gw-modal] .pdp__modal-add { flex: 1; padding: 13px; font-size: 14px; border-radius: 9px; }
 
@@ -856,7 +856,7 @@
           {%- if show_weight -%}
             <div class="pdp__spec"><span class="accent" style="background:#6a4f86"></span>
               <div style="display:flex;align-items:center;gap:10px"><span class="ico" style="background:#ede7f3">&#129504;</span><span class="k">COMPLEXITY</span></div>
-              <div class="v">{{ m.weight.value }} / 5</div>{% if m.complexity.value != blank %}<div class="vsub">{{ m.complexity.value }} weight</div>{% endif %}
+              <div class="v">{{ m.weight.value | round: 1 }} / 5</div>{% if m.complexity.value != blank %}<div class="vsub">{{ m.complexity.value }} weight</div>{% endif %}
             </div>
           {%- endif -%}
           {%- if m.designer.value != blank -%}
@@ -956,12 +956,18 @@
 
         {%- unless gift_card_page -%}
         {%- if section.settings.show_features -%}
-          <div class="pdp__h" style="font-size:17px;margin:24px 0 12px">Why you'll love it</div>
+          <div class="pdp__h" style="font-size:22px;margin:24px 0 14px;text-transform:uppercase;font-family:'Barlow Condensed',sans-serif;letter-spacing:.04em">Why you'll love it</div>
           <div class="pdp__feats">
-            {%- if bgg != blank -%}<div class="pdp__feat"><span class="ok">&#10003;</span> Rated {{ bggdisp }} on BoardGameGeek{% if m.bgg_rank.value != blank %} · ranked #{{ m.bgg_rank.value }}{% endif %}</div>{%- endif -%}
-            {%- if m.complexity.value != blank -%}<div class="pdp__feat"><span class="ok">&#10003;</span> {{ m.complexity.value }}-weight — {{ m.play_time.value | default: 'a satisfying play length' }}</div>{%- endif -%}
-            {%- if m.player_count.value != blank -%}<div class="pdp__feat"><span class="ok">&#10003;</span> Plays {{ m.player_count.value }} players</div>{%- endif -%}
-            <div class="pdp__feat"><span class="ok">&#10003;</span> 100% official UK stock with price-match promise</div>
+            {%- assign custom_features = m.features.value -%}
+            {%- if custom_features != blank and custom_features.size > 0 -%}
+              {%- for feat in custom_features -%}<div class="pdp__feat">{{ feat }}</div>{%- endfor -%}
+            {%- endif -%}
+            {%- if bgg != blank -%}<div class="pdp__feat">Rated {{ bggdisp }} on BoardGameGeek{% if m.bgg_rank.value != blank %} &middot; ranked #{{ m.bgg_rank.value }}{% endif %}</div>{%- endif -%}
+            {%- if custom_features == blank or custom_features.size == 0 -%}
+              {%- if m.complexity.value != blank -%}<div class="pdp__feat">{{ m.complexity.value }}-weight &mdash; {{ m.play_time.value | default: 'a satisfying play length' }}</div>{%- endif -%}
+              {%- if m.player_count.value != blank -%}<div class="pdp__feat">Plays {{ m.player_count.value }} players</div>{%- endif -%}
+              <div class="pdp__feat">100% official UK stock with price-match promise</div>
+            {%- endif -%}
           </div>
         {%- endif -%}
         {%- endunless -%}
