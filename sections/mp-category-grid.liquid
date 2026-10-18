@@ -122,14 +122,14 @@
     .mp-catg-{{ section.id }} .mp-catg__body { max-width: 54%; }
   }
   @media (max-width: 749px) {
-    .mp-catg-{{ section.id }} .mp-catg__card { min-height: 180px; }
-    .mp-catg-{{ section.id }} .mp-catg__body { max-width: 55%; }
-    .mp-catg-{{ section.id }} .mp-catg__graphic { width: 48%; }
-    /* Large cards collapse to 1 column on mobile so all cards sit in a 2-col grid */
+    .mp-catg-{{ section.id }} .mp-catg__grid { grid-template-columns: 1fr; }
+    .mp-catg-{{ section.id }} .mp-catg__card { min-height: 160px; }
     .mp-catg-{{ section.id }} .mp-catg__card--large { grid-column: span 1; min-height: 180px; }
-    .mp-catg-{{ section.id }} .mp-catg__card--large .mp-catg__name { font-size: 22px; }
+    .mp-catg-{{ section.id }} .mp-catg__body,
     .mp-catg-{{ section.id }} .mp-catg__card--large .mp-catg__body { max-width: 55%; }
-    .mp-catg-{{ section.id }} .mp-catg__card--large .mp-catg__graphic { width: 48%; }
+    .mp-catg-{{ section.id }} .mp-catg__graphic,
+    .mp-catg-{{ section.id }} .mp-catg__card--large .mp-catg__graphic { width: 46%; }
+    .mp-catg-{{ section.id }} .mp-catg__card--large .mp-catg__name { font-size: 32px; }
   }
 {%- endstyle -%}
 

@@ -137,11 +137,15 @@
     .mp-br-{{ section.id }} .mp-br__heading { font-size: 24px; }
   }
   @media (max-width: 749px) {
+    /* Grid items default to min-width:auto which lets them expand beyond 1fr — reset both panels */
+    .mp-br-{{ section.id }} .mp-br__bgg-card,
+    .mp-br-{{ section.id }} .mp-br__rev-card { min-width: 0; overflow: hidden; }
     .mp-br-{{ section.id }} .mp-br__bgg-card { padding: 20px 16px 16px; }
+    .mp-br-{{ section.id }} .mp-br__heading { overflow-wrap: break-word; word-break: break-word; }
     .mp-br-{{ section.id }} .mp-br__rprice,
     .mp-br-{{ section.id }} .mp-br__raddform { display: none; }
     .mp-br-{{ section.id }} .mp-br__rev-card { padding: 24px 20px; }
-    .mp-br-{{ section.id }} .mp-br__slider { min-width: 0; }
+    .mp-br-{{ section.id }} .mp-br__slider,
     .mp-br-{{ section.id }} .mp-br__slide { min-width: 0; }
     .mp-br-{{ section.id }} .mp-br__slide-quote { overflow-wrap: break-word; word-break: break-word; }
     .mp-br-{{ section.id }} .mp-br__slide-product { flex-wrap: wrap; gap: 8px; }
