@@ -19,9 +19,7 @@
   .mp-cl-{{ section.id }} .cl__hsub { margin: 0; font-size: 17px; line-height: 1.45; color: rgba(255,255,255,.85); max-width: 460px; }
   .mp-cl-{{ section.id }} .cl__hlink { color: #fff; font-size: 14px; font-weight: 600; text-decoration: underline; align-self: flex-start; padding: 4px 0; }
   .mp-cl-{{ section.id }} .cl__hero-art { position: relative; align-self: stretch; min-height: 200px; overflow: visible; }
-  .mp-cl-{{ section.id }} .cl__hero-circle { position: absolute; left: 0; top: -60px; width: 100%; aspect-ratio: 1; border-radius: 999px; background: repeating-conic-gradient(from 0deg at 50% 50%,rgba(255,255,255,.10) 0deg 7deg,rgba(255,255,255,0) 7deg 20deg); pointer-events: none; }
-  .mp-cl-{{ section.id }} .cl__hero-glow { position: absolute; left: 25%; top: 5%; width: 50%; aspect-ratio: 1; border-radius: 999px; background: rgba(255,255,255,.12); pointer-events: none; }
-  .mp-cl-{{ section.id }} .cl__hero-img { position: absolute; right: 4%; top: 50%; width: 58%; height: auto; transform: translateY(-50%) rotate(5deg); filter: drop-shadow(0 14px 18px rgba(0,0,0,.35)); object-fit: contain; }
+  .mp-cl-{{ section.id }} .cl__hero-img { position: absolute; right: -2%; top: 50%; width: 88%; height: auto; transform: translateY(-50%) rotate(5deg); filter: drop-shadow(0 14px 18px rgba(0,0,0,.35)); object-fit: contain; }
 
   /* Chips */
   .mp-cl-{{ section.id }} .cl__chips { display: flex; gap: 8px; padding: 16px 0 0; overflow-x: auto; scrollbar-width: none; flex-wrap: wrap; }
@@ -237,8 +235,6 @@
         {%- endif -%}
       </div>
       <div class="cl__hero-art" aria-hidden="true">
-        <span class="cl__hero-circle"></span>
-        <span class="cl__hero-glow"></span>
         {%- if hero_art_image != blank -%}
           {{ hero_art_image | image_url: width: 600 | image_tag: alt: '', class: 'cl__hero-img', loading: 'eager', width: 600, height: 600 }}
         {%- elsif default_hero_asset != blank -%}
