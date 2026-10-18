@@ -81,6 +81,18 @@
   .mp-hd-{{ section.id }} .mp-hd__muted { color: #9fb4bd; font-size: 11px; }
   .mp-hd-{{ section.id }} .mp-hd__white { color: #fff; }
 
+  /* Mobile count badges — hidden by default, revealed inside the 749px query */
+  .mp-hd-{{ section.id }} .mp-hd__wish-btn,
+  .mp-hd-{{ section.id }} .mp-hd__basket { position: relative; }
+  .mp-hd-{{ section.id }} .mp-hd__mob-badge {
+    display: none; position: absolute; top: 0; right: 0;
+    transform: translate(35%, -35%);
+    min-width: 16px; height: 16px; border-radius: 10px;
+    background: #e84040; color: #fff; font-size: 9px; font-weight: 700;
+    align-items: center; justify-content: center; padding: 0 3px;
+    pointer-events: none; line-height: 1;
+  }
+
   /* row 2 — mega nav */
   .mp-hd-{{ section.id }} .mp-nav { background: #1d4252; position: relative; }
   .mp-hd-{{ section.id }} .mp-nav__in {
@@ -178,11 +190,16 @@
     .mp-hd-{{ section.id }} .mp-hd__in { flex-wrap: wrap; gap: 12px; padding: 12px 16px; }
     .mp-hd-{{ section.id }} .mp-hd__search { order: 3; flex: 1 0 100%; }
     .mp-hd-{{ section.id }} .mp-hd__cats { display: none; }
-    .mp-hd-{{ section.id }} .mp-hd__util { margin-left: auto; gap: 12px; }
-    /* Hide account/wishlist icons on mobile — basket stays visible, saving enough
-       horizontal space to keep burger + logo + basket on a single row. */
+    .mp-hd-{{ section.id }} .mp-hd__util { margin-left: auto; gap: 8px; }
     .mp-hd-{{ section.id }} .mp-hd__acct { display: none; }
-    .mp-hd-{{ section.id }} .mp-hd__wish-btn { display: none; }
+    /* Wishlist: strip the dark box, show only the icon */
+    .mp-hd-{{ section.id }} .mp-hd__wish-btn { background: transparent; border-color: transparent; padding: 8px; }
+    /* Basket: strip the white pill, show only the icon */
+    .mp-hd-{{ section.id }} .mp-hd__basket { background: transparent; color: #9fb4bd; padding: 8px; }
+    .mp-hd-{{ section.id }} .mp-hd__basket-label { display: none; }
+    /* Show the count badges; hide when data-empty */
+    .mp-hd-{{ section.id }} .mp-hd__mob-badge { display: flex; }
+    .mp-hd-{{ section.id }} .mp-hd__mob-badge[data-empty] { display: none; }
     .mp-hd-{{ section.id }} .mp-nav__in { padding: 0 16px; }
     .mp-hd-{{ section.id }} .mp-hd__logo .mp-hd__logo-full { display: none; }
     .mp-hd-{{ section.id }} .mp-hd__logo .mp-hd__logo-mark { display: block; }
@@ -327,6 +344,7 @@
         <!-- wishlist: dark card with heart icon + count -->
         <a href="{% if customer %}/pages/wishlist{% else %}{{ routes.account_login_url }}{% endif %}" class="mp-hd__wish-btn" aria-label="Wishlist">
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          <span class="mp-hd__mob-badge" data-wish-badge data-empty aria-hidden="true">0</span>
           <span class="mp-hd__wish-inner">
             <span class="mp-hd__wish-label">Wishlist</span>
             <span class="mp-hd__wish-count"><span class="mp-wish-nav__count" data-wishlist-count>0</span> saved</span>
@@ -339,7 +357,8 @@
         <!-- basket: white button -->
         <a href="{{ routes.cart_url }}" class="mp-hd__basket" data-mp-cart-btn>
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-          <span>Basket &middot; <span data-cart-total>{{ cart.total_price | money }}</span></span>
+          <span class="mp-hd__basket-label">Basket &middot; <span data-cart-total>{{ cart.total_price | money }}</span></span>
+          <span class="mp-hd__mob-badge" data-mp-basket-badge{% if cart.item_count == 0 %} data-empty{% endif %} aria-hidden="true">{{ cart.item_count }}</span>
         </a>
       </div>
     </div>
@@ -521,25 +540,44 @@
     });
   })();
 
-  // Keep the header basket count in sync after cart mutations
+  // Keep the header basket total + badge count in sync after cart mutations
   document.addEventListener('DOMContentLoaded', function () {
     if (typeof subscribe !== 'function' || typeof PUB_SUB_EVENTS !== 'object') return;
     subscribe(PUB_SUB_EVENTS.cartUpdate, function (data) {
+      if (!data || !data.cartData) return;
       var totalEl = document.querySelector('[data-cart-total]');
-      if (!totalEl || !data || !data.cartData) return;
-      var total = data.cartData.total_price;
-      var currency = data.cartData.currency || 'GBP';
-      var locale = document.documentElement.lang || 'en-GB';
-      try {
-        var formatted = new Intl.NumberFormat(locale, {
-          style: 'currency',
-          currency: currency,
-          minimumFractionDigits: 2
-        }).format(total / 100);
-        totalEl.textContent = formatted;
-      } catch (_) {}
+      if (totalEl) {
+        var total = data.cartData.total_price;
+        var currency = data.cartData.currency || 'GBP';
+        var locale = document.documentElement.lang || 'en-GB';
+        try {
+          totalEl.textContent = new Intl.NumberFormat(locale, {
+            style: 'currency', currency: currency, minimumFractionDigits: 2
+          }).format(total / 100);
+        } catch (_) {}
+      }
+      var basketBadge = document.querySelector('[data-mp-basket-badge]');
+      if (basketBadge) {
+        var count = data.cartData.item_count || 0;
+        basketBadge.textContent = count;
+        count > 0 ? basketBadge.removeAttribute('data-empty') : basketBadge.setAttribute('data-empty', '');
+      }
     });
   }, { once: true });
+
+  // Keep the wishlist badge count in sync when the wishlist app updates its counter
+  (function () {
+    var src = document.querySelector('[data-wishlist-count]');
+    var badge = document.querySelector('[data-wish-badge]');
+    if (!src || !badge) return;
+    function sync() {
+      var n = parseInt(src.textContent, 10) || 0;
+      badge.textContent = n;
+      n > 0 ? badge.removeAttribute('data-empty') : badge.setAttribute('data-empty', '');
+    }
+    sync();
+    new MutationObserver(sync).observe(src, { childList: true, characterData: true, subtree: true });
+  })();
 
   {%- if customer -%}
   // Load loyalty points balance into the header account area
