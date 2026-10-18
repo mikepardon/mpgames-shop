@@ -229,8 +229,6 @@
 
         <div class="mp-br__slider"
              id="mp-br-slider-{{ section.id }}"
-             data-token="{{ section.settings.jm_api_token }}"
-             data-domain="{{ shop.permanent_domain }}"
              data-autoplay="5000">
 
           {%- for block in section.blocks -%}
@@ -273,8 +271,6 @@
   var slider = document.getElementById('mp-br-slider-{{ section.id }}');
   if (!slider) return;
 
-  var token   = slider.dataset.token;
-  var domain  = slider.dataset.domain;
   var delay   = parseInt(slider.dataset.autoplay) || 5000;
   var current = 0;
   var timer;
@@ -380,21 +376,15 @@
     });
   }
 
-  if (token && domain) {
-    fetch('https://judge.me/api/v1/reviews?api_token=' + encodeURIComponent(token) +
-          '&shop_domain=' + encodeURIComponent(domain) +
-          '&per_page=3&page=1&sort_by=featured_at&sort_dir=desc')
-      .then(function (res) { return res.json(); })
-      .then(function (data) {
-        if (data.reviews && data.reviews.length > 0) {
-          renderApiReviews(data.reviews);
-        }
-        init();
-      })
-      .catch(function () { init(); });
-  } else {
-    init();
-  }
+  fetch('/apps/notify/proxy-reviews')
+    .then(function (res) { return res.json(); })
+    .then(function (data) {
+      if (data.reviews && data.reviews.length > 0) {
+        renderApiReviews(data.reviews);
+      }
+      init();
+    })
+    .catch(function () { init(); });
 })();
 </script>
 
