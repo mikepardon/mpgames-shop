@@ -1,7 +1,8 @@
 {%- comment -%}
   MPGames BGG top 6 + customer reviews — side-by-side split panel.
   Left: white card with top-rated products ordered by BGG score.
-  Right: purple reviews panel with Judge.me aggregate score and featured quote.
+  Right: purple reviews slider — fetches latest reviews from Judge.me API when
+         api_token is set; falls back to manually configured review blocks.
 {%- endcomment -%}
 
 {%- style -%}
@@ -81,30 +82,54 @@
     font-family: 'Barlow Condensed', sans-serif;
     font-size: 72px; font-weight: 800; color: #fff; line-height: 1; margin: 0;
   }
-  .mp-br-{{ section.id }} .mp-br__stars {
-    display: flex; gap: 4px; margin-top: 6px;
-  }
+  .mp-br-{{ section.id }} .mp-br__stars { display: flex; gap: 4px; margin-top: 6px; }
   .mp-br-{{ section.id }} .mp-br__star { color: #F5B841; font-size: 20px; }
   .mp-br-{{ section.id }} .mp-br__rev-count { font-size: 13px; color: #D9CCF0; margin-top: 4px; }
-  .mp-br-{{ section.id }} .mp-br__quote {
-    margin: 20px 0 0;
-    font-size: 15px; line-height: 1.55; color: #E8E0F5; font-style: italic;
-    flex: 1;
+
+  /* ── Slider ── */
+  .mp-br-{{ section.id }} .mp-br__slider { flex: 1; display: flex; flex-direction: column; margin-top: 20px; min-height: 0; }
+  .mp-br-{{ section.id }} .mp-br__slide { display: none; flex-direction: column; flex: 1; }
+  .mp-br-{{ section.id }} .mp-br__slide.is-active { display: flex; animation: mp-br-fade .35s; }
+  @keyframes mp-br-fade { from { opacity: 0 } to { opacity: 1 } }
+  .mp-br-{{ section.id }} .mp-br__slide-stars { display: flex; gap: 3px; margin-bottom: 10px; }
+  .mp-br-{{ section.id }} .mp-br__slide-star { font-size: 16px; }
+  .mp-br-{{ section.id }} .mp-br__slide-star--filled { color: #F5B841; }
+  .mp-br-{{ section.id }} .mp-br__slide-star--empty { color: rgba(255,255,255,.2); }
+  .mp-br-{{ section.id }} .mp-br__slide-quote {
+    flex: 1; font-size: 15px; line-height: 1.55; color: #E8E0F5; font-style: italic; margin: 0;
   }
-  .mp-br-{{ section.id }} .mp-br__quote::before { content: '\201C'; }
-  .mp-br-{{ section.id }} .mp-br__quote::after { content: '\201D'; }
-  .mp-br-{{ section.id }} .mp-br__reviewer { font-size: 13px; color: #D9CCF0; margin-top: 10px; font-style: normal; }
-  .mp-br-{{ section.id }} .mp-br__rev-product {
-    margin-top: 20px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,.12);
+  .mp-br-{{ section.id }} .mp-br__slide-quote::before { content: '\201C'; }
+  .mp-br-{{ section.id }} .mp-br__slide-quote::after { content: '\201D'; }
+  .mp-br-{{ section.id }} .mp-br__slide-reviewer { font-size: 13px; color: #D9CCF0; margin-top: 10px; font-style: normal; }
+  .mp-br-{{ section.id }} .mp-br__slide-product {
+    margin-top: 14px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,.12);
     display: flex; align-items: center; justify-content: space-between; gap: 12px;
   }
-  .mp-br-{{ section.id }} .mp-br__rev-pname { font-size: 14px; font-weight: 600; color: #fff; }
-  .mp-br-{{ section.id }} .mp-br__rev-shop {
+  .mp-br-{{ section.id }} .mp-br__slide-pname { font-size: 14px; font-weight: 600; color: #fff; }
+  .mp-br-{{ section.id }} .mp-br__slide-shop {
     border: 1.5px solid rgba(255,255,255,.4); border-radius: 8px; padding: 7px 14px;
     font-size: 13px; font-weight: 600; color: #fff; text-decoration: none; white-space: nowrap;
-    transition: background .15s;
+    transition: background .15s; flex: none;
   }
-  .mp-br-{{ section.id }} .mp-br__rev-shop:hover { background: rgba(255,255,255,.12); }
+  .mp-br-{{ section.id }} .mp-br__slide-shop:hover { background: rgba(255,255,255,.12); }
+
+  /* ── Slider navigation ── */
+  .mp-br-{{ section.id }} .mp-br__slider-nav {
+    display: flex; align-items: center; justify-content: space-between; margin-top: 16px; flex: none;
+  }
+  .mp-br-{{ section.id }} .mp-br__dots { display: flex; gap: 6px; align-items: center; }
+  .mp-br-{{ section.id }} .mp-br__dot {
+    width: 7px; height: 7px; border-radius: 50%; background: rgba(255,255,255,.3);
+    border: 0; cursor: pointer; padding: 0; transition: background .2s;
+  }
+  .mp-br-{{ section.id }} .mp-br__dot.is-active { background: #fff; }
+  .mp-br-{{ section.id }} .mp-br__nav-btns { display: flex; gap: 6px; }
+  .mp-br-{{ section.id }} .mp-br__nav-btn {
+    background: rgba(255,255,255,.12); border: 0; color: #fff; border-radius: 6px;
+    width: 30px; height: 30px; cursor: pointer; font-size: 20px; display: flex;
+    align-items: center; justify-content: center; transition: background .15s; line-height: 1;
+  }
+  .mp-br-{{ section.id }} .mp-br__nav-btn:hover { background: rgba(255,255,255,.25); }
 
   @media (max-width: 900px) {
     .mp-br-{{ section.id }} .mp-br__grid { grid-template-columns: 1fr; }
@@ -169,7 +194,7 @@
         </ul>
       </div>
 
-      <!-- Reviews panel -->
+      <!-- Reviews slider -->
       <div class="mp-br__rev-card">
         <p class="mp-br__rev-kicker">{{ section.settings.reviews_kicker }}</p>
         {%- liquid
@@ -187,36 +212,203 @@
         {%- if jm_count != blank -%}
           <p class="mp-br__rev-count">{{ jm_count }} verified reviews</p>
         {%- endif -%}
-        <blockquote class="mp-br__quote">{{ section.settings.quote_text }}</blockquote>
-        <p class="mp-br__reviewer">— {{ section.settings.quote_reviewer }}</p>
-        {%- if section.settings.featured_product_name != blank -%}
-          <div class="mp-br__rev-product">
-            <span class="mp-br__rev-pname">{{ section.settings.featured_product_name }}</span>
-            {%- if section.settings.featured_product_url != blank -%}
-              <a class="mp-br__rev-shop" href="{{ section.settings.featured_product_url }}">Shop {{ section.settings.featured_product_name }}</a>
-            {%- endif -%}
+
+        <div class="mp-br__slider"
+             id="mp-br-slider-{{ section.id }}"
+             data-token="{{ section.settings.jm_api_token }}"
+             data-domain="{{ shop.domain }}"
+             data-autoplay="5000">
+
+          {%- for block in section.blocks -%}
+            {%- assign block_rating = block.settings.rating | default: 5 -%}
+            <div class="mp-br__slide{% if forloop.first %} is-active{% endif %}" {{ block.shopify_attributes }}>
+              <div class="mp-br__slide-stars">
+                {%- for star_i in (1..5) -%}
+                  <span class="mp-br__slide-star mp-br__slide-star--{% if star_i <= block_rating %}filled{% else %}empty{% endif %}">&#9733;</span>
+                {%- endfor -%}
+              </div>
+              <p class="mp-br__slide-quote">{{ block.settings.body }}</p>
+              <p class="mp-br__slide-reviewer">&#8212; {{ block.settings.reviewer }}</p>
+              {%- if block.settings.product_name != blank -%}
+                <div class="mp-br__slide-product">
+                  <span class="mp-br__slide-pname">{{ block.settings.product_name }}</span>
+                  {%- if block.settings.product_url != blank -%}
+                    <a class="mp-br__slide-shop" href="{{ block.settings.product_url }}">Shop now</a>
+                  {%- endif -%}
+                </div>
+              {%- endif -%}
+            </div>
+          {%- endfor -%}
+
+          <div class="mp-br__slider-nav">
+            <div class="mp-br__dots"></div>
+            <div class="mp-br__nav-btns">
+              <button class="mp-br__nav-btn mp-br__nav-btn--prev" aria-label="Previous review">&#8249;</button>
+              <button class="mp-br__nav-btn mp-br__nav-btn--next" aria-label="Next review">&#8250;</button>
+            </div>
           </div>
-        {%- endif -%}
+        </div>
       </div>
 
     </div>
   </div>
 </div>
 
+<script>
+(function () {
+  var slider = document.getElementById('mp-br-slider-{{ section.id }}');
+  if (!slider) return;
+
+  var token   = slider.dataset.token;
+  var domain  = slider.dataset.domain;
+  var delay   = parseInt(slider.dataset.autoplay) || 5000;
+  var current = 0;
+  var timer;
+
+  function getSlides() {
+    return Array.from(slider.querySelectorAll('.mp-br__slide'));
+  }
+
+  function buildDots(slides) {
+    var dotsEl = slider.querySelector('.mp-br__dots');
+    dotsEl.innerHTML = '';
+    slides.forEach(function (_, i) {
+      var d = document.createElement('button');
+      d.className = 'mp-br__dot' + (i === 0 ? ' is-active' : '');
+      d.setAttribute('aria-label', 'Review ' + (i + 1));
+      d.addEventListener('click', function () { go(i); });
+      dotsEl.appendChild(d);
+    });
+  }
+
+  function go(index) {
+    var slides = getSlides();
+    var dots   = Array.from(slider.querySelectorAll('.mp-br__dot'));
+    slides[current].classList.remove('is-active');
+    if (dots[current]) dots[current].classList.remove('is-active');
+    current = (index + slides.length) % slides.length;
+    slides[current].classList.add('is-active');
+    if (dots[current]) dots[current].classList.add('is-active');
+  }
+
+  function startAutoplay() {
+    timer = setInterval(function () { go(current + 1); }, delay);
+  }
+
+  function init() {
+    var slides = getSlides();
+    if (slides.length === 0) return;
+    buildDots(slides);
+    if (slides.length > 1) {
+      slider.querySelector('.mp-br__nav-btn--prev').addEventListener('click', function () {
+        clearInterval(timer); go(current - 1); startAutoplay();
+      });
+      slider.querySelector('.mp-br__nav-btn--next').addEventListener('click', function () {
+        clearInterval(timer); go(current + 1); startAutoplay();
+      });
+      slider.addEventListener('mouseenter', function () { clearInterval(timer); });
+      slider.addEventListener('mouseleave', startAutoplay);
+      startAutoplay();
+    }
+  }
+
+  function starsHtml(rating) {
+    var html = '<div class="mp-br__slide-stars">';
+    for (var s = 1; s <= 5; s++) {
+      html += '<span class="mp-br__slide-star mp-br__slide-star--' + (s <= rating ? 'filled' : 'empty') + '">&#9733;</span>';
+    }
+    return html + '</div>';
+  }
+
+  function renderApiReviews(reviews) {
+    var nav = slider.querySelector('.mp-br__slider-nav');
+    getSlides().forEach(function (el) { el.remove(); });
+    current = 0;
+
+    reviews.forEach(function (r, i) {
+      var slide = document.createElement('div');
+      slide.className = 'mp-br__slide' + (i === 0 ? ' is-active' : '');
+
+      var starsDiv = document.createElement('div');
+      starsDiv.innerHTML = starsHtml(r.rating || 5);
+      slide.appendChild(starsDiv.firstChild);
+
+      var quote = document.createElement('p');
+      quote.className = 'mp-br__slide-quote';
+      quote.textContent = r.body || '';
+
+      var reviewer = document.createElement('p');
+      reviewer.className = 'mp-br__slide-reviewer';
+      reviewer.textContent = '— ' + (r.reviewer && r.reviewer.name ? r.reviewer.name : 'Verified buyer');
+
+      slide.appendChild(quote);
+      slide.appendChild(reviewer);
+
+      if (r.product_title) {
+        var productDiv = document.createElement('div');
+        productDiv.className = 'mp-br__slide-product';
+
+        var pname = document.createElement('span');
+        pname.className = 'mp-br__slide-pname';
+        pname.textContent = r.product_title;
+
+        var shopLink = document.createElement('a');
+        shopLink.className = 'mp-br__slide-shop';
+        shopLink.textContent = 'Shop now';
+        shopLink.href = '/products/' + encodeURIComponent(r.product_handle || '');
+
+        productDiv.appendChild(pname);
+        productDiv.appendChild(shopLink);
+        slide.appendChild(productDiv);
+      }
+
+      slider.insertBefore(slide, nav);
+    });
+  }
+
+  if (token && domain) {
+    fetch('https://judge.me/api/v1/reviews?api_token=' + encodeURIComponent(token) +
+          '&shop_domain=' + encodeURIComponent(domain) +
+          '&per_page=3&page=1&sort_by=featured_at&sort_dir=desc')
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        if (data.reviews && data.reviews.length > 0) {
+          renderApiReviews(data.reviews);
+        }
+        init();
+      })
+      .catch(function () { init(); });
+  } else {
+    init();
+  }
+})();
+</script>
+
 {% schema %}
 {
   "name": "MP BGG + Reviews",
+  "max_blocks": 5,
+  "blocks": [
+    {
+      "type": "review",
+      "name": "Review quote",
+      "settings": [
+        { "type": "textarea", "id": "body",         "label": "Review text" },
+        { "type": "text",     "id": "reviewer",     "label": "Reviewer name",  "default": "Verified buyer" },
+        { "type": "range",    "id": "rating",        "label": "Star rating",    "min": 1, "max": 5, "step": 1, "default": 5 },
+        { "type": "text",     "id": "product_name", "label": "Product name",   "info": "Shown at the bottom of this review card." },
+        { "type": "url",      "id": "product_url",  "label": "Product URL" }
+      ]
+    }
+  ],
   "settings": [
-    { "type": "text",       "id": "kicker",              "label": "BGG kicker",           "default": "The hobbyist corner" },
-    { "type": "text",       "id": "heading",             "label": "BGG heading",          "default": "Highest rated on BoardGameGeek" },
-    { "type": "collection", "id": "collection",          "label": "Collection",           "info": "Products sorted by custom.bgg_rating metafield. Defaults to all products." },
-    { "type": "text",       "id": "reviews_kicker",      "label": "Reviews kicker",       "default": "Customers are saying" },
-    { "type": "text",       "id": "rating_fallback",     "label": "Rating fallback",      "default": "4.93", "info": "Shown if Judge.me metafield is not set." },
-    { "type": "text",       "id": "count_fallback",      "label": "Review count fallback",                  "info": "Shown if Judge.me metafield is not set." },
-    { "type": "textarea",   "id": "quote_text",          "label": "Featured quote",       "default": "Arrived quickly, beautifully packaged and exactly as described. MPGames is our go-to for every game night." },
-    { "type": "text",       "id": "quote_reviewer",      "label": "Reviewer name",        "default": "Sarah M., verified buyer" },
-    { "type": "text",       "id": "featured_product_name", "label": "Featured product name" },
-    { "type": "url",        "id": "featured_product_url",  "label": "Featured product URL" }
+    { "type": "text",       "id": "kicker",          "label": "BGG kicker",           "default": "The hobbyist corner" },
+    { "type": "text",       "id": "heading",         "label": "BGG heading",          "default": "Highest rated on BoardGameGeek" },
+    { "type": "collection", "id": "collection",      "label": "Collection",           "info": "Products sorted by custom.bgg_rating metafield. Defaults to all products." },
+    { "type": "text",       "id": "reviews_kicker",  "label": "Reviews kicker",       "default": "Customers are saying" },
+    { "type": "text",       "id": "rating_fallback", "label": "Rating fallback",      "default": "4.93", "info": "Shown if Judge.me metafield is not set." },
+    { "type": "text",       "id": "count_fallback",  "label": "Review count fallback",                  "info": "Shown if Judge.me metafield is not set." },
+    { "type": "text",       "id": "jm_api_token",    "label": "Judge.me API token",   "info": "From Judge.me admin > Settings > API. When set, the slider auto-fetches the 3 latest reviews. Leave blank to use the review blocks below." }
   ],
   "presets": [
     { "name": "MP BGG + Reviews" }

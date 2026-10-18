@@ -351,11 +351,22 @@
         "tab_pre_label": "Pre-orders",
         "new_col": "new-releases",
         "preorder_col": "pre-orders",
-        "products_to_show": 8
+        "products_to_show": 10
       }
     },
     "mp_bgg_reviews": {
       "type": "mp-bgg-reviews",
+      "blocks": {
+        "review_1": {
+          "type": "review",
+          "settings": {
+            "body": "Arrived quickly, beautifully packaged and exactly as described. MPGames is our go-to for every game night.",
+            "reviewer": "Sarah M., verified buyer",
+            "rating": 5
+          }
+        }
+      },
+      "block_order": ["review_1"],
       "settings": {
         "kicker": "The hobbyist corner",
         "heading": "Highest rated on BoardGameGeek",
@@ -363,10 +374,7 @@
         "reviews_kicker": "Customers are saying",
         "rating_fallback": "4.93",
         "count_fallback": "",
-        "quote_text": "Arrived quickly, beautifully packaged and exactly as described. MPGames is our go-to for every game night.",
-        "quote_reviewer": "Sarah M., verified buyer",
-        "featured_product_name": "",
-        "featured_product_url": ""
+        "jm_api_token": ""
       }
     },
     "mp_preowned_band": {

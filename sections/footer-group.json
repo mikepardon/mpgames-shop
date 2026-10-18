@@ -32,14 +32,14 @@
           "type": "column",
           "settings": {
             "heading": "Company",
-            "links": "About MPGames|/pages/about\nFrom the blog|/blogs/news\nBrowse the collection|/collections"
+            "links": "About MPGames|/pages/about\nFrom the blog|/blogs/news\nBrowse the collection|/collections\nLoyalty points|/pages/loyalty-points"
           }
         },
         "sell-trade": {
           "type": "column",
           "settings": {
             "heading": "Sell & Trade",
-            "links": "Trade in your games|/pages/trade-in"
+            "links": "Trade in your games|/pages/trade-in\nPre-owned games|/collections/pre-owned"
           }
         }
       },
