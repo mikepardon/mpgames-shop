@@ -125,6 +125,11 @@
     .mp-catg-{{ section.id }} .mp-catg__card { min-height: 160px; }
     .mp-catg-{{ section.id }} .mp-catg__body { max-width: 58%; }
     .mp-catg-{{ section.id }} .mp-catg__graphic { width: 44%; }
+    /* Large cards are full-width on mobile — give the text column more room and
+       scale down the heading so it doesn't wrap. */
+    .mp-catg-{{ section.id }} .mp-catg__card--large .mp-catg__name { font-size: 28px; }
+    .mp-catg-{{ section.id }} .mp-catg__card--large .mp-catg__body { max-width: 62%; }
+    .mp-catg-{{ section.id }} .mp-catg__card--large .mp-catg__graphic { width: 40%; }
   }
 {%- endstyle -%}
 

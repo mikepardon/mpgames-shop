@@ -179,6 +179,10 @@
     .mp-hd-{{ section.id }} .mp-hd__search { order: 3; flex: 1 0 100%; }
     .mp-hd-{{ section.id }} .mp-hd__cats { display: none; }
     .mp-hd-{{ section.id }} .mp-hd__util { margin-left: auto; gap: 12px; }
+    /* Hide account/wishlist icons on mobile — basket stays visible, saving enough
+       horizontal space to keep burger + logo + basket on a single row. */
+    .mp-hd-{{ section.id }} .mp-hd__acct { display: none; }
+    .mp-hd-{{ section.id }} .mp-hd__wish-btn { display: none; }
     .mp-hd-{{ section.id }} .mp-nav__in { padding: 0 16px; }
     .mp-hd-{{ section.id }} .mp-hd__logo .mp-hd__logo-full { display: none; }
     .mp-hd-{{ section.id }} .mp-hd__logo .mp-hd__logo-mark { display: block; }
