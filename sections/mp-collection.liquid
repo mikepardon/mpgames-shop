@@ -21,7 +21,7 @@
   .mp-cl-{{ section.id }} .cl__hero-art { position: relative; height: 220px; overflow: visible; }
   .mp-cl-{{ section.id }} .cl__hero-circle { position: absolute; left: 0; top: -60px; width: 100%; aspect-ratio: 1; border-radius: 999px; background: repeating-conic-gradient(from 0deg at 50% 50%,rgba(255,255,255,.10) 0deg 7deg,rgba(255,255,255,0) 7deg 20deg); pointer-events: none; }
   .mp-cl-{{ section.id }} .cl__hero-glow { position: absolute; left: 25%; top: 5%; width: 50%; aspect-ratio: 1; border-radius: 999px; background: rgba(255,255,255,.12); pointer-events: none; }
-  .mp-cl-{{ section.id }} .cl__hero-img { position: absolute; right: 4%; top: 0; width: 58%; height: auto; transform: rotate(5deg); filter: drop-shadow(0 14px 18px rgba(0,0,0,.35)); object-fit: contain; }
+  .mp-cl-{{ section.id }} .cl__hero-img { position: absolute; right: 4%; top: 50%; width: 58%; height: auto; transform: translateY(-50%) rotate(5deg); filter: drop-shadow(0 14px 18px rgba(0,0,0,.35)); object-fit: contain; }
 
   /* Chips */
   .mp-cl-{{ section.id }} .cl__chips { display: flex; gap: 8px; padding: 16px 0 0; overflow-x: auto; scrollbar-width: none; flex-wrap: wrap; }
@@ -84,7 +84,7 @@
   .mp-cl-{{ section.id }} .cl__flag--pre { background: #FDE9D4; color: #B4530F; }
   .mp-cl-{{ section.id }} .cl__flag--sale { background: #FFE4E1; color: #C0392B; }
   .mp-cl-{{ section.id }} .cl__media-wrap { aspect-ratio: 1/1; max-height: 240px; background: #F3EDE2; display: flex; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; text-decoration: none; }
-  .mp-cl-{{ section.id }} .cl__media-wrap img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 4px; box-shadow: 0 10px 22px rgba(20,35,58,.18); }
+  .mp-cl-{{ section.id }} .cl__media-wrap img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 4px; }
   .mp-cl-{{ section.id }} .cl__cbody { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
   .mp-cl-{{ section.id }} .cl__eyebrow { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 20px; }
   .mp-cl-{{ section.id }} .cl__eyebrow-type { font-size: 12px; font-weight: 700; letter-spacing: .6px; text-transform: uppercase; }
@@ -395,7 +395,6 @@
               <article class="cl__card">
                 {%- if cpre -%}<span class="cl__flag cl__flag--pre mp-cond">Pre-order</span>
                 {%- elsif csale -%}<span class="cl__flag cl__flag--sale mp-cond">-{{ cdisc }}%</span>{%- endif -%}
-                {% render 'mp-wishlist-button', product: product, class: 'mp-wish--float' %}
                 <a class="cl__media-wrap" href="{{ product.url }}" aria-label="{{ product.title | escape }}">
                   {%- if product.featured_image -%}
                     {{ product.featured_image | image_url: width: 520 | image_tag: alt: product.title, loading: 'lazy', widths: '260, 520', width: 520, height: 520 }}

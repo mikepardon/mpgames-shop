@@ -126,7 +126,7 @@
           "settings": {
             "group": "players",
             "label": "2",
-            "tag": "players-2"
+            "tag": "players-2-plus"
           }
         },
         "option_ykiebt": {
@@ -166,7 +166,7 @@
           "settings": {
             "group": "duration",
             "label": "~2 hours",
-            "tag": "playtime-long"
+            "tag": "playtime-epic"
           }
         },
         "option_q6Jaqn": {
