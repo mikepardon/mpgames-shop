@@ -74,7 +74,10 @@
     <div class="mp-ni__panel is-active" id="mp-ni-panel-new-{{ section.id }}" role="tabpanel">
       <div class="mp-ni__grid">
         {%- if new_col != blank -%}
-          {%- for product in new_col.products limit: cards_limit -%}
+          {%- assign ni_shown = 0 -%}
+          {%- for product in new_col.products -%}
+            {%- unless product.available -%}{%- continue -%}{%- endunless -%}
+            {%- if ni_shown >= cards_limit -%}{%- break -%}{%- endif -%}
             <a class="mp-ni__card" href="{{ product.url }}">
               <div class="mp-ni__thumb">
                 {%- if product.featured_image -%}
@@ -88,9 +91,11 @@
                 <p class="mp-ni__price">{{ product.price | money }}</p>
               </div>
             </a>
-          {%- else -%}
-            <p class="mp-ni__empty">No new arrivals yet — check back soon.</p>
+            {%- assign ni_shown = ni_shown | plus: 1 -%}
           {%- endfor -%}
+          {%- if ni_shown == 0 -%}
+            <p class="mp-ni__empty">No new arrivals yet — check back soon.</p>
+          {%- endif -%}
         {%- else -%}
           <p class="mp-ni__empty">Select a collection in the section settings.</p>
         {%- endif -%}
@@ -100,7 +105,10 @@
     <div class="mp-ni__panel" id="mp-ni-panel-pre-{{ section.id }}" role="tabpanel">
       <div class="mp-ni__grid">
         {%- if pre_col != blank -%}
-          {%- for product in pre_col.products limit: cards_limit -%}
+          {%- assign pre_shown = 0 -%}
+          {%- for product in pre_col.products -%}
+            {%- unless product.available -%}{%- continue -%}{%- endunless -%}
+            {%- if pre_shown >= cards_limit -%}{%- break -%}{%- endif -%}
             <a class="mp-ni__card" href="{{ product.url }}">
               <div class="mp-ni__thumb">
                 {%- if product.featured_image -%}
@@ -114,9 +122,11 @@
                 <p class="mp-ni__price">{{ product.price | money }}</p>
               </div>
             </a>
-          {%- else -%}
-            <p class="mp-ni__empty">No pre-orders available right now.</p>
+            {%- assign pre_shown = pre_shown | plus: 1 -%}
           {%- endfor -%}
+          {%- if pre_shown == 0 -%}
+            <p class="mp-ni__empty">No pre-orders available right now.</p>
+          {%- endif -%}
         {%- else -%}
           <p class="mp-ni__empty">Select a collection in the section settings.</p>
         {%- endif -%}
