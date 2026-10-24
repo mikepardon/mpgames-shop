@@ -16,7 +16,7 @@
           "type": "slide",
           "settings": {
             "layout": "image",
-            "image": "shopify://shop_images/Wacky_Racing_Banner_2a.png",
+            "image": "shopify://shop_images/banner-wacky-racing-1600x600.png",
             "image_alt": "",
             "cta_url": "shopify://collections/racer",
             "kicker": "TOP-RANKED TABLETOP",
@@ -44,7 +44,7 @@
           "type": "slide",
           "settings": {
             "layout": "image",
-            "image": "shopify://shop_images/kcd-preorder-banner.png",
+            "image": "shopify://shop_images/banner-kingdom-come-1600x600.png",
             "image_alt": "",
             "cta_url": "shopify://products/kingdom-come-deliverance-the-board-game-pre-order",
             "kicker": "TOP-RANKED TABLETOP",
