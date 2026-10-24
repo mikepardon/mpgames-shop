@@ -81,8 +81,8 @@
   .mp-cl-{{ section.id }} .cl__flag { position: absolute; top: 12px; left: 12px; z-index: 2; font-size: 11px; font-weight: 800; letter-spacing: .8px; text-transform: uppercase; padding: 5px 9px; border-radius: 6px; }
   .mp-cl-{{ section.id }} .cl__flag--pre { background: #FDE9D4; color: #B4530F; }
   .mp-cl-{{ section.id }} .cl__flag--sale { background: #FFE4E1; color: #C0392B; }
-  .mp-cl-{{ section.id }} .cl__media-wrap { aspect-ratio: 1/1; max-height: 240px; background: #F3EDE2; display: flex; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; text-decoration: none; }
-  .mp-cl-{{ section.id }} .cl__media-wrap img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 4px; }
+  .mp-cl-{{ section.id }} .cl__media-wrap { aspect-ratio: 1/1; max-height: 240px; background: #F3EDE2; display: block; position: relative; overflow: hidden; text-decoration: none; }
+  .mp-cl-{{ section.id }} .cl__media-wrap img { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); max-width: calc(100% - 40px); max-height: calc(100% - 40px); object-fit: contain; border-radius: 4px; }
   .mp-cl-{{ section.id }} .cl__cbody { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
   .mp-cl-{{ section.id }} .cl__eyebrow { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 20px; }
   .mp-cl-{{ section.id }} .cl__eyebrow-type { font-size: 12px; font-weight: 700; letter-spacing: .6px; text-transform: uppercase; }
