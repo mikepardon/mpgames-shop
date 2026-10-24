@@ -30,7 +30,7 @@
           "type": "slide",
           "settings": {
             "layout": "image",
-            "image": "shopify://shop_images/mpgames-trade-in-banner.png",
+            "image": "shopify://shop_images/banner-trade-ins-1600x600.png",
             "image_alt": "",
             "cta_url": "shopify://pages/trade-in",
             "kicker": "TOP-RANKED TABLETOP",
