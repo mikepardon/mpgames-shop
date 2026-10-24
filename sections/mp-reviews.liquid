@@ -59,23 +59,14 @@
     {%- endif -%}
 
     <div class="rv__widget">
-      <div class="jdgm-widget jdgm-all-reviews-widget" data-branch-key=""></div>
+      {{- shop.metafields.judgeme.html_miracle_0 -}}
+      <div class="jdgm-widget jdgm-all-reviews-widget">
+        {{- shop.metafields.judgeme.all_reviews_header -}}
+        {{- shop.metafields.judgeme.all_reviews_0 -}}
+      </div>
     </div>
   </div>
 </div>
-
-<script>
-(function () {
-  function tryLoad(attempts) {
-    if (window.jdgm && typeof jdgm.loadAll === 'function') {
-      jdgm.loadAll();
-      return;
-    }
-    if (attempts > 0) { setTimeout(function () { tryLoad(attempts - 1); }, 500); }
-  }
-  document.addEventListener('DOMContentLoaded', function () { tryLoad(10); });
-})();
-</script>
 
 {% schema %}
 {

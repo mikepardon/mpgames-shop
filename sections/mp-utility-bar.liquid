@@ -37,10 +37,17 @@
   .mp-ub-{{ section.id }} .mp-ub__stars { color: #f4b942; letter-spacing: 1px; }
   .mp-ub-{{ section.id }} .mp-ub__review-link { color: #cfd8dc; text-decoration: none; }
   .mp-ub-{{ section.id }} .mp-ub__review-link:hover { color: #fff; }
+  .mp-ub-{{ section.id }} .mp-ub__social { display: flex; align-items: center; gap: 2px; }
+  .mp-ub-{{ section.id }} .mp-ub__social .list-social { justify-content: flex-start; gap: 0; }
+  .mp-ub-{{ section.id }} .mp-ub__social .list-social__link { color: #7a9aaa; padding: 4px 6px; }
+  .mp-ub-{{ section.id }} .mp-ub__social .list-social__link:hover { color: #fff; }
+  .mp-ub-{{ section.id }} .mp-ub__social .icon,
+  .mp-ub-{{ section.id }} .mp-ub__social .svg-wrapper svg { width: 14px; height: 14px; fill: currentColor; }
   @media (max-width: 749px) {
     .mp-ub-{{ section.id }} .mp-ub__in { font-size: 11px; padding: 6px 16px; }
     .mp-ub-{{ section.id }} .mp-ub__usp:not(:first-child) { display: none; }
     .mp-ub-{{ section.id }} .mp-ub__reviews { display: none; }
+    .mp-ub-{{ section.id }} .mp-ub__social { display: none; }
   }
 {%- endstyle -%}
 
@@ -79,6 +86,9 @@
           <span class="mp-ub__usp">{{ section.settings.usp_3_label }}</span>
         {%- endif -%}
       {%- endif -%}
+    </div>
+    <div class="mp-ub__social">
+      {%- render 'social-icons' -%}
     </div>
     {%- if review_text != blank -%}
       <a href="{{ review_href }}" class="mp-ub__reviews" aria-label="See all customer reviews">
