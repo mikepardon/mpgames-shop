@@ -201,6 +201,9 @@
   .mp-pdp-{{ section.id }} .pdp__notify-note { margin-top: 8px; font-size: 13px; color: #6b7a82; text-align: center; }
   .mp-pdp-{{ section.id }} .pdp__notify-note a { color: #c2410c; font-weight: 600; }
   .mp-pdp-{{ section.id }} .pdp__notify-err { color: #d6402e; }
+  .mp-pdp-{{ section.id }} .pdp__loyalty { margin-top: 10px; font-size: 13px; color: #6b7a82; }
+  .mp-pdp-{{ section.id }} .pdp__loyalty a { color: #f2872f; font-weight: 600; text-decoration: none; }
+  .mp-pdp-{{ section.id }} .pdp__loyalty a:hover { text-decoration: underline; }
   .mp-pdp-{{ section.id }} .pdp__gw { margin-top: 14px; border: 1px solid #e7ddcb; border-radius: 11px; background: #fffdf9; overflow: hidden; }
   .mp-pdp-{{ section.id }} .pdp__gw-toggle { display: flex; align-items: center; gap: 12px; padding: 14px 16px; cursor: pointer; }
   .mp-pdp-{{ section.id }} .pdp__gw-check { width: 18px; height: 18px; flex: none; accent-color: #f2872f; cursor: pointer; }
@@ -596,13 +599,8 @@
         {%- endunless -%}
 
         {%- unless is_preorder -%}
-        <div class="pdp__stock" data-stock>
-          {%- if product.available -%}
-            <span class="pdp__dot" style="background:#2f8f5b"></span><b style="color:#2f8f5b">In stock</b>
-            {%- if variant.inventory_management and variant.inventory_quantity > 0 -%}<span style="color:#6b7a82"> · {{ variant.inventory_quantity }} available</span>{%- endif -%}
-          {%- else -%}
-            <span class="pdp__dot" style="background:#d6402e"></span><b style="color:#d6402e">Out of stock</b>
-          {%- endif -%}
+        <div class="pdp__stock" data-stock{% if product.available %} hidden{% endif %}>
+          {%- unless product.available -%}<span class="pdp__dot" style="background:#d6402e"></span><b style="color:#d6402e">Out of stock</b>{%- endunless -%}
         </div>
         {%- endunless -%}
 
@@ -617,20 +615,20 @@
         {%- assign show_notify = false -%}
         {%- unless is_preorder or product.available -%}{%- assign show_notify = true -%}{%- endunless -%}
 
-        {%- comment -%} Out of stock -> hide quantity; nothing to add to the basket. {%- endcomment -%}
         <div data-qty-wrap{% if show_notify %} hidden{% endif %}>
-          <div class="pdp__qlabel">Quantity</div>
-          <div class="pdp__qty">
-            <button type="button" data-q="-1" aria-label="Decrease quantity">&minus;</button>
-            <input type="number" id="pdp-qty-{{ section.id }}" value="1" min="1" inputmode="numeric">
-            <button type="button" data-q="1" aria-label="Increase quantity">+</button>
-          </div>
+          <input type="number" id="pdp-qty-{{ section.id }}" value="1" min="1" hidden>
         </div>
 
         <div class="pdp__actions"{% if show_notify %} hidden{% endif %} data-buy-actions>
           <button type="button" class="pdp__add" data-add="cart"{% unless product.available %} disabled{% endunless %}>{% if is_preorder %}Pre-order now{% else %}Add to basket{% endif %}</button>
           {%- render 'mp-wishlist-button', product: product, class: 'pdp__wish' -%}
         </div>
+        {%- unless show_notify or gift_card_page -%}
+          {%- assign loyalty_points = variant.price | divided_by: 50 -%}
+          {%- if loyalty_points > 0 -%}
+          <p class="pdp__loyalty" data-loyalty-pts>Purchasing will earn you up to <strong>{{ loyalty_points }} </strong><a href="/pages/loyalty-points" target="_blank" rel="noopener noreferrer">Loyalty points</a>.</p>
+          {%- endif -%}
+        {%- endunless -%}
         {%- comment -%} Out of stock (and not a pre-order): native back-in-stock relay to the /apps/notify app proxy. Logged-in shoppers register in one tap; logged-out shoppers are sent to log in or register first. {%- endcomment -%}
         <div class="pdp__notify-wrap" data-notify-wrap{% unless show_notify %} hidden{% endunless %}>
           <div style="display:flex;gap:11px">
@@ -1476,11 +1474,25 @@
       if (msrpSaveEl) msrpSaveEl.hidden = !!v.compare_str;
       if (skuEl) { if (v.sku) { skuEl.textContent = 'SKU: ' + v.sku; skuEl.hidden = false; } else { skuEl.hidden = true; } }
       if (stockEl) {
-        stockEl.innerHTML = isPreorder
-          ? '<span class="pdp__dot" style="background:#f2872f"></span><b style="color:#b4560f">Available to pre-order</b>'
-          : (v.available
-            ? '<span class="pdp__dot" style="background:#2f8f5b"></span><b style="color:#2f8f5b">In stock</b>' + (v.avail_qty > 0 ? '<span style="color:#6b7a82"> · ' + v.avail_qty + ' available</span>' : '')
-            : '<span class="pdp__dot" style="background:#d6402e"></span><b style="color:#d6402e">Out of stock</b>');
+        if (isPreorder) {
+          stockEl.innerHTML = '<span class="pdp__dot" style="background:#f2872f"></span><b style="color:#b4560f">Available to pre-order</b>';
+          stockEl.hidden = false;
+        } else if (v.available) {
+          stockEl.hidden = true;
+        } else {
+          stockEl.innerHTML = '<span class="pdp__dot" style="background:#d6402e"></span><b style="color:#d6402e">Out of stock</b>';
+          stockEl.hidden = false;
+        }
+      }
+      var loyaltyEl = root.querySelector('[data-loyalty-pts]');
+      if (loyaltyEl) {
+        var pts = Math.floor(v.price / 50);
+        if (pts > 0 && v.available) {
+          loyaltyEl.querySelector('strong').textContent = pts + ' ';
+          loyaltyEl.hidden = false;
+        } else {
+          loyaltyEl.hidden = true;
+        }
       }
       if (addBtn) { addBtn.disabled = !v.available; addBtn.textContent = !v.available ? 'Sold out' : (isPreorder ? 'Pre-order now' : 'Add to basket'); }
       if (buyBtn) buyBtn.disabled = !v.available;
