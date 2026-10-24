@@ -3,7 +3,16 @@
   Imported from Claude Design "MPGames Homepage".
 {%- endcomment -%}
 
+{{ 'component-list-social.css' | asset_url | stylesheet_tag }}
+
 {%- style -%}
+  .mp-ft-{{ section.id }} .mp-ft__social { margin-top: 16px; }
+  .mp-ft-{{ section.id }} .mp-ft__social .list-social { justify-content: flex-start; gap: 4px; }
+  .mp-ft-{{ section.id }} .mp-ft__social .list-social__link { color: #9fb4bd; padding: 8px; }
+  .mp-ft-{{ section.id }} .mp-ft__social .list-social__link:hover { color: #fff; }
+  .mp-ft-{{ section.id }} .mp-ft__social .list-social__link svg { width: 20px; height: 20px; fill: currentColor; }
+  .mp-ft-{{ section.id }} .mp-ft__social .icon { width: 20px; height: 20px; }
+  .mp-ft-{{ section.id }} .mp-ft__social .svg-wrapper svg { fill: currentColor; }
   .mp-ft-{{ section.id }} { background: #0d2630; color: #9fb4bd; font-family: 'Barlow', ui-sans-serif, system-ui, sans-serif; }
   .mp-ft-{{ section.id }} .mp-ft__in { width: 100%; padding: 38px 28px 0; }
   .mp-ft-{{ section.id }} .mp-ft__cols {
@@ -43,6 +52,9 @@
       <div>
         <a href="{{ routes.root_url }}" class="mp-ft__logo mp-cond" aria-label="{{ shop.name }}"><img src="{{ 'MPGames-logo.png' | asset_url }}" alt="{{ shop.name | escape }}" width="190" height="30" style="height:30px;width:auto;display:block"></a>
         <div class="mp-ft__blurb">{{ section.settings.blurb }}</div>
+        <div class="mp-ft__social">
+          {%- render 'social-icons' -%}
+        </div>
       </div>
       {%- for block in section.blocks -%}
         <div {{ block.shopify_attributes }}>
