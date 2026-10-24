@@ -124,6 +124,9 @@
   .mp-pdpi-{{ section.id }} .pdp__notify-note a { color: #c2410c; font-weight: 600; }
   .mp-pdpi-{{ section.id }} .pdp__notify-err { color: #d6402e; }
   .mp-pdpi-{{ section.id }} .pdp__appblocks { margin-top: 12px; }
+  .mp-pdpi-{{ section.id }} .pdp__loyalty { margin-top: 10px; font-size: 13px; color: #6b7a82; }
+  .mp-pdpi-{{ section.id }} .pdp__loyalty a { color: #f2872f; font-weight: 600; text-decoration: none; }
+  .mp-pdpi-{{ section.id }} .pdp__loyalty a:hover { text-decoration: underline; }
 
   .mp-pdpi-{{ section.id }} .pdp__reassure { border: 1px solid #e2ddd1; border-radius: 10px; background: #fbf9f4; margin-top: 18px; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; font-size: 12.5px; color: #4a443c; }
   .mp-pdpi-{{ section.id }} .pdp__reassure b { color: #16323f; }
@@ -294,13 +297,8 @@
           </div>
         {%- endunless -%}
 
-        <div class="pdp__stock" data-stock>
-          {%- if product.available -%}
-            <span class="pdp__dot" style="background:#2f8f5b"></span><b style="color:#2f8f5b">{% if variant.requires_shipping == false %}Available to download{% else %}In stock &amp; ready to print{% endif %}</b>
-            {%- if variant.inventory_management and variant.inventory_quantity > 0 -%}<span style="color:#6b7a82"> · {{ variant.inventory_quantity }} available</span>{%- endif -%}
-          {%- else -%}
-            <span class="pdp__dot" style="background:#d6402e"></span><b style="color:#d6402e">Currently unavailable</b>
-          {%- endif -%}
+        <div class="pdp__stock" data-stock{% if product.available %} hidden{% endif %}>
+          {%- unless product.available -%}<span class="pdp__dot" style="background:#d6402e"></span><b style="color:#d6402e">Currently unavailable</b>{%- endunless -%}
         </div>
 
         {%- comment -%} Out of stock -> hide the buy controls and offer the back-in-stock notify relay instead. {%- endcomment -%}
@@ -308,18 +306,20 @@
         {%- unless product.available -%}{%- assign show_notify = true -%}{%- endunless -%}
 
         <div data-qty-wrap{% if show_notify %} hidden{% endif %}>
-          <div class="pdp__qlabel">Quantity</div>
-          <div class="pdp__qty">
-            <button type="button" data-q="-1" aria-label="Decrease quantity">&minus;</button>
-            <input type="number" id="pdp-qty-{{ section.id }}" value="1" min="1" inputmode="numeric">
-            <button type="button" data-q="1" aria-label="Increase quantity">+</button>
-          </div>
+          <input type="number" id="pdp-qty-{{ section.id }}" value="1" min="1" hidden>
         </div>
 
         <div class="pdp__actions"{% if show_notify %} hidden{% endif %} data-buy-actions>
           <button type="button" class="pdp__add" data-add="cart"{% unless product.available %} disabled{% endunless %}>Add to basket</button>
         </div>
         <button type="button" class="pdp__buynow" data-add="checkout"{% if show_notify %} hidden{% endif %}{% unless product.available %} disabled{% endunless %}>Buy it now</button>
+
+        {%- unless show_notify -%}
+          {%- assign loyalty_points = variant.price | divided_by: 50 -%}
+          {%- if loyalty_points > 0 -%}
+          <p class="pdp__loyalty" data-loyalty-pts>Purchasing will earn you up to <strong>{{ loyalty_points }} </strong><a href="/pages/loyalty-points" target="_blank" rel="noopener noreferrer">Loyalty points</a>.</p>
+          {%- endif -%}
+        {%- endunless -%}
 
         {%- comment -%} Native back-in-stock relay to the /apps/notify app proxy. Logged-in shoppers register in one tap; logged-out shoppers are sent to log in or register first. {%- endcomment -%}
         <div class="pdp__notify-wrap" data-notify-wrap{% unless show_notify %} hidden{% endunless %}>
@@ -565,13 +565,26 @@
       if (skuEl) { if (v.sku) { skuEl.textContent = 'SKU: ' + v.sku; skuEl.hidden = false; } else { skuEl.hidden = true; } }
       var digital = v.requires_shipping === false;
       if (stockEl) {
-        stockEl.innerHTML = v.available
-          ? '<span class="pdp__dot" style="background:#2f8f5b"></span><b style="color:#2f8f5b">' + (digital ? 'Available to download' : 'In stock &amp; ready to print') + '</b>' + (v.avail_qty > 0 ? '<span style="color:#6b7a82"> · ' + v.avail_qty + ' available</span>' : '')
-          : '<span class="pdp__dot" style="background:#d6402e"></span><b style="color:#d6402e">Currently unavailable</b>';
+        if (v.available) {
+          stockEl.hidden = true;
+        } else {
+          stockEl.innerHTML = '<span class="pdp__dot" style="background:#d6402e"></span><b style="color:#d6402e">Currently unavailable</b>';
+          stockEl.hidden = false;
+        }
       }
       if (addBtn) { addBtn.disabled = !v.available; addBtn.textContent = !v.available ? 'Sold out' : 'Add to basket'; }
       if (buyBtn) buyBtn.disabled = !v.available;
       toggleNotify(!v.available);
+      var loyaltyEl = root.querySelector('[data-loyalty-pts]');
+      if (loyaltyEl) {
+        var pts = Math.floor(v.price / 50);
+        if (pts > 0 && v.available) {
+          loyaltyEl.querySelector('strong').textContent = pts + ' ';
+          loyaltyEl.hidden = false;
+        } else {
+          loyaltyEl.hidden = true;
+        }
+      }
       if (physNotice) physNotice.hidden = digital;
       if (digiNotice) digiNotice.hidden = !digital;
       if (shipsNote) shipsNote.hidden = digital;
