@@ -11,9 +11,6 @@
   .mp-bl-{{ section.id }} .bl__kicker { font-size: 12.5px; font-weight: 600; color: #f2872f; letter-spacing: 1.5px; }
   .mp-bl-{{ section.id }} .bl__h1 { font-size: 40px; font-weight: 700; margin: 8px 0 0; }
   .mp-bl-{{ section.id }} .bl__sub { font-size: 14.5px; color: #8a8278; margin: 8px auto 0; max-width: 560px; }
-  .mp-bl-{{ section.id }} .bl__chips { display: flex; gap: 9px; justify-content: center; flex-wrap: wrap; padding: 18px 0 6px; }
-  .mp-bl-{{ section.id }} .bl__chip { background: #fff; border: 1px solid #e2ddd1; color: #4a443c; font-size: 13px; font-weight: 600; padding: 8px 16px; border-radius: 8px; text-decoration: none; }
-  .mp-bl-{{ section.id }} .bl__chip.is-active { background: #16323f; border-color: #16323f; color: #fff; }
 
   .mp-bl-{{ section.id }} .bl__feat { display: flex; gap: 0; border: 1px solid #e7ddcb; border-radius: 14px; overflow: hidden; background: #fff; box-shadow: 0 1px 3px rgba(20,40,50,.05); text-decoration: none; color: inherit; margin-top: 18px; }
   .mp-bl-{{ section.id }} .bl__featimg { width: 580px; flex: none; min-height: 320px; position: relative; background: repeating-linear-gradient(45deg,#e6e0d4,#e6e0d4 13px,#ded7c9 13px,#ded7c9 26px); background-size: cover; background-position: center; }
@@ -53,7 +50,12 @@
   .mp-bl-{{ section.id }} .bl__popn { font-size: 24px; font-weight: 700; color: #e0d6c4; flex: none; width: 24px; }
   .mp-bl-{{ section.id }} .bl__popt { font-size: 13.5px; font-weight: 600; color: #16323f; line-height: 1.25; }
   .mp-bl-{{ section.id }} .bl__popm { font-size: 11.5px; color: #9b948a; margin-top: 3px; }
-  .mp-bl-{{ section.id }} .bl__topic { display: flex; justify-content: space-between; padding: 11px 18px; border-top: 1px solid #f1ece2; font-size: 13px; color: #4a443c; text-decoration: none; }
+  .mp-bl-{{ section.id }} .bl__topics { padding: 28px 0 36px; border-top: 1px solid #e2ddd1; margin-top: 4px; }
+  .mp-bl-{{ section.id }} .bl__topicsh { font-size: 18px; font-weight: 700; margin-bottom: 16px; color: #16323f; }
+  .mp-bl-{{ section.id }} .bl__topicsgrid { display: flex; flex-wrap: wrap; gap: 10px; }
+  .mp-bl-{{ section.id }} .bl__topicchip { background: #fff; border: 1.5px solid #e2ddd1; color: #4a443c; font-size: 13.5px; font-weight: 600; padding: 9px 20px; border-radius: 50px; text-decoration: none; transition: background 0.15s, color 0.15s, border-color 0.15s, transform 0.15s; }
+  .mp-bl-{{ section.id }} .bl__topicchip:hover { background: #16323f; border-color: #16323f; color: #fff; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(22,50,63,.12); }
+  .mp-bl-{{ section.id }} .bl__topicchip.is-active { background: #f2872f; border-color: #f2872f; color: #fff; }
   .mp-bl-{{ section.id }} .bl__news { border-radius: 12px; background: #2b2233; padding: 22px; }
   .mp-bl-{{ section.id }} .bl__news h3 { color: #fff; font-size: 18px; font-weight: 700; margin: 0; }
   .mp-bl-{{ section.id }} .bl__news p { color: #c5b9d4; font-size: 12.5px; margin: 6px 0 0; line-height: 1.5; }
@@ -90,15 +92,6 @@
       <h1 class="bl__h1 mp-cond">{{ section.settings.heading | default: blog.title }}</h1>
       {%- if section.settings.subtitle != blank -%}<div class="bl__sub">{{ section.settings.subtitle }}</div>{%- endif -%}
     </div>
-
-    {%- if blog.all_tags.size > 0 -%}
-      <div class="bl__chips">
-        <a class="bl__chip mp-cond{% unless cur_tag %} is-active{% endunless %}" href="{{ blog.url }}">All articles</a>
-        {%- for tag in blog.all_tags -%}
-          <a class="bl__chip mp-cond{% if cur_tag == tag %} is-active{% endif %}" href="{{ blog.url }}/tagged/{{ tag | handleize }}">{{ tag }}</a>
-        {%- endfor -%}
-      </div>
-    {%- endif -%}
 
     {%- paginate blog.articles by section.settings.posts_per_page -%}
       {%- assign featured = blog.articles.first -%}
@@ -183,15 +176,6 @@
             {%- endfor -%}
           </div>
 
-          {%- if blog.all_tags.size > 0 -%}
-            <div class="bl__panel">
-              <div class="bl__ph mp-cond">Browse by topic</div>
-              {%- for tag in blog.all_tags -%}
-                <a class="bl__topic" href="{{ blog.url }}/tagged/{{ tag | handleize }}"><span>{{ tag }}</span><span style="color:#9b948a">&#8594;</span></a>
-              {%- endfor -%}
-            </div>
-          {%- endif -%}
-
           <div class="bl__news">
             <h3 class="mp-cond">{{ section.settings.news_title }}</h3>
             <p>{{ section.settings.news_text }}</p>
@@ -207,6 +191,17 @@
           </div>
         </aside>
       </div>
+
+      {%- if blog.all_tags.size > 0 -%}
+        <div class="bl__topics">
+          <div class="bl__topicsh mp-cond">Browse by topic</div>
+          <div class="bl__topicsgrid">
+            {%- for tag in blog.all_tags -%}
+              <a class="bl__topicchip mp-cond{% if cur_tag == tag %} is-active{% endif %}" href="{{ blog.url }}/tagged/{{ tag | handleize }}">{{ tag }}</a>
+            {%- endfor -%}
+          </div>
+        </div>
+      {%- endif -%}
     {%- endpaginate -%}
 
   </div>
