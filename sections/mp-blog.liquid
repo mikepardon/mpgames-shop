@@ -51,11 +51,13 @@
   .mp-bl-{{ section.id }} .bl__popt { font-size: 13.5px; font-weight: 600; color: #16323f; line-height: 1.25; }
   .mp-bl-{{ section.id }} .bl__popm { font-size: 11.5px; color: #9b948a; margin-top: 3px; }
   .mp-bl-{{ section.id }} .bl__topics { padding: 28px 0 36px; border-top: 1px solid #e2ddd1; margin-top: 4px; }
-  .mp-bl-{{ section.id }} .bl__topicsh { font-size: 18px; font-weight: 700; margin-bottom: 16px; color: #16323f; }
-  .mp-bl-{{ section.id }} .bl__topicsgrid { display: flex; flex-wrap: wrap; gap: 10px; }
-  .mp-bl-{{ section.id }} .bl__topicchip { background: #fff; border: 1.5px solid #e2ddd1; color: #4a443c; font-size: 13.5px; font-weight: 600; padding: 9px 20px; border-radius: 50px; text-decoration: none; transition: background 0.15s, color 0.15s, border-color 0.15s, transform 0.15s; }
-  .mp-bl-{{ section.id }} .bl__topicchip:hover { background: #16323f; border-color: #16323f; color: #fff; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(22,50,63,.12); }
-  .mp-bl-{{ section.id }} .bl__topicchip.is-active { background: #f2872f; border-color: #f2872f; color: #fff; }
+  .mp-bl-{{ section.id }} .bl__topicsh { font-size: 18px; font-weight: 700; margin-bottom: 20px; color: #16323f; }
+  .mp-bl-{{ section.id }} .bl__topicsgrid { columns: 3; gap: 0; }
+  .mp-bl-{{ section.id }} .bl__topicchip { display: flex; justify-content: space-between; align-items: center; padding: 11px 6px 11px 0; border-bottom: 1px solid #ede9e0; font-size: 13.5px; color: #4a443c; text-decoration: none; break-inside: avoid; transition: color 0.12s, padding-left 0.12s; }
+  .mp-bl-{{ section.id }} .bl__topicchip::after { content: '→'; color: #c8c2b8; transition: color 0.12s, transform 0.12s; display: inline-block; }
+  .mp-bl-{{ section.id }} .bl__topicchip:hover { color: #f2872f; padding-left: 6px; }
+  .mp-bl-{{ section.id }} .bl__topicchip:hover::after { color: #f2872f; transform: translateX(3px); }
+  .mp-bl-{{ section.id }} .bl__topicchip.is-active { color: #f2872f; font-weight: 700; }
   .mp-bl-{{ section.id }} .bl__news { border-radius: 12px; background: #2b2233; padding: 22px; }
   .mp-bl-{{ section.id }} .bl__news h3 { color: #fff; font-size: 18px; font-weight: 700; margin: 0; }
   .mp-bl-{{ section.id }} .bl__news p { color: #c5b9d4; font-size: 12.5px; margin: 6px 0 0; line-height: 1.5; }
@@ -77,6 +79,7 @@
     .mp-bl-{{ section.id }} .bl__wrap { padding: 0 16px; }
     .mp-bl-{{ section.id }} .bl__h1 { font-size: 30px; }
     .mp-bl-{{ section.id }} .bl__grid { grid-template-columns: 1fr; }
+    .mp-bl-{{ section.id }} .bl__topicsgrid { columns: 2; }
   }
 {%- endstyle -%}
 
