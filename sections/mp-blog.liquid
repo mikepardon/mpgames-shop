@@ -195,12 +195,21 @@
         </aside>
       </div>
 
-      {%- if blog.all_tags.size > 0 -%}
+      {%- liquid
+        assign curated_topics = "adventure games,anime games,board game news,board game reviews,board games,board games for kids,buying guide,card games,co-op games,collection building,cooperative games,couples games,eurogames,family board games,family games,game night,game recommendations,gift guide,gift ideas,high player count,hobby,new arrivals,new releases,opinion,party games,player count,pre-order,racing games,solo games,standalone games,strategy games,tabletop gaming,three players,two player games,two-player games,video game adaptations,worker placement" | split: ","
+        assign topics_to_show = "" | split: ""
+        for topic in curated_topics
+          if blog.all_tags contains topic
+            assign topics_to_show = topics_to_show | push: topic
+          endif
+        endfor
+      -%}
+      {%- if topics_to_show.size > 0 -%}
         <div class="bl__topics">
           <div class="bl__topicsh mp-cond">Browse by topic</div>
           <div class="bl__topicsgrid">
-            {%- for tag in blog.all_tags -%}
-              <a class="bl__topicchip mp-cond{% if cur_tag == tag %} is-active{% endif %}" href="{{ blog.url }}/tagged/{{ tag | handleize }}">{{ tag }}</a>
+            {%- for topic in topics_to_show -%}
+              <a class="bl__topicchip mp-cond{% if cur_tag == topic %} is-active{% endif %}" href="{{ blog.url }}/tagged/{{ topic | handleize }}">{{ topic }}</a>
             {%- endfor -%}
           </div>
         </div>
