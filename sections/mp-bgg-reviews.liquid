@@ -166,7 +166,15 @@
             assign bgg_source = collections.all.products
           endif
           assign bgg_keyed = ''
+          assign min_ratings = section.settings.min_ratings_count | default: 100
           for p in bgg_source
+            unless p.available
+              continue
+            endunless
+            assign ratings_count = p.metafields.custom.bgg_ratings_count.value | default: 0
+            if ratings_count < min_ratings
+              continue
+            endif
             assign r = p.metafields.custom.bgg_rating.value | default: 0 | times: 10 | round | plus: 100000
             assign bgg_keyed = bgg_keyed | append: r | append: '|' | append: p.handle | append: ','
           endfor
@@ -403,6 +411,7 @@
     { "type": "text",       "id": "kicker",          "label": "BGG kicker",           "default": "The hobbyist corner" },
     { "type": "text",       "id": "heading",         "label": "BGG heading",          "default": "Highest rated on BoardGameGeek" },
     { "type": "collection", "id": "collection",      "label": "Collection",           "info": "Products sorted by custom.bgg_rating metafield. Defaults to all products." },
+    { "type": "range",      "id": "min_ratings_count", "min": 0, "max": 500, "step": 25, "label": "Minimum BGG ratings count", "default": 100, "info": "Hide games with fewer ratings — filters out titles whose score may be skewed." },
     { "type": "text",       "id": "reviews_kicker",  "label": "Reviews kicker",       "default": "Customers are saying" },
     { "type": "text",       "id": "rating_fallback", "label": "Rating fallback",      "default": "4.93", "info": "Shown if Judge.me metafield is not set." },
     { "type": "text",       "id": "count_fallback",  "label": "Review count fallback",                  "info": "Shown if Judge.me metafield is not set." },
