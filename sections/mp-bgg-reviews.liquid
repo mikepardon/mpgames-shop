@@ -53,6 +53,8 @@
   .mp-br-{{ section.id }} .mp-br__rmeta { flex: 1; min-width: 0; }
   .mp-br-{{ section.id }} .mp-br__rname { font-size: 14px; font-weight: 600; color: #14233A; line-height: 1.2; transition: color .15s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .mp-br-{{ section.id }} .mp-br__rtype { font-size: 11.5px; color: #6A7686; margin-top: 2px; }
+  .mp-br-{{ section.id }} .mp-br__bgg { display: inline-flex; align-items: center; gap: 5px; background: #2b2233; border-radius: 5px; padding: 2px 7px; margin-top: 5px; }
+  .mp-br-{{ section.id }} .mp-br__bgg b { font-size: 9px; font-weight: 700; color: #fff; }
   .mp-br-{{ section.id }} .mp-br__rprice {
     font-family: 'Barlow Condensed', sans-serif;
     font-size: 18px; font-weight: 800; color: #14233A; flex: none; margin: 0 6px;
@@ -191,6 +193,19 @@
             {%- for p in bgg_source -%}{%- if p.handle == want -%}{%- assign bgg_product = p -%}{%- break -%}{%- endif -%}{%- endfor -%}
             {%- if bgg_product.handle != want -%}{%- continue -%}{%- endif -%}
             {%- assign bgg_shown = bgg_shown | plus: 1 -%}
+            {%- liquid
+              assign bgg_val = bgg_product.metafields.custom.bgg_rating.value | times: 1.0
+              assign bgg_int = bgg_val | times: 10 | round
+              assign bgg_whole = bgg_int | divided_by: 10 | floor
+              assign bgg_dec = bgg_int | modulo: 10
+              assign bgg_display = bgg_whole | append: '.' | append: bgg_dec
+              assign bgg_color = '#e0b441'
+              if bgg_val >= 8.0
+                assign bgg_color = '#5fbf7e'
+              elsif bgg_val >= 7.0
+                assign bgg_color = '#9ccf63'
+              endif
+            -%}
             <li>
               <a class="mp-br__row" href="{{ bgg_product.url }}">
                 <span class="mp-br__rank mp-cond">{{ bgg_shown }}</span>
@@ -202,6 +217,7 @@
                 <span class="mp-br__rmeta">
                   <span class="mp-br__rname">{{ bgg_product.title }}</span>
                   <span class="mp-br__rtype">{{ bgg_product.type }}</span>
+                  <div class="mp-br__bgg"><b class="mp-cond">BGG</b><span style="font-size:11px;font-weight:700;color:{{ bgg_color }}">{{ bgg_display }}</span></div>
                 </span>
                 <span class="mp-br__rprice mp-cond">{{ bgg_product.price | money }}</span>
                 <form action="{{ routes.cart_add_url }}" method="post" enctype="multipart/form-data" class="mp-br__raddform">
