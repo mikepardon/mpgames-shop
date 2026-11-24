@@ -16,9 +16,9 @@
           "type": "slide",
           "settings": {
             "layout": "image",
-            "image": "shopify://shop_images/banner-wacky-racing-1600x600.png",
+            "image": "shopify://shop_images/banner-christmas-party-games-1600x600.png",
             "image_alt": "",
-            "cta_url": "shopify://collections/racer",
+            "cta_url": "shopify://collections/category-family",
             "kicker": "TOP-RANKED TABLETOP",
             "title": "Board games ranked by BoardGameGeek, delivered across the UK",
             "sub": "Shop by BGG score, player count and play time — next working day dispatch.",
@@ -33,6 +33,20 @@
             "image": "shopify://shop_images/banner-trade-ins-1600x600.png",
             "image_alt": "",
             "cta_url": "shopify://pages/trade-in",
+            "kicker": "TOP-RANKED TABLETOP",
+            "title": "The biggest names in tabletop, all in one place",
+            "sub": "Games ranked by BoardGameGeek score, player count and play time.",
+            "cta_label": "Shop the collection",
+            "bg": "linear-gradient(120deg,#14233A,#2c5466)"
+          }
+        },
+        "slide_nnjryK": {
+          "type": "slide",
+          "settings": {
+            "layout": "image",
+            "image": "shopify://shop_images/banner-for-the-gods-1600x600.png",
+            "image_alt": "",
+            "cta_url": "shopify://products/for-the-gods-pre-order",
             "kicker": "TOP-RANKED TABLETOP",
             "title": "The biggest names in tabletop, all in one place",
             "sub": "Games ranked by BoardGameGeek score, player count and play time.",
@@ -58,6 +72,7 @@
       "block_order": [
         "slide_K9iJqL",
         "s1",
+        "slide_nnjryK",
         "slide_TCTHdh"
       ],
       "settings": {
@@ -376,6 +391,7 @@
         "kicker": "The hobbyist corner",
         "heading": "Highest rated on BoardGameGeek",
         "collection": "top-rated",
+        "min_ratings_count": 100,
         "reviews_kicker": "Customers are saying",
         "rating_fallback": "4.93",
         "count_fallback": "",
